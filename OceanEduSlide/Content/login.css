@@ -1,0 +1,235 @@
+﻿body {
+  background: #ebeeef;
+  font-family: 'Poppins', sans-serif;
+}
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+.container {
+  max-width: 1440px !important;
+}
+.wrap-login100 {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.limiter {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.limiter .title {
+  background: url('admin/bg-login.jpg') no-repeat;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 50px 15px 50px 15px;
+}
+.limiter .title:before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(54, 84, 99, 0.7);
+}
+.limiter .title h2 {
+  font-size: 30px;
+  color: #fff;
+  text-transform: uppercase;
+}
+form {
+  width: 100%;
+  display: block;
+  text-align: center;
+  padding: 40px 0;
+}
+form input {
+  height: 45px;
+  font-size: 15px;
+  color: #555555;
+  width: 65%;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  padding: 0 5px;
+  border: none;
+  border-bottom: 1px solid #079AA6;
+  position: relative;
+}
+form input:focus {
+  outline: none;
+}
+form .user-name {
+  width: 100px;
+}
+form span {
+  display: inline-block;
+}
+form span.field-validation-error {
+  color: #c90404;
+  font-size: 0.7rem;
+  width: 100%;
+  display: block;
+}
+.validation-summary-errors {
+  color: #c90404;
+  font-size: 0.8rem;
+  width: 100%;
+}
+.login100-form-btn {
+  background: #079AA6;
+  border: none;
+  color: #fff;
+  margin-left: 5px;
+  padding: 10px 25px;
+  border-radius: 3px;
+  transition: 0.3s;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 0.875rem;
+}
+.login100-form-btn:hover {
+  background-color: #004767;
+  box-shadow: 0 12px 24px -10px rgba(21, 59, 93, 0.46);
+  transform: scale(0.95);
+}
+.login100-form-btn:focus {
+  outline: none;
+}
+.login100-form-btn a {
+  color: #fff;
+  text-decoration: none;
+}
+hr {
+  background: #079AA6;
+}
+.ul-contact {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+.ul-contact li {
+  padding: 7px;
+}
+.ul-contact img {
+  width: 50px;
+  transition: 0.3s;
+}
+.ul-contact img:hover {
+  transform: scale(1.1, 1.1);
+}
+.ul-contact a {
+  color: #000000;
+  position: relative;
+  margin-left: 10px;
+}
+.ul-contact a span {
+  position: absolute;
+  top: -80px;
+  display: block;
+  background: #fff;
+  padding: 10px;
+  border-radius: 3px;
+  box-shadow: 0 0.125rem 0.625rem rgba(60, 118, 126, 0.4), 0 0.0625rem 0.125rem rgba(35, 44, 46, 0.51);
+  transition: 0.3s;
+  text-align: center;
+  width: auto;
+  visibility: hidden;
+  opacity: 0;
+  font-size: 0.775rem;
+}
+.ul-contact a #mail {
+  left: -40px;
+}
+.ul-contact a #fb {
+  left: -37px;
+}
+.ul-contact a #phone {
+  left: -15px;
+}
+.ul-contact a:hover {
+  text-decoration: none;
+  color: #079AA6;
+}
+.ul-contact a:hover span {
+  top: -65px;
+  visibility: visible;
+  opacity: 1;
+}
+.ul-contact a img {
+  margin-right: 5px;
+}
+.ul-info {
+  list-style: none;
+}
+.ul-info li {
+  padding: 7px 0;
+  font-size: 0.875rem;
+  text-align: justify;
+}
+.ul-info li img {
+  width: 13px;
+  position: relative;
+  top: -1px;
+}
+.ul-info li b {
+  color: #27747a;
+}
+.support-title {
+  font-size: 1.2rem;
+  text-align: center;
+  border-top: 0.5px solid #079AA6;
+  padding: 20px 0 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.title-content {
+  font-weight: bold;
+  font-size: 1.2rem;
+  background: linear-gradient(180deg, #107881 0%, #0bc1d0 57.81%, #076d76 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+}
+.title-content img {
+  width: 30px;
+  position: relative;
+  top: -5px;
+}
+.contact-us {
+  font-size: 0.7rem;
+  color: #079AA6;
+  font-weight: 500;
+}
+@media only screen and (max-width: 1024px) {
+  form input {
+    width: 55%;
+  }
+}
+@media only screen and (max-width: 768px) {
+  form {
+    padding: 30px 0 20px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .title-content {
+    font-size: 1rem;
+  }
+}

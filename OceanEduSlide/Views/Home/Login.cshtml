@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+}
+<div class="first-login">
+    <div class="logo-slogan">
+        <div>
+            <img src="~/Content/images/logo.png" alt="Ocean Edu" data-aos="fade-down" data-aos-delay="0"/>
+            <div class="slogan"data-aos="fade-up" data-aos-delay="400">
+                HỆ THỐNG ANH NGỮ QUỐC TẾ
+            </div>
+        </div>
+    </div>
+    <div class="login-box">
+        <a class="btn-login" href="javascript:;">
+            <img src="~/Content/images/login-btn-bg.png" alt="Login" />
+        </a>
+    </div>
+</div>
+<div class="second-login hidden">
+    <div class="login-form">
+        <div>
+            <img class="title-img" src="~/Content/images/login-title.png"/>
+            <form action="/" method="get">
+                <div class="input-container">
+                    <span>Id:</span>
+                    <input type="text" name="Id" value="" />
+                </div>
+                <div class="input-container">
+                    <span>Pass:</span>
+                    <input type="password" name="Password" value="" />
+                </div>
+                <button class="btn-login" type="submit">
+                    <img src="~/Content/images/login-btn-bg.png" />
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="login-footer">
+        
+    </div>
+    <div class="logo-anchor">
+        <img src="~/Content/images/logo.png" />
+    </div>
+</div>
+@section Scripts {
+    <script>
+        login();
+    </script>
+}
