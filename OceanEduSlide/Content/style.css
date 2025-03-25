@@ -644,11 +644,13 @@ body {
 }
 .slide-text .item .number {
   font-size: 5rem;
-  color: #ED690F;
+  color: #F25D2D;
   font-family: myriadpro-boldcond;
   text-align: center;
   line-height: 1;
   margin: 0;
+  -webkit-text-stroke: 0.3px white;
+  text-shadow: 2px 0 4px rgba(0, 0, 0, 0.5);
 }
 .slide-text .item1 {
   background-image: url("images/text-people-bg.png");

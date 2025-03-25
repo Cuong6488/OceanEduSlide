@@ -748,20 +748,24 @@ body {
     color: #1253B2;
     align-items: center;
     justify-content: center;
-    font-weight:600;
+    font-weight: 600;
+
     .item {
         @include custom-background();
         width: 400px;
         height: 330px;
         padding: 120px 20px;
-        position:relative;
-        .number{
-            font-size:5rem;
-            color:$orange;
-            font-family:myriadpro-boldcond;
-            text-align:center;
-            line-height:1;
-            margin:0;
+        position: relative;
+
+        .number {
+            font-size: 5rem;
+            color: #F25D2D;
+            font-family: myriadpro-boldcond;
+            text-align: center;
+            line-height: 1;
+            margin: 0;
+            -webkit-text-stroke: .3px white;
+            text-shadow: 2px 0 4px rgba(0,0,0,.5);
         }
     }
 
