@@ -1,6 +1,14 @@
 ﻿@font-face {
+  font-family: "josefinsans";
+  src: url("../webfonts/josefinsans-variablefont_wght.ttf") format("truetype");
+}
+@font-face {
   font-family: "utm avobold_italic";
   src: url("../webfonts/utm avobold_italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "myriadpro-boldcond";
+  src: url("../webfonts/myriadpro-boldcond.otf") format("opentype");
 }
 @font-face {
   font-family: "robotocondensed-variablefont_wght";
@@ -17,6 +25,10 @@
 @font-face {
   font-family: "utm avoitalic";
   src: url("../webfonts/utm avoitalic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "svn-bebas";
+  src: url("../webfonts/svn-bebas neue pro expanded extrabold.otf") format("opentype");
 }
 button {
   outline: none;
@@ -410,56 +422,240 @@ body {
   object-fit: cover;
 }
 
-.about-index {
-  position: relative;
+.about-page {
+  background-size: cover;
+  background-position: center;
   background-image: url("images/about-bg.png");
+  height: 100vh;
+}
+.about-page .slide {
   background-size: cover;
   background-position: center;
   height: 100vh;
 }
-.about-index .logo-about {
+.about-page .btns-text img, .about-page .menu-btn img {
+  border-radius: 10px;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
+}
+.about-page .logo-about {
   position: absolute;
   top: 30px;
   left: 30px;
 }
-.about-index .logo-about img {
+.about-page .logo-about img {
   width: 225px;
 }
-.about-index .btns-text {
+.about-page .btns-text {
   position: absolute;
   top: 30px;
   right: 30px;
 }
-.about-index .btns-text p {
+.about-page .btns-text p {
   color: white;
   margin-bottom: 0.5rem;
 }
-.about-index .btns-text img {
+.about-page .btns-text img {
   height: 30px;
 }
-.about-index .btns-text div {
+.about-page .btns-text div {
   position: relative;
   margin-bottom: 5px;
   height: 30px;
 }
-.about-index .btns-text div img {
+.about-page .btns-text div img {
   position: absolute;
   right: 0;
 }
-.about-index ul {
+.about-page ul {
   display: flex;
   position: absolute;
   bottom: 45px;
   right: 60px;
   height: 50px;
 }
-.about-index ul li:not(:last-child) {
+.about-page ul li:not(:last-child) {
   margin-right: 7px;
 }
-.about-index ul img {
+.about-page ul img {
   height: 50px;
 }
-.about-index .btns-text img, .about-index ul img {
-  border-radius: 10px;
-  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
+
+/*.about-index, .map-first {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+
+    .btns-text, ul {
+        img {
+            border-radius: 10px;
+            box-shadow: 2px 4px 5px rgba(0,0,0,.3);
+        }
+    }
+}*/
+.about-index {
+  background-image: url("images/about-bg.png");
+}
+
+.map-first {
+  background-image: url("images/s-bg.png");
+  align-items: center;
+}
+.map-first .map-container {
+  height: 600px;
+  width: 35%;
+  display: flex;
+  justify-content: right;
+  position: relative;
+}
+.map-first .map-container .map-S {
+  height: 100%;
+}
+.map-first .map-container a {
+  position: absolute;
+  display: inline-block;
+  z-index: 2;
+}
+.map-first .map-container a img {
+  width: 20px;
+}
+.map-first .map-container .btn-north {
+  top: 50px;
+  right: 240px;
+}
+.map-first .map-container .btn-mid {
+  top: 200px;
+  right: 220px;
+}
+.map-first .map-container .btn-south {
+  bottom: 100px;
+  right: 180px;
+}
+.map-first .map-container div {
+  position: absolute;
+}
+.map-first .map-container .locations-north {
+  top: 0;
+  right: 188px;
+}
+.map-first .map-container .locations-north img {
+  width: 160px;
+}
+.map-first .map-container .locations-mid {
+  top: 150px;
+  right: 120px;
+}
+.map-first .map-container .locations-mid img {
+  width: 160px;
+}
+.map-first .map-container .locations-south {
+  bottom: 90px;
+  right: 180px;
+}
+.map-first .map-container .locations-south img {
+  width: 25px;
+}
+.map-first .map-content {
+  height: 500px;
+  position: relative;
+  flex: 1;
+  padding-left: 2rem;
+}
+.map-first .map-content .row {
+  width: 600px !important;
+}
+.map-first .map-content-title {
+  font-size: 2rem;
+  font-family: josefinsans;
+  font-weight: bold;
+}
+.map-first .map-content * {
+  color: white;
+}
+.map-first .map-content .col-4 {
+  font-size: 1.25rem;
+}
+.map-first .map-content .content-slogan {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 0.8;
+  width: 400px;
+  /*font-family:robotocondensed-variablefont_wght;*/
+  transform: translateY(-50px);
+}
+.map-first .map-content .content-slogan span {
+  display: inline-block;
+  margin-left: 2.25rem;
+  font-size: 2.5rem;
+  transform: translateY(-0.875rem);
+}
+.map-first .map-content .offices-number {
+  font-size: 1.75rem;
+  font-weight: 300;
+  transform: translateX(-100px);
+  transition: transform 0.5s;
+  line-height: 1;
+}
+.map-first .map-content .offices-number span {
+  cursor: pointer;
+  color: #ED690F;
+  font-weight: bold;
+  font-size: 4rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.office-list {
+  font-family: josefinsans;
+  max-height: 0;
+  overflow: hidden;
+}
+.office-list.active {
+  max-height: 500px;
+  transition: 0.3s;
+}
+.office-list .office-list-title {
+  font-weight: bold;
+  font-size: 2.25rem;
+  margin-top: 1rem;
+}
+.office-list .office-list-title img {
+  width: 20px;
+  object-fit: contain;
+  transform: translateY(-7px);
+}
+
+.slide-text {
+  font-family: montserrat;
+  color: #1253B2;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+.slide-text .item {
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 400px;
+  height: 330px;
+  padding: 120px 20px;
+  position: relative;
+}
+.slide-text .item .number {
+  font-size: 5rem;
+  color: #ED690F;
+  font-family: myriadpro-boldcond;
+  text-align: center;
+  line-height: 1;
+  margin: 0;
+}
+.slide-text .item1 {
+  background-image: url("images/text-people-bg.png");
+}
+.slide-text .item2 {
+  background-image: url("images/text-student-bg.png");
+}
+.slide-text .item3 {
+  background-image: url("images/text-comeback-bg.png");
 }

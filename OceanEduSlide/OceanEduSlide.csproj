@@ -173,6 +173,19 @@
     <Content Include="Content\images\logo-index.png" />
     <Content Include="Content\images\Logo-white.png" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\S-bg.png" />
+    <Content Include="Content\images\S-Location-yellow.png" />
+    <Content Include="Content\images\S-mid-location.png" />
+    <Content Include="Content\images\S-north-location.png" />
+    <Content Include="Content\images\S-S.png" />
+    <Content Include="Content\images\S-Side-Location.png" />
+    <Content Include="Content\images\S-south-location.png" />
+    <Content Include="Content\images\text-1000000.png" />
+    <Content Include="Content\images\text-3000.png" />
+    <Content Include="Content\images\text-90.png" />
+    <Content Include="Content\images\text-comeback-bg.png" />
+    <Content Include="Content\images\text-people-bg.png" />
+    <Content Include="Content\images\text-student-bg.png" />
     <Content Include="Content\images\tick-all.png" />
     <Content Include="Content\jquery.fancybox.css" />
     <Content Include="Content\jquery.fancybox.min.css" />
@@ -1092,6 +1105,7 @@
     <Content Include="webfonts\UTM AvoItalic.ttf" />
     <Content Include="webfonts\UTM Bebas.ttf" />
     <Content Include="webfonts\RobotoCondensed-VariableFont_wght.ttf" />
+    <Content Include="webfonts\MyriadPro-BoldCond.otf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
