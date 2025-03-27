@@ -1105,7 +1105,8 @@
     <Content Include="webfonts\UTM AvoItalic.ttf" />
     <Content Include="webfonts\UTM Bebas.ttf" />
     <Content Include="webfonts\RobotoCondensed-VariableFont_wght.ttf" />
-    <Content Include="webfonts\MyriadPro-BoldCond.otf" />
+    <Content Include="webfonts\MYRIADPRO-BOLD.OTF" />
+    <Content Include="webfonts\MYRIADPRO-BOLDCOND.OTF" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

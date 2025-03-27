@@ -12,6 +12,17 @@ function login() {
     });
 }
 function about() {
+    $(".tick").on("mousedown touchstart", function () {
+        timeout = setTimeout(function () {
+            $(this).addClass("active");
+        }, 700); 
+    });
+
+    $(".tick").on("mouseup touchend", function () {
+       
+        clearTimeout(timeout);
+    });
+
     $(".btn-map").on("click", function () {
         $(".about-page > .slide:not(.map-first)").fadeOut(300, function () {
             $(".map-first").fadeIn(300);
@@ -30,8 +41,8 @@ function about() {
         $(".locations-north").fadeIn(300);
         $(".locations-mid").fadeOut(300);
         $(".locations-south").fadeOut(300);
-        $(".btn-mid img").css('width', '20px');
-        $(".btn-south img").css('width', '20px');
+        $(".btn-mid img").css('width', '28px');
+        $(".btn-south img").css('width', '28px');
         $(".btn-north img").css('width', '0');
         $(".offices-number").fadeOut(0);
         $(".offices-number").css('transform', 'translateX(0)');
@@ -51,8 +62,8 @@ function about() {
         $(".locations-mid").fadeIn(300);
         $(".locations-north").fadeOut(300);
         $(".locations-south").fadeOut(300);
-        $(".btn-north img").css('width', '20px');
-        $(".btn-south img").css('width', '20px');
+        $(".btn-north img").css('width', '28px');
+        $(".btn-south img").css('width', '28px');
         $(".btn-mid img").css('width', '0');
         $(".offices-number").fadeOut(0);
         $(".offices-number").css('transform', 'translateX(0)');
@@ -72,8 +83,8 @@ function about() {
         $(".locations-south").fadeIn(300);
         $(".locations-north").fadeOut(300);
         $(".locations-mid").fadeOut(300);
-        $(".btn-north img").css('width', '20px');
-        $(".btn-mid img").css('width', '20px');
+        $(".btn-north img").css('width', '28px');
+        $(".btn-mid img").css('width', '28px');
         $(".btn-south img").css('width', '0');
         $(".offices-number").fadeOut(0);
         $(".offices-number").css('transform', 'translateX(0)');
