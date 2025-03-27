@@ -12,17 +12,64 @@ function login() {
     });
 }
 function about() {
+    var isTick = false;
+    var isMousedown = false;
     $(".tick").on("mousedown touchstart", function () {
+        const thistick = $(this);
         timeout = setTimeout(function () {
-            $(this).addClass("active");
-        }, 700); 
+            isTick = true;
+            $(".tick").css('cursor', 'pointer');
+            thistick.addClass("activetick");
+            isMousedown = true;
+        }, 700);
     });
-
     $(".tick").on("mouseup touchend", function () {
-       
         clearTimeout(timeout);
     });
 
+
+    $(".btn-tick-all").on("click", function () {
+        $(".tick").filter(function () {
+            return $(this).css("display") !== "none" && $(this).closest(":hidden").length === 0;
+        }).toggleClass("activetick");
+
+        // Kiểm tra xem có bất kỳ phần tử nào có lớp 'activetick'
+        if ($(".activetick").length > 0) {
+            isTick = true;
+            $(".tick").css('cursor', 'pointer');
+        }
+        else {
+            isTick = false;
+            $(".tick").css('cursor', '');
+        }
+    });
+    $(".tick").on("click", function () {
+
+        if (isTick === true) {
+            if (isMousedown === true) {
+                $(this).addClass("activetick");
+                isMousedown = false;
+            }
+            else {
+                $(this).toggleClass("activetick");
+            }
+        }
+        if ($(".activetick").length > 0) {
+            isTick = true;
+            $(".tick").css('cursor', 'pointer');
+        }
+        else {
+            isTick = false;
+            $(".tick").css('cursor', '');
+        }
+    });
+    $(".btn-file").on("click", function () {
+        $(".tick.activetick").fadeOut(300);
+
+        $(".tick.activetick").removeClass("activetick");
+        isTick = false;
+        $(".tick").css('cursor', '');
+    });
     $(".btn-map").on("click", function () {
         $(".about-page > .slide:not(.map-first)").fadeOut(300, function () {
             $(".map-first").fadeIn(300);
@@ -31,7 +78,7 @@ function about() {
     });
     $(".map-first .btn-map").on("click", function () {
         $(".offices-number").fadeIn(300);
-        $(".offices-number").css('transform','translateX(0)');
+        $(".offices-number").css('transform', 'translateX(0)');
 
     });
     $(".btn-north").on("click", function () {
@@ -99,14 +146,17 @@ function about() {
     });
     $(document).on("click", ".office-south-text", function () {
         $(".office-list").removeClass("active");
+        $(this).siblings(".south").fadeIn(0);
         $(this).siblings(".south").addClass("active");
     });
     $(document).on("click", ".office-mid-text", function () {
         $(".office-list").removeClass("active");
+        $(this).siblings(".mid").fadeIn(0);
         $(this).siblings(".mid").addClass("active");
     });
     $(document).on("click", ".office-north-text", function () {
         $(".office-list").removeClass("active");
+        $(this).siblings(".north").fadeIn(0);
         $(this).siblings(".north").addClass("active");
     });
     $(".item").hide();
@@ -115,7 +165,7 @@ function about() {
             $(".slide-text").fadeIn(300);
             $(".slide-text").css("display", "flex");
             $(".number span").countUp();
-            $(".item1").show("slow"); 
+            $(".item1").show("slow");
 
             setTimeout(function () {
                 $(".item2").show("slow");

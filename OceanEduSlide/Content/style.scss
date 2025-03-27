@@ -1,4 +1,4 @@
-
+﻿
 $main-color: #00aeef;
 $secondmain-color: #2e3191;
 $linear: linear-gradient(180deg, #228B22 0%, #5EB22F 100%);
@@ -1251,5 +1251,25 @@ body {
 
     .item3 {
         background-image: url('images/text-comeback-bg.png');
+    }
+}
+.tick {
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+
+    &.activetick {
+        background-color: rgb($secondmain-color,.7);
+        border-color: #28a745;
+        /*border:1px solid $secondmain-color;*/
+        &::after {
+            content: "✔";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: $orange;
+            z-index:2;
+            font-size: 16px;
+            font-weight: bold;
+        }
     }
 }
