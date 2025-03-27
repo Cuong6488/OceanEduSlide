@@ -682,10 +682,18 @@ body {
 
     .map-container {
         height: 580px;
-        width: 35%;
+        width: 45%;
         display: flex;
         justify-content: right;
         position: relative;
+
+        @media(max-width:1900px) {
+            width: 40%;
+        }
+
+        @media(max-width:1500px) {
+            width: 35%;
+        }
 
         .map-S {
             height: 100%;
@@ -752,8 +760,7 @@ body {
         height: 500px;
         position: relative;
         flex: 1;
-        padding: 0 2rem;
-
+        padding: 0 6rem 0 2rem;
 
         .row {
             width: 700px !important;
@@ -996,6 +1003,7 @@ body {
 
         .map-content {
             height: 550px;
+            padding: 0 2rem;
 
             .content-slogan {
                 font-size: 5rem;

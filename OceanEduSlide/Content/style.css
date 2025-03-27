@@ -578,10 +578,20 @@ body {
 }
 .map-first .map-container {
   height: 580px;
-  width: 35%;
+  width: 45%;
   display: flex;
   justify-content: right;
   position: relative;
+}
+@media (max-width: 1900px) {
+  .map-first .map-container {
+    width: 40%;
+  }
+}
+@media (max-width: 1500px) {
+  .map-first .map-container {
+    width: 35%;
+  }
 }
 .map-first .map-container .map-S {
   height: 100%;
@@ -634,7 +644,7 @@ body {
   height: 500px;
   position: relative;
   flex: 1;
-  padding: 0 2rem;
+  padding: 0 6rem 0 2rem;
 }
 .map-first .map-content .row {
   width: 700px !important;
@@ -825,6 +835,7 @@ body {
   }
   .map-first .map-content {
     height: 550px;
+    padding: 0 2rem;
   }
   .map-first .map-content .content-slogan {
     font-size: 5rem;
