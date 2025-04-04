@@ -21,6 +21,10 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        public ActionResult Pathway()
+        {
+            return View();
+        }
 
         public ActionResult Contact()
         {

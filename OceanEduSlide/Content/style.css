@@ -495,53 +495,54 @@ body {
   object-fit: cover;
 }
 
-.about-page {
+.page-100vh {
   background-size: cover;
   background-position: center;
   background-image: url("images/about-bg.png");
   height: 100vh;
 }
-.about-page .slide {
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-}
-.about-page .btns-text img, .about-page .menu-btn img {
-  border-radius: 10px;
-  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
-}
-.about-page .logo-about {
+.page-100vh .logo-about {
   position: absolute;
   top: 20px;
   left: 20px;
 }
-.about-page .logo-about img {
+.page-100vh .logo-about img {
   width: 200px;
 }
-.about-page .btns-text {
+.page-100vh .btns-text img, .page-100vh .menu-btn img {
+  border-radius: 10px;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
+}
+.page-100vh .btns-text {
   position: absolute;
   top: 30px;
   right: 30px;
 }
-.about-page .btns-text .btn-tick-all {
+.page-100vh .btns-text .btn-tick-all {
   z-index: 2;
 }
-.about-page .btns-text p {
+.page-100vh .btns-text p {
   color: white;
   margin-bottom: 0.5rem;
 }
-.about-page .btns-text img {
+.page-100vh .btns-text img {
   height: 30px;
 }
-.about-page .btns-text div {
+.page-100vh .btns-text div {
   position: relative;
   margin-bottom: 5px;
   height: 30px;
 }
-.about-page .btns-text div img {
+.page-100vh .btns-text div img {
   position: absolute;
   right: 0;
 }
+.page-100vh .slide {
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
 .about-page ul {
   display: flex;
   position: absolute;
@@ -1071,4 +1072,89 @@ body {
   z-index: 2;
   font-size: 16px;
   font-weight: bold;
+}
+
+.pathway-page .pathway-left {
+  position: absolute;
+  left: 50px;
+  bottom: 5vh;
+  height: 82vh;
+}
+.pathway-page .pathway-left img {
+  height: 100%;
+  display: block;
+  margin: auto;
+  cursor: pointer;
+}
+.pathway-page .pathway-left .move:not(:last-child) {
+  margin-bottom: 0.5vh;
+}
+.pathway-page .pathway-left .toeic {
+  height: 19vh;
+}
+.pathway-page .pathway-left .ielts {
+  height: 21vh;
+}
+.pathway-page .pathway-left .focus {
+  height: 18vh;
+}
+.pathway-page .pathway-left .challenge {
+  height: 11vh;
+}
+.pathway-page .pathway-left .discovery {
+  height: 11vh;
+}
+.pathway-page .pathway-mid {
+  position: relative;
+  width: fit-content;
+  height: 85vh;
+  margin: auto;
+}
+.pathway-page .pathway-mid img {
+  height: 100%;
+  margin: auto;
+  display: block;
+}
+.pathway-page .pathway-mid .toeic {
+  position: absolute;
+  bottom: 50%;
+  right: 0;
+  transform: translate(195%, 10vh) !important;
+  width: 28vh;
+}
+.pathway-page .pathway-mid .toeic img {
+  width: 100%;
+  height: auto !important;
+}
+.pathway-page .pathway-mid .ielts {
+  position: absolute;
+  bottom: 50%;
+  left: 0;
+  transform: translate(-195%, 10vh) !important;
+  width: 28vh;
+}
+.pathway-page .pathway-mid .ielts img {
+  width: 100%;
+  height: auto !important;
+}
+.pathway-page .pathway-mid .focus {
+  height: 43%;
+  bottom: 56.8%;
+  left: 0;
+}
+.pathway-page .pathway-mid .challenge {
+  height: 28%;
+  bottom: 28.8%;
+  left: 0;
+}
+.pathway-page .pathway-mid .discovery {
+  height: 28.8%;
+  bottom: 0;
+  left: 0;
+}
+.pathway-page .pathway-mid .tick {
+  transform: translate(-50%, 10vh);
+  display: none;
+  position: absolute;
+  cursor: pointer;
 }

@@ -173,6 +173,14 @@
     <Content Include="Content\images\logo-index.png" />
     <Content Include="Content\images\Logo-white.png" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\pathway-arrow.png" />
+    <Content Include="Content\images\pathway-challenge.png" />
+    <Content Include="Content\images\pathway-discovery.png" />
+    <Content Include="Content\images\pathway-focus.png" />
+    <Content Include="Content\images\pathway-ielts-mid.png" />
+    <Content Include="Content\images\pathway-ielts.png" />
+    <Content Include="Content\images\pathway-toeic-mid.png" />
+    <Content Include="Content\images\pathway-toeic.png" />
     <Content Include="Content\images\S-bg.png" />
     <Content Include="Content\images\S-Location-yellow.png" />
     <Content Include="Content\images\S-mid-location.png" />
@@ -1107,6 +1115,7 @@
     <Content Include="webfonts\RobotoCondensed-VariableFont_wght.ttf" />
     <Content Include="webfonts\MYRIADPRO-BOLD.OTF" />
     <Content Include="webfonts\MYRIADPRO-BOLDCOND.OTF" />
+    <Content Include="Views\Home\Pathway.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

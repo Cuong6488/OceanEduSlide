@@ -11,7 +11,69 @@ function login() {
         });
     });
 }
-function about() {
+function pathway() { 
+    $(document).ready(function () {
+        let isDragging = false;
+        let currentElement = null;
+
+        function startDrag(e) {
+            isDragging = true;
+            currentElement = $(this);
+
+            currentElement.css({
+                position: "absolute",
+                transform: "translate(-75%, -125%)",
+                transition: "none",
+            });
+
+            let event = e.type === "mousedown" ? e : e.originalEvent.touches[0];
+            currentElement.css({
+                top: event.pageY + "px",
+                left: event.pageX + "px",
+            });
+
+            e.preventDefault();
+        }
+
+        function doDrag(e) {
+            if (isDragging && currentElement) {
+                let event = e.type === "mousemove" ? e : e.originalEvent.touches[0];
+                currentElement.css({
+                    top: event.pageY + "px",
+                    left: event.pageX + "px",
+                });
+            }
+        }
+
+        function endDrag() {
+            if (isDragging && currentElement) {
+                isDragging = false;
+
+                // Lấy class thứ hai của phần tử đang kéo (ví dụ: 'toeic', 'ielts', ...)
+                let secondaryClass = currentElement.attr("class").split(" ")[0];
+
+                // Hiển thị phần tử tương ứng trong pathway-mid
+               currentElement.css("display", "none"); // Ẩn phần tử sau khi nhả
+                $(".pathway-mid ." + secondaryClass).css("display", "block");
+
+                currentElement = null;
+            }
+        }
+
+        // Gắn sự kiện cho chuột
+        $(document).on("mousedown", ".move", startDrag);
+        $(document).on("mousemove", doDrag);
+        $(document).on("mouseup", endDrag);
+
+        // Gắn sự kiện cho cảm ứng
+        $(document).on("touchstart", ".move", startDrag);
+        $(document).on("touchmove", doDrag);
+        $(document).on("touchend", endDrag);
+    });
+    tick();
+}
+
+function tick() {
     var isTick = false;
     var isMousedown = false;
     $(".tick").on("mousedown touchstart", function () {
@@ -70,6 +132,9 @@ function about() {
         isTick = false;
         $(".tick").css('cursor', '');
     });
+}
+function about() {
+    tick();
     $(".btn-map").on("click", function () {
         $(".about-page > .slide:not(.map-first)").fadeOut(300, function () {
             $(".map-first").fadeIn(300);

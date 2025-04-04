@@ -581,24 +581,11 @@ body {
     }
 }
 
-.about-page {
+.page-100vh {
     background-size: cover;
     background-position: center;
     background-image: url('images/about-bg.png');
     height: 100vh;
-
-    .slide {
-        background-size: cover;
-        background-position: center;
-        height: 100vh;
-    }
-
-    .btns-text, .menu-btn {
-        img {
-            border-radius: 10px;
-            box-shadow: 2px 4px 5px rgba(0,0,0,.3);
-        }
-    }
 
     .logo-about {
         position: absolute;
@@ -609,6 +596,14 @@ body {
             width: 200px;
         }
     }
+
+    .btns-text, .menu-btn {
+        img {
+            border-radius: 10px;
+            box-shadow: 2px 4px 5px rgba(0,0,0,.3);
+        }
+    }
+
 
     .btns-text {
         position: absolute;
@@ -639,6 +634,16 @@ body {
             }
         }
     }
+
+
+    .slide {
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+    }
+}
+
+.about-page {
 
     ul {
         display: flex;
@@ -1244,7 +1249,7 @@ body {
             padding: 90px 20px 50px 20px;
 
             .number {
-                line-height:.9;
+                line-height: .9;
             }
         }
     }
@@ -1261,6 +1266,7 @@ body {
         background-image: url('images/text-comeback-bg.png');
     }
 }
+
 .tick {
     position: relative;
     transition: background-color 0.3s, border-color 0.3s;
@@ -1275,9 +1281,113 @@ body {
             top: 5px;
             right: 5px;
             color: $orange;
-            z-index:2;
+            z-index: 2;
             font-size: 16px;
             font-weight: bold;
+        }
+    }
+}
+
+.pathway-page {
+    .pathway-left {
+        position: absolute;
+        left: 50px;
+        bottom: 5vh;
+        height: 82vh;
+
+        img {
+            height: 100%;
+            display: block;
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .move:not(:last-child) {
+            margin-bottom: .5vh;
+        }
+
+        .toeic {
+            height: 19vh;
+        }
+
+        .ielts {
+            height: 21vh;
+        }
+
+        .focus {
+            height: 18vh;
+        }
+
+        .challenge {
+            height: 11vh;
+        }
+
+        .discovery {
+            height: 11vh;
+        }
+    }
+
+    .pathway-mid {
+        position: relative;
+        width: fit-content;
+        height: 85vh;
+        margin: auto;
+
+        img {
+            height: 100%;
+            margin: auto;
+            display: block;
+        }
+
+        .toeic {
+            position: absolute;
+            bottom: 50%;
+            right: 0;
+            transform: translate(195%,10vh) !important;
+            width: 28vh;
+
+            img {
+                width: 100%;
+                height: auto !important;
+            }
+        }
+
+        .ielts {
+            position: absolute;
+            bottom: 50%;
+            left: 0;
+            transform: translate(-195%,10vh) !important;
+            width: 28vh;
+
+            img {
+                width: 100%;
+                height: auto !important;
+            }
+        }
+
+        .focus {
+            height: 43%;
+            bottom: 56.8%;
+            left: 0;
+        }
+
+        .challenge {
+            height: 28%;
+            bottom: 28.8%;
+            left: 0;
+        }
+
+        .discovery {
+            height: 28.8%;
+            bottom: 0;
+            left: 0;
+        }
+
+        .tick {
+            transform: translate(-50%,10vh);
+            display: none;
+            position: absolute;
+            cursor:pointer;
         }
     }
 }
