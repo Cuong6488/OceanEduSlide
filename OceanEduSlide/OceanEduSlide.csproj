@@ -112,6 +112,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -159,12 +160,19 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\images\8trithongminh.png" />
     <Content Include="Content\images\about-bg.png" />
     <Content Include="Content\images\banner-index.png" />
+    <Content Include="Content\images\btn-back.png" />
+    <Content Include="Content\images\btn-book.png" />
+    <Content Include="Content\images\btn-class.png" />
     <Content Include="Content\images\btn-cup.png" />
     <Content Include="Content\images\btn-hand.png" />
     <Content Include="Content\images\btn-map.png" />
     <Content Include="Content\images\btn-mess.png" />
+    <Content Include="Content\images\btn-pathway.png" />
+    <Content Include="Content\images\btn-people.png" />
+    <Content Include="Content\images\btn-setting-green.png" />
     <Content Include="Content\images\btn-setting.png" />
     <Content Include="Content\images\btn-user.png" />
     <Content Include="Content\images\file-download.png" />
@@ -175,6 +183,16 @@
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\pathway-arrow.png" />
     <Content Include="Content\images\pathway-challenge.png" />
+    <Content Include="Content\images\pathway-discovery-imgkid.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-1a.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-1b.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-2a.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-2b.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-3a.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-3b.png" />
+    <Content Include="Content\images\pathway-discovery-kindy-b.png" />
+    <Content Include="Content\images\pathway-discovery-pre-kindy-a.png" />
+    <Content Include="Content\images\pathway-discovery-title.png" />
     <Content Include="Content\images\pathway-discovery.png" />
     <Content Include="Content\images\pathway-focus.png" />
     <Content Include="Content\images\pathway-ielts-mid.png" />

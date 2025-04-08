@@ -22,14 +22,14 @@
     <div class="login-form">
         <div>
             <img class="title-img" src="~/Content/images/login-title.png"/>
-            <form action="@Url.Action("Index")" method="get">
+            <form action="@Url.Action("Login")" method="post">
                 <div class="input-container">
                     <span>Id:</span>
-                    <input type="text" name="Id" value="" />
+                    <input type="text" name="Id" value="" required/>
                 </div>
                 <div class="input-container">
                     <span>Pass:</span>
-                    <input type="password" name="Password" value="" />
+                    <input type="password" name="Password" value="" required/>
                 </div>
                 <button class="btn-login" type="submit">
                     <img src="~/Content/images/login-btn-bg.png" />

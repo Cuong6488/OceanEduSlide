@@ -515,26 +515,26 @@ body {
         }
     }
 
-    .logo-anchor {
-        position: absolute;
-        top: 0;
-        left: 80px;
-        width: 180px;
-        aspect-ratio: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 2px solid $main-color;
-        border-top: none;
-        border-radius: 0 0 50% 50%;
-        box-shadow: 4px 0 5px rgba(0,0,0,.25);
-
-        img {
-            width: 140px;
-        }
-    }
 }
 
+.logo-anchor {
+    position: absolute;
+    top: 0;
+    left: 80px;
+    width: 180px;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid $main-color;
+    border-top: none;
+    border-radius: 0 0 50% 50%;
+    box-shadow: 4px 0 5px rgba(0,0,0,.25);
+    background:white;
+    img {
+        width: 140px;
+    }
+}
 .header {
     padding: 1.5rem 100px;
     height: 90px;
@@ -641,11 +641,8 @@ body {
         background-position: center;
         height: 100vh;
     }
-}
 
-.about-page {
-
-    ul {
+    .menu-btn {
         display: flex;
         position: absolute;
         bottom: 45px;
@@ -662,6 +659,9 @@ body {
             height: 50px;
         }
     }
+}
+
+.about-page {
 }
 
 /*.about-index, .map-first {
@@ -1387,7 +1387,56 @@ body {
             transform: translate(-50%,10vh);
             display: none;
             position: absolute;
-            cursor:pointer;
+            cursor: pointer;
+        }
+    }
+
+    .pathway-discovery {
+        width: fit-content;
+        margin: auto;
+        /*transform:translateY(2vh);*/
+        position:absolute;
+        left:50%;
+        top:40vh;
+        transform:translate(-50%,-50%);
+        img {
+            width: 100%;
+            height: auto !important;
+        }
+
+        .pathway-discovery-imgkid {
+            width: 163vh;
+            transform: translate(7vh,13vh);
+            position: relative;
+            max-width:82vw;
+        }
+
+        .pathways-discovery {
+            display: flex;
+            margin-bottom: 1.5vh;
+            position: relative;
+
+            & > div {
+                width: 21vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                max-width: 10vw;
+            }
+
+            .w-1 {
+                width: 18.9vh;
+                max-width: calc(30vw - 6vh)/3;
+            }
+
+            .me-2vh {
+                margin-right: 2vh;
+            }
+        }
+
+        .pathway-discovery-title {
+            width: 176vh;
+            max-width: 87.5vw;
         }
     }
 }

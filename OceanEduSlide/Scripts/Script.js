@@ -4,6 +4,7 @@
     duration: 500
 });
 
+var isTick = false;
 function login() {
     $(".login-box a").on("click", function () {
         $(".first-login").fadeOut(300, function () { // Ẩn phần tử với hiệu ứng mờ dần
@@ -11,7 +12,8 @@ function login() {
         });
     });
 }
-function pathway() { 
+function pathway() {
+    var pathway = "";
     $(document).ready(function () {
         let isDragging = false;
         let currentElement = null;
@@ -53,7 +55,7 @@ function pathway() {
                 let secondaryClass = currentElement.attr("class").split(" ")[0];
 
                 // Hiển thị phần tử tương ứng trong pathway-mid
-               currentElement.css("display", "none"); // Ẩn phần tử sau khi nhả
+                currentElement.css("display", "none"); // Ẩn phần tử sau khi nhả
                 $(".pathway-mid ." + secondaryClass).css("display", "block");
 
                 currentElement = null;
@@ -71,10 +73,27 @@ function pathway() {
         $(document).on("touchend", endDrag);
     });
     tick();
+    $(".pathway-mid .tick").on("click", function () {
+        if (isTick === false) {
+            pathway = $(this).attr("class").split(" ")[0];
+            $(".pathway-mid,.pathway-left").fadeOut(300, function () {
+                $(".pathway-index").fadeIn(300);
+                //$(".menu-btn").fadeIn(300);
+                if (pathway === "discovery") {
+                $(".btns-text p").text("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI");
+                }
+            });
+        }
+    });
+    $(".btn-pathway").on("click", function () {
+        if (pathway === "discovery") {
+            $(".pathway-discovery").fadeIn(300);
+        }
+        
+    });
 }
 
 function tick() {
-    var isTick = false;
     var isMousedown = false;
     $(".tick").on("mousedown touchstart", function () {
         const thistick = $(this);
