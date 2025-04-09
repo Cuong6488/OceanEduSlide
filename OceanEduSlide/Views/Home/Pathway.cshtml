@@ -18,42 +18,7 @@
             </a>
         </div>
     </div>
-    @*<a class="logo-anchor" href="/">
-        <img src="~/Content/images/logo.png" />
-    </a>*@
-    @*<ul class="ul-reset menu-btn">
-            <li>
-                <a class="btn-map" href="javascript:;">
-                    <img src="~/Content/images/btn-map.png" />
-                </a>
-            </li>
-            <li>
-                <a class="btn-mess" href="javascript:;">
-                    <img src="~/Content/images/btn-mess.png" />
-                </a>
-            </li>
-            <li>
-                <a class="btn-cup" href="javascript:;">
-                    <img src="~/Content/images/btn-cup.png" />
-                </a>
-            </li>
-            <li>
-                <a class="btn-user" href="javascript:;">
-                    <img src="~/Content/images/btn-user.png" />
-                </a>
-            </li>
-
-            <li>
-                <a class="btn-setting" href="javascript:;">
-                    <img src="~/Content/images/btn-setting.png" />
-                </a>
-            </li>
-            <li>
-                <a class="btn-hand" href="javascript:;">
-                    <img src="~/Content/images/btn-hand.png" />
-                </a>
-            </li>
-        </ul>*@
+   
     <div class="pathway-left">
         <div class="toeic move" data-aos="fade-right" data-aos-delay="0">
             <img src="~/Content/images/pathway-toeic.png" />
@@ -89,9 +54,12 @@
         </div>
     </div>
     <div class="pathway-index hidden">
+        <a class="logo-anchor" href="@Url.Action("Pathway")">
+            <img src="~/Content/images/logo.png" />
+        </a>
         <ul class="ul-reset menu-btn">
             <li>
-                <a class="btn-map" href="javascript:;">
+                <a class="btn-people" href="javascript:;">
                     <img src="~/Content/images/btn-people.png" />
                 </a>
             </li>
@@ -117,45 +85,109 @@
                 </a>
             </li>
         </ul>
-        <div class="pathway-discovery tick hidden">
-            <div class="pathway-discovery-imgkid">
-                <img src="~/Content/images/pathway-discovery-imgkid.png" />
+        <div class="pathway-discovery hidden slide">
+            <ul class="ul-reset menu-star">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <li>
+                        <a class="star-@i" href="javascript:;">
+                            <img src="~/Content/images/pathway-discovery-staricon.png" />
+                        </a>
+                    </li>
+                }
+            </ul>
+            <div class="pathway-discovery-content">
+                <div class="pathway-discovery-title1">
+                    <img src="~/Content/images/pathway-discovery-title1.png" />
+                </div>
+                <div class="pathway-discovery-imgkid">
+                    <img src="~/Content/images/pathway-discovery-imgkid.png" />
+                </div>
+                <div class="pathways-discovery">
+                    <div class="w-1">
+                        <img src="~/Content/images/pathway-discovery-pre-kindy-a.png" />
+                    </div>
+                    <div class="me-2vh">
+                        <img src="~/Content/images/pathway-discovery-kindy-b.png" />
+                    </div>
+                    <div class="w-1">
+                        <img src="~/Content/images/pathway-discovery-kindy-1a.png" />
+                    </div>
+                    <div class="me-2vh w-1">
+                        <img src="~/Content/images/pathway-discovery-kindy-1b.png" />
+                    </div>
+                    <div>
+                        <img src="~/Content/images/pathway-discovery-kindy-2a.png" />
+                    </div>
+                    <div class="me-2vh">
+                        <img src="~/Content/images/pathway-discovery-kindy-2b.png" />
+                    </div>
+                    <div>
+                        <img src="~/Content/images/pathway-discovery-kindy-3a.png" />
+                    </div>
+                    <div>
+                        <img src="~/Content/images/pathway-discovery-kindy-3b.png" />
+                    </div>
+                </div>
+                <div class="pathway-discovery-title">
+                    <img src="~/Content/images/pathway-discovery-title2.png" />
+                    <img class="title3" src="~/Content/images/pathway-discovery-title3.png" />
+                </div>
+
+                <div class="discovery-text-star">
+                    <img class="star-1 hidden" src="~/Content/images/discovery-text-star1.png" />
+                    <img class="star-2 hidden" src="~/Content/images/discovery-text-star2.png" />
+                    <img class="star-3 hidden" src="~/Content/images/discovery-text-star3.png" />
+                    <img class="star-4 hidden" src="~/Content/images/discovery-text-star4.png" />
+                    <img class="star-5 hidden" src="~/Content/images/discovery-text-star5.png" />
+                </div>
             </div>
-            <div class="pathways-discovery">
-                <div class="w-1">
-                    <img src="~/Content/images/pathway-discovery-pre-kindy-a.png" />
+        </div>
+        <div class="overview overview-discovery slide hidden">
+            <div class="btn-slide tick">
+                <a class="btn-back" href="javascript:;">
+                    <img src="~/Content/images/slide-back.png" />
+                </a>
+                <a class="btn-next" href="javascript:;">
+                    <img src="~/Content/images/slide-next.png" />
+                </a>
+            </div>
+            <div class="overview-content tick">
+                <div class="overview-discovery-title">
+                    <img src="~/Content/images/overview-title.png" />
                 </div>
-                <div class="me-2vh">
-                    <img src="~/Content/images/pathway-discovery-kindy-b.png" />
+                <div class="overview1-discovery">
+                    Discovery English là chương trình tiếng Anh dành cho các bé từ 4-6 tuổi.
+                    Đây là giai đoạn cửa sổ vàng, trẻ có thể tiếp thu vô hạn tiềm năng kiến
+                    thức và vận dụng tối đa <a class="eight-smart" href="javascript:;">8 miền trí thông minh </a>não bộ
                 </div>
-                <div class="w-1">
-                    <img src="~/Content/images/pathway-discovery-kindy-1a.png" />
-                </div>
-                <div class="me-2vh w-1">
-                    <img src="~/Content/images/pathway-discovery-kindy-1b.png" />
-                </div>
-                <div>
-                    <img src="~/Content/images/pathway-discovery-kindy-2a.png" />
-                </div>
-                <div class="me-2vh">
-                    <img src="~/Content/images/pathway-discovery-kindy-2b.png" />
-                </div>
-                <div>
-                    <img src="~/Content/images/pathway-discovery-kindy-3a.png" />
-                </div>
-                <div>
-                    <img src="~/Content/images/pathway-discovery-kindy-3b.png" />
+                <div class="overview2-discovery hidden">
+                    <div>
+                        Chương trình Discovery English được Ocean Edu dày công nghiên cứu và lựa chọn giáo trình với mong
+                        muốn khai mở tối đa tiềm năng trí tuệ của trẻ, giúp trẻ phát triển toàn diện không chỉ về ngôn ngữ mà còn
+                        về trí tuệ, tư duy, thể chất, tính cách.
+                    </div>
+                    <div>
+                        Chương trình học bao gồm các chủ đề gần gũi với trẻ nhỏ như gia đình, trường học, đồ chơi, động vật, thực
+                        phẩm, thời tiết và các hoạt động thường ngày. Các chủ để lồng ghép tình huống thực tế nhằm hỗ trợ phát
+                        triển kỹ năng mềm cần thiết cho trẻ từ sớm.
+                    </div>
                 </div>
             </div>
-            <div class="pathway-discovery-title">
-                <img src="~/Content/images/pathway-discovery-title.png" />
+            
+        </div>
+        <div class="eight-smart-discovery slide hidden">
+            <div class="eight-smart-img">
+                <img src="~/Content/images/8trithongminh.png" />
+            </div>
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
             </div>
         </div>
     </div>
-    
 </div>
 @section Scripts {
-    
+
     <script>
         pathway();
     </script>

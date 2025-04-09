@@ -78,19 +78,62 @@ function pathway() {
             pathway = $(this).attr("class").split(" ")[0];
             $(".pathway-mid,.pathway-left").fadeOut(300, function () {
                 $(".pathway-index").fadeIn(300);
-                //$(".menu-btn").fadeIn(300);
                 if (pathway === "discovery") {
-                $(".btns-text p").text("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI");
+                    $(".btns-text p").text("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI");
                 }
             });
+            $(".logo-about").fadeOut(100);
+            //$(".logo-anchor").css("display", "flex");
         }
     });
     $(".btn-pathway").on("click", function () {
         if (pathway === "discovery") {
+            $(".pathway-index > .slide:not(.pathway-discovery)").fadeOut(300, function () {
             $(".pathway-discovery").fadeIn(300);
+            });
         }
-        
     });
+    $(".btn-people").on("click", function () {
+        if (pathway === "discovery") {
+            $(".pathway-index > .slide:not(.overview-discovery)").fadeOut(300, function () {
+                $(".overview-discovery").fadeIn(300);
+            });
+        }
+    });
+    $(".overview-discovery .btn-back").on("click", function () {
+        $(".overview2-discovery").fadeOut(300, function () {
+            $(".overview1-discovery").fadeIn(300);
+        });
+    });
+    $(".overview-discovery .btn-next").on("click", function () {
+        $(".overview1-discovery").fadeOut(300, function () {
+            $(".overview2-discovery").fadeIn(300);
+        });
+    });
+    $(".eight-smart").on("click", function () {
+        $(".pathway-index > .slide:not(.eight-smart-discovery)").fadeOut(300, function () {
+            $(".eight-smart-discovery").fadeIn(300);
+            $(".menu-btn").fadeOut(300);
+
+        });
+    });
+    $(".eight-smart-discovery .btn-back-square").on("click", function () {
+        $(".btn-people").trigger("click");
+            $(".menu-btn").fadeIn(300);
+    });
+    $(".menu-star a").on("click", function () {
+        $(".menu-star a").removeClass("active");
+        $(this).addClass("active");
+        var textStarClass = $(this).attr("class").split(" ")[0];
+        if (pathway === "discovery") {
+            //$(".discovery-text-star img").fadeOut(300);
+            $(".title3").fadeOut(0);
+            $(".discovery-text-star img").fadeOut(0);
+
+            $(".discovery-text-star ." + textStarClass).fadeIn(0);
+        }
+    });
+   
 }
 
 function tick() {
