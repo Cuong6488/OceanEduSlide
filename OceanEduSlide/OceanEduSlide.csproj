@@ -192,6 +192,9 @@
     <Content Include="Content\images\overview-title.png" />
     <Content Include="Content\images\pathway-arrow.png" />
     <Content Include="Content\images\pathway-challenge.png" />
+    <Content Include="Content\images\pathway-detail-after.png" />
+    <Content Include="Content\images\pathway-detail-box-bg.png" />
+    <Content Include="Content\images\pathway-detail-title-bg.png" />
     <Content Include="Content\images\pathway-discovery-bg.png" />
     <Content Include="Content\images\pathway-discovery-imgkid.png" />
     <Content Include="Content\images\pathway-discovery-kindy-1a.png" />
@@ -1150,6 +1153,7 @@
     <Content Include="webfonts\MYRIADPRO-BOLD.OTF" />
     <Content Include="webfonts\MYRIADPRO-BOLDCOND.OTF" />
     <Content Include="Views\Home\Pathway.cshtml" />
+    <Content Include="webfonts\UTM-Swiss-CondensedBold.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

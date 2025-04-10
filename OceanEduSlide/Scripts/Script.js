@@ -119,7 +119,10 @@ function pathway() {
     });
     $(".eight-smart-discovery .btn-back-square").on("click", function () {
         $(".btn-people").trigger("click");
-            $(".menu-btn").fadeIn(300);
+        $(".menu-btn").fadeIn(300);
+    });
+    $(".pathway-detail .btn-back-square").on("click", function () {
+        $(".btn-pathway").trigger("click");
     });
     $(".menu-star a").on("click", function () {
         $(".menu-star a").removeClass("active");
@@ -132,6 +135,25 @@ function pathway() {
 
             $(".discovery-text-star ." + textStarClass).fadeIn(0);
         }
+    });
+    $(".pathways div").on("click", function () {
+        var pwdetailClass = $(this).attr("class").split(" ")[0];
+        $(".pathway-index > .slide:not(." + pwdetailClass+")").fadeOut(300, function () {
+            $(".pathway-index ." + pwdetailClass).fadeIn(300);
+
+        });
+        if (pathway === "discovery") {
+            //$(".discovery-text-star img").fadeOut(300);
+            $(".title3").fadeOut(0);
+            $(".discovery-text-star img").fadeOut(0);
+
+            $(".discovery-text-star ." + textStarClass).fadeIn(0);
+        }
+    });
+    $(".pathway-detail-box").on("click", function () {
+        $(".pathway-detail-box").removeClass("active");
+        $(this).addClass("active");
+
     });
    
 }
