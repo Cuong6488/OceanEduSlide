@@ -114,6 +114,11 @@ function pathway() {
                 $(".overview-challenge").fadeIn(300);
             });
         }
+        if (pathway === "focus") {
+            $(".pathway-index > .slide:not(.overview-focus)").fadeOut(300, function () {
+                $(".overview-focus").fadeIn(300);
+            });
+        }
     });
     $(".overview-discovery .btn-back").on("click", function () {
         $(".overview2-discovery").fadeOut(300, function () {

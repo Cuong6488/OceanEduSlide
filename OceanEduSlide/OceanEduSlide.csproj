@@ -275,6 +275,7 @@
     <Content Include="Content\images\text-student-bg.png" />
     <Content Include="Content\images\tick-all.png" />
     <Content Include="Content\images\title-challenge.png" />
+    <Content Include="Content\images\title-focus.png" />
     <Content Include="Content\jquery.fancybox.css" />
     <Content Include="Content\jquery.fancybox.min.css" />
     <Content Include="Content\jquery.nice-number.css" />
