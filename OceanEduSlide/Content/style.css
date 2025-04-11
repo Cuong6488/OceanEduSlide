@@ -458,6 +458,7 @@ body {
   border-radius: 0 0 50% 50%;
   box-shadow: 4px 0 5px rgba(0, 0, 0, 0.25);
   background: white;
+  z-index: 10;
 }
 .logo-anchor img {
   width: 140px;
@@ -1081,10 +1082,164 @@ body {
   font-weight: bold;
 }
 
+.pathway-text-star {
+  width: 66%;
+}
+
 .pathway-page {
   /*.logo-anchor {
       display: none;
   }*/
+}
+.pathway-page .overview img {
+  width: 100%;
+}
+.pathway-page .overview .overview-content {
+  width: fit-content;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: josefinsans;
+  color: #2e3191;
+}
+.pathway-page .overview .overview-content .overview1-discovery {
+  background-image: url("images/overview-bg1.png");
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 70vw;
+  aspect-ratio: 4;
+  font-size: 36px;
+  font-weight: 500;
+  padding: 7.5vh 9vh;
+}
+.pathway-page .overview .overview-content .overview1-discovery a {
+  font-weight: bold;
+  color: #DE0000;
+}
+.pathway-page .overview .overview-content .overview2 > div {
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url("images/overview-bg2.png");
+  width: 70vw;
+  aspect-ratio: 6;
+  padding: 6vh 9vh;
+  font-size: 30px;
+}
+.pathway-page .overview .overview-content .overview2-challenge > div {
+  font-size: 22px;
+  padding: 7vh;
+}
+@media (max-width: 1900px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    font-size: 32px;
+  }
+  .pathway-page .overview .overview-content .overview2 > div {
+    font-size: 28px;
+    padding: 5vh 8vh;
+  }
+  .pathway-page .overview .overview-content .overview2-challenge > div {
+    font-size: 20px;
+    padding: 6.5vh 6vh;
+  }
+}
+@media (max-width: 1700px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    font-size: 28px;
+  }
+  .pathway-page .overview .overview-content .overview2 > div {
+    font-size: 23px;
+    padding: 5vh 6vh;
+  }
+  .pathway-page .overview .overview-content .overview2-challenge > div {
+    font-size: 17.5px;
+    padding: 6.5vh 6vh;
+    aspect-ratio: 6.5;
+  }
+}
+@media (max-width: 1500px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    font-size: 26px;
+  }
+  .pathway-page .overview .overview-content .overview2 > div {
+    font-size: 20px;
+  }
+  .pathway-page .overview .overview-content .overview2-challenge > div {
+    font-size: 16px;
+    padding: 5.5vh;
+  }
+}
+@media (max-width: 1350px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    font-size: 24px;
+  }
+  .pathway-page .overview .overview-content .overview2 > div {
+    font-size: 18px;
+  }
+  .pathway-page .overview .overview-content .overview2-challenge > div {
+    font-size: 14px;
+  }
+}
+@media (max-width: 1250px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    font-size: 22px;
+  }
+  .pathway-page .overview .overview-content .overview2 > div {
+    font-size: 16px;
+  }
+  .pathway-page .overview .overview-content .overview2-challenge > div {
+    font-size: 13px;
+    padding: 4.5vh;
+  }
+}
+.pathway-page .overview .overview-title {
+  width: 130vh;
+  max-width: 60vw;
+  margin: auto;
+  margin-bottom: 2.5vh;
+}
+.pathway-page .overview .overview-title.overview-challenge-title {
+  width: 90vh;
+  max-width: 45vw;
+  margin-bottom: 2vh;
+}
+.pathway-page .overview .btn-slide {
+  position: absolute;
+  left: 80px;
+  bottom: 40px;
+  width: fit-content;
+  height: 50px;
+  display: flex;
+}
+.pathway-page .overview .btn-slide > :nth-child(2) {
+  transform: translateX(-5px);
+}
+.pathway-page .overview .btn-slide img {
+  height: 50px;
+}
+.pathway-page .menu-star {
+  display: flex;
+  position: absolute;
+  bottom: 35px;
+  left: 40px;
+  height: 50px;
+}
+.pathway-page .menu-star li:not(:last-child) {
+  margin-right: 15px;
+}
+.pathway-page .menu-star img {
+  height: 50px !important;
+}
+.pathway-page .menu-star a {
+  opacity: 1;
+  visibility: visible;
+  transition: 0.3s;
+}
+.pathway-page .menu-star a.active {
+  opacity: 0;
+  visibility: hidden;
 }
 .pathway-page .pathway-left {
   position: absolute;
@@ -1184,7 +1339,7 @@ body {
 }
 .pathway-page .pathway-discovery img {
   width: 100%;
-  height: auto !important;
+  height: auto;
 }
 .pathway-page .pathway-discovery .pathway-discovery-title1 {
   width: 85vh;
@@ -1225,32 +1380,6 @@ body {
 .pathway-page .pathway-discovery .pathway-discovery-title > :first-child {
   margin-bottom: 0.7vh;
 }
-.pathway-page .pathway-discovery .discovery-text-star {
-  width: 150vh;
-  max-width: 63vw;
-}
-.pathway-page .pathway-discovery .menu-star {
-  display: flex;
-  position: absolute;
-  bottom: 35px;
-  left: 40px;
-  height: 50px;
-}
-.pathway-page .pathway-discovery .menu-star li:not(:last-child) {
-  margin-right: 15px;
-}
-.pathway-page .pathway-discovery .menu-star img {
-  height: 50px !important;
-}
-.pathway-page .pathway-discovery .menu-star a {
-  opacity: 1;
-  visibility: visible;
-  transition: 0.3s;
-}
-.pathway-page .pathway-discovery .menu-star a.active {
-  opacity: 0;
-  visibility: hidden;
-}
 @media (min-aspect-ratio: 1) and (max-aspect-ratio: 1.5) {
   .pathway-page .pathway-discovery .pathway-discovery-title1 {
     transform: translateY(7vh) !important;
@@ -1267,65 +1396,6 @@ body {
     transform: translate(9.5vh, 8vh) !important;
   }
 }
-.pathway-page .overview img {
-  width: 100%;
-}
-.pathway-page .overview .overview-content {
-  width: fit-content;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: josefinsans;
-  color: #2e3191;
-}
-.pathway-page .overview .overview-content .overview1-discovery {
-  background-image: url("images/overview-bg1.png");
-  background-position: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  width: 180vh;
-  max-width: 80vw;
-  aspect-ratio: 4;
-  font-size: 32px;
-  font-weight: 500;
-  padding: 7.5vh 9vh;
-}
-.pathway-page .overview .overview-content .overview1-discovery a {
-  font-weight: bold;
-  color: #DE0000;
-}
-.pathway-page .overview .overview-content .overview2-discovery > div {
-  background-position: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-image: url("images/overview-bg2.png");
-  width: 180vh;
-  max-width: 80vw;
-  aspect-ratio: 6;
-  padding: 6vh 9vh;
-  font-size: 22px;
-}
-.pathway-page .overview .overview-discovery-title {
-  width: 130vh;
-  max-width: 60vw;
-  margin: auto;
-  margin-bottom: 2.5vh;
-}
-.pathway-page .overview .btn-slide {
-  position: absolute;
-  left: 80px;
-  bottom: 40px;
-  width: fit-content;
-  height: 50px;
-  display: flex;
-}
-.pathway-page .overview .btn-slide > :nth-child(2) {
-  transform: translateX(-5px);
-}
-.pathway-page .overview .btn-slide img {
-  height: 50px;
-}
 .pathway-page .eight-smart-discovery .eight-smart-img {
   height: 100vh;
   width: 98vh;
@@ -1338,27 +1408,114 @@ body {
 }
 .pathway-page .eight-smart-discovery .btn-back-square {
   right: 80px;
+  left: unset;
+}
+.pathway-page .pathway-challenge, .pathway-page .pathway-focus {
+  background-image: url("images/pathway-discovery-bg.png");
+  /*.challenge-text-star {
+      width: 50vw;
+  }*/
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level, .pathway-page .pathway-challenge .pathways-focus .pathway-level, .pathway-page .pathway-focus .pathways-challenge .pathway-level, .pathway-page .pathway-focus .pathways-focus .pathway-level {
+  display: flex;
+  width: 21vw;
+  aspect-ratio: 1.2;
+  flex-direction: column;
+  margin-right: 1vw;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level .level-container > .img-first-child, .pathway-page .pathway-challenge .pathways-focus .pathway-level .level-container > .img-first-child, .pathway-page .pathway-focus .pathways-challenge .pathway-level .level-container > .img-first-child, .pathway-page .pathway-focus .pathways-focus .pathway-level .level-container > .img-first-child {
+  aspect-ratio: 3;
+  object-fit: contain;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level .level-container > :first-child, .pathway-page .pathway-challenge .pathways-focus .pathway-level .level-container > :first-child, .pathway-page .pathway-focus .pathways-challenge .pathway-level .level-container > :first-child, .pathway-page .pathway-focus .pathways-focus .pathway-level .level-container > :first-child {
+  font-size: 32px;
+  font-weight: bold;
+  color: #2e3191;
+  line-height: 1;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level .pathways div, .pathway-page .pathway-challenge .pathways-focus .pathway-level .pathways div, .pathway-page .pathway-focus .pathways-challenge .pathway-level .pathways div, .pathway-page .pathway-focus .pathways-focus .pathway-level .pathways div {
+  cursor: pointer;
+  flex: 1 1 auto;
+  /*width: 25%;*/
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-26, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-26 {
+  width: 26vw;
+  aspect-ratio: 1.8;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-20, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-20 {
+  width: 20vw;
+  aspect-ratio: 1.8;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level.starters, .pathway-page .pathway-challenge .pathways-focus .pathway-level.starters, .pathway-page .pathway-focus .pathways-challenge .pathway-level.starters, .pathway-page .pathway-focus .pathways-focus .pathway-level.starters {
+  justify-content: end;
+}
+.pathway-page .pathway-challenge .pathways-challenge .pathway-level.movers, .pathway-page .pathway-challenge .pathways-focus .pathway-level.movers, .pathway-page .pathway-focus .pathways-challenge .pathway-level.movers, .pathway-page .pathway-focus .pathways-focus .pathway-level.movers {
+  justify-content: center;
+}
+.pathway-page .pathway-challenge .pathway-challenge-content, .pathway-page .pathway-challenge .pathway-focus-content, .pathway-page .pathway-focus .pathway-challenge-content, .pathway-page .pathway-focus .pathway-focus-content {
+  width: fit-content;
+  margin: auto;
+  /*transform: translateY(2vh);*/
+  position: absolute;
+  left: 50%;
+  top: 40vh;
+  transform: translate(-50%, -50%);
+}
+.pathway-page .pathway-challenge img, .pathway-page .pathway-focus img {
+  width: 100%;
+  height: auto;
+}
+.pathway-page .pathway-challenge .pathway-challenge-title1, .pathway-page .pathway-challenge .pathway-focus-title1, .pathway-page .pathway-focus .pathway-challenge-title1, .pathway-page .pathway-focus .pathway-focus-title1 {
+  width: 30vw;
+  /*max-width: 50vw;*/
+  /*transform: translateY(12vh);*/
+  margin: auto;
+}
+.pathway-page .pathway-challenge .pathway-challenge-title, .pathway-page .pathway-challenge .pathway-focus-title, .pathway-page .pathway-focus .pathway-challenge-title, .pathway-page .pathway-focus .pathway-focus-title {
+  width: 100%;
+}
+.pathway-page .pathway-challenge .pathway-challenge-title > :first-child, .pathway-page .pathway-challenge .pathway-focus-title > :first-child, .pathway-page .pathway-focus .pathway-challenge-title > :first-child, .pathway-page .pathway-focus .pathway-focus-title > :first-child {
+  margin-bottom: 1rem;
+}
+@media (max-aspect-ratio: 2.5) and (min-aspect-ratio: 2) {
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level, .pathway-page .pathway-challenge .pathways-focus .pathway-level, .pathway-page .pathway-focus .pathways-challenge .pathway-level, .pathway-page .pathway-focus .pathways-focus .pathway-level {
+    width: 24vw;
+  }
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-26, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-26 {
+    width: 28.4vw;
+  }
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-20, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-20 {
+    width: 21.8vw;
+  }
+}
+@media (max-aspect-ratio: 2) and (min-aspect-ratio: 1.5) {
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level, .pathway-page .pathway-challenge .pathways-focus .pathway-level, .pathway-page .pathway-focus .pathways-challenge .pathway-level, .pathway-page .pathway-focus .pathways-focus .pathway-level {
+    width: 25vw;
+  }
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-26, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-26, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-26 {
+    width: 29.5vw;
+  }
+  .pathway-page .pathway-challenge .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-challenge .pathways-focus .pathway-level.w-20, .pathway-page .pathway-focus .pathways-challenge .pathway-level.w-20, .pathway-page .pathway-focus .pathways-focus .pathway-level.w-20 {
+    width: 22.7vw;
+  }
 }
 
 .btn-back-square {
   position: absolute;
   bottom: 45px;
-  right: 80px;
+  left: 45px;
   height: 80px;
   cursor: pointer;
   aspect-ratio: 1;
 }
 .btn-back-square img {
-  height: 80px;
+  height: 80px !important;
   box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.3);
   border-radius: 12px;
 }
 
 .pathway-detail {
   background-image: url("images/pathway-discovery-bg.png");
-}
-.pathway-detail .btn-back-square {
-  left: 45px;
 }
 .pathway-detail-container {
   width: fit-content;
@@ -1631,5 +1788,57 @@ body {
   .pathway-detail-box-content {
     width: 420px;
     font-size: 15px;
+  }
+}
+
+.book-discovery .book-container {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+}
+.book-discovery img {
+  height: 100%;
+}
+.book-discovery .discovery-book-book1 {
+  margin-right: 20px;
+}
+.book-discovery a {
+  display: block;
+  width: fit-content;
+  height: 12vh;
+  margin: auto;
+  margin-top: 10px;
+}
+.book-discovery > div {
+  height: 55vh;
+  cursor: pointer;
+}
+
+.discovery-book-content {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.discovery-book-content .book-content {
+  height: 75vh;
+  max-width: 85%;
+  object-fit: contain;
+}
+.discovery-book-content .starandfriend-text {
+  height: 10vh;
+  margin-top: 10px;
+}
+.discovery-book-content .starandfriend-text img {
+  height: 100%;
+}
+.discovery-book-content .sixbook {
+  height: 80vh;
+  display: block;
+  margin: auto;
+}
+@media (max-aspect-ratio: 2.3) {
+  .discovery-book-content .sixbook {
+    height: unset;
+    max-width: 70%;
   }
 }

@@ -89,7 +89,17 @@ function pathway() {
     $(".btn-pathway").on("click", function () {
         if (pathway === "discovery") {
             $(".pathway-index > .slide:not(.pathway-discovery)").fadeOut(300, function () {
-            $(".pathway-discovery").fadeIn(300);
+                $(".pathway-discovery").fadeIn(300);
+            });
+        }
+        if (pathway === "challenge") {
+            $(".pathway-index > .slide:not(.pathway-challenge)").fadeOut(300, function () {
+                $(".pathway-challenge").fadeIn(300);
+            });
+        }
+        if (pathway === "focus") {
+            $(".pathway-index > .slide:not(.pathway-focus)").fadeOut(300, function () {
+                $(".pathway-focus").fadeIn(300);
             });
         }
     });
@@ -97,6 +107,11 @@ function pathway() {
         if (pathway === "discovery") {
             $(".pathway-index > .slide:not(.overview-discovery)").fadeOut(300, function () {
                 $(".overview-discovery").fadeIn(300);
+            });
+        }
+        if (pathway === "challenge") {
+            $(".pathway-index > .slide:not(.overview-challenge)").fadeOut(300, function () {
+                $(".overview-challenge").fadeIn(300);
             });
         }
     });
@@ -130,15 +145,14 @@ function pathway() {
         var textStarClass = $(this).attr("class").split(" ")[0];
         if (pathway === "discovery") {
             //$(".discovery-text-star img").fadeOut(300);
-            $(".title3").fadeOut(0);
-            $(".discovery-text-star img").fadeOut(0);
-
-            $(".discovery-text-star ." + textStarClass).fadeIn(0);
         }
+        $(".title3").fadeOut(0);
+        $(".pathway-text-star img").fadeOut(0);
+        $(".pathway-text-star ." + textStarClass).fadeIn(0);
     });
     $(".pathways div").on("click", function () {
         var pwdetailClass = $(this).attr("class").split(" ")[0];
-        $(".pathway-index > .slide:not(." + pwdetailClass+")").fadeOut(300, function () {
+        $(".pathway-index > .slide:not(." + pwdetailClass + ")").fadeOut(300, function () {
             $(".pathway-index ." + pwdetailClass).fadeIn(300);
 
         });
@@ -155,7 +169,39 @@ function pathway() {
         $(this).addClass("active");
 
     });
-   
+
+    $(".btn-book").on("click", function () {
+        if (pathway === "discovery") {
+            $(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
+                $(".book-discovery").fadeIn(300);
+            });
+        }
+    });
+    $(".discovery-book-book1").on("click", function () {
+        $(".pathway-index > .slide:not(.discovery-book-book1-content)").fadeOut(300, function () {
+            $(".discovery-book1-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            $(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".discovery-book-book2").on("click", function () {
+        $(".pathway-index > .slide:not(.discovery-book-book2-content)").fadeOut(300, function () {
+            $(".discovery-book2-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            $(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".starandfriend-text").on("click", function () {
+        $(".pathway-index > .slide:not(.discovery-book-book3-content)").fadeOut(300, function () {
+            $(".discovery-book3-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            $(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".discovery-book-content .btn-back-square").on("click", function () {
+        $(".btn-book").trigger("click");
+        $(".menu-btn").fadeIn(300);
+    });
 }
 
 function tick() {

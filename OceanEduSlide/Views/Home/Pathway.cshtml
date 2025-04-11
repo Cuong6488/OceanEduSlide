@@ -69,7 +69,7 @@
                 </a>
             </li>
             <li>
-                <a class="btn-cup" href="javascript:;">
+                <a class="btn-book" href="javascript:;">
                     <img src="~/Content/images/btn-book.png" />
                 </a>
             </li>
@@ -134,7 +134,7 @@
                     <img class="title3" src="~/Content/images/pathway-discovery-title3.png" />
                 </div>
 
-                <div class="discovery-text-star">
+                <div class="pathway-text-star">
                     <img class="star-1 hidden" src="~/Content/images/discovery-text-star1.png" />
                     <img class="star-2 hidden" src="~/Content/images/discovery-text-star2.png" />
                     <img class="star-3 hidden" src="~/Content/images/discovery-text-star3.png" />
@@ -153,7 +153,7 @@
                 </a>
             </div>
             <div class="overview-content">
-                <div class="overview-discovery-title">
+                <div class="overview-discovery-title overview-title">
                     <img src="~/Content/images/overview-title.png" />
                 </div>
                 <div class="overview1-discovery">
@@ -161,7 +161,7 @@
                     Đây là giai đoạn cửa sổ vàng, trẻ có thể tiếp thu vô hạn tiềm năng kiến
                     thức và vận dụng tối đa <a class="eight-smart" href="javascript:;">8 miền trí thông minh </a>não bộ
                 </div>
-                <div class="overview2-discovery hidden">
+                <div class="overview2-discovery overview2 hidden">
                     <div>
                         Chương trình Discovery English được Ocean Edu dày công nghiên cứu và lựa chọn giáo trình với mong
                         muốn khai mở tối đa tiềm năng trí tuệ của trẻ, giúp trẻ phát triển toàn diện không chỉ về ngôn ngữ mà còn
@@ -2311,6 +2311,3123 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="book-discovery slide hidden">
+            <div class="d-flex justify-content-center book-container">
+                <div class="discovery-book-book1">
+                    <img src="~/Content/images/discovery-book-mylittleissland.png" />
+                    <a href="#">
+                        <img src="~/Content/images/discovery-book-btnvideo.png" />
+                    </a>
+                </div>
+                <div class="discovery-book-book2">
+                    <img src="~/Content/images/discovery-book-starandfriends.png" />
+                    <a href="#">
+                        <img src="~/Content/images/discovery-book-btnvideo.png" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="discovery-book1-content discovery-book-content slide hidden justify-content-center align-items-center">
+            <img class="book-content" src="~/Content/images/discovery-book-mylittleisland-content.png" />
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+        </div>
+        <div class="discovery-book2-content discovery-book-content slide hidden justify-content-center align-items-center">
+            <div>
+                <img class="sixbook" src="~/Content/images/discovery-book-6book.png" />
+                <div class="d-flex justify-content-center starandfriend-text">
+                    <img src="~/Content/images/discovery-book-starandfriend-text.png" />
+                </div>
+                <div class="btn-back-square">
+                    <img src="~/Content/images/btn-back-square.png" />
+                </div>
+            </div>
+        </div>
+
+        <div class="discovery-book3-content discovery-book-content slide hidden justify-content-center align-items-center">
+            <img class="book-content" src="~/Content/images/discovery-book-starandfriend-content.png" />
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+        </div>
+
+
+        <div class="overview overview-challenge slide hidden">
+            @*<div class="btn-slide">
+                <a class="btn-back" href="javascript:;">
+                    <img src="~/Content/images/slide-back.png" />
+                </a>
+                <a class="btn-next" href="javascript:;">
+                    <img src="~/Content/images/slide-next.png" />
+                </a>
+            </div>*@
+            <div class="overview-content">
+                <div class="overview-challenge-title overview-title">
+                    <img src="~/Content/images/title-challenge.png" />
+                </div>
+                <div class="overview2-challenge overview2">
+                    <div>
+                        Challenge English là chương trình tiếng Anh dành cho các bé từ 6 - 11 tuổi, là giai đoạn học tập
+                        quan trọng của trẻ, không chỉ về mặt kiến thức mà còn về kỹ năng sống. Trong thời kỳ này, trẻ
+                        bắt đầu phát triển tư duy logic cũng như khả năng sáng tạo. Vì vậy, việc học tiếng Anh cho
+                        trẻ ở độ tuổi này cần được chú trọng để giúp trẻ phát triển toàn diện.
+                    </div>
+                    <div>
+                        Chương trình Challenge English tập trung vào các chủ đề khám phá và sáng tạo, học tập tích hợp
+                        như khám phá thiên nhiên, nghệ thuật, thể thao, lễ hội,.. với mục tiêu giúp trẻ phát triển tư
+                        duy lập trình và các kỹ năng tương lai, bao gồm tư duy phản biện, giao tiếp, hợp tác và sáng tạo.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-challenge hidden slide">
+            <ul class="ul-reset menu-star">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <li>
+                        <a class="star-@i" href="javascript:;">
+                            <img src="~/Content/images/pathway-discovery-staricon.png" />
+                        </a>
+                    </li>
+                }
+            </ul>
+            <div class="pathway-challenge-content">
+                <div class="pathway-challenge-title1">
+                    <img src="~/Content/images/challenge-pathway-title.png" />
+                </div>
+                <div class="pathways-challenge d-flex">
+                    <div class="starters pathway-level">
+                        <div class="level-container">
+                            <img class="img-first-child" src="~/Content/images/challenge-pathway-starters-img.png" />
+                            <div class="d-flex pathway-items pathways">
+                                <div class="challenge-pre-kids-a">
+                                    <img src="~/Content/images/challenge-pathway-pre-kids-a.png" />
+                                </div>
+                                <div class="challenge-pre-kids-b">
+                                    <img src="~/Content/images/challenge-pathway-pre-kids-b.png" />
+                                </div>
+                                <div class="challenge-kids-1a">
+                                    <img src="~/Content/images/challenge-pathway-kids-1a.png" />
+                                </div>
+                                <div class="challenge-kids-1b">
+                                    <img src="~/Content/images/challenge-pathway-kids-1b.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/challenge-pathway-starters.png" />
+                        </div>
+
+                    </div>
+                    <div class="movers pathway-level">
+                        <div class="level-container">
+                            <img class="img-first-child" src="~/Content/images/challenge-pathway-movers-img.png" />
+                            <div class="d-flex pathway-items pathways">
+                                <div class="challenge-kids-2a">
+                                    <img src="~/Content/images/challenge-pathway-kids-2a.png" />
+                                </div>
+                                <div class="challenge-kids-2b">
+                                    <img src="~/Content/images/challenge-pathway-kids-2b.png" />
+                                </div>
+                                <div class="challenge-kids-3a">
+                                    <img src="~/Content/images/challenge-pathway-kids-3a.png" />
+                                </div>
+                                <div class="challenge-kids-3b">
+                                    <img src="~/Content/images/challenge-pathway-kids-3b.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/challenge-pathway-movers.png" />
+                        </div>
+
+                    </div>
+                    <div class="flyers pathway-level">
+                        <div class="level-container">
+                            <img class="img-first-child" src="~/Content/images/challenge-pathway-flyers-img.png" />
+                            <div class="d-flex pathway-items pathways">
+                                <div class="challenge-kids-4a">
+                                    <img src="~/Content/images/challenge-pathway-kids-4a.png" />
+                                </div>
+                                <div class="challenge-kids-4b">
+                                    <img src="~/Content/images/challenge-pathway-kids-4b.png" />
+                                </div>
+                                <div class="challenge-kids-5a">
+                                    <img src="~/Content/images/challenge-pathway-kids-5a.png" />
+                                </div>
+                                <div class="challenge-kids-5b">
+                                    <img src="~/Content/images/challenge-pathway-kids-5b.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/challenge-pathway-flyers.png" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="pathway-challenge-title">
+                    <img src="~/Content/images/challenge-pathway-line.png" />
+                </div>
+
+                <div class="pathway-text-star">
+                    <img class="star-1 hidden" src="~/Content/images/discovery-text-star1.png" />
+                    <img class="star-2 hidden" src="~/Content/images/discovery-text-star2.png" />
+                    <img class="star-3 hidden" src="~/Content/images/discovery-text-star3.png" />
+                    <img class="star-4 hidden" src="~/Content/images/discovery-text-star4.png" />
+                    <img class="star-5 hidden" src="~/Content/images/discovery-text-star5.png" />
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-pre-kids-a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        PRE - KIDS A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới đồ trang trí sinh nhật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới bữa trưa và dụng cụ ăn uống
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới âm nhạc và các loại nhạc cụ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới trang trại
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc "It's (color)" để miêu tả màu sắc
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc câu rủ rê với "Let's"
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc có …: There is/are…
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai tình huống theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Ngày sinh nhật của Fluffy
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Nhà bếp đồ chơi
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Fluffy chơi trống
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chú cáo lông đỏ
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: thiệp sinh nhật, nhạc cụ, đồ chơi nông trại, trang trí bàn ăn
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách chăm sóc động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách nhờ vả lịch sự
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách lắng nghe người khác
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm các phụ âm: c, b, s, p, t, d, a, f
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu và thực hành thí nghiệm về:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cầu vồng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Nghề làm gốm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Sóng âm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thực phẩm có nguồn gốc từ động vật
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pathway-detail challenge-pre-kids-b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        PRE - KIDS B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới khủng long
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới dã ngoại và đồ ăn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới động vật biển
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng liên quan tới hóa trang, trang phục
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc: It has... / It doesn’t have...
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thích / không thích: I like / don’t like
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc hỏi-trả lời về khả năng: Can you see...? Yes, I can / No, I can’t
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc giới thiệu trang phục: I’m wearing...
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai tình huống theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm mô hình khủng long
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Buổi dã ngoại
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Trò chơi lặn biển
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Diễn kịch đóng vai
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: làm mô hình khủng long, mô phỏng buổi dã ngoại, làm đồ hoá trang để diễn kịch
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách động viên và hỗ trợ lẫn nhau
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách chia sẻ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Mặc quần áo phù hợp theo thời tiết
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thỏa hiệp, làm việc nhóm
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm các âm: l, e, y, j, I, u, m, o
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu và thực hành thí nghiệm về:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khủng long ăn gì?
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Lượng đường trong đồ ăn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Các loài động vật có vỏ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Sợi len
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-1a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 1A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về đồ dùng học tập và màu sắc
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về đồ chơi và phương tiện giao thông
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về đồ dùng mỹ thuật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về các thành viên trong gia đình
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về các bộ phận trên cơ thể
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Giới thiệu bản thân và người khác: My name is..., This is my dad..., Who’s this?
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hỏi và trả lời về đồ vật và số lượng: What’s this?-It’s a ball, There is / There are, How many...?
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Mô tả đặc điểm cơ thể với động từ "tobe" và "have": I have big eyes, She has long hair, I’m tall
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai tình huống theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hãy cùng chơi với nhau!
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Ngôi nhà cầu vồng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Gia đình lớn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Đó là một con quái vật!
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: làm đồ chơi nổi, tạo cửa hàng mỹ thuật, làm nhà thủ công, tổ chức vở kịch rối
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm quen và kết bạn mới
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách dọn dẹp sau khi học mỹ thuật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách giới thiệu bản thân và gia đình
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách hòa nhập, hỗ trợ và giúp đỡ bạn bè
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm và phân biệt các cặp âm: p-b, d-t, g-k, z-s
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thử nghiệm vật liệu làm đồ chơi: nổi hay chìm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Trộn màu sáng-tối
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm trò chơi ghép hình các hình khối
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thử nếm và đoán vị để tìm hiểu năm giác quan
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-1b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 1B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về vật nuôi và động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về hoa quả
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về sở thích và hoạt động
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về quần áo và thời tiết
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về khả năng: can / can’t
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc diễn tả sở thích: like / don’t like
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc hỏi-đáp về sở thích và hoạt động:  What does he do?-He sings.
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc hỏi-đáp về vị trí đồ vật, sử dụng trạng từ chỉ vị trí
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chú ếch trong chiếc mũ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thức ăn cho chim
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Trường học nghệ thuật xiếc vui nhộn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Bữa tiệc cướp biển
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: Làm dự án lớp học thú cưng, Làm quán trái cây, Tổ chức ngày hội hoạt động, Làm sách flap book về thời tiết
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết cách chăm sóc động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách tái chế
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Vui chơi an toàn và giữ an toàn cho bản thân
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm và phân biệt các cặp âm: m-n, l-r, h-w, v-f
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá nhu cầu của thực vật và động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu chu trình sống của hoa quả
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu về vòng đời của con ếch
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm chong chóng gió và đo sức gió
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-2a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 2A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về địa điểm trong thị trấn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về động vật và thói quen hàng ngày
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng mô tả đồ vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng mô tả cảm xúc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về sở thích: like / don’t like
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc mô tả vị trí với "There is / There are" và trạng từ chỉ vị trí
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thì hiện tại đơn để mô tả người và nói về thói quen hàng ngày
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc sử dụng đại từ sở hữu
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Một ngày đặc biệt trong thị trấn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Các con vật có biết múa không?
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu chuyện tìm đồ bị mất
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cuộc thi vẽ tranh vui nhộn
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: làm cuốn sổ giới thiệu về thị trấn, thuyết trình về ngày và đêm, làm phòng trưng bày nghệ thuật
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Lắng nghe bạn bè
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách chuẩn bị sẵn sàng cho hoạt động hằng ngày
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết giúp đỡ người khác
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết xin phép và tôn trọng người khác
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm và phân biệt các cặp âm: /æ/-/e/, /ɪ/-/ɒ/, /ʌ/-/ks/, /dʒ/-/j/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu vật liệu xây nhà
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tạo mô hình Trái Đất và Mặt Trời
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá chất rắn và chất lỏng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thí nghiệm về sự lan tỏa cảm xúc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-2b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 2B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về đồ ăn và thực phẩm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về các môn thể thao và vận động
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về ngôi nhà và sinh hoạt hằng ngày
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về thiên nhiên và phương hướng
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc yêu cầu lịch sự với Can I …?
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thì hiện tại tiếp diễn để mô tả hành động đang diễn ra
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc chỉ sự sở hữu với 's
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc chỉ đường và vị trí bằng giới từ
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Nghe hiểu câu chuyện qua tranh và nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hãy đến đây và cùng chơi!
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Trận bóng đá vui nhộn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Các hoạt động thường ngày
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Giúp đỡ bạn bè
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tô màu, vẽ tranh theo chủ đề
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu về tầm quan trọng của lòng tử tế và quan tâm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết chia sẻ kỹ năng trong các hoạt động thể thao cho bạn bè
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết thể hiện sự quan tâm đến người thân
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm và phân biệt các cặp âm: /ʧ/-/ʃ/, /ð/-/θ/, /w/-/f/, /s/-/ʃ/-/dʒ/-/tʃ/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu các loại sữa và làm kem
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Đo dung tích phổi và ghi kết quả
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Quan sát quá trình phân huỷ của túi giấy và túi nhựa
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá cấu trúc đất và chuyển động mảng kiến tạo
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-3a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 3A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về môn học và phòng học
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về hành động biểu diễn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về thời tiết và động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về cảm xúc và lễ hội
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về vũ trụ và du hành không gian
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thì hiện tại tiếp diễn: He’s doing…
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thì quá khứ đơn: It was / He worked…
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc so sánh và miêu tả: more… than / …er than
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nêu ý kiến cá nhân: I think…, I agree…, I disagree…
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Buổi trình diễn tài năng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Bảo tàng băng giá
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cuộc diễu hành lễ hội
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chuyến du hành vào không gian
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án thủ công: làm sách lật tay, làm mô hình trưng bày, tổ chức buổi diễu hành, làm con rối
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách trân trọng tài năng của bạn bè
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách trân trọng các di tích, di sản
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách sắp xếp gọn gàng, ngăn nắp
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách quý trọng thời gian với gia đình và bạn bè
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách phát âm và phân biệt các cặp âm: /æ/ - /e/ - /ɪ/, /ɒ/ - /ʌ/, /eɪ/ - /aɪ/, /oʊ/ - /ju/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu về cơ thể người: xương và cơ bắp
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá hóa thạch và thí nghiệm với băng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thiết kế hoa văn đối xứng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu về lực đẩy và công nghệ tên lửa
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-3b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 3B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về bãi biển và kỳ nghỉ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về cửa hàng và mua sắm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về môi trường và bảo vệ thiên nhiên
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về nghề nghiệp và công việc tương lai
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc quá khứ đơn: He went / They didn’t go
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về số lượng: There is / There are, some, a lot of, many, much
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc diễn đạt kế hoạch và mong muốn: going to, I want / would like to
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về sở thích và lý do: I like / don’t like, Why do you…? – Because…
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Giải cứu chú cá heo
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chú thỏ đi lạc
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thử thách xanh bảo vệ môi trường
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Ước mơ nghề nghiệp tương lai
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án: làm bãi biển thu nhỏ trong hộp, tạo một cửa hàng mua sắm, thực hiện dự án môi trường, làm hội chợ việc làm
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách tìm kiếm sự giúp đỡ đúng cách
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết cách chăm sóc thú cưng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thảo luận kế hoạch bảo vệ môi trường
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chia sẻ sở thích và học cách vượt qua thử thách
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Luyện phát âm các cặp âm: /ɑː/ - /iː/, /ɔː/ - /ə/, /ʊ/ - /uː/, /aʊ/ - /ɔɪ/ - /eɪ/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá dòng chảy quanh Trái Đất
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu về thiết kế thương hiệu và bao bì sản phẩm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu tác động của rác thải đến môi trường
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu về những nhà kỹ sư âm thanh
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-4a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 4A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về thiên nhiên và hoạt động ngoài trời
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về cuộc sống trong quá khứ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về không gian và du hành vũ trụ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về các nhân vật và câu chuyện giả tưởng
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về kế hoạch: going to
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc mô tả khả năng trong quá khứ: could
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc diễn tả tương lai: will / won’t
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc kể lại quá khứ: It was / They were
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chuyến phiêu lưu trên đảo hoang
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Kho báu bị thất lạc
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thuộc địa trong vũ trụ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu chuyện hai chú rồng
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án: Lên kế hoạch một chuyến thám hiểm, về phương tiện đi lại trong tương lai, sáng tạo một loài vật tưởng tượng, làm mô hình thủ công thành phố của người Aztec
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách viết thư SOS, viết báo, tờ rơi, bản tường trình
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm việc nhóm và hỗ trợ nhau
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách suy nghĩ cho người khác
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách chăm sóc thế giới của mình
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách trở thành phiên bản tốt nhất của bản thân
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Luyện phát âm các âm: /ɜː/, /ɡ/, /eə/, /ɪd/, /ɪə/, /s/, /bl/, /cl/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá cấu trúc hình học và độ bền của những cây cầu
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu hệ thống số cổ đại
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thử nghiệm truyền âm thanh
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu nguyên lý hoạt động của máy bay
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-4b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 4B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về động vật hoang dã và môi trường sống
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về hoạt động câu lạc bộ và kết bạn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+
+                                        Từ vựng về sức khỏe và thuốc men
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về công viên giải trí và cảm xúc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu điều kiện loại 1
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Động từ khuyết thiếu: should
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc thể hiện mục đích: to V
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Phân biệt thì Quá khứ - Hiện tại - Tương lai
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung câu chuyện qua tranh và thực hành nhập vai tình huống theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Bảo vệ động vật hoang dã
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá hoạt động mới
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu chuyện bùng phát dịch bệnh
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thám hiểm công viên giải trí
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án: chiến dịch bảo vệ động vật, tổ chức hội chợ câu lạc bộ, làm hồ sơ thông tin về các loài cây, làm mô hình tàu lượn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách viết thư, tờ rơi, giấy khám bệnh, học cách điền vào form
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách bảo vệ các loài động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Kết bạn qua trải nghiệm mới
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách tự chăm sóc bản thân
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Trở nên có trách nhiệm hơn
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Luyện phát âm các âm: /br/, /tr/, /sk/, /sm/, /sn/, /sp/, /st/, /sw/, /kw/, /tw/, /dʒ/, /s/
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tạo hộp đèn và khám phá ánh sáng
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu kỹ năng thể thao và biểu đồ số liệu
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá vi khuẩn và sự lây lan
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá lực chuyển động và ma sát
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-5a slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 5A
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về khu phố và trường học
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về cảnh quan thiên nhiên và thời tiết
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về hoạt động giải trí và lễ hội
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về phim ảnh và điện ảnh
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc chỉ quy tắc: must / mustn’t
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc chỉ nghĩa vụ: have to / don’t have to
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu hỏi về quá khứ và tương lai
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        So sánh hơn và câu điều kiện loại 1
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu nội dung truyện và nhập vai theo các chủ đề:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Bữa tiệc khu phố
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Người máy giúp việc ở trường học
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu chuyện cổ Trung Hoa
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Sinh nhật và sở thích
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Đam mê làm phim
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án: thiết kế ngôi trường lý tưởng, làm mô hình đĩa truyện, tự thiết kế một lễ hội, làm trailer phim
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách viết hướng dẫn, làm thơ, viết email về kế hoạch tương lai, viết bài bình luận phim
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu và tuân thủ quy tắc chung
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thể hiện sự đồng cảm trong giao tiếp
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Chia sẻ và hợp tác trong nhóm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết lắng nghe và tôn trọng ý kiến người khác
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Luyện nói với cấu trúc so sánh, thời gian, tương lai
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Nhấn mạnh cách diễn đạt và ngữ điệu trong đối thoại
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá năng lượng ánh sáng và vật liệu phản xạ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu chu trình nước và tạo mây trong ly
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá phân số qua thể thao
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá về các bộ phim và tạo vòng lặp hoạt hình bằng thủ công
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pathway-detail challenge-kids-5b slide hidden">
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+            <div class="pathway-detail-container">
+                <div class="pathway-detail-title">
+                    <img src="~/Content/images/pathway-detail-title-bg.png" />
+                    <span>
+                        KHÓA KIDS 5B
+                    </span>
+                </div>
+                <div class="d-flex justify-content-center pathway-detail-boxs">
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            TỪ VỰNG
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về du lịch và trải nghiệm
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về mật mã và đồ vật cá nhân
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về ẩm thực và nấu ăn
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Từ vựng về công nghệ và âm nhạc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            CẤU TRÚC
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc hiện tại hoàn thành: have/has + V3
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc bị động: is/are + V3
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cấu trúc nói về sự chắc chắn: must / might / could
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Câu hỏi đuôi và cách dùng -ing / -ed trong mô tả cảm xúc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Nghe hiểu <br />
+                            & kể chuyện
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu và nhập vai theo các câu chuyện:
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hai người lữ khách và con gấu
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tin nhắn bí mật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Nồi súp ngon lành
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cuộc thi âm nhạc công nghệ
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động thực hành,<br />
+                            sáng tạo
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Làm dự án: Lập kế hoạch chuyến đi đáng nhớ, Tạo trò chơi truy tìm kho báu, Thiết kế thực đơn bữa trưa, Sáng tác bài hát về công nghệ
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Học cách viết bài phỏng vấn, nhật ký, công thức nấu ăn, viết truyện từ tranh
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Kỹ năng mềm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Hiểu tác động môi trường khi đi lại
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Biết cách xử lý tình huống khẩn cấp
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thực hành thói quen ăn uống lành mạnh
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Cân bằng giữa công nghệ và cuộc sống
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Ngữ âm <br /> & phát âm
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Luyện phát âm qua mẫu câu hỏi đuôi
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Thực hành ngữ điệu trong câu cảm thán và nghi vấn
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pathway-detail-box tick">
+                        <img src="~/Content/images/pathway-detail-box-bg.png" />
+                        <div class="pathway-detail-box-text">
+                            Hoạt động STEAM
+                        </div>
+                        <div class="pathway-detail-box-content">
+                            <div></div>
+                            <ul class=" ul-reset">
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu đặc điểm thích nghi của động vật
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Khám phá lịch sử mã hóa và mật mã
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tìm hiểu hỗn hợp và dung dịch trong khoa học
+                                    </div>
+                                </li>
+                                <li class="d-flex">
+                                    <img src="~/Content/images/slide-next.png" />
+                                    <div>
+                                        Tạo mạch điện đơn giản và công tắc
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pathway-focus hidden slide">
+            <ul class="ul-reset menu-star">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <li>
+                        <a class="star-@i" href="javascript:;">
+                            <img src="~/Content/images/pathway-discovery-staricon.png" />
+                        </a>
+                    </li>
+                }
+            </ul>
+            <div class="pathway-focus-content">
+                <div class="pathway-focus-title1">
+                    <img src="~/Content/images/focus-pathway-title.png" />
+                </div>
+                <div class="pathways-focus d-flex mb-3">
+                    <div class="starters pathway-level w-26">
+                        <div class="level-container">
+                            <div class="text-center mb-2">
+                                TEENS
+                            </div>
+                            <div class="d-flex pathway-items pathways">
+                                <div class="focus-pre-kids-a">
+                                    <img src="~/Content/images/focus-pathway-1a.png" />
+                                </div>
+                                <div class="focus-pre-kids-b">
+                                    <img src="~/Content/images/focus-pathway-1b.png" />
+                                </div>
+                                <div class="focus-kids-1a">
+                                    <img src="~/Content/images/focus-pathway-2a.png" />
+                                </div>
+                                <div class="focus-kids-1b">
+                                    <img src="~/Content/images/focus-pathway-2b.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/focus-pathway-starters.png" />
+                        </div>
+
+                    </div>
+                    <div class="movers pathway-level w-20">
+                        <div class="level-container">
+                            <div class="text-center mb-2">
+                                IELTS
+                            </div>
+                            <div class="d-flex pathway-items pathways">
+                                <div class="focus-kids-2a">
+                                    <img src="~/Content/images/focus-pathway-pre-ielts.png" />
+                                </div>
+                                <div class="focus-kids-2b">
+                                    <img src="~/Content/images/focus-pathway-40.png" />
+                                </div>
+                                <div class="focus-kids-3a">
+                                    <img src="~/Content/images/focus-pathway-45.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/focus-pathway-flyers.png" />
+                        </div>
+
+                    </div>
+                    <div class="flyers pathway-level w-20">
+                        <div class="level-container">
+                            <div class="text-center mb-2">
+                                IELTS
+                            </div>
+                            <div class="d-flex pathway-items pathways">
+                                <div class="focus-kids-4a">
+                                    <img src="~/Content/images/focus-pathway-50.png" />
+                                </div>
+                                <div class="focus-kids-4b">
+                                    <img src="~/Content/images/focus-pathway-55.png" />
+                                </div>
+                                <div class="focus-kids-5a">
+                                    <img src="~/Content/images/focus-pathway-60.png" />
+                                </div>
+                            </div>
+                            <img src="~/Content/images/focus-pathway-movers.png" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="pathway-focus-title">
+                    <img src="~/Content/images/focus-pathway-line.png" />
+                </div>
+
+                <div class="pathway-text-star">
+                    <img class="star-1 hidden" src="~/Content/images/discovery-text-star1.png" />
+                    <img class="star-2 hidden" src="~/Content/images/discovery-text-star2.png" />
+                    <img class="star-3 hidden" src="~/Content/images/discovery-text-star3.png" />
+                    <img class="star-4 hidden" src="~/Content/images/discovery-text-star4.png" />
+                    <img class="star-5 hidden" src="~/Content/images/discovery-text-star5.png" />
                 </div>
             </div>
         </div>
