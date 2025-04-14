@@ -59,6 +59,11 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        [Route("hoc-phi")]
+        public ActionResult Price()
+        {
+            return View();
+        }
         public ActionResult Pathway()
         {
             return View();

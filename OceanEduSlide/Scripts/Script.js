@@ -12,6 +12,60 @@ function login() {
         });
     });
 }
+
+
+$(document).ready(function () {
+    $.datepicker.regional['vi'] = {
+        closeText: 'Đóng',
+        prevText: '&#x3C;Trước',
+        nextText: 'Tiếp&#x3E;',
+        currentText: 'Hôm nay',
+        monthNames: ['Tháng Một', 'Tháng Hai', 'Tháng Ba', 'Tháng Tư',
+            'Tháng Năm', 'Tháng Sáu', 'Tháng Bảy', 'Tháng Tám', 'Tháng Chín',
+            'Tháng Mười', 'Tháng Mười Một', 'Tháng Mười Hai'],
+        monthNamesShort: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
+            'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10',
+            'Tháng 11', 'Tháng 12'],
+        dayNames: ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm',
+            'Thứ Sáu', 'Thứ Bảy'],
+        dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+        dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+        weekHeader: 'Tu', dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['vi']);
+
+    var activeLinkId = sessionStorage.getItem('activeLinkId');
+    if (activeLinkId) {
+        $('#' + activeLinkId).addClass('active');
+    }
+    var currentPath = window.location.pathname;
+    $('.footer-item').each(function () {
+        if ($(this).attr('href') === currentPath) {
+            $('.footer-item').removeClass('active');
+            $(this).addClass('active');
+            sessionStorage.setItem('activeLinkId', this.id);
+        }
+
+    });
+    $('.footer-item').click(function (event) {
+        event.preventDefault();
+        $('.footer-item').removeClass('active');
+        $(this).addClass('active');
+        sessionStorage.setItem('activeLinkId', this.id);
+        var url = $(this).attr('href');
+        window.location.href = url;
+    });
+});
+var today = new Date();
+$(".datepicker").datepicker({
+    dateFormat: "dd/mm/yy",
+    yearRange: "1900:2100",
+    minDate: today,
+});
 function pathway() {
     var pathway = "";
     $(document).ready(function () {
@@ -182,14 +236,14 @@ function pathway() {
             });
         }
     });
-    $(".discovery-book-book1").on("click", function () {
+    $(".discovery-book-book1 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book1-content)").fadeOut(300, function () {
             $(".discovery-book1-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);
             $(".menu-btn").fadeOut(300);
         });
     });
-    $(".discovery-book-book2").on("click", function () {
+    $(".discovery-book-book2 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book2-content)").fadeOut(300, function () {
             $(".discovery-book2-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);

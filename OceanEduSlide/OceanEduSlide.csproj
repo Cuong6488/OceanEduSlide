@@ -196,6 +196,7 @@
     <Content Include="Content\images\challenge-pathway-starters-img.png" />
     <Content Include="Content\images\challenge-pathway-starters.png" />
     <Content Include="Content\images\challenge-pathway-title.png" />
+    <Content Include="Content\images\challenge-text-star1.png" />
     <Content Include="Content\images\discovery-book-6book.png" />
     <Content Include="Content\images\discovery-book-btnvideo.png" />
     <Content Include="Content\images\discovery-book-mylittleisland-content.png" />
@@ -224,6 +225,8 @@
     <Content Include="Content\images\focus-pathway-pre-ielts.png" />
     <Content Include="Content\images\focus-pathway-starters.png" />
     <Content Include="Content\images\focus-pathway-title.png" />
+    <Content Include="Content\images\focus-text-star1.png" />
+    <Content Include="Content\images\focus-text-star2.png" />
     <Content Include="Content\images\login-btn-bg.png" />
     <Content Include="Content\images\login-title.png" />
     <Content Include="Content\images\logo-index.png" />
@@ -258,6 +261,9 @@
     <Content Include="Content\images\pathway-ielts.png" />
     <Content Include="Content\images\pathway-toeic-mid.png" />
     <Content Include="Content\images\pathway-toeic.png" />
+    <Content Include="Content\images\price-before.png" />
+    <Content Include="Content\images\price-select-arrow.png" />
+    <Content Include="Content\images\price-title.png" />
     <Content Include="Content\images\S-bg.png" />
     <Content Include="Content\images\S-Location-yellow.png" />
     <Content Include="Content\images\S-mid-location.png" />
@@ -1198,6 +1204,7 @@
     <Content Include="webfonts\MYRIADPRO-BOLDCOND.OTF" />
     <Content Include="Views\Home\Pathway.cshtml" />
     <Content Include="webfonts\UTM-Swiss-CondensedBold.ttf" />
+    <Content Include="Views\Home\Price.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1128,7 +1128,7 @@ body {
   padding: 6vh 9vh;
   font-size: 30px;
 }
-.pathway-page .overview .overview-content .overview2-challenge > div {
+.pathway-page .overview .overview-content .overview2-challenge > div, .pathway-page .overview .overview-content .overview2-focus > div {
   font-size: 22px;
   padding: 7vh;
 }
@@ -1841,4 +1841,147 @@ body {
     height: unset;
     max-width: 70%;
   }
+}
+
+.price-advice, .price-overview {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.price-advice .btn-back-square, .price-overview .btn-back-square {
+  left: unset;
+  right: 25px;
+  bottom: 25px;
+  height: 60px;
+}
+.price-advice .btn-back-square img, .price-overview .btn-back-square img {
+  height: 60px !important;
+}
+
+.price-advice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.price-advice-box {
+  width: 30%;
+}
+.price-advice-box > :first-child {
+  position: relative;
+}
+.price-advice-box > :first-child > :first-child {
+  transform: translateY(3px);
+  position: relative;
+  z-index: 1;
+}
+.price-advice-box > :first-child > :nth-child(2) {
+  position: absolute;
+  content: "";
+  bottom: 0;
+  left: 0;
+  /*transform: translateY(-100%);*/
+  width: 75%;
+}
+.price-advice-box-container {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05));
+  position: relative;
+  padding: 24px 12px 12px 24px;
+  clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%);
+  /*height: 500px;*/
+  /* div {
+      background: green;
+      height: 100%;
+  }*/
+}
+.price-advice-box-container .input-container {
+  display: flex;
+  align-items: center;
+  font-family: josefinsans;
+  margin-bottom: 2px;
+  /*padding: 0.375rem 0;*/
+  padding-left: 1rem;
+  /*font-size:15px;*/
+}
+.price-advice-box-container .input-container > :first-child {
+  width: 180px;
+  /*border-right: 1px solid white;*/
+  position: relative;
+}
+.price-advice-box-container .input-container > :first-child::after {
+  content: "";
+  right: 0;
+  top: 50%;
+  position: absolute;
+  width: 1.5px;
+  height: 80%;
+  background: white;
+  transform: translateY(-50%);
+}
+.price-advice-box-container .input-container input, .price-advice-box-container .input-container select, .price-advice-box-container .input-container textarea {
+  flex: 1;
+  border: none;
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0.125rem 0.75rem;
+}
+.price-advice-box-container .input-container select {
+  padding: 0.125rem 2.25rem 0.125rem 0.75rem;
+  background-image: url("images/price-select-arrow.png");
+  background-size: 16px 8px;
+}
+.price-advice-box-container .input-container-note {
+  position: relative;
+  /*background: #F79157;*/
+}
+.price-advice-box-container .input-container-note::after {
+  position: absolute;
+  content: "";
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(to right, white 50%, rgba(255, 255, 255, 0.5), transparent);
+}
+.price-advice-box-container .input-container-cth {
+  background: #F4764A;
+}
+.price-advice-box-container .input-container-level {
+  background: #F79157;
+}
+.price-advice-box-container .input-container-pathway {
+  background: #FCC672;
+}
+.price-advice-box-container .input-container-unitprice {
+  background: #57E423;
+}
+.price-advice-box-container .input-container-totalprice {
+  background: #69E429;
+}
+.price-advice-box-container .input-container-qdsale {
+  background: #83E431;
+}
+.price-advice-box-container .input-container-moneyprice {
+  background: #83E431;
+}
+.price-advice-box-container .input-container-giftprice {
+  background: #94E437;
+}
+.price-advice-box-container .input-container-finalprice {
+  background: #AEE340;
+}
+.price-advice-box-container .input-container-paymethod {
+  background: #C0E346;
+}
+.price-advice-box-container .input-container-paychanel {
+  background: #D1E34B;
+}
+.price-advice-box-container .input-container-prepay {
+  background: #DAE34E;
+}
+.price-advice-box-container .input-container-postpaid {
+  background: #ECE354;
+}
+.price-advice-box-container .input-container-term {
+  background: #ECE354;
+}
+.price-advice-box-container .input-container-pricepermonth {
+  background: #FCC672;
 }
