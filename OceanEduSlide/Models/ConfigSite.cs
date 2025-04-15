@@ -37,7 +37,7 @@ namespace OceanEduSlide.Models
         public int Years { get; set; }
         [Display(Name = "Số khách hàng sử dụng"), Required(ErrorMessage = "Hãy nhập số khách hàng"), RegularExpression(@"\d+", ErrorMessage = "Chỉ nhập số nguyên dương"), UIHint("NumberBox")]
         public int Customers { get; set; }
-        [Display(Name = "Số đại lý"), Required(ErrorMessage = "Hãy nhập số đại lý"), RegularExpression(@"\d+", ErrorMessage = "Chỉ nhập số nguyên dương"), UIHint("NumberBox")]
+        [Display(Name = "Số chi nhánh"), Required(ErrorMessage = "Hãy nhập số chi nhánh"), RegularExpression(@"\d+", ErrorMessage = "Chỉ nhập số nguyên dương"), UIHint("NumberBox")]
         public int Agencies { get; set; }
         [Display(Name = "Slogan"), Required(ErrorMessage = "Hãy nhập mục này"), UIHint("TextBox"), StringLength(200)]
         public string Slogan { get; set; }

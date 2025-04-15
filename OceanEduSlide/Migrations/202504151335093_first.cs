@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class a : DbMigration
+    public partial class first : DbMigration
     {
         public override void Up()
         {
@@ -64,10 +64,47 @@
                     })
                 .PrimaryKey(t => t.Id);
             
+            CreateTable(
+                "dbo.Discounts",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Username = c.String(nullable: false),
+                        Password = c.String(nullable: false, maxLength: 60),
+                        Active = c.Boolean(nullable: false),
+                        OfficeId = c.Int(nullable: false),
+                        PercentDiscount = c.Decimal(precision: 18, scale: 2),
+                        MoneyDiscount = c.Int(),
+                        Gift = c.String(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Offices", t => t.OfficeId, cascadeDelete: true)
+                .Index(t => t.OfficeId);
+            
+            CreateTable(
+                "dbo.Users",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Username = c.String(nullable: false),
+                        Password = c.String(nullable: false, maxLength: 60),
+                        Active = c.Boolean(nullable: false),
+                        OfficeId = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Offices", t => t.OfficeId, cascadeDelete: true)
+                .Index(t => t.OfficeId);
+            
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.Users", "OfficeId", "dbo.Offices");
+            DropForeignKey("dbo.Discounts", "OfficeId", "dbo.Offices");
+            DropIndex("dbo.Users", new[] { "OfficeId" });
+            DropIndex("dbo.Discounts", new[] { "OfficeId" });
+            DropTable("dbo.Users");
+            DropTable("dbo.Discounts");
             DropTable("dbo.Offices");
             DropTable("dbo.ConfigSites");
             DropTable("dbo.Admins");

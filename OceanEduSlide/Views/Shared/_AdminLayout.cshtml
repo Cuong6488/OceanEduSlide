@@ -1,0 +1,131 @@
+﻿@using OceanEduSlide.Models
+@{ var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"]; }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>@ViewBag.Title</title>
+    <meta name="robots" content="noindex" />
+    <link rel="shortcut icon" href="~/favicon.ico">
+    @Styles.Render("~/Content/admincss", "~/Content/themes/base/css")
+    <link href="~/Scripts/multi-upload/jquery.fileupload.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="responsive">
+        <div class="app-header">
+            <div class="app-header__logo">
+                @if (config.Image != null)
+                {
+                    <a href="@Url.Action("Index","Home")" target="_blank"><img class="logo-admin" src="@Path.Combine("/images/configs/", config.Image)" alt="logo" /></a>
+                }
+                <a id="btn-show" onclick="myFunction()"><i class="fal fa-bars"></i><i class="fal fa-times"></i></a>
+            </div>
+            <div class="app-header__content">
+                <div class="media me-lg-5 me-3 drop d-flex">
+                    <img class="me-3 avatar" src="~/Content/admin/icon_profile.png" />
+                    <div class="media-body">
+                        <h5 class="mb-0">@User.Identity.Name</h5>
+                        Quản trị viên
+                    </div>
+                    <div class="content-drop">
+                        <a href="@Url.Action("LogOut","Vcms")"><i class="fal fa-sign-out-alt pr-1"></i> Đăng xuất</a>
+                        <a href="@Url.Action("ChangePassword","Vcms")"><i class="fal fa-low-vision me-1"></i>Đổi mật khẩu</a>
+                        <a href="@Url.Action("ConfigSite","Vcms")"><i class="fal fa-info-circle"></i> Thông tin chung</a>
+                    </div>
+                </div>
+                <a id="help" class="drop" onclick="fbFunction()">
+                    <i class="fas fa-user-headset"></i>
+                    <div class="content-drop">Gửi yêu cầu cho chúng tôi</div>
+                </a>
+            </div>
+        </div>
+        <div id="left_menu_profile">
+            <div class="left_menu_profile">
+                <ul class="drop-bar">
+                    <li data-id="0">
+                        <a class="root expand" href="@Url.Action("Index","Vcms")">
+                            Tổng quan website
+                            <i class="far fa-tachometer icon"></i>
+                        </a>
+                    </li>
+                    <li data-id="1">
+                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Admin</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Đổi mật khẩu", "ChangePassword", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Quản lý admin", "CreateAdmin", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Thông tin chung", "ConfigSite", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Đăng xuất", "Logout", "Vcms", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="2">
+                        <a class="root"><i class="far fa-file-check icon"></i><span>Quản lý Bài viết</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Danh mục bài viết", "ArticleCategory", "Article", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Thêm mới bài viết", "Article", "Article", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách bài viết", "ListArticle", "Article", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="3">
+                        <a class="root"><i class="fal fa-box icon"></i><span>Quản lý Sản phẩm</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Danh mục sản phẩm", "ProductCategory", "ProductVcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Thêm mới sản phẩm", "Product", "ProductVcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách sản phẩm", "ListProduct", "ProductVcms", null, new { @class = "text_link" })</div>
+                            @*<div>@Html.ActionLink("Thêm mới lựa chọn", "Option", "ProductVcms", null, new { @class = "text_link" })</div>*@
+                        </div>
+                    </li>
+                    <li data-id="4">
+                        <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Quảng cáo</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Thêm mới quảng cáo", "Banner", "Banner", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách quảng cáo", "ListBanner", "Banner", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="5">
+                        <a class="root"><i class="far fa-address-book icon"></i><span>Danh sách Liên hệ</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Đăng ký chi nhánh", "ListContactAgency", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Tham quan Showroom", "ListContactShowroom", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Liên hệ mua hàng", "ListOrder", "Vcms", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="6">
+                        <a class="root"><i class="fas fa-city icon"></i><span>Quản lý Địa danh</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Quản lý địa danh", "City", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách chi nhánh", "ListAgency", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách trạm bảo hành", "ListWarrantyStation", "Vcms", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="7">
+                        <a class="root"><i class="fa-solid fa-video icon"></i><span>Quản lý Video</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Thêm mới video", "Video", "Video", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách video", "ListVideo", "Video", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="content_center_right">
+            <div class="content_center_right">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery", "~/bundles/jqueryval", "~/bundles/jqueryui", "~/bundles/bootstrap")
+    <script src="~/Scripts/multi-upload/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/multi-upload/jquery.fileupload.js"></script>
+    <script src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+    <script src="~/Scripts/jquery.toast.js"></script>
+    <script src="~/Scripts/jquery.cookie.js"></script>
+    <script src="~/Scripts/jquery.fancybox.min.js"></script>
+    <script src="~/Scripts/scriptAdmin.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>

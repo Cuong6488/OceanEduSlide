@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OceanEduSlide.DAL;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -21,6 +22,10 @@ namespace OceanEduSlide
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            using (var unitofWork = new UnitOfWork())
+            {
+                Application["ConfigSite"] = unitofWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
+            }
         }
     }
 }

@@ -1,0 +1,63 @@
+﻿@model OceanEduSlide.ViewModels.InsertOfficeViewModel
+@{
+    ViewBag.Title = "Thêm mới chi nhánh";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Thêm mới chi nhánh</h2>
+<a class="btn quick-link" href="@Url.Action("ListOffice")"><i class="far fa-list me-1"></i> Danh sách chi nhánh</a>
+<div class="box_content">
+    @using (Html.BeginForm("Office", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+    <table class="form_table">
+        @*<tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.CityId)</td>
+            <td class="form_text">
+                @Html.DropDownListFor(model => model.Office.CityId, Model.SelectCities, "Tất cả tỉnh thành", new { @class = "mt-2", @data_item = "city" })
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.DistrictId)</td>
+            <td class="form_text">@Html.DropDownListFor(model => model.Office.DistrictId, Model.DistrictSelectList, "Quận huyện", new { @class = "form_control", @data_item = "district" })</td>
+        </tr>*@
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Name)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Name)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.ShortCode)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.ShortCode)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Hotline)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Hotline)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Email)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Email)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Place)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Place)</td>
+        </tr>
+        @*<tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.GoogleMap)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.GoogleMap)</td>
+        </tr>*@
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Active)</td>
+            <td class="form_text">@Html.CheckBoxFor(model => model.Office.Active, new { @checked = "checked" })</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Sort)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Sort, new { @checked = "checked" })</td>
+        </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Thêm mới" />
+            </td>
+        </tr>
+    </table>
+    }
+</div>

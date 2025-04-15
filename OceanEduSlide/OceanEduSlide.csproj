@@ -45,16 +45,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CKFinder">
+      <HintPath>..\..\..\..\Documents\Zalo Received Files\CKFinder.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Helpers">
+      <HintPath>..\..\..\..\Documents\Zalo Received Files\Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageResizer, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageResizer.4.2.8\lib\net45\ImageResizer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -119,6 +134,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\VcmsController.cs" />
     <Compile Include="DAL\DataEntities.cs" />
     <Compile Include="DAL\EmailValidationAttribute.cs" />
     <Compile Include="DAL\GenericRepository.cs" />
@@ -127,16 +143,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202504151043218_a.cs" />
-    <Compile Include="Migrations\202504151043218_a.Designer.cs">
-      <DependentUpon>202504151043218_a.cs</DependentUpon>
+    <Compile Include="Migrations\202504151335093_first.cs" />
+    <Compile Include="Migrations\202504151335093_first.Designer.cs">
+      <DependentUpon>202504151335093_first.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
+    <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AdminViewModel.cs" />
+    <Compile Include="ViewModels\OfficeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\adminSite.css" />
@@ -1229,6 +1248,17 @@
     <Content Include="Views\Home\Pathway.cshtml" />
     <Content Include="webfonts\UTM-Swiss-CondensedBold.ttf" />
     <Content Include="Views\Home\Price.cshtml" />
+    <Content Include="Views\Vcms\Office.cshtml" />
+    <Content Include="Views\Vcms\ChangePassword.cshtml" />
+    <Content Include="Views\Vcms\ConfigSite.cshtml" />
+    <Content Include="Views\Vcms\CreateAdmin.cshtml" />
+    <Content Include="Views\Vcms\Index.cshtml" />
+    <Content Include="Views\Vcms\ListAdmin.cshtml" />
+    <Content Include="Views\Vcms\ListOffice.cshtml" />
+    <Content Include="Views\Vcms\Login.cshtml" />
+    <Content Include="Views\Vcms\UpdateAdmin.cshtml" />
+    <Content Include="Views\Vcms\UpdateOffice.cshtml" />
+    <Content Include="Views\Shared\_AdminLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1325,8 +1355,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202504151043218_a.resx">
-      <DependentUpon>202504151043218_a.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504151335093_first.resx">
+      <DependentUpon>202504151335093_first.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

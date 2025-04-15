@@ -1,0 +1,66 @@
+﻿@model OceanEduSlide.ViewModels.LoginAdminViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <meta name="robots" content="noindex"/>
+    <link href="~/Content/login.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-8 pr-4 order-lg-0 order-1">
+                <img class="img-fluid my-3 mt-lg-5 pt-lg-3" src="~/Content/admin/login/banner.jpg" />
+                <div class="title-content my-2">
+                    <img src="~/Content/admin/login/checklist.svg" /> ƯU ĐIỂM CỦA HỆ THỐNG QUẢN TRỊ WEBSITE VICO
+                </div>
+                <ul class="ul-info mt-2">
+                    <li><b><img src="~/Content/admin/login/check.svg" /> Dễ sử dụng:</b> hệ thống quản trị VicoCms liên tục được nâng cấp để công việc quản trị website ngày càng dễ dàng hơn.</li>
+                    <li><b><img src="~/Content/admin/login/check.svg" /> Cấu trúc đồng nhất:</b> các module của website có chung cách bố trí các tính năng. Vì vậy, người quản trị chỉ cần làm quen với việc quản lý một module là có thể dễ dàng sử dụng các module khác.</li>
+                    <li><b><img src="~/Content/admin/login/check.svg" /> Bảo mật:</b> hệ thống được xây dựng trên công nghệ ASP.NET và chi nhánh dữ liệu SQL Server của Micosoft, có tính bảo mật và an toàn dữ liệu cao.</li>
+                    <li><b><img src="~/Content/admin/login/check.svg" /> Tính năng cao cấp:</b> hệ thống còn cung cấp các tính năng cao cấp như: thống kê báo cáo, thùng rác, thêm mới nhanh dữ liệu, tối ưu website cho các công cụ tìm kiếm,...</li>
+                </ul>
+            </div>
+            <div class="col-sm-12 col-lg-4 order-lg-1 order-0">
+                <div class="limiter mt-lg-5 pt-3">
+                    <div class="wrap-login100">
+                        <div class="title"><h2>Đăng nhập</h2></div>
+                        @using (Html.BeginForm())
+                        {
+                            @Html.ValidationSummary(true)
+                            @Html.AntiForgeryToken()
+                            <div class="input-group">
+                                <span class="mt-3 user-name">Tài khoản</span>
+                                @Html.TextBoxFor(modelItem => modelItem.Username, new { @placeholder = "*Nhập tài khoản" })<br />
+                                @Html.ValidationMessageFor(modelItem => modelItem.Username)
+                            </div>
+                            <div class="input-group">
+                                <span class="mt-3 user-name">Mật khẩu</span>
+                                @Html.PasswordFor(modelItem => modelItem.Password, new { @placeholder = "*Nhập mật khẩu" })<br />
+                                @Html.ValidationMessageFor(modelItem => modelItem.Password)
+                            </div>
+                            <button type="submit" class="login100-form-btn">
+                                Đăng nhập
+                            </button>
+                        }
+                        <hr />
+                        <ul class="ul-contact pt-3">
+                            <li><a href="https://www.facebook.com/Thietkewebsite.vico" target="_blank"><img src="~/Content/admin/login/facebook.svg" /> <span id="fb">Thietkewebsite.vico</span></a></li>
+                            <li><a href="https://vicogroup.vn/lien-he" target="_blank"><img src="~/Content/admin/login/mail.svg" /><span id="mail">vicogroup@vico.vn</span></a></li>
+                            <li><a href="tel: 0984477700"><img src="~/Content/admin/login/call-center-agent.svg" /><span id="phone">0984477700</span></a></li>
+                        </ul>
+                        <div class="text-center contact-us mb-lg-5 mb-3">Liên hệ ngay với chúng tôi !!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery", "~/bundles/jqueryval")
+</body>
+</html>

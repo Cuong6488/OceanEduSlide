@@ -5,13 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
-
 namespace OceanEduSlide.Models
 {
     public class Office
     {
         public int Id { get; set; }
-        [Display(Name = "Tên cơ sở"), Required(ErrorMessage = "Hãy nhập tên cơ sở"), StringLength(100, ErrorMessage = "Tối đa 100 ký tự"), UIHint("TextBox")]
+        [Display(Name = "Tên chi nhánh"), Required(ErrorMessage = "Hãy nhập tên chi nhánh"), StringLength(100, ErrorMessage = "Tối đa 100 ký tự"), UIHint("TextBox")]
         public string Name { get; set; }
         [Display(Name = "Địa chỉ"), Required(ErrorMessage = "Hãy nhập địa chỉ"), UIHint("TextBox")]
         public string Place { get; set; }
@@ -25,6 +24,8 @@ namespace OceanEduSlide.Models
         public int Sort { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
+        public virtual ICollection<User> Users { get; set; }
         public Office()
         {
             Active = true;

@@ -1,0 +1,29 @@
+﻿
+@model IEnumerable<OceanEduSlide.Models.Admin>
+<head>
+    <link href=" https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" rel="stylesheet" />
+</head>
+<div class="box_content">
+    <table class="list_table" id="list-admin">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Username)</th>
+                <th>@Html.DisplayNameFor(model => model.Active)</th>
+                <th></th>
+            </tr>
+            @foreach (var admin in Model)
+            {
+                <tr data-id="@admin.Username">
+                    <td class="left">@admin.Username</td>
+                    <td>@Html.DisplayFor(a => admin.Active)</td>
+                    <td class="list-icon">
+                        @Html.ActionLink("Sửa", "UpdateAdmin", new { id = admin.Id }) - <a href="javascript:;" class="red-warring deleteAdmin" id="@admin.Username">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/Content/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery.toast.js"></script>
+<script src="~/Scripts/scriptAdmin.js"></script>

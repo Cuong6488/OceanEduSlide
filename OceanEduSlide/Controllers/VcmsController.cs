@@ -1,0 +1,422 @@
+﻿using Helpers;
+using PagedList;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+using OceanEduSlide.DAL;
+using OceanEduSlide.Models;
+using OceanEduSlide.ViewModels;
+
+namespace OceanEduSlide.Controllers
+{
+    [Authorize]
+    public class VcmsController : Controller
+    {
+        // GET: Vcms
+        public readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
+
+        #region Admin
+        [AllowAnonymous]
+        public ActionResult Login()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Login(LoginAdminViewModel model, string returnUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                var admin = _unitOfWork.AdminRepository.Get(a => a.Username == model.Username && a.Active).SingleOrDefault();
+                if (admin != null && HtmlHelpers.VerifyHash(model.Password, "SHA256", admin.Password))
+                {
+                    var ticket = new FormsAuthenticationTicket(1, model.Username.ToLower(), DateTime.Now, DateTime.Now.AddDays(30), true,
+                        admin.ToString(), FormsAuthentication.FormsCookiePath);
+                    var encTicket = FormsAuthentication.Encrypt(ticket);
+                    // Create the cookie.
+                    Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
+                    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
+                        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    return RedirectToAction("Index", "Vcms");
+                }
+                ModelState.AddModelError("", @"Tên đăng nhập hoặc mật khẩu không chính xác.");
+            }
+            return View(model);
+        }
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login", "Vcms");
+        }
+        public ActionResult ChangePassword(int result = 0)
+        {
+            ViewBag.Result = result;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ChangePassWord(ChangePassWordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var admin = Admins.FirstOrDefault(z => z.Username.Equals(User.Identity.Name, StringComparison.OrdinalIgnoreCase));
+                if (admin != null)
+                {
+                    if (HtmlHelpers.VerifyHash(model.OldPassword, "SHA256", admin.Password))
+                    {
+                        admin.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                        _unitOfWork.Save();
+                        return RedirectToAction("ChangePassword", new { result = 1 });
+                    }
+                    ModelState.AddModelError("", @"Mật khẩu hiện tại không đúng, vui lòng nhập lại");
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
+            }
+            return View();
+        }
+        public PartialViewResult ListAdmin()
+        {
+            var model = Admins;
+            return PartialView(model);
+        }
+        public ActionResult CreateAdmin(string result = "")
+        {
+            ViewBag.Result = result;
+            var model = new CreateAdminViewModel
+            {
+                Admins = Admins,
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CreateAdmin(CreateAdminViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var exist = Admins.Any(z => z.Username.Equals(model.Username));
+                if (exist)
+                {
+                    ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
+                    return View();
+                }
+                else
+                {
+                    var m = new Admin
+                    {
+                        Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
+                        Username = model.Username,
+                        Active = model.Active,
+                    };
+                    _unitOfWork.AdminRepository.Insert(m);
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateAdmin", new { result = "add" });
+                }
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        public ActionResult UpdateAdmin(int id)
+        {
+            var model = new CreateAdminViewModel
+            {
+                Admins = Admins.Where(z => z.Id == id),
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult UpdateAdmin(CreateAdminViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var admin = Admins.Where(z => z.Username == model.Username).FirstOrDefault();
+                if (admin != null)
+                {
+                    admin.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                    admin.Active = model.Active;
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateAdmin", new { result = "update" });
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        [HttpPost]
+        public JsonResult DeleteAdmin(string username)
+        {
+            if (Admins.Count() > 1)
+            {
+                var admin = Admins.Where(z => z.Username == username).FirstOrDefault();
+                _unitOfWork.AdminRepository.Delete(admin);
+                _unitOfWork.Save();
+                return Json(new { status = true, msg = "Xóa quản trị viên thành công" });
+            }
+            else
+            {
+                return Json(new { status = false, msg = "Phải có ít nhất một quản trị viên" });
+            }
+
+        }
+        #endregion
+
+        public ActionResult Index()
+        {
+            var model = new InfoAdminViewModel
+            {
+                Admins = Admins,
+                //Banners = Banners,
+                //Products = Products,
+                //Articles = Articles,
+                //Contacts = ContactAgencies,
+            };
+            return View(model);
+        }
+
+        public ActionResult ConfigSite(string result = "")
+        {
+            var model = _unitOfWork.ConfigSiteRepository.Get().FirstOrDefault();
+            ViewBag.Result = result;
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult ConfigSite(ConfigSite config)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!_unitOfWork.ConfigSiteRepository.Get().Any())
+                {
+                    _unitOfWork.ConfigSiteRepository.Insert(config);
+                }
+                else
+                {
+                    var model = _unitOfWork.ConfigSiteRepository.GetById(config.Id);
+                    var file = Request.Files["Image"];
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        if (!HtmlHelpers.CheckFileExt(file.FileName, "jpg|jpeg|png|gif"))
+                        {
+                            ModelState.AddModelError("", @"Chỉ chấp nhận định dạng ảnh jpg|jpeg|png|gif");
+                            return View(model);
+                        }
+                        if (file.ContentLength > 1024 * 1024 * 4)
+                        {
+                            ModelState.AddModelError("", @"Chỉ chấp nhận định dạng ảnh dung lượng dưới 4gb");
+                            return View(model);
+                        }
+                        var imgFileName = HtmlHelpers.ConvertToUnSign(null, Path.GetFileNameWithoutExtension(file.FileName)) +
+                        "-" + DateTime.Now.Millisecond + Path.GetExtension(file.FileName);
+                        var imgPath = "/images/configs/" + DateTime.Now.ToString("yyyy/MM/dd");
+                        HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
+                        var imgFile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
+                        var newImage = Image.FromStream(file.InputStream);
+                        var fixSizeImage = HtmlHelpers.FixedSize(newImage, 1000, 1000, false);
+                        HtmlHelpers.SaveJpeg(Server.MapPath(Path.Combine(imgPath, imgFileName)), fixSizeImage, 90);
+                        model.Image = imgFile;
+                    }
+                    var favicon = Request.Files["Favicon"];
+                    if (favicon != null && favicon.ContentLength > 0)
+                    {
+                        if (!HtmlHelpers.CheckFileExt(favicon.FileName, "jpg|jpeg|png|gif"))
+                        {
+                            ModelState.AddModelError("", @"Chỉ chấp nhận định dạng ảnh jpg|jpeg|png|gif");
+                            return View(model);
+                        }
+                        if (favicon.ContentLength > 1024 * 1024 * 4)
+                        {
+                            ModelState.AddModelError("", @"Chỉ chấp nhận định dạng ảnh dung lượng dưới 4gb");
+                            return View(model);
+                        }
+                        var imgFileName = HtmlHelpers.ConvertToUnSign(null, Path.GetFileNameWithoutExtension(favicon.FileName)) +
+                        "-" + DateTime.Now.Millisecond + Path.GetExtension(favicon.FileName);
+                        var imgPath = "/images/configs/" + DateTime.Now.ToString("yyyy/MM/dd");
+                        HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
+                        var imgFile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
+                        var newImage = Image.FromStream(favicon.InputStream);
+                        var fixSizeImage = HtmlHelpers.FixedSize(newImage, 1000, 1000, false);
+                        HtmlHelpers.SaveJpeg(Server.MapPath(Path.Combine(imgPath, imgFileName)), fixSizeImage, 90);
+                        model.Favicon = imgFile;
+                    }
+                    model.Title = config.Title;
+                    model.Slogan = config.Slogan;
+                    model.Description = config.Description;
+                    model.Place = config.Place;
+                    model.Hotline = config.Hotline;
+                    model.Email = config.Email;
+                    model.Facebook = config.Facebook;
+                    model.Instagram = config.Instagram;
+                    model.Youtube = config.Youtube;
+                    model.UrlMessenger = config.UrlMessenger;
+                    model.TikTok = config.TikTok;
+                    model.LiveChat = config.LiveChat;
+                    model.GoogleMap = config.GoogleMap;
+                    model.AboutText = config.AboutText;
+                    model.AboutBody = config.AboutBody;
+                    model.AboutFooter = config.AboutFooter;
+                    model.Customers = config.Customers;
+                    model.Agencies = config.Agencies;
+                    model.Years = config.Years;
+                    _unitOfWork.Save();
+
+                    HttpContext.Application["ConfigSite"] = model;
+                }
+                return RedirectToAction("ConfigSite", new { result = "success" });
+            }
+
+            return HttpNotFound();
+        }
+
+
+        #region Office
+        public ActionResult ListOffice(int? page, string name, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: l => l.OrderByDescending(a => a.Id));
+
+            //if (cityId.HasValue)
+            //{
+            //    offices = offices.Where(l => l.CityId == cityId);
+            //}
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    offices = offices.Where(l => l.Name.Contains(newkey));
+                }
+            }
+            var model = new ListOfficeViewModel
+            {
+                //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
+                Offices = offices.ToPagedList(pageNumber, pageSize),
+                //cityId = cityId,
+                Name = name
+            };
+            return View(model);
+        }
+        public ActionResult Office()
+        {
+            var model = new InsertOfficeViewModel
+            {
+                //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
+                Office = new Office { Active = true }
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult Office(InsertOfficeViewModel model, FormCollection fc)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.OfficeRepository.Insert(model.Office);
+                _unitOfWork.Save();
+                return RedirectToAction("ListOffice", new { result = "success" });
+
+            }
+            //model.SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name");
+            return View(model);
+        }
+        public ActionResult UpdateOffice(int OfficeId = 0)
+        {
+            var Office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+            if (Office == null)
+            {
+                return RedirectToAction("ListOffice");
+            }
+            var model = new InsertOfficeViewModel
+            {
+                Office = Office,
+                //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
+                //DistrictSelectList = DistrictSelectList(Office.CityId)
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult UpdateOffice(InsertOfficeViewModel model)
+        {
+            var Office = _unitOfWork.OfficeRepository.GetById(model.Office.Id);
+            if (Office == null)
+            {
+                return RedirectToAction("ListOffice");
+            }
+            if (ModelState.IsValid)
+            {
+                //Office.CityId = model.Office.CityId;
+                Office.Name = model.Office.Name;
+                //Office.Infor = model.Office.Infor;
+                Office.Active = model.Office.Active;
+                Office.Sort = model.Office.Sort;
+                Office.Email = model.Office.Email;
+                Office.Hotline = model.Office.Hotline;
+                Office.ShortCode = model.Office.ShortCode;
+                Office.Place = model.Office.Place;
+                //Office.DistrictId = model.Office.DistrictId;
+                //Office.GoogleMap = model.Office.GoogleMap;
+                _unitOfWork.Save();
+                return RedirectToAction("ListOffice", new { result = "update" });
+            }
+            //model.SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name");
+            //model.DistrictSelectList = DistrictSelectList(Office.CityId);
+            return View(model);
+        }
+        [HttpPost]
+        public bool DeleteOffice(int OfficeId = 0)
+        {
+            var Office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+            if (Office == null)
+            {
+                return false;
+            }
+            _unitOfWork.OfficeRepository.Delete(Office);
+            _unitOfWork.Save();
+            return true;
+        }
+        [HttpPost]
+        public bool QuickUpdateOffice(int? quantity, bool? status, bool active, int sort = 0, int OfficeId = 0)
+        {
+            var Office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+            if (Office == null)
+            {
+                return false;
+            }
+            if (status != null)
+            {
+                Office.Active = Convert.ToBoolean(status);
+            }
+            if (sort >= 0)
+            {
+                Office.Sort = sort;
+            }
+            Office.Active = active;
+            _unitOfWork.Save();
+            return true;
+        }
+        #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            _unitOfWork.Dispose();
+            base.Dispose(disposing);
+        }
+    }
+}

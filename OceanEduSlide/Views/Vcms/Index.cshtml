@@ -1,0 +1,74 @@
+﻿@model OceanEduSlide.ViewModels.InfoAdminViewModel
+@{
+    ViewBag.Title = "Welcome to website";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="top-title">
+    <div class="media">
+        <p><i class="fal fa-home-lg-alt"></i></p>
+        <div class="media-body">
+            <h5 class="mt-3">Tổng quan</h5>
+        </div>
+    </div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="far fa-business-time me-1"></i> Hòm thư
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="@Url.Action("ListContact","Vcms")"><i class="fal fa-envelope me-1"></i>Hộp thư đến <span>@*@Model.Contacts.Count()*@</span></a>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-md-5 mt-3">
+        <div class="overview-item">
+            <div class="icon"><i class="fal fa-user"></i></div>
+            <a class="stretched-link" href="@Url.Action("CreateAdmin","Vcms")">Quản trị viên</a>
+            <p class="counter">@Model.Admins.Count()</p>
+            <div class="info">
+                <i class="far fa-edit me-1"></i> Có thể thay đổi thông tin website
+            </div>
+        </div>
+    </div>
+    @*<div class="col-sm-12 col-md-6 col-lg-3 mt-md-5 mt-3">
+        <div class="overview-item">
+            <div class="icon icon-article"> <i class="fal fa-newspaper"></i></div>
+            <a class="stretched-link" href="@Url.Action("ListArticle","Article")">Tin tức</a>
+            <p class="counter">@Model.Articles.Count()</p>
+            <div class="info">
+                <i class="far fa-history me-1"></i> Tin tức mới nhất
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-md-5 mt-3">
+        <div class="overview-item">
+            <div class="icon icon-product"><i class="fal fa-box"></i></div>
+            <a class="stretched-link" href="@Url.Action("ListProduct","ProductVcms")">Sản phẩm</a>
+            <p class="counter">@Model.Products.Count()</p>
+            <div class="info">
+                <i class="fal fa-shopping-cart me-1"></i> Cập nhật liên tục
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-md-5 mt-3">
+        <div class="overview-item">
+            <div class="icon icon-order"> <i class="fal fa-comments"></i></div>
+            <a class="stretched-link" href="@Url.Action("ListContact","Contact")">Liên hệ</a>
+            <p class="counter">@Model.Contacts.Count()</p>
+            <div class="info">
+                <i class="far fa-history me-1"></i> Cập nhật mới nhất
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-md-5 mt-3">
+        <div class="overview-item">
+            <div class="icon icon-cart"><i class="fal fa-ad me-1"></i></div>
+            <a class="stretched-link" href="@Url.Action("ListBanner","Banner")">Quảng cáo</a>
+            <p class="counter">@Model.Banners.Count()</p>
+            <div class="info">
+                <i class="far fa-history me-1"></i> Cập nhật liên tục
+            </div>
+        </div>
+    </div>*@
+
+</div>

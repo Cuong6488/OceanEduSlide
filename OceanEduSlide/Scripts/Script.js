@@ -216,7 +216,6 @@ function price() {
                 $(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
             }
 
-            updatePrices(); // Cập nhật đơn giá và thành tiền
         });
 
         //Khi thay đổi lộ trình
