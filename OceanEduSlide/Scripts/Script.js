@@ -60,12 +60,237 @@ $(document).ready(function () {
         window.location.href = url;
     });
 });
-var today = new Date();
-$(".datepicker").datepicker({
-    dateFormat: "dd/mm/yy",
-    yearRange: "1900:2100",
-    minDate: today,
-});
+function price() {
+    var today = new Date();
+    $(".datepicker").datepicker({
+        dateFormat: "dd/mm/yy",
+        yearRange: "1900:2100",
+        minDate: today,
+    });
+
+    $(".input-container-cth select").on("change", function (data) {
+        const id = $(this).val();
+        var items = [];
+        items.push("<option value>Chọn cấp độ học</option>");
+
+        if (id !== "") {
+            if (id === "pre-primary") {
+                items.push('<option value="no-ielts">PRE-KINDY A</option>');
+                items.push('<option value="no-ielts">PRE-KINDY B</option>');
+                items.push('<option value="no-ielts">KINDY1A</option>');
+                items.push('<option value="no-ielts">KINDY1B</option>');
+                items.push('<option value="no-ielts">KINDY2A</option>');
+                items.push('<option value="no-ielts">KINDY2B</option>');
+                items.push('<option value="no-ielts">KINDY3A</option>');
+                items.push('<option value="no-ielts">KINDY3B</option>');
+            }
+            else if (id === "primary") {
+                items.push('<option value="no-ielts">PRE-KIDS A</option>');
+                items.push('<option value="no-ielts">PRE-KIDS B</option>');
+                items.push('<option value="no-ielts">PRE - KINDY B</option>');
+                items.push('<option value="no-ielts">KIDS1A</option>');
+                items.push('<option value="no-ielts">KIDS1B</option>');
+                items.push('<option value="no-ielts">KIDS2A</option>');
+                items.push('<option value="no-ielts">KIDS2B</option>');
+                items.push('<option value="no-ielts">KIDS3A</option>');
+                items.push('<option value="no-ielts">KIDS3B</option>');
+                items.push('<option value="no-ielts">KIDS4A</option>');
+                items.push('<option value="no-ielts">KIDS4B</option>');
+                items.push('<option value="no-ielts">KIDS5A</option>');
+                items.push('<option value="no-ielts">KIDS5B</option>');
+            }
+            else if (id === "high-school") {
+                items.push('<option value="no-ielts">TEENS1A</option>');
+                items.push('<option value="no-ielts">TEENS1B</option>');
+                items.push('<option value="no-ielts">TEENS2A</option>');
+                items.push('<option value="no-ielts">TEENS2B</option>');
+                items.push('<option value="ielts">PRE-IELTS</option>');
+                items.push('<option value="ielts">IELTS 4.0</option>');
+                items.push('<option value="ielts">IELTS 4.5</option>');
+                items.push('<option value="ielts">IELTS 5.0</option>');
+                items.push('<option value="ielts">IELTS 5.5</option>');
+                items.push('<option value="ielts">IELTS 6.0</option>');
+            }
+            else if (id === "ielts") {
+                items.push('<option value="ielts">GN1A</option>');
+                items.push('<option value="ielts">GN1B</option>');
+                items.push('<option value="ielts">GN2A</option>');
+                items.push('<option value="ielts">GN2B</option>');
+                items.push('<option value="ielts">PRE-IELTS</option>');
+                items.push('<option value="ielts">IELTS 4.0</option>');
+                items.push('<option value="ielts">IELTS 4.5</option>');
+                items.push('<option value="ielts">IELTS 5.0</option>');
+                items.push('<option value="ielts">IELTS 5.5</option>');
+                items.push('<option value="ielts">IELTS 6.0</option>');
+                items.push('<option value="ielts">IELTS 6.5</option>');
+                items.push('<option value="ielts">IELTS 7.0</option>');
+                items.push('<option value="ielts">IELTS 7.5</option>');
+                items.push('<option value="ielts">IELTS 8.0</option>');
+                items.push('<option value="ielts">IELTS 8.5</option>');
+            }
+            else if (id === "toeic") {
+                items.push('<option value="no-ielts">GN1A</option>');
+                items.push('<option value="no-ielts">GN1B</option>');
+                items.push('<option value="no-ielts">GN2A</option>');
+                items.push('<option value="no-ielts">GN2B</option>');
+                items.push('<option value="no-ielts">TOEIC 400</option>');
+                items.push('<option value="no-ielts">TOEIC 450</option>');
+                items.push('<option value="no-ielts">TOEIC 500</option>');
+                items.push('<option value="no-ielts">TOEIC 550</option>');
+                items.push('<option value="no-ielts">TOEIC 600</option>');
+                items.push('<option value="no-ielts">TOEIC 650</option>');
+                items.push('<option value="no-ielts">TOEIC 700</option>');
+                items.push('<option value="no-ielts">TOEIC 750</option>');
+                items.push('<option value="no-ielts">TOEIC 800</option>');
+                items.push('<option value="no-ielts">TOEIC 850</option>');
+                items.push('<option value="no-ielts">TOEIC 900</option>');
+                items.push('<option value="no-ielts">TOEIC 950</option>');
+            }
+            $(this).closest(".input-container-cth").siblings(".input-container-level").find("select").html(items.join(""));
+
+        }
+        else {
+            $(this).closest(".input-container-cth").siblings(".input-container-level").find("select").html(items.join(""));
+        }
+    });
+    $(document).ready(function () {
+        // Hàm chuyển đổi từ chuỗi ngày dạng "dd/mm/yy" thành đối tượng Date
+        function parseDate(dateStr) {
+            const parts = dateStr.split("/");
+            return new Date(parts[2], parts[1] - 1, parts[0]); // Năm, Tháng (0-based), Ngày
+        }
+
+        // Hàm chuyển đổi từ đối tượng Date thành chuỗi ngày dạng "dd/mm/yy"
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, "0");
+            const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Hàm tính toán đơn giá
+        function calculateUnitPrice(levelValue) {
+            if (levelValue === "ielts") {
+                return 3989000; // Đơn giá cho cấp độ "ielts"
+            } else if (levelValue === "no-ielts") {
+                return 2989000; // Đơn giá cho cấp độ "no-ielts"
+            } else {
+                return ""; // Đơn giá rỗng nếu không có giá trị
+            }
+        }
+
+        // Hàm tính toán thành tiền
+        function calculateTotalPrice(unitPrice, pathwayMonths) {
+            if (unitPrice && pathwayMonths) {
+                return unitPrice * pathwayMonths; // Thành tiền = đơn giá * số tháng
+            } else {
+                return ""; // Thành tiền rỗng nếu thiếu giá trị
+            }
+        }
+
+        // Hàm cập nhật đơn giá và thành tiền
+        //function updatePrices() {
+        //    const levelValue = $(".input-container-level select").val(); // Cấp độ học
+        //    const pathwayMonths = $(".input-container-pathway select").val(); // Lộ trình
+
+        //    const unitPrice = calculateUnitPrice(levelValue); // Tính đơn giá
+        //    const totalPrice = calculateTotalPrice(unitPrice, pathwayMonths); // Tính thành tiền
+
+        //    // Hiển thị đơn giá
+        //    $(".input-container-unitprice input").val(unitPrice ? `${unitPrice.toLocaleString()}đ` : "");
+
+        //    // Hiển thị thành tiền
+        //    $(".input-container-totalprice input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
+        //}
+
+        // Khi thay đổi thời gian bắt đầu
+        $(".start-date").on("change", function () {
+            const startDateValue = $(this).val();
+            const pathwayMonths = $(".input-container-pathway select").val();
+
+            if (startDateValue && pathwayMonths) {
+                const startDate = parseDate(startDateValue);
+                startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+                $(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+            } else {
+                $(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
+            }
+
+            updatePrices(); // Cập nhật đơn giá và thành tiền
+        });
+
+        //Khi thay đổi lộ trình
+        $(".input-container-pathway select").on("change", function () {
+            const pathwayMonths = $(this).val();
+            const startDateValue = $(".start-date").val();
+
+            if (startDateValue && pathwayMonths) {
+                const startDate = parseDate(startDateValue);
+                startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+                $(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+            } else {
+                $(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
+            }
+
+            const levelValue2 = $(this).closest(".input-container-pathway").siblings(".input-container-level").find("select").val(); // Cấp độ học
+
+            const pathwayMonths2 = $(this).val(); // Lộ trình
+
+            const unitPrice2 = calculateUnitPrice(levelValue2); // Tính đơn giá
+            const totalPrice2 = calculateTotalPrice(unitPrice2, pathwayMonths2); // Tính thành tiền
+            // Hiển thị đơn giá
+            //$(this).closest(".input-container-pathway").siblings(".input-container-unitprice").find("input").val(unitPrice2 ? `${unitPrice2.toLocaleString()}đ` : "");
+            //Hiển thị thành tiền
+            $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
+        });
+
+        //Khi thay đổi cấp độ học
+        $(".input-container-level select").on("change", function () {
+            const levelValue = $(this).val(); // Cấp độ học
+            const pathwayMonths = $(this).closest(".input-container-level").siblings(".input-container-pathway").find("select").val(); // Lộ trình
+
+            const unitPrice = calculateUnitPrice(levelValue); // Tính đơn giá
+            const totalPrice = calculateTotalPrice(unitPrice, pathwayMonths); // Tính thành tiền
+            // Hiển thị đơn giá
+            $(this).closest(".input-container-level").siblings(".input-container-unitprice").find("input").val(unitPrice ? `${unitPrice.toLocaleString()}đ` : "");
+            //Hiển thị thành tiền
+            $(this).closest(".input-container-level").siblings(".input-container-totalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
+        });
+    });
+
+}
+function ExportPdf() {
+    //const margin = 10;
+
+    //// Tạo đối tượng options với cấu hình lề và các tùy chọn khác
+    //const options = {
+    //    margin: margin,
+    //    filename: 'output.pdf',
+    //    html2canvas: { scale: 1 },
+    //    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    //};
+
+    //// Lấy phần tử HTML để chuyển đổi thành PDF
+    //const element = document.getElementById('source-html');
+
+    //// Tạo và lưu tệp PDF với các tùy chọn đã thiết lập
+    //html2pdf().from(element).set(options).save();
+
+    const element = document.getElementById('source-html');
+    const options = {
+        margin: 0,
+        filename: 'phieudangky.pdf',
+        html2canvas: {
+            scale: 3,
+            useCORS: true // Hỗ trợ tải tệp CSS
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+
+    // Đảm bảo CSS được áp dụng trước khi xuất
+    html2pdf().from(element).set(options).save();
+}
+
 function pathway() {
     var pathway = "";
     $(document).ready(function () {
