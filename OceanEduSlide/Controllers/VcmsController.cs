@@ -361,7 +361,7 @@ namespace OceanEduSlide.Controllers
                     model.AboutBody = config.AboutBody;
                     model.AboutFooter = config.AboutFooter;
                     model.Customers = config.Customers;
-                    model.Agencies = config.Agencies;
+                    //model.Agencies = config.Agencies;
                     model.Years = config.Years;
                     _unitOfWork.Save();
 
