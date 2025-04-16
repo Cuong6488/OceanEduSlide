@@ -1,7 +1,9 @@
 ﻿using OceanEduSlide.DAL;
+using OceanEduSlide.Migrations;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+//using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,7 +19,7 @@ namespace OceanEduSlide
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine());
 
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataEntities, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataEntities, Configuration>());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
