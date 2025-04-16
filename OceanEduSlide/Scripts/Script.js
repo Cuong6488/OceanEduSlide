@@ -188,21 +188,6 @@ function price() {
             }
         }
 
-        // Hàm cập nhật đơn giá và thành tiền
-        //function updatePrices() {
-        //    const levelValue = $(".input-container-level select").val(); // Cấp độ học
-        //    const pathwayMonths = $(".input-container-pathway select").val(); // Lộ trình
-
-        //    const unitPrice = calculateUnitPrice(levelValue); // Tính đơn giá
-        //    const totalPrice = calculateTotalPrice(unitPrice, pathwayMonths); // Tính thành tiền
-
-        //    // Hiển thị đơn giá
-        //    $(".input-container-unitprice input").val(unitPrice ? `${unitPrice.toLocaleString()}đ` : "");
-
-        //    // Hiển thị thành tiền
-        //    $(".input-container-totalprice input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
-        //}
-
         // Khi thay đổi thời gian bắt đầu
         $(".start-date").on("change", function () {
             const startDateValue = $(this).val();
@@ -237,8 +222,6 @@ function price() {
 
             const unitPrice2 = calculateUnitPrice(levelValue2); // Tính đơn giá
             const totalPrice2 = calculateTotalPrice(unitPrice2, pathwayMonths2); // Tính thành tiền
-            // Hiển thị đơn giá
-            //$(this).closest(".input-container-pathway").siblings(".input-container-unitprice").find("input").val(unitPrice2 ? `${unitPrice2.toLocaleString()}đ` : "");
             //Hiển thị thành tiền
             $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
         });
@@ -254,6 +237,71 @@ function price() {
             $(this).closest(".input-container-level").siblings(".input-container-unitprice").find("input").val(unitPrice ? `${unitPrice.toLocaleString()}đ` : "");
             //Hiển thị thành tiền
             $(this).closest(".input-container-level").siblings(".input-container-totalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
+        });
+        $(".input-container-qdsale select").on("change", function () {
+            var thisElement = $(this);
+            var idDiscount = $(this).val();
+            var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
+            $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney } , function (data) {
+                if (data.status) {
+                    thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
+                    thisElement.closest(".price-advice-box").find(".input-container-giftprice").find("input").val(data.gift);
+                    thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val(data.finalMoney.toLocaleString() + 'đ');
+
+                }
+            });
+        });
+        $(".input-container-prepay input").on("change", function () {
+            //var thisElement = $(this);
+            var prepay = $(this).val().replace(/\./g, "").replace(/đ/g, "").trim();
+            var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/đ/g, "").trim();
+            var remainpay = finalMoney - prepay;
+            $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val(remainpay.toLocaleString()+'đ');
+            
+        });
+        $(".input-container-term select").on("change", function () {
+            //var thisElement = $(this);
+            var term = $(this).val();
+            var remainpay = $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val().replace(/\./g, "").replace(/đ/g, "").trim();
+            var paypermonth = Math.round(remainpay / term);
+
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+
+        });
+        $(".price-advice-box-title").on("click", function () {
+            //var thisElement = $(this);
+            var cth = $(this).closest(".price-advice-box").find(".input-container-cth").find("select option:selected").text();
+            var level = $(this).closest(".price-advice-box").find(".input-container-level").find("select option:selected").text();
+            var pathway = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select option:selected").text();
+            var paymethod = $(this).closest(".price-advice-box").find(".input-container-paymethod").find("select option:selected").text();
+            var term = $(this).closest(".price-advice-box").find(".input-container-term").find("select option:selected").text();
+            var qdsale = $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select option:selected").text();
+            var paychanel = $(this).closest(".price-advice-box").find(".input-container-paychanel").find("select option:selected").text();
+            var startdate = $(this).closest(".price-advice-box").find(".start-date").val();
+            var enddate = $(this).closest(".price-advice-box").find(".end-date").val();
+            var unitprice = $(this).closest(".price-advice-box").find(".input-container-unitprice").find("input").val();
+            var totalprice = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
+            var moneyprice = $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val();
+            var giftprice = $(this).closest(".price-advice-box").find(".input-container-giftprice").find("input").val();
+            var finalprice = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val();
+            var prepay = $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val();
+            var postpaid = $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val();
+            var pricepermonth = $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val();
+            var note = $(this).closest(".price-advice-box").find("textarea").val();
+            $(".price-advice").fadeOut(300, function () {
+                $(".price-overview").fadeIn(300);
+            });
+            $(".input-cth").val($(".input-cth").val() + cth);
+            $(".input-level").val($(".input-level").val() + level);
+            $(".input-pathway").val($(".input-pathway").val() + pathway);
+            $(".input-chanel").val($(".input-chanel").val() + paychanel);
+            $(".input-paymethod").val($(".input-paymethod").val() + paymethod);
+            $(".input-totalprice").val($(".input-totalprice").val() + finalprice);
+            $(".input-moneyprice").val($(".input-moneyprice").val() + moneyprice);
+            $(".input-giftprice").val($(".input-giftprice").val() + giftprice);
+            $(".input-pricepermonth").val($(".input-pricepermonth").val() + pricepermonth);
+            $(".input-note").val($(".input-note").val() + note);
+            //$(".input-cth").val(cth);
         });
     });
 

@@ -12,22 +12,23 @@ namespace OceanEduSlide.Filters
             if (cookie == null)
             {
                 var returnUrl = filterContext.HttpContext.Request.Url?.AbsolutePath;
-                //filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary
-                // {{ "action", "Login" },
-                // { "controller", "Home" },
-                // { "returnUrl", returnUrl }
-                // });
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary
-                    {{"action", "Login"}, {"controller", "Home"}});
+                 {{ "action", "Login" },
+                 { "controller", "Home" },
+                 { "returnUrl", returnUrl }
+                 });
+                //filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary
+                //    {{"action", "Login"}, {"controller", "Home"}});
             }
             else
             {
                 var ticketInfo = FormsAuthentication.Decrypt(cookie.Value);
                 var data = ticketInfo.UserData;
-                filterContext.RouteData.Values["Id"] = data;
                 //filterContext.RouteData.Values["Fullname"] = data.Split('|')[0];
-                //filterContext.RouteData.Values["Username"] = ticketInfo?.Name;
+                filterContext.RouteData.Values["Username"] = ticketInfo?.Name;
                 //filterContext.RouteData.Values["MemberAvatar"] = data.Split('|')[2];
+
+                filterContext.RouteData.Values["OfficeId"] = data.Split('|')[1];
             }
             base.OnActionExecuting(filterContext);
         }

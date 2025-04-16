@@ -1,4 +1,4 @@
-﻿
+﻿@model OceanEduSlide.ViewModels.UserLoginModel
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_LayoutAccount.cshtml";
@@ -6,8 +6,8 @@
 <div class="first-login">
     <div class="logo-slogan">
         <div>
-            <img src="~/Content/images/logo.png" alt="Ocean Edu" data-aos="fade-down" data-aos-delay="0"/>
-            <div class="slogan"data-aos="fade-up" data-aos-delay="400">
+            <img src="~/Content/images/logo.png" alt="Ocean Edu" data-aos="fade-down" data-aos-delay="0" />
+            <div class="slogan" data-aos="fade-up" data-aos-delay="400">
                 HỆ THỐNG ANH NGỮ QUỐC TẾ
             </div>
         </div>
@@ -21,24 +21,31 @@
 <div class="second-login hidden">
     <div class="login-form">
         <div>
-            <img class="title-img" src="~/Content/images/login-title.png"/>
-            <form action="@Url.Action("Login")" method="post">
+            <img class="title-img" src="~/Content/images/login-title.png" />
+
+            @using (Html.BeginForm())
+            {
+                @Html.ValidationSummary(true)
+                @Html.AntiForgeryToken()
                 <div class="input-container">
                     <span>Id:</span>
-                    <input type="text" name="Id" value="" required/>
+                    @Html.TextBoxFor(model => model.Username, new { @class = "form-control", @placeholder = "Email hoặc số điện thoại" })
+                    @Html.ValidationMessageFor(model => model.Username)
                 </div>
                 <div class="input-container">
                     <span>Pass:</span>
-                    <input type="password" name="Password" value="" required/>
+                    @Html.PasswordFor(model => model.Password, new { @class = "form-control", @placeholder = "Mật khẩu" })
+                    @Html.ValidationMessageFor(model => model.Password)
                 </div>
+
                 <button class="btn-login" type="submit">
                     <img src="~/Content/images/login-btn-bg.png" />
                 </button>
-            </form>
+            }
         </div>
     </div>
     <div class="login-footer">
-        
+
     </div>
     <div class="logo-anchor">
         <img src="~/Content/images/logo.png" />
