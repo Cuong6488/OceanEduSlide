@@ -62,50 +62,32 @@
                         </div>
                     </li>
                     <li data-id="2">
-                        <a class="root"><i class="far fa-file-check icon"></i><span>Quản lý Bài viết</span><i class="fas fa-caret-down"></i></a>
+                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Tài khoản chi nhánh</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
-                            <div>@Html.ActionLink("Danh mục bài viết", "ArticleCategory", "Article", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Thêm mới bài viết", "Article", "Article", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách bài viết", "ListArticle", "Article", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Thêm mới user", "CreateUser", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách user", "ListUser", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
-                    <li data-id="3">
-                        <a class="root"><i class="fal fa-box icon"></i><span>Quản lý Sản phẩm</span><i class="fas fa-caret-down"></i></a>
+                    <li data-id="2">
+                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Quyết định ưu đãi</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
-                            <div>@Html.ActionLink("Danh mục sản phẩm", "ProductCategory", "ProductVcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Thêm mới sản phẩm", "Product", "ProductVcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách sản phẩm", "ListProduct", "ProductVcms", null, new { @class = "text_link" })</div>
-                            @*<div>@Html.ActionLink("Thêm mới lựa chọn", "Option", "ProductVcms", null, new { @class = "text_link" })</div>*@
+                            <div>@Html.ActionLink("Thêm mới QĐ ưu đãi", "CreateDiscount", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Danh sách QĐ ưu đãi", "ListDiscount", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
-                    <li data-id="4">
-                        <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Quảng cáo</span><i class="fas fa-caret-down"></i></a>
-                        <div class="sub hidden">
-                            <div>@Html.ActionLink("Thêm mới quảng cáo", "Banner", "Banner", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách quảng cáo", "ListBanner", "Banner", null, new { @class = "text_link" })</div>
-                        </div>
-                    </li>
-                    <li data-id="5">
-                        <a class="root"><i class="far fa-address-book icon"></i><span>Danh sách Liên hệ</span><i class="fas fa-caret-down"></i></a>
-                        <div class="sub hidden">
-                            <div>@Html.ActionLink("Đăng ký chi nhánh", "ListContactAgency", "Vcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Tham quan Showroom", "ListContactShowroom", "Vcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Liên hệ mua hàng", "ListOrder", "Vcms", null, new { @class = "text_link" })</div>
-                        </div>
-                    </li>
+                    @*<li data-id="4">
+            <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Quảng cáo</span><i class="fas fa-caret-down"></i></a>
+            <div class="sub hidden">
+                <div>@Html.ActionLink("Thêm mới quảng cáo", "Banner", "Banner", null, new { @class = "text_link" })</div>
+                <div>@Html.ActionLink("Danh sách quảng cáo", "ListBanner", "Banner", null, new { @class = "text_link" })</div>
+            </div>
+        </li>*@
                     <li data-id="6">
                         <a class="root"><i class="fas fa-city icon"></i><span>Quản lý Địa danh</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
-                            <div>@Html.ActionLink("Quản lý địa danh", "City", "Vcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách chi nhánh", "ListAgency", "Vcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách trạm bảo hành", "ListWarrantyStation", "Vcms", null, new { @class = "text_link" })</div>
-                        </div>
-                    </li>
-                    <li data-id="7">
-                        <a class="root"><i class="fa-solid fa-video icon"></i><span>Quản lý Video</span><i class="fas fa-caret-down"></i></a>
-                        <div class="sub hidden">
-                            <div>@Html.ActionLink("Thêm mới video", "Video", "Video", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Danh sách video", "ListVideo", "Video", null, new { @class = "text_link" })</div>
+                            @*<div>@Html.ActionLink("Quản lý địa danh", "City", "Vcms", null, new { @class = "text_link" })</div>*@
+                            <div>@Html.ActionLink("Danh sách chi nhánh", "ListOffice", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Thêm mới chi nhánh", "Office", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                 </ul>

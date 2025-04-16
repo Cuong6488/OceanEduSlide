@@ -147,6 +147,14 @@
     <Compile Include="Migrations\202504151335093_first.Designer.cs">
       <DependentUpon>202504151335093_first.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202504160409227_a.cs" />
+    <Compile Include="Migrations\202504160409227_a.Designer.cs">
+      <DependentUpon>202504160409227_a.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504160439133_dc.cs" />
+    <Compile Include="Migrations\202504160439133_dc.Designer.cs">
+      <DependentUpon>202504160439133_dc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1259,6 +1267,27 @@
     <Content Include="Views\Vcms\UpdateAdmin.cshtml" />
     <Content Include="Views\Vcms\UpdateOffice.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
+    <Content Include="Views\Vcms\CreateUser.cshtml" />
+    <Content Include="Views\Vcms\ListUser.cshtml" />
+    <Content Include="Views\Vcms\CreateDiscount.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DisplayOrderStatus.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Enum.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\GroupId.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\GroupVideoId.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ImageArticle.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ImageArticleCat.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ImageBrand.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ImagePerson.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ImageProductCat.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Payment.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTimePicker.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditorBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\MoneyBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\NumberBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Password.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\TextArea.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\TextBox.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\UploadMultiFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1357,6 +1386,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202504151335093_first.resx">
       <DependentUpon>202504151335093_first.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504160409227_a.resx">
+      <DependentUpon>202504160409227_a.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504160439133_dc.resx">
+      <DependentUpon>202504160439133_dc.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

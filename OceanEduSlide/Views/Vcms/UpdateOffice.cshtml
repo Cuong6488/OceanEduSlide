@@ -11,7 +11,7 @@
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Office.Id)
     <table class="form_table">
-        <tr>
+        @*<tr>
             <td class="form_name">@Html.LabelFor(model => model.Office.CityId)</td>
             <td class="form_text">
                 @Html.DropDownListFor(model => model.Office.CityId, Model.SelectCities, "Chọn tỉnh thành", new { @class = "mt-2", data_item = "city" })
@@ -22,18 +22,26 @@
             <td class="form_text">
                 @Html.DropDownListFor(model => model.Office.DistrictId, Model.DistrictSelectList, "Quận huyện", new { @class = "mt-2", data_item = "district" })
             </td>
-        </tr>
+        </tr>*@
         <tr>
             <td class="form_name">@Html.LabelFor(model => model.Office.Name)</td>
             <td class="form_text">@Html.EditorFor(model => model.Office.Name)</td>
         </tr>
         <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Infor)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Infor)</td>
+            <td class="form_name">@Html.LabelFor(model => model.Office.ShortCode)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.ShortCode)</td>
         </tr>
         <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.GoogleMap)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.GoogleMap)</td>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Place)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Place)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Hotline)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Hotline)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Office.Email)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Office.Email)</td>
         </tr>
         <tr>
             <td class="form_name">@Html.LabelFor(model => model.Office.Active)</td>

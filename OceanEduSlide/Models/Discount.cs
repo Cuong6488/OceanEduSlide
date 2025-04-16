@@ -10,18 +10,18 @@ namespace OceanEduSlide.Models
     public class Discount
     {
         public int Id { get; set; }
-        [Display(Name = "Tên QĐ ưu đãi"), Required(ErrorMessage = "Hãy điền tên đăng nhập"), RegularExpression(@"[a-z0-9]{4,10}", ErrorMessage = "Chỉ nhập chữ thường và số 0-9, từ 4-10 ký tự"), UIHint("TextBox")]
+        [Display(Name = "Tên QĐ ưu đãi"), Required(ErrorMessage = "Hãy điền tên QĐ"), UIHint("TextBox")]
         public string Username { get; set; }
-        [Display(Name="Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự"), UIHint("Password")]
-        public string Password { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
         public int OfficeId { get; set; }
-        [Display(Name = "% ưu đãi")]
+        [Display(Name = "% ưu đãi"),RegularExpression(@"^(?!0(\.0+)?$)\d+(\.\d+)?$", ErrorMessage = "Nhập số dương"), UIHint("NumberBox")]
         public decimal? PercentDiscount { get; set; }
-        [Display(Name = "Ưu đãi tiền mặt")]
+        [Display(Name = "Ưu đãi tiền mặt"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public int? MoneyDiscount { get; set; }
+        [Display(Name = "Lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy chọn lộ trình")]
+        public int Pathway { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]
         public string Gift { get; set; }
         public virtual Office Office { get; set; }

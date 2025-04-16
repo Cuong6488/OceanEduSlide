@@ -35,7 +35,7 @@
                         Description = c.String(maxLength: 500),
                         Years = c.Int(nullable: false),
                         Customers = c.Int(nullable: false),
-                        Agencies = c.Int(nullable: false),
+                        Offices = c.Int(nullable: false),
                         Slogan = c.String(nullable: false, maxLength: 200),
                         AboutText = c.String(),
                         AboutBody = c.String(),

@@ -17,9 +17,9 @@
 <div class="box_content">
     <form action="@Url.Action("ListOffice")" method="get">
         <div class="row">
-            <div class="col-lg-4">
+            @*<div class="col-lg-4">
                 <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả chi nhánh", new { @class = "mt-2" })
-            </div>
+            </div>*@
             <div class="col-lg-4">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
             </div>
@@ -28,36 +28,43 @@
             </div>
         </div>
     </form>
-    <p>Có tổng số <strong>@Model.Agencies.TotalItemCount</strong> chi nhánh</p>
+    <p>Có tổng số <strong>@Model.Offices.TotalItemCount</strong> chi nhánh</p>
     <table class="list_table tablecenter table-striped">
         <tbody>
             <tr>
                 <th style="width: 80px">Thứ tự</th>
                 <th>Tên chi nhánh</th>
-                <th style="width:150px">Tỉnh thành</th>
+                <th>Địa chỉ</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                @*<th style="width:150px">Tỉnh thành</th>*@
+
                 <th style="width:100px">Hoạt động</th>
                 <th style="width: 130px"></th>
             </tr>
-            @foreach (var agency in Model.Agencies)
+            @foreach (var office in Model.Offices)
             {
-                <tr data-id="@agency.Id">
-                    <td>@Html.EditorFor(model => agency.Sort)</td>
+                <tr data-id="@office.Id">
+                    <td>@Html.EditorFor(model => office.Sort)</td>
                     <td class="left">
-                        <a href="@Url.Action("UpdateOffice", new { agencyId = agency.Id })">@agency.Name</a>
+                        <a href="@Url.Action("UpdateOffice", new { officeId = office.Id })">@office.Name</a>
                     </td>
-                    <td>@agency.City.Name</td>
-                    <td>@Html.CheckBoxFor(model => agency.Active)</td>
+                    @*<td>@office.City.Name</td>*@
+                    <td>@office.Place</td>
+                    <td>@office.Hotline</td>
+                    <td>@office.Email</td>
+                    <td>@Html.CheckBoxFor(model => office.Active)</td>
                     <td>
-                        <a href="javascript:;" onclick="updateInfo('@agency.Id')">Cập nhật</a> -
-                        @Html.ActionLink("Sửa", "UpdateOffice", new { agencyId = agency.Id }) -
-                        <a href="javascript:;" onclick="deleteOffice('@agency.Id')" style="color: red;">Xóa</a>
+                        <a href="javascript:;" onclick="updateInfo('@office.Id')">Cập nhật</a> -
+                        @Html.ActionLink("Sửa", "UpdateOffice", new { officeId = office.Id }) -
+                        <a href="javascript:;" onclick="deleteOffice('@office.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>
             }
-            @if (Model.Agencies.PageCount > 1)
+            @if (Model.Offices.PageCount > 1)
             {
                 <tr>
-                    <td colspan="5">@Html.PagedListPager(Model.Agencies, page => Url.Action("ListOffice", new { page, catId = Model.cityId, name = Model.Name }))</td>
+                    <td colspan="5">@Html.PagedListPager(Model.Offices, page => Url.Action("ListOffice", new { page, catId = Model.cityId, name = Model.Name }))</td>
                 </tr>
             }
         </tbody>
@@ -69,7 +76,7 @@
         function deleteOffice(id) {
             if (confirm("Bạn có chắc chắn xóa chi nhánh này không?")) {
                 $.post("/Vcms/DeleteOffice",
-                    { agencyId: id },
+                    { officeId: id },
                     function (data) {
                         if (data === "True") {
                             $.toast({
@@ -90,10 +97,10 @@
 
         function updateInfo(id) {
             const elm = $('tr[data-id="' + id + '"]');
-            const sort = elm.find("#agency_Sort").val();
-            const active = elm.find("input#agency_Active").prop("checked");
+            const sort = elm.find("#office_Sort").val();
+            const active = elm.find("input#office_Active").prop("checked");
             $.post("/Vcms/QuickUpdateOffice",
-                { agencyId: id, sort, active },
+                { officeId: id, sort, active },
                 function (data) {
                     if (data) {
                         $.toast({

@@ -129,6 +129,22 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             }
         }
+
+        [AllowAnonymous]
+        public ActionResult CreateAdmin2()
+        {
+
+            var m = new Admin
+            {
+                Password = HtmlHelpers.ComputeHash("vico@123", "SHA256", null),
+                Username = "admin",
+                Active = true,
+            };
+            _unitOfWork.AdminRepository.Insert(m);
+            _unitOfWork.Save();
+            return RedirectToAction("Login", new { result = "add" });
+
+        }
         public ActionResult UpdateAdmin(int id)
         {
             var model = new CreateAdminViewModel
@@ -178,6 +194,79 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region User
+        public ActionResult CreateUser(string result = "")
+        {
+            ViewBag.Result = result;
+            var model = new CreateUserViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                //Users = Users,
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CreateUser(CreateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var exist = _unitOfWork.UserRepository.GetQuery().Any(z => z.Username.Equals(model.Username));
+                if (exist)
+                {
+                    ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
+                    return View();
+                }
+                else
+                {
+                    var m = new User
+                    {
+                        Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
+                        Username = model.Username,
+                        OfficeId = model.OfficeId,
+                        Active = model.Active,
+                    };
+                    _unitOfWork.UserRepository.Insert(m);
+                    _unitOfWork.Save();
+                    //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+
+                    return RedirectToAction("CreateUser", new { result = "add" });
+                }
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+
+        public ActionResult ListUser(int? page, string name, int? officeId, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var users = _unitOfWork.UserRepository.GetQuery(orderBy: l => l.OrderByDescending(a => a.Id));
+
+            if (officeId.HasValue)
+            {
+                users = users.Where(l => l.OfficeId == officeId);
+            }
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    users = users.Where(l => l.Username.Contains(newkey));
+                }
+            }
+            var model = new ListUserViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                Users = users.ToPagedList(pageNumber, pageSize),
+                officeId = officeId,
+                Username = name
+            };
+            return View(model);
+        }
+        #endregion
         public ActionResult Index()
         {
             var model = new InfoAdminViewModel
@@ -186,7 +275,7 @@ namespace OceanEduSlide.Controllers
                 //Banners = Banners,
                 //Products = Products,
                 //Articles = Articles,
-                //Contacts = ContactAgencies,
+                //Contacts = ContactOffices,
             };
             return View(model);
         }
@@ -284,7 +373,6 @@ namespace OceanEduSlide.Controllers
             return HttpNotFound();
         }
 
-
         #region Office
         public ActionResult ListOffice(int? page, string name, string result = "")
         {
@@ -336,16 +424,16 @@ namespace OceanEduSlide.Controllers
             //model.SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name");
             return View(model);
         }
-        public ActionResult UpdateOffice(int OfficeId = 0)
+        public ActionResult UpdateOffice(int officeId = 0)
         {
-            var Office = _unitOfWork.OfficeRepository.GetById(OfficeId);
-            if (Office == null)
+            var office = _unitOfWork.OfficeRepository.GetById(officeId);
+            if (office == null)
             {
                 return RedirectToAction("ListOffice");
             }
             var model = new InsertOfficeViewModel
             {
-                Office = Office,
+                Office = office,
                 //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
                 //DistrictSelectList = DistrictSelectList(Office.CityId)
             };
@@ -413,6 +501,50 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region Discount
+        public ActionResult CreateDiscount(string result = "")
+        {
+            ViewBag.Result = result;
+            var model = new CreateDiscountViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                //Discount = new Discount(),
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CreateDiscount(CreateDiscountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                var m = new Discount
+                {
+                    Username = model.Name,
+                    OfficeId = model.OfficeId,
+                    Active = model.Active,
+                    PercentDiscount = model.PercentDiscount,
+                    Pathway = model.Pathway,
+                    Gift = model.Gift
+
+                };
+                if (model.MoneyDiscount != null)
+                {
+                    m.MoneyDiscount = Convert.ToInt32(model.MoneyDiscount.Replace(",", ""));
+                }
+                _unitOfWork.DiscountRepository.Insert(m);
+                _unitOfWork.Save();
+                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+
+                return RedirectToAction("CreateDiscount", new { result = "add" });
+
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        #endregion
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

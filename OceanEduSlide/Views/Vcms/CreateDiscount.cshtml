@@ -1,0 +1,83 @@
+﻿@model OceanEduSlide.ViewModels.CreateDiscountViewModel
+@{
+    ViewBag.Title = "CreateDiscount";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới QĐ thành công</strong></div>}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật QĐ thành công</strong></div>}
+<h2 class="mb-5 mt-0">Thêm mới QĐ ưu đãi</h2>
+<a class="btn quick-link" href="@Url.Action("CreateDiscount","Vcms")"><i class="far fa-list me-1"></i> Danh sách QĐ ưu đãi</a>
+<div class="box_content px-300 mb-5">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tbody>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Name)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Name, new { @class = "form_control w300" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.OfficeId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Chọn chi nhánh")
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Pathway)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Pathway, Model.SelectPathway, "Chọn lộ trình", new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.Pathway)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.PercentDiscount)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.PercentDiscount, new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.PercentDiscount)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.MoneyDiscount)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.MoneyDiscount, new { htmlAttributes = new { @class = "input-number" } })
+                        @Html.ValidationMessageFor(model => model.MoneyDiscount)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Gift)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Gift)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                    <td class="form_text">
+                        @Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><input class="btn quick-link w-auto" type="submit" value="Thêm mới QĐ"></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}
