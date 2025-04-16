@@ -97,7 +97,7 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public JsonResult CalcMoney(int id, string totalMoney)
         {
-            int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace("đ", ""));
+            int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace(",", "").Replace("đ", ""));
             var discount = _unitOfWork.DiscountRepository.GetById(id);
             int moneyDiscount = 0;
             if (discount != null)

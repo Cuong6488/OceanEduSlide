@@ -69,6 +69,15 @@ function price() {
     });
 
     $(".input-container-cth select").on("change", function (data) {
+        $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").prop("selectedIndex", 0);
+        $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-giftprice").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-paymethod").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
         const id = $(this).val();
         var items = [];
         items.push("<option value>Chọn cấp độ học</option>");
@@ -205,6 +214,15 @@ function price() {
 
         //Khi thay đổi lộ trình
         $(".input-container-pathway select").on("change", function () {
+            $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").prop("selectedIndex", 0);
+            $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-giftprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-paymethod").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             const pathwayMonths = $(this).val();
             const startDateValue = $(".start-date").val();
 
@@ -228,6 +246,15 @@ function price() {
 
         //Khi thay đổi cấp độ học
         $(".input-container-level select").on("change", function () {
+            $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").prop("selectedIndex", 0);
+            $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-giftprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-paymethod").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             const levelValue = $(this).val(); // Cấp độ học
             const pathwayMonths = $(this).closest(".input-container-level").siblings(".input-container-pathway").find("select").val(); // Lộ trình
 
@@ -253,8 +280,8 @@ function price() {
         });
         $(".input-container-prepay input").on("change", function () {
             //var thisElement = $(this);
-            var prepay = $(this).val().replace(/\./g, "").replace(/đ/g, "").trim();
-            var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/đ/g, "").trim();
+            var prepay = $(this).val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+            var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
             var remainpay = finalMoney - prepay;
             $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val(remainpay.toLocaleString()+'đ');
             
@@ -262,7 +289,7 @@ function price() {
         $(".input-container-term select").on("change", function () {
             //var thisElement = $(this);
             var term = $(this).val();
-            var remainpay = $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val().replace(/\./g, "").replace(/đ/g, "").trim();
+            var remainpay = $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
             var paypermonth = Math.round(remainpay / term);
 
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
@@ -304,7 +331,12 @@ function price() {
             //$(".input-cth").val(cth);
         });
     });
+    $(".price-overview .btn-back-square").on("click", function () {
+        $(".price-overview").fadeOut(300, function () {
+            $(".price-advice").fadeIn(300);
+        });
 
+    });
 }
 function ExportPdf() {
     //const margin = 10;

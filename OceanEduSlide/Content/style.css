@@ -1847,8 +1847,6 @@ body {
   background-image: url("images/pathway-discovery-bg.png");
 }
 .price-advice .btn-back-square, .price-overview .btn-back-square {
-  left: unset;
-  right: 25px;
   bottom: 25px;
   height: 60px;
 }
@@ -1860,6 +1858,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.price-advice .btn-back-square {
+  right: 25px;
+  left: unset;
 }
 .price-advice-box {
   width: 30%;
@@ -1986,76 +1988,11 @@ body {
   background: #FCC672;
 }
 
-.price-overview {
-  /* input {
-       background: transparent;border: none;outline: none;width: 100%;
-   }*/
-  /*&-title {
-      width: 45%;
-      display: flex;
-      align-items: center;
-      transform: translateY(-5px);
-  }*/
+.price-overview .btn-back-square {
+  left: 25px;
 }
 .price-overview-ticket {
-  /*       position: relative;width: 90%;background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0.9));padding: 0 50px 70px 50px;
-  */
   clip-path: polygon(0 -3px, calc(100% - 36px) -3px, 100% 36px, 100% 100%, 0 100%);
-}
-.price-overview-header {
-  /*display: flex;justify-content: space-between;*/
-  /*
-          img {
-              width: 100%;
-          }*/
-  /*.logo-anchor {
-      position: unset;width: 120px;height: 120px;transform: translateY(-3px);
-
-      img {
-          width: 90px;
-      }
-  }*/
-}
-.price-overview-headinfor {
-  /*width: calc((100% - 120px) *4/10);*/
-  /* width: 35%;
-   min-width: 400px;
-   margin-top: 10px;
-
-   & * {
-       font-weight: 300;
-       font-size: 0.875rem;
-       line-height: 1.2;
-   }*/
-  /*
-          & > :first-child {
-              font-weight: bold;
-              font-size: 1.25rem;
-              font-family: montserrat;
-              margin-bottom: .375rem;
-          }*/
-}
-.price-overview-body {
-  /* background: linear-gradient(to bottom, white 40%, rgba(255, 255, 255, 0.9), transparent);
-   padding-top: 30px;
-   border-radius: 0 30px 0 0;*/
-  /*.group-input {*/
-  /* display: flex;
-   border-bottom: 1px solid $main-color;*/
-  /*input {
-          padding: 3px 10px;
-          font-weight: 350;
-          font-size: 1.25rem;
-      }
-
-      & > :nth-child(2) {
-          width: 35%;
-      }
-
-      & > :first-child {
-          flex: 1;
-      }
-  }*/
 }
 .price-overview-slogan {
   position: absolute;
