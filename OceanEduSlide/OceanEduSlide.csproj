@@ -229,7 +229,6 @@
     <Content Include="Content\images\btn-setting-green.png" />
     <Content Include="Content\images\btn-setting.png" />
     <Content Include="Content\images\btn-user.png" />
-    <Content Include="Content\images\Capture222.PNG" />
     <Content Include="Content\images\challenge-book-content.png" />
     <Content Include="Content\images\challenge-book-text.png" />
     <Content Include="Content\images\challenge-book1.png" />
@@ -302,6 +301,7 @@
     <Content Include="Content\images\logo-index.png" />
     <Content Include="Content\images\Logo-white.png" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\lethanhdat.png" />
     <Content Include="Content\images\overview-bg1.png" />
     <Content Include="Content\images\overview-bg2.png" />
     <Content Include="Content\images\overview-title.png" />

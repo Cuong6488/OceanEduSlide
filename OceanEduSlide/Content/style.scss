@@ -7,6 +7,10 @@ $gray-color: #eee;
 $orange: #ED690F;
 $blue: #2D3AE2;
 
+@font-face {
+    font-family: 'utm avo';
+    src: url('../webfonts/utm avo.ttf') format('truetype');
+}
 
 @font-face {
     font-family: 'josefinsans';
@@ -276,7 +280,7 @@ body {
     z-index: 1;
     background-position: center;
     background-size: contain;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
 }
 
 .slick-prev {
@@ -2796,9 +2800,75 @@ body {
     }
 
     .container {
-        width: 90%;
+        max-width: 90% !important;
     }
 
     .face-slick {
+    }
+
+    .fade-slide {
+        background-image: url('images/pathway-discovery-bg.png');
+    }
+
+    .face-item {
+        font-family: 'utm avo';
+        text-transform: uppercase;
+
+        .img-container {
+            padding: 1rem;
+            border-radius: 10px 10px 15px 15px;
+            transform: translateY(5px);
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
+            padding-bottom: 0;
+
+            img {
+                width: 100%;
+                aspect-ratio: 3/4;
+                object-fit: cover;
+                background-image: url('images/face-img-bg.png');
+                background-position: center;
+                background-size: 100% 100%;
+                transform: translateY(-24px);
+            }
+        }
+
+        .face-name {
+            background: linear-gradient(to right,$blue,$main-color);
+            text-align: center;
+            font-size: 26px;
+            color: white;
+            padding: .5rem;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+
+            &::after {
+                position: absolute;
+                content: '';
+                height: 2px;
+                width: 60%;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                background-image: url('images/face-name-after.png');
+                @include custom-background();
+            }
+        }
+
+        .face-office {
+            text-align: center;
+            padding: 8px;
+            color:$secondmain-color;
+        }
+
+        .face-achie {
+            text-align: center;
+            width: 70%;
+            padding: 5px;
+            background-image: url('images/face-achie.png');
+            @include custom-background();
+            margin: auto;
+            color:$red;
+            font-size:26px;
+        }
     }
 }
