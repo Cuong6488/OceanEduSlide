@@ -283,7 +283,8 @@ function price() {
             var prepay = $(this).val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
             var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
             var remainpay = finalMoney - prepay;
-            $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val(remainpay.toLocaleString()+'đ');
+            $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val(remainpay.toLocaleString() + 'đ');
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             
         });
         $(".input-container-term select").on("change", function () {
@@ -335,7 +336,16 @@ function price() {
         $(".price-overview").fadeOut(300, function () {
             $(".price-advice").fadeIn(300);
         });
-
+        $(".input-cth").val("Chương trình học: ");
+        $(".input-level").val("Cấp độ học: ");
+        $(".input-pathway").val("Lộ trình học: ");
+        $(".input-chanel").val("Kênh trả góp: ");
+        $(".input-paymethod").val("Hình thức thanh toán: ");
+        $(".input-totalprice").val("Học phí: ");
+        $(".input-moneyprice").val("Số tiền ưu đãi: ");
+        $(".input-giftprice").val("Quà tặng: ");
+        $(".input-pricepermonth").val("Học phí/ tháng: ");
+        $(".input-note").val("Ghi chú: ");
     });
 }
 function ExportPdf() {
@@ -539,31 +549,75 @@ function pathway() {
                 $(".book-discovery").fadeIn(300);
             });
         }
+        if (pathway === "challenge") {
+            $(".pathway-index > .slide:not(.challenge-book1-content)").fadeOut(300, function () {
+                $(".challenge-book1-content").css("display", "flex");
+            });
+        }
     });
+   
     $(".discovery-book-book1 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book1-content)").fadeOut(300, function () {
+            $(".discovery-book1-content").fadeIn(300);
             $(".discovery-book1-content").css("display", "flex");
-            //$(".discovery-book1-content").fadeIn(300);
             $(".menu-btn").fadeOut(300);
         });
     });
     $(".discovery-book-book2 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book2-content)").fadeOut(300, function () {
+            $(".discovery-book2-content").fadeIn(300);
             $(".discovery-book2-content").css("display", "flex");
-            //$(".discovery-book1-content").fadeIn(300);
             $(".menu-btn").fadeOut(300);
         });
     });
     $(".starandfriend-text").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book3-content)").fadeOut(300, function () {
+            $(".discovery-book3-content").fadeIn(300);
             $(".discovery-book3-content").css("display", "flex");
-            //$(".discovery-book1-content").fadeIn(300);
             $(".menu-btn").fadeOut(300);
         });
     });
-    $(".discovery-book-content .btn-back-square").on("click", function () {
+    $(".book1-challenge-text").on("click", function () {
+        $(".pathway-index > .slide:not(.challenge-book2-content)").fadeOut(300, function () {
+            $(".challenge-book2-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".book2-challenge-text").on("click", function () {
+        $(".pathway-index > .slide:not(.challenge-book3-content)").fadeOut(300, function () {
+            $(".challenge-book3-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".pathway-book-content .btn-back-square").on("click", function () {
         $(".btn-book").trigger("click");
         $(".menu-btn").fadeIn(300);
+    });
+    $(".btn-class").on("click", function () {
+        if (pathway === "discovery") {
+            //$(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
+            //    $(".book-discovery").fadeIn(300);
+            //});
+        }
+        if (pathway === "challenge") {
+            $(".pathway-index > .slide:not(.teaching-method-challenge)").fadeOut(300, function () {
+                $(".teaching-method-challenge").fadeIn(300);
+                $(".teaching-method-challenge").css("display", "flex");
+            });
+        }
+    });
+    $(".teaching-method-name").on("click", function () {
+        if (pathway === "discovery") {
+            //$(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
+            //    $(".book-discovery").fadeIn(300);
+            //});
+        }
+        if (pathway === "challenge") {
+            $(this).siblings(".teaching-method-content").addClass("active");
+            
+        }
     });
 }
 

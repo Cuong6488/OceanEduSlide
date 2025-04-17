@@ -229,6 +229,10 @@
     <Content Include="Content\images\btn-setting-green.png" />
     <Content Include="Content\images\btn-setting.png" />
     <Content Include="Content\images\btn-user.png" />
+    <Content Include="Content\images\challenge-book-content.png" />
+    <Content Include="Content\images\challenge-book-text.png" />
+    <Content Include="Content\images\challenge-book1.png" />
+    <Content Include="Content\images\challenge-book2.png" />
     <Content Include="Content\images\challenge-pathway-flyers-img.png" />
     <Content Include="Content\images\challenge-pathway-flyers.png" />
     <Content Include="Content\images\challenge-pathway-kids-1a.png" />
@@ -329,6 +333,11 @@
     <Content Include="Content\images\S-south-location.png" />
     <Content Include="Content\images\slide-back.png" />
     <Content Include="Content\images\slide-next.png" />
+    <Content Include="Content\images\teaching-method-challenge-content1.png" />
+    <Content Include="Content\images\teaching-method-challenge-content2.png" />
+    <Content Include="Content\images\teaching-method-challenge-name1.png" />
+    <Content Include="Content\images\teaching-method-challenge-name2.png" />
+    <Content Include="Content\images\teaching-method-challenge-title.png" />
     <Content Include="Content\images\text-1000000.png" />
     <Content Include="Content\images\text-3000.png" />
     <Content Include="Content\images\text-90.png" />

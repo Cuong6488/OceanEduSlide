@@ -1816,28 +1816,37 @@ body {
   cursor: pointer;
 }
 
-.discovery-book-content {
+.pathway-book-content {
   background-image: url("images/pathway-discovery-bg.png");
 }
-.discovery-book-content .book-content {
+.pathway-book-content .book-content {
   height: 75vh;
   max-width: 85%;
   object-fit: contain;
 }
-.discovery-book-content .starandfriend-text {
-  height: 10vh;
+.pathway-book-content .book-content-challenge {
+  width: 80%;
+  height: unset;
+  display: block;
+  margin: auto;
+}
+.pathway-book-content .starandfriend-text, .pathway-book-content .book-text {
+  /*height: 10vh;*/
+  width: 50%;
+  margin: auto;
   margin-top: 10px;
 }
-.discovery-book-content .starandfriend-text img {
-  height: 100%;
+.pathway-book-content .starandfriend-text img, .pathway-book-content .book-text img {
+  /*height: 100%;*/
+  width: 100%;
 }
-.discovery-book-content .sixbook {
+.pathway-book-content .sixbook {
   height: 80vh;
   display: block;
   margin: auto;
 }
 @media (max-aspect-ratio: 2.3) {
-  .discovery-book-content .sixbook {
+  .pathway-book-content .sixbook {
     height: unset;
     max-width: 70%;
   }
@@ -2009,4 +2018,34 @@ body {
 }
 .price-overview #btn-export img {
   width: 45px;
+}
+
+.teaching-method {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.teaching-method img {
+  display: block;
+  margin: auto;
+}
+.teaching-method-title {
+  width: 25%;
+  margin-bottom: 20px !important;
+}
+.teaching-method-box {
+  width: 40%;
+}
+.teaching-method-box.teaching-method-challenge1 {
+  margin-right: 40px;
+}
+.teaching-method-name {
+  width: 70%;
+  margin-bottom: 20px !important;
+}
+.teaching-method-content {
+  width: 100%;
+  opacity: 0;
+  /*visibility:hidden;*/
+}
+.teaching-method-content.active {
+  opacity: 1;
 }

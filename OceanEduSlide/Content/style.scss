@@ -2237,22 +2237,32 @@ body {
     }
 }
 
-.discovery-book-content {
+.pathway-book-content {
     background-image: url('images/pathway-discovery-bg.png');
 
     .book-content {
         height: 75vh;
         max-width: 85%;
         object-fit: contain;
+
+        &-challenge {
+            width: 80%;
+            height: unset;
+            display: block;
+            margin: auto;
+        }
     }
 
 
-    .starandfriend-text {
-        height: 10vh;
+    .starandfriend-text, .book-text {
+        /*height: 10vh;*/
+        width: 50%;
+        margin: auto;
         margin-top: 10px;
 
         img {
-            height: 100%;
+            /*height: 100%;*/
+            width: 100%;
         }
     }
 
@@ -2471,6 +2481,40 @@ body {
 
         img {
             width: 45px;
+        }
+    }
+}
+.teaching-method {
+background-image: url('images/pathway-discovery-bg.png');
+    img {
+        display: block;
+        margin: auto;
+    }
+
+    &-title {
+        width: 25%;
+        margin-bottom: 20px !important;
+    }
+
+    &-box {
+        width: 40%;
+
+        &.teaching-method-challenge1 {
+            margin-right: 40px;
+        }
+    }
+
+    &-name {
+        width: 70%;
+        margin-bottom: 20px !important;
+    }
+
+    &-content {
+        width: 100%;
+        opacity: 0;
+        /*visibility:hidden;*/
+        &.active {
+            opacity: 1;
         }
     }
 }
