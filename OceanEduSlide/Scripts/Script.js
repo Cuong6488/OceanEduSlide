@@ -389,18 +389,17 @@ function face() {
                 infinite: true,
                 speed: 1000,
                 slidesToShow: 5,
-                slidesToScroll: 1,
+                slidesToScroll: 5,
                 autoplaySpeed: 2000,
                 arrows: true,
                 nextArrow: '<button type="button" class="slick-next"></button>',
                 prevArrow: '<button type="button" class="slick-prev"></button>',
                 responsive: [
                     {
-                        breakpoint: 1200,
+                        breakpoint: 1400,
                         settings: {
                             slidesToShow: 4,
-                            slidesToScroll: 1,
-                            centerMode: false,
+                            slidesToScroll: 4,
                         }
                     }
                 ]

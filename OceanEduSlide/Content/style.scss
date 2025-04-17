@@ -2804,6 +2804,7 @@ body {
     }
 
     .face-slick {
+        /*transform:translateY(50px);*/
     }
 
     .fade-slide {
@@ -2813,7 +2814,7 @@ body {
     .face-item {
         font-family: 'utm avo';
         text-transform: uppercase;
-
+        /*transform:translateY(50px);*/
         .img-container {
             padding: 1rem;
             border-radius: 10px 10px 15px 15px;
@@ -2840,6 +2841,7 @@ body {
             padding: .5rem;
             position: relative;
             box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+            clip-path: polygon( 0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0 );
 
             &::after {
                 position: absolute;
@@ -2857,7 +2859,7 @@ body {
         .face-office {
             text-align: center;
             padding: 8px;
-            color:$secondmain-color;
+            color: $secondmain-color;
         }
 
         .face-achie {
@@ -2867,8 +2869,8 @@ body {
             background-image: url('images/face-achie.png');
             @include custom-background();
             margin: auto;
-            color:$red;
-            font-size:26px;
+            color: $red;
+            font-size: 26px;
         }
     }
 }

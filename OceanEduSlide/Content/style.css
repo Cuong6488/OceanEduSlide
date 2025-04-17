@@ -2260,12 +2260,16 @@ body {
 .face .container {
   max-width: 90% !important;
 }
+.face .face-slick {
+  /*transform:translateY(50px);*/
+}
 .face .fade-slide {
   background-image: url("images/pathway-discovery-bg.png");
 }
 .face .face-item {
   font-family: "utm avo";
   text-transform: uppercase;
+  /*transform:translateY(50px);*/
 }
 .face .face-item .img-container {
   padding: 1rem;
@@ -2291,6 +2295,7 @@ body {
   padding: 0.5rem;
   position: relative;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  clip-path: polygon(0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0);
 }
 .face .face-item .face-name::after {
   position: absolute;
