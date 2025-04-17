@@ -1,0 +1,64 @@
+﻿<div class="face">
+    <div class="face-index slide page-100vh">
+        <a class="logo-anchor pathway-home-btn" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btns-text">
+            @*<p>CHƯƠNG TRÌNH HỌC</p>*@
+            <div class="btn-file">
+                <a href="javascript:;"><img src="~/Content/images/file-download.png" /></a>
+            </div>
+            <div class="btn-tick-all">
+                <a href="javascript:;">
+                    <img src="~/Content/images/tick-all.png" />
+                </a>
+            </div>
+        </div>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <img class="face-index-module face-ielts" src="~/Content/images/face-ielts.png" />
+            <img class="face-index-module face-cambridge" src="~/Content/images/face-cambridge.png" />
+            <img class="face-index-module face-oe" src="~/Content/images/face-oe.png" />
+            <img class="face-index-module face-student" src="~/Content/images/face-student.png" />
+            <img class="face-index-module face-rate" src="~/Content/images/face-rate.png" />
+        </div>
+    </div>
+    <div class="face-ielts-slide slide hidden">
+        <a class="logo-anchor pathway-home-btn" href="javascript:;">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btn-back-square">
+            <img src="~/Content/images/btn-back-square.png" />
+        </div>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="face-slick">
+                    @for (int i = 1; i < 10; i++)
+                    {
+                        <div class="face-item">
+                            <div class="img-bg">
+                                <div class="img-container">
+                                    <img src="~/Content/images/Capture222.PNG" />
+                                </div>
+                            </div>
+                            <div class="face-name">
+                                Lê Thành Đạt
+                            </div>
+                            <div class="face-office">
+
+                            </div>
+                            <div class="face-achie">
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script>
+        face();
+    </script>
+}

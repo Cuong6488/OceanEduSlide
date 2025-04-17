@@ -117,6 +117,10 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        public ActionResult Face()
+        {
+            return View();
+        }
 
         public ActionResult Contact()
         {

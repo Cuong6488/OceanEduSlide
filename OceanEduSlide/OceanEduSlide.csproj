@@ -229,6 +229,7 @@
     <Content Include="Content\images\btn-setting-green.png" />
     <Content Include="Content\images\btn-setting.png" />
     <Content Include="Content\images\btn-user.png" />
+    <Content Include="Content\images\Capture222.PNG" />
     <Content Include="Content\images\challenge-book-content.png" />
     <Content Include="Content\images\challenge-book-text.png" />
     <Content Include="Content\images\challenge-book1.png" />
@@ -261,11 +262,23 @@
     <Content Include="Content\images\discovery-book-starandfriend-content.png" />
     <Content Include="Content\images\discovery-book-starandfriend-text.png" />
     <Content Include="Content\images\discovery-book-starandfriends.png" />
+    <Content Include="Content\images\discovery-overview-another1.png" />
+    <Content Include="Content\images\discovery-overview-another2.png" />
+    <Content Include="Content\images\discovery-overview-another3.png" />
+    <Content Include="Content\images\discovery-overview-another4.png" />
     <Content Include="Content\images\discovery-text-star1.png" />
     <Content Include="Content\images\discovery-text-star2.png" />
     <Content Include="Content\images\discovery-text-star3.png" />
     <Content Include="Content\images\discovery-text-star4.png" />
     <Content Include="Content\images\discovery-text-star5.png" />
+    <Content Include="Content\images\face-achie.png" />
+    <Content Include="Content\images\face-cambridge.png" />
+    <Content Include="Content\images\face-ielts.png" />
+    <Content Include="Content\images\face-img-bg.png" />
+    <Content Include="Content\images\face-name-after.png" />
+    <Content Include="Content\images\face-oe.png" />
+    <Content Include="Content\images\face-rate.png" />
+    <Content Include="Content\images\face-student.png" />
     <Content Include="Content\images\file-download.png" />
     <Content Include="Content\images\focus-pathway-1a.png" />
     <Content Include="Content\images\focus-pathway-1b.png" />
@@ -331,6 +344,8 @@
     <Content Include="Content\images\S-S.png" />
     <Content Include="Content\images\S-Side-Location.png" />
     <Content Include="Content\images\S-south-location.png" />
+    <Content Include="Content\images\slick-next.png" />
+    <Content Include="Content\images\slick-prev.png" />
     <Content Include="Content\images\slide-back.png" />
     <Content Include="Content\images\slide-next.png" />
     <Content Include="Content\images\teaching-method-challenge-content1.png" />
@@ -1303,6 +1318,7 @@
     <Content Include="Views\Shared\EditorTemplates\TextArea.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TextBox.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\UploadMultiFile.cshtml" />
+    <Content Include="Views\Home\Face.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

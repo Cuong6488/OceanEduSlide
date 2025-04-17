@@ -269,7 +269,7 @@ function price() {
             var thisElement = $(this);
             var idDiscount = $(this).val();
             var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
-            $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney } , function (data) {
+            $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney }, function (data) {
                 if (data.status) {
                     thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
                     thisElement.closest(".price-advice-box").find(".input-container-giftprice").find("input").val(data.gift);
@@ -285,7 +285,7 @@ function price() {
             var remainpay = finalMoney - prepay;
             $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val(remainpay.toLocaleString() + 'đ');
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
-            
+
         });
         $(".input-container-term select").on("change", function () {
             //var thisElement = $(this);
@@ -379,8 +379,43 @@ function ExportPdf() {
     // Đảm bảo CSS được áp dụng trước khi xuất
     html2pdf().from(element).set(options).save();
 }
-
+function face() {
+    $(".face-ielts").on("click", function () {
+        $(".face-index").fadeOut(300, function () {
+            $(".face-ielts-slide").fadeIn(300);
+            $('.face-slick').slick({
+                autoplay: true,
+                dots: false,
+                infinite: true,
+                speed: 1000,
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                autoplaySpeed: 2000,
+                arrows: true,
+                nextArrow: '<button type="button" class="slick-next"></button>',
+                prevArrow: '<button type="button" class="slick-prev"></button>',
+                responsive: [
+                    {
+                        breakpoint: 1200,
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 1,
+                            centerMode: false,
+                        }
+                    }
+                ]
+            });
+        });
+    });
+}
 function pathway() {
+    $(".logo-anchor.pathway-home-btn").on("click", function () {
+        $(".pathway-index").fadeOut(300, function () {
+            $(".pathway-mid").fadeIn(300);
+            $(".logo-about").fadeIn(100);
+            $(".logo-anchor.pathway-home-btn").fadeIn(300);
+        });
+    });
     var pathway = "";
     $(document).ready(function () {
         let isDragging = false;
@@ -488,15 +523,37 @@ function pathway() {
             });
         }
     });
+    var slidenumber = 1;
     $(".overview-discovery .btn-back").on("click", function () {
-        $(".overview2-discovery").fadeOut(300, function () {
-            $(".overview1-discovery").fadeIn(300);
-        });
+        if (slidenumber === 2) {
+            $(".overview2-discovery").fadeOut(300, function () {
+                $(".overview1-discovery").fadeIn(300);
+            });
+            slidenumber = 1;
+        }
+        else if (slidenumber === 3) {
+            $(".overview3-discovery").fadeOut(300, function () {
+                $(".overview2-discovery").fadeIn(300);
+                $(".overview-discovery-title").fadeIn(0);
+            });
+            slidenumber = 2;
+        }
+
     });
     $(".overview-discovery .btn-next").on("click", function () {
-        $(".overview1-discovery").fadeOut(300, function () {
-            $(".overview2-discovery").fadeIn(300);
-        });
+        if (slidenumber === 1) {
+            $(".overview1-discovery").fadeOut(300, function () {
+                $(".overview2-discovery").fadeIn(300);
+            });
+            slidenumber = 2;
+        }
+        else if (slidenumber === 2) {
+            $(".overview2-discovery").fadeOut(300, function () {
+                $(".overview3-discovery").fadeIn(300);
+                $(".overview-discovery-title").fadeOut(0);
+            });
+            slidenumber = 3;
+        }
     });
     $(".eight-smart").on("click", function () {
         $(".pathway-index > .slide:not(.eight-smart-discovery)").fadeOut(300, function () {
@@ -555,24 +612,24 @@ function pathway() {
             });
         }
     });
-   
+
     $(".discovery-book-book1 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book1-content)").fadeOut(300, function () {
-            $(".discovery-book1-content").fadeIn(300);
+            //$(".discovery-book1-content").fadeIn(300);
             $(".discovery-book1-content").css("display", "flex");
             $(".menu-btn").fadeOut(300);
         });
     });
     $(".discovery-book-book2 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book2-content)").fadeOut(300, function () {
-            $(".discovery-book2-content").fadeIn(300);
+            //$(".discovery-book2-content").fadeIn(300);
             $(".discovery-book2-content").css("display", "flex");
             $(".menu-btn").fadeOut(300);
         });
     });
     $(".starandfriend-text").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book3-content)").fadeOut(300, function () {
-            $(".discovery-book3-content").fadeIn(300);
+            //$(".discovery-book3-content").fadeIn(300);
             $(".discovery-book3-content").css("display", "flex");
             $(".menu-btn").fadeOut(300);
         });
@@ -616,7 +673,7 @@ function pathway() {
         }
         if (pathway === "challenge") {
             $(this).siblings(".teaching-method-content").addClass("active");
-            
+
         }
     });
 }

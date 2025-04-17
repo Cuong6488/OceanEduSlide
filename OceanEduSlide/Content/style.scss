@@ -269,41 +269,24 @@ body {
 .slick-arrow {
     position: absolute;
     top: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     transform: translateY(-50%);
-    width: 30px;
+    width: 40px;
     aspect-ratio: 1;
     border: none;
-    background-color: $main-color;
     z-index: 1;
-    border-radius: 50%;
-
-    i {
-        color: white;
-        font-size: 18px;
-    }
+    background-position: center;
+    background-size: contain;
+    background-repeat:no-repeat;
 }
 
 .slick-prev {
-    left: -10px;
-
-    @media (min-width:576px) {
-        left: -15px;
-    }
-
-    box-shadow: -3px 3px 5px rgba(0,0,0,0.5);
+    left: -50px;
+    background-image: url('images/slick-prev.png');
 }
 
 .slick-next {
-    right: -10px;
-
-    @media (min-width:576px) {
-        right: -15px;
-    }
-
-    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+    right: -50px;
+    background-image: url('images/slick-next.png');
 }
 
 .slick-slide {
@@ -542,6 +525,30 @@ body {
     img {
         width: 140px;
     }
+
+    @media(max-width:1600px) {
+        width: 160px;
+
+        img {
+            width: 120px;
+        }
+    }
+
+    @media(max-width:1400px) {
+        width: 140px;
+
+        img {
+            width: 110px;
+        }
+    }
+
+    @media(max-width:1200px) {
+        width: 120px;
+
+        img {
+            width: 90px;
+        }
+    }
 }
 
 .header {
@@ -705,7 +712,7 @@ body {
             width: 40%;
         }
 
-        @media(max-width:1500px) {
+        @media(max-width:1500px) and (min-aspect-ratio:1.59) {
             width: 35%;
         }
 
@@ -781,7 +788,7 @@ body {
         }
 
         &-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-family: josefinsans;
             font-weight: bold;
         }
@@ -814,7 +821,7 @@ body {
         }
 
         .offices-number {
-            font-size: 2.75rem;
+            font-size: 2.25rem;
             font-weight: 300;
             transform: translateX(-100px);
             transition: transform .5s;
@@ -905,7 +912,7 @@ body {
         }
     }
 
-    @media(min-height:750px) {
+    @media(min-height:750px) and (min-aspect-ratio: 1.59) {
 
         .map-container {
             height: 650px;
@@ -967,7 +974,7 @@ body {
         }
     }
 
-    @media(min-height:800px) {
+    @media(min-height:800px) and (min-aspect-ratio: 1.59) {
 
         .map-container {
             height: 700px;
@@ -1031,7 +1038,7 @@ body {
         }
     }
 
-    @media(min-height:900px) {
+    @media(min-height:900px) and (min-aspect-ratio: 1.59) {
 
         .map-container {
             height: 800px;
@@ -1087,7 +1094,7 @@ body {
         }
     }
 
-    @media(min-height:1000px) {
+    @media(min-height:1000px) and (min-aspect-ratio: 1.59) {
 
         .map-container {
             height: 900px;
@@ -1140,6 +1147,201 @@ body {
             }
         }
     }
+
+
+    @media(min-height:750px) and (max-aspect-ratio: 1.59) {
+
+        .map-container {
+            height: 530px;
+
+            .btn-north {
+                top: 20px;
+                right: 210px;
+            }
+
+            .btn-mid {
+                top: 160px;
+                right: 180px;
+            }
+
+            .btn-south {
+                bottom: 90px;
+                right: 155px;
+            }
+
+            .locations-north {
+                right: 165px;
+
+                img {
+                    width: 150px;
+                }
+            }
+
+            .locations-mid {
+                top: 130px;
+                right: 100px;
+
+                img {
+                    width: 150px;
+                }
+            }
+
+            .locations-south {
+                bottom: 80px;
+                right: 155px;
+
+                img {
+                    width: 25px;
+                }
+            }
+        }
+
+        .map-content {
+            height: 420px;
+            padding: 0 1rem;
+
+            .offices-number {
+                font-size: 2rem;
+
+                span {
+                    font-size: 3rem;
+                }
+            }
+
+
+            .office-list-title {
+                font-size: 1.5rem;
+            }
+
+            .row {
+                width: 600px !important;
+            }
+
+            .col-4 {
+                font-size: 1.125rem;
+            }
+        }
+    }
+
+    @media(min-height:800px) and (max-aspect-ratio: 1.59) {
+
+        .map-container {
+            height: 700px;
+
+            .btn-north {
+                top: 50px;
+                right: 280px;
+            }
+
+            .btn-mid {
+                top: 230px;
+                right: 245px;
+            }
+
+            .btn-south {
+                bottom: 120px;
+                right: 210px;
+            }
+
+            .locations-north {
+                top: 0;
+                right: 220px;
+
+                img {
+                    width: 190px;
+                }
+            }
+
+            .locations-mid {
+                top: 170px;
+                right: 139px;
+
+                img {
+                    width: 190px;
+                }
+            }
+
+            .locations-south {
+                bottom: 110px;
+                right: 205px;
+
+                img {
+                    width: 30px;
+                }
+            }
+        }
+
+        .map-content {
+            height: 550px;
+            padding: 0 1rem;
+
+            .content-slogan {
+                font-size: 5rem;
+
+                span {
+                    margin-left: 2.5rem;
+                    font-size: 2.75rem;
+                    transform: translateY(-1.5rem);
+                }
+            }
+        }
+    }
+
+    @media(min-height:950px) and (max-aspect-ratio: 1.59) {
+
+        .map-container {
+            height: 800px;
+
+
+            .btn-north {
+                top: 60px;
+                right: 325px;
+            }
+
+            .btn-mid {
+                top: 275px;
+                right: 280px;
+            }
+
+            .btn-south {
+                bottom: 130px;
+                right: 245px;
+            }
+
+            .locations-north {
+                top: 0;
+                right: 250px;
+
+                img {
+                    width: 220px;
+                }
+            }
+
+            .locations-mid {
+                top: 200px;
+                right: 160px;
+
+                img {
+                    width: 220px;
+                }
+            }
+
+            .locations-south {
+                bottom: 120px;
+                right: 235px;
+
+                img {
+                    width: 35px;
+                }
+            }
+        }
+
+        .map-content {
+            .col-4 {
+                font-size: 1.5rem;
+            }
+        }
+    }
 }
 
 .office-list {
@@ -1154,7 +1356,7 @@ body {
 
     .office-list-title {
         font-weight: bold;
-        font-size: 2rem;
+        font-size: 1.5rem;
         margin-top: 1rem;
 
         img {
@@ -1353,6 +1555,31 @@ body {
                 }
             }
 
+            .overview3-discovery {
+                &-container {
+                    & > :first-child {
+                        position: relative;
+
+                        img {
+                            height: 5.5vw;
+                            width: auto;
+                        }
+                    }
+                }
+
+                &-text {
+                    position: absolute;
+                    top: -20px;
+                    left: 50%;
+                    transform: translate(-50%,-100%);
+                    width: 65%;
+                    font-weight: 600;
+                    color: white;
+                    font-size: 32px;
+                    text-shadow: 2px 2px 1px $blue;
+                }
+            }
+
             @media(max-width:1900px) {
                 .overview1-discovery {
                     font-size: 32px;
@@ -1392,6 +1619,12 @@ body {
                         }
                     }
                 }
+
+                .overview3-discovery {
+                    &-text {
+                        font-size: 28px;
+                    }
+                }
             }
 
             @media(max-width:1500px) {
@@ -1409,6 +1642,12 @@ body {
                             font-size: 16px;
                             padding: 5.5vh;
                         }
+                    }
+                }
+
+                .overview3-discovery {
+                    &-text {
+                        font-size: 24px;
                     }
                 }
             }
@@ -1429,6 +1668,12 @@ body {
                         }
                     }
                 }
+
+                .overview3-discovery {
+                    &-text {
+                        font-size: 22px;
+                    }
+                }
             }
 
             @media(max-width:1250px) {
@@ -1446,6 +1691,12 @@ body {
                             font-size: 13px;
                             padding: 4.5vh;
                         }
+                    }
+                }
+
+                .overview3-discovery {
+                    &-text {
+                        font-size: 20px;
                     }
                 }
             }
@@ -2484,8 +2735,10 @@ body {
         }
     }
 }
+
 .teaching-method {
-background-image: url('images/pathway-discovery-bg.png');
+    background-image: url('images/pathway-discovery-bg.png');
+
     img {
         display: block;
         margin: auto;
@@ -2516,5 +2769,36 @@ background-image: url('images/pathway-discovery-bg.png');
         &.active {
             opacity: 1;
         }
+    }
+}
+
+.face {
+    background-image: url('images/about-bg.png');
+    background-size: cover;
+    background-position: center;
+
+    .face-index {
+        &-module {
+            width: 17%;
+        }
+    }
+
+    .btn-back-square {
+        bottom: unset;
+        left: unset;
+        top: 25px;
+        right: 25px;
+        height: 60px;
+
+        img {
+            height: 60px !important;
+        }
+    }
+
+    .container {
+        width: 90%;
+    }
+
+    .face-slick {
     }
 }
