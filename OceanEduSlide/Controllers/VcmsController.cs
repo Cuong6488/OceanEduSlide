@@ -133,15 +133,18 @@ namespace OceanEduSlide.Controllers
         [AllowAnonymous]
         public ActionResult CreateAdmin2()
         {
-
-            var m = new Admin
+            if (!Admins.Any(a => a.Username == "admin"))
             {
-                Password = HtmlHelpers.ComputeHash("vico@123", "SHA256", null),
-                Username = "admin",
-                Active = true,
-            };
-            _unitOfWork.AdminRepository.Insert(m);
-            _unitOfWork.Save();
+                var m = new Admin
+                {
+                    Password = HtmlHelpers.ComputeHash("vico@123", "SHA256", null),
+                    Username = "admin",
+                    Active = true,
+                };
+                _unitOfWork.AdminRepository.Insert(m);
+                _unitOfWork.Save();
+            }
+
             return RedirectToAction("Login", new { result = "add" });
 
         }
@@ -517,7 +520,7 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 var m = new Discount
                 {
                     Username = model.Name,
