@@ -18,8 +18,7 @@ namespace OceanEduSlide.Controllers
     [Authorize]
     public class VcmsController : Controller
     {
-        // GET: Vcms
-        public readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
 
         #region Admin
@@ -270,6 +269,7 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         #endregion
+
         public ActionResult Index()
         {
             var model = new InfoAdminViewModel
@@ -548,6 +548,7 @@ namespace OceanEduSlide.Controllers
             }
         }
         #endregion
+
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

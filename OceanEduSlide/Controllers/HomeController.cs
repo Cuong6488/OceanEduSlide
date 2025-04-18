@@ -4,7 +4,6 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -15,7 +14,7 @@ namespace OceanEduSlide.Controllers
     [MemberFilter]
     public class HomeController : Controller
     {
-        public readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private string Username => RouteData.Values["Username"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         public ActionResult Index()
