@@ -2246,6 +2246,7 @@ body {
 }
 .face .face-index-module {
   width: 17%;
+  cursor: pointer;
 }
 .face .btn-back-square {
   bottom: unset;
@@ -2263,41 +2264,40 @@ body {
 .face .face-slick {
   /*transform:translateY(50px);*/
 }
-.face .fade-slide {
-  background-image: url("images/pathway-discovery-bg.png");
-}
-.face .face-item {
+.face .face-slick .face-item {
   font-family: "utm avo";
-  text-transform: uppercase;
   /*transform:translateY(50px);*/
 }
-.face .face-item .img-container {
+.face .face-slick .face-item .img-container {
   padding: 1rem;
   border-radius: 10px 10px 15px 15px;
   transform: translateY(5px);
   background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
   padding-bottom: 0;
 }
-.face .face-item .img-container img {
+.face .face-slick .face-item .img-container img {
   width: 100%;
   aspect-ratio: 3/4;
   object-fit: cover;
+  object-position: bottom;
   background-image: url("images/face-img-bg.png");
   background-position: center;
   background-size: 100% 100%;
   transform: translateY(-24px);
 }
-.face .face-item .face-name {
+.face .face-slick .face-item .face-name {
   background: linear-gradient(to right, #2D3AE2, #00aeef);
   text-align: center;
-  font-size: 26px;
+  font-size: 21px;
+  text-transform: uppercase;
   color: white;
   padding: 0.5rem;
+  padding-top: 1rem;
   position: relative;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
   clip-path: polygon(0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0);
 }
-.face .face-item .face-name::after {
+.face .face-slick .face-item .face-name::after {
   position: absolute;
   content: "";
   height: 2px;
@@ -2310,20 +2310,58 @@ body {
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
-.face .face-item .face-office {
+.face .face-slick .face-item .face-office {
   text-align: center;
-  padding: 8px;
-  color: #2e3191;
-}
-.face .face-item .face-achie {
-  text-align: center;
-  width: 70%;
   padding: 5px;
+  color: #2e3191;
+  text-transform: uppercase;
+}
+.face .face-slick .face-item .face-achie {
+  text-align: center;
+  width: fit-content;
+  min-width: 70%;
+  padding: 5px 35px;
   background-image: url("images/face-achie.png");
   background-position: center;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   margin: auto;
   color: #DE0000;
-  font-size: 26px;
+  font-size: 21px;
+}
+@media (max-width: 1700px) {
+  .face .face-slick .face-item .face-name, .face .face-slick .face-item .face-achie {
+    font-size: 18px;
+  }
+  .face .face-slick .face-item .face-office {
+    font-size: 14px;
+  }
+}
+@media (max-width: 1400px) {
+  .face .face-slick .slick-slide {
+    margin: 0.5rem;
+  }
+  .face .face-slick .slick-list {
+    margin: -0.5rem;
+  }
+  .face .face-slick .face-item .img-container {
+    padding: 0.75rem;
+    border-radius: 10px 10px 15px 15px;
+    transform: translateY(5px);
+    padding-bottom: 0;
+  }
+  .face .face-slick .face-item .img-container img {
+    transform: translateY(-18px);
+  }
+}
+@media (max-width: 1200px) {
+  .face .face-slick .face-item .face-name, .face .face-slick .face-item .face-achie {
+    font-size: 16px;
+  }
+  .face .face-slick .face-item .face-office {
+    font-size: 13px;
+  }
+}
+.face .fade-slide {
+  background-image: url("images/pathway-discovery-bg.png");
 }

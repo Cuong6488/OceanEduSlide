@@ -1,6 +1,6 @@
 ﻿<div class="face">
     <div class="face-index slide page-100vh">
-        <a class="logo-anchor pathway-home-btn" href="@Url.Action("Index")">
+        <a class="logo-anchor" href="@Url.Action("Index")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btns-text">
@@ -15,40 +15,501 @@
             </div>
         </div>
         <div class="h-100 d-flex justify-content-center align-items-center">
-            <img class="face-index-module face-ielts" src="~/Content/images/face-ielts.png" />
-            <img class="face-index-module face-cambridge" src="~/Content/images/face-cambridge.png" />
-            <img class="face-index-module face-oe" src="~/Content/images/face-oe.png" />
-            <img class="face-index-module face-student" src="~/Content/images/face-student.png" />
-            <img class="face-index-module face-rate" src="~/Content/images/face-rate.png" />
+            <img class="face-index-module face-ielts tick" src="~/Content/images/face-ielts.png" data-aos="fade-up" data-aos-delay="0" />
+            <img class="face-index-module face-cambridge tick" src="~/Content/images/face-cambridge.png" data-aos="fade-up" data-aos-delay="200" />
+            <img class="face-index-module face-oe tick" src="~/Content/images/face-oe.png" data-aos="fade-up" data-aos-delay="400" />
+            <img class="face-index-module face-student tick" src="~/Content/images/face-student.png" data-aos="fade-up" data-aos-delay="600" />
+            <img class="face-index-module face-rate tick" src="~/Content/images/face-rate.png" data-aos="fade-up" data-aos-delay="800" />
         </div>
     </div>
     <div class="fade-slide face-ielts-slide slide hidden">
-        <a class="logo-anchor pathway-home-btn" href="javascript:;">
+        <a class="logo-anchor" href="@Url.Action("Index")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
-            <img src="~/Content/images/btn-back-square.png" />
+            <a href="@Url.Action("Face")"><img src="~/Content/images/btn-back-square.png" /></a>
+
         </div>
         <div class="h-100 d-flex justify-content-center align-items-center">
             <div class="container">
-                <div class="face-slick">
-                    @for (int i = 1; i < 10; i++)
-                    {
-                        <div class="face-item">
-                            <div class="img-container">
-                                    <img src="~/Content/images/lethanhdat.png" />
-                            </div>
-                            <div class="face-name">
-                                Lê Thành Đạt
-                            </div>
-                            <div class="face-office">
-                                Ocean Edu Thái Bình
-                            </div>
-                            <div class="face-achie">
-                                6.5 Ielts
-                            </div>
+                <div class="face-slick face-ielts-slick">
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-dhh.png" />
                         </div>
-                    }
+                        <div class="face-name">
+                            Đặng Huy Hùng
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Lạng Giang
+                        </div>
+                        <div class="face-achie">
+                            7.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-dmd.png" />
+                        </div>
+                        <div class="face-name">
+                            Đặng Minh Dương
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Ninh Giang
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-dtd.png" />
+                        </div>
+                        <div class="face-name">
+                            Đinh Tiến Dũng
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Đồng Hới
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-lhm.png" />
+                        </div>
+                        <div class="face-name">
+                            Lương Hoàng Minh
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Từ Sơn
+                        </div>
+                        <div class="face-achie">
+                            7.5 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-ltd.png" />
+                        </div>
+                        <div class="face-name">
+                            Lê Thành Đạt
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Thái Bình
+                        </div>
+                        <div class="face-achie">
+                            6.5 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-mta.png" />
+                        </div>
+                        <div class="face-name">
+                            Mai Thế Anh
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Từ Sơn
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-mvh.png" />
+                        </div>
+                        <div class="face-name">
+                            Mai Văn Hoàng
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Hưng Hà
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-nlpn.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Lê Phương Nam
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Hoài Đức
+                        </div>
+                        <div class="face-achie">
+                            5.5 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-ntd.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Tuấn Đạt
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Khoái Châu
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-ntxn.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Thị Xuân Nghĩa
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU
+                        </div>
+                        <div class="face-achie">
+                            Lớp 5.5 đạt 7.5
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-ptk.png" />
+                        </div>
+                        <div class="face-name">
+                            Phùng Tuấn Kiên
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Tân Triều
+                        </div>
+                        <div class="face-achie">
+                            Lớp 6.5 đạt 7.5
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-pvd.png" />
+                        </div>
+                        <div class="face-name">
+                            Phạm Việt Duy
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Kiến Xương
+                        </div>
+                        <div class="face-achie">
+                            6.5 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-tgl.png" />
+                        </div>
+                        <div class="face-name">
+                            Trần Gia Linh
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Nam Định 2
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/ielt-tqh.png" />
+                        </div>
+                        <div class="face-name">
+                            Trần Quang Huy
+                        </div>
+                        <div class="face-office">
+                            OCEAN EDU Nam Định
+                        </div>
+                        <div class="face-achie">
+                            6.0 IELTS
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fade-slide face-cambridge-slide slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btn-back-square">
+            <a href="@Url.Action("Face")"><img src="~/Content/images/btn-back-square.png" /></a>
+
+        </div>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="face-slick face-cambridge-slick">
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-dhpl.png" />
+                        </div>
+                        <div class="face-name">
+                            Đặng Hoàng Phương Linh
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Quy Nhơn
+                        </div>
+                        <div class="face-achie">
+                            A2 Cambridge
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-dxk.png" />
+                        </div>
+                        <div class="face-name">
+                            Đinh Xuân Khoa
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Thái Hòa
+                        </div>
+                        <div class="face-achie">
+                            Cambridge Flyers
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-hnan.png" />
+                        </div>
+                        <div class="face-name">
+                            Hồ Ngọc An Nhiên
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Kon Tum
+                        </div>
+                        <div class="face-achie">
+                            A2 Cambridge
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-nad.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn An Đông
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Kỳ Anh
+                        </div>
+                        <div class="face-achie">
+                            A2 Cambridge
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-nhq.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Hữu Quân
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Hoài Đức
+                        </div>
+                        <div class="face-achie">
+                            A2 Cambridge
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-nntm.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Ngọc Trà My
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Nguyễn Trãi
+                        </div>
+                        <div class="face-achie">
+                            Cambridge Flyers
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-nqc.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Quỳnh Chi
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Hải Dương 2
+                        </div>
+                        <div class="face-achie">
+                            Cambridge Flyers
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-pnkn.png" />
+                        </div>
+                        <div class="face-name">
+                            Phan Nguyễn Khánh Ngọc
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Kon Tum
+                        </div>
+                        <div class="face-achie">
+                            B1 Cambridge
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/cambridge-tbu.png" />
+                        </div>
+                        <div class="face-name">
+                            Trương Bảo Uyên
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Kon Tum
+                        </div>
+                        <div class="face-achie">
+                            A2 Cambridge
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fade-slide face-oe-slide slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btn-back-square">
+            <a href="@Url.Action("Face")"><img src="~/Content/images/btn-back-square.png" /></a>
+        </div>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="face-slick face-oe-slick">
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-dtm.png" />
+                        </div>
+                        <div class="face-name">
+                            Đàm Trà My
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Hạ Long 2
+                        </div>
+                        <div class="face-achie">
+                            Giải ba IOcean Edu cấp tỉnh
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-lqb.png" />
+                        </div>
+                        <div class="face-name">
+                            Lê Quốc Bảo
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Dương Nội
+                        </div>
+                        <div class="face-achie">
+                            Giải ba Olymic T.A cấp Quận
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-ncmd.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Công Minh Duy
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Từ Sơn
+                        </div>
+                        <div class="face-achie">
+                            Giải nhất cuộc thi nói giỏi T.A cấp TP
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-nla.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Lan Anh
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Chúc Sơn
+                        </div>
+                        <div class="face-achie">
+                            Giải nhất Olympic T.A cấp Huyện
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-nmt.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Minh Thành
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Nho Quan
+                        </div>
+                        <div class="face-achie">
+                            Giải bạc Toán T.A Timo
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-nttl.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Trần Thảo Ly
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Diễn Châu
+                        </div>
+                        <div class="face-achie">
+                            Cambridge Flyers
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-ntxh.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Thị Xuân Hoài
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu BMT
+                        </div>
+                        <div class="face-achie">
+                            Giải bạc Olympic T.A cấp tỉnh
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-vpta.png" />
+                        </div>
+                        <div class="face-name">
+                            Vũ Phương Tuệ Anh
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Thanh Miện
+                        </div>
+                        <div class="face-achie">
+                            Giải nhất VioLympic
+                        </div>
+                    </div>
+                    <div class="face-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/faceoe-ntg.png" />
+                        </div>
+                        <div class="face-name">
+                            Nguyễn Trường Giang
+                        </div>
+                        <div class="face-office">
+                            Ocean Edu Mê Linh
+                        </div>
+                        <div class="face-achie">
+                            Giải đồng cuộc thi toán T.A Timo
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

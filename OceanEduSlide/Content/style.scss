@@ -2784,6 +2784,7 @@ body {
     .face-index {
         &-module {
             width: 17%;
+            cursor:pointer;
         }
     }
 
@@ -2805,72 +2806,123 @@ body {
 
     .face-slick {
         /*transform:translateY(50px);*/
+        .face-item {
+            font-family: 'utm avo';
+            /*transform:translateY(50px);*/
+            .img-container {
+                padding: 1rem;
+                border-radius: 10px 10px 15px 15px;
+                transform: translateY(5px);
+                background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
+                padding-bottom: 0;
+
+                img {
+                    width: 100%;
+                    aspect-ratio: 3/4;
+                    object-fit: cover;
+                    object-position: bottom;
+                    background-image: url('images/face-img-bg.png');
+                    background-position: center;
+                    background-size: 100% 100%;
+                    transform: translateY(-24px);
+                }
+            }
+
+            .face-name {
+                background: linear-gradient(to right,$blue,$main-color);
+                text-align: center;
+                font-size: 21px;
+                text-transform: uppercase;
+                color: white;
+                padding: .5rem;
+                padding-top: 1rem;
+                position: relative;
+                box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+                clip-path: polygon( 0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0 );
+
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    height: 2px;
+                    width: 60%;
+                    bottom: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-image: url('images/face-name-after.png');
+                    @include custom-background();
+                }
+            }
+
+            .face-office {
+                text-align: center;
+                padding: 5px;
+                color: $secondmain-color;
+                text-transform: uppercase;
+            }
+
+            .face-achie {
+                text-align: center;
+                width: fit-content;
+                min-width: 70%;
+                padding: 5px 35px;
+                background-image: url('images/face-achie.png');
+                @include custom-background();
+                margin: auto;
+                color: $red;
+                font-size: 21px;
+            }
+        }
+
+        @media(max-width:1700px) {
+            .face-item {
+                .face-name, .face-achie {
+                    font-size: 18px;
+                }
+
+                .face-office {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        @media(max-width:1400px) {
+            .slick-slide {
+                margin: .5rem;
+            }
+
+            .slick-list {
+                margin: -.5rem;
+            }
+
+            .face-item {
+                .img-container {
+                    padding: .75rem;
+                    border-radius: 10px 10px 15px 15px;
+                    transform: translateY(5px);
+                    padding-bottom: 0;
+
+                    img {
+                        transform: translateY(-18px);
+                    }
+                }
+            }
+        }
+
+        @media(max-width:1200px) {
+            .face-item {
+                .face-name, .face-achie {
+                    font-size: 16px;
+                }
+
+                .face-office {
+                    font-size: 13px;
+                }
+            }
+        }
     }
 
     .fade-slide {
         background-image: url('images/pathway-discovery-bg.png');
-    }
-
-    .face-item {
-        font-family: 'utm avo';
-        text-transform: uppercase;
-        /*transform:translateY(50px);*/
-        .img-container {
-            padding: 1rem;
-            border-radius: 10px 10px 15px 15px;
-            transform: translateY(5px);
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
-            padding-bottom: 0;
-
-            img {
-                width: 100%;
-                aspect-ratio: 3/4;
-                object-fit: cover;
-                background-image: url('images/face-img-bg.png');
-                background-position: center;
-                background-size: 100% 100%;
-                transform: translateY(-24px);
-            }
-        }
-
-        .face-name {
-            background: linear-gradient(to right,$blue,$main-color);
-            text-align: center;
-            font-size: 26px;
-            color: white;
-            padding: .5rem;
-            position: relative;
-            box-shadow: 2px 2px 5px rgba(0,0,0,.3);
-            clip-path: polygon( 0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0 );
-
-            &::after {
-                position: absolute;
-                content: '';
-                height: 2px;
-                width: 60%;
-                bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                background-image: url('images/face-name-after.png');
-                @include custom-background();
-            }
-        }
-
-        .face-office {
-            text-align: center;
-            padding: 8px;
-            color: $secondmain-color;
-        }
-
-        .face-achie {
-            text-align: center;
-            width: 70%;
-            padding: 5px;
-            background-image: url('images/face-achie.png');
-            @include custom-background();
-            margin: auto;
-            color: $red;
-            font-size: 26px;
-        }
     }
 }

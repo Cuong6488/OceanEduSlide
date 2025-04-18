@@ -380,31 +380,96 @@ function ExportPdf() {
     html2pdf().from(element).set(options).save();
 }
 function face() {
+    tick();
     $(".face-ielts").on("click", function () {
-        $(".face-index").fadeOut(300, function () {
-            $(".face-ielts-slide").fadeIn(300);
-            $('.face-slick').slick({
-                autoplay: true,
-                dots: false,
-                infinite: true,
-                speed: 1000,
-                slidesToShow: 5,
-                slidesToScroll: 5,
-                autoplaySpeed: 2000,
-                arrows: true,
-                nextArrow: '<button type="button" class="slick-next"></button>',
-                prevArrow: '<button type="button" class="slick-prev"></button>',
-                responsive: [
-                    {
-                        breakpoint: 1400,
-                        settings: {
-                            slidesToShow: 4,
-                            slidesToScroll: 4,
+        if (isTick === false) {
+            $(".face-index").fadeOut(300, function () {
+                $(".face-ielts-slide").fadeIn(300);
+                $('.face-ielts-slick').slick({
+                    autoplay: true,
+                    dots: false,
+                    infinite: true,
+                    speed: 1000,
+                    slidesToShow: 5,
+                    slidesToScroll: 5,
+                    autoplaySpeed: 2000,
+                    arrows: true,
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    responsive: [
+                        {
+                            breakpoint: 1400,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 4,
+                            }
                         }
-                    }
-                ]
+                    ]
+                });
             });
+        }
+    });
+    $(".face-cambridge").on("click", function () {
+        if (isTick === false) {
+            $(".face-index").fadeOut(300, function () {
+                $(".face-cambridge-slide").fadeIn(300);
+                $('.face-cambridge-slick').slick({
+                    autoplay: true,
+                    dots: false,
+                    infinite: true,
+                    speed: 1000,
+                    slidesToShow: 5,
+                    slidesToScroll: 5,
+                    autoplaySpeed: 2000,
+                    arrows: true,
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    responsive: [
+                        {
+                            breakpoint: 1400,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 4,
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+    });
+    $(".face-oe").on("click", function () {
+        if (isTick === false) {
+            $(".face-index").fadeOut(300, function () {
+                $(".face-oe-slide").fadeIn(300);
+                $('.face-oe-slick').slick({
+                    autoplay: true,
+                    dots: false,
+                    infinite: true,
+                    speed: 1000,
+                    slidesToShow: 5,
+                    slidesToScroll: 5,
+                    autoplaySpeed: 2000,
+                    arrows: true,
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    responsive: [
+                        {
+                            breakpoint: 1400,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 4,
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+    });
+    $(".face .btn-back-square").on("click", function () {
+        $(".face > .slide:not(.face-index)").fadeOut(300, function () {
+            $(".face-index").fadeIn(300);
         });
+
     });
 }
 function pathway() {
