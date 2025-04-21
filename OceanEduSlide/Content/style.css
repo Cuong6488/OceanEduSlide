@@ -1414,6 +1414,12 @@ body {
     font-size: 20px;
   }
 }
+@media (max-width: 1160px) {
+  .pathway-page .overview .overview-content .overview1-discovery {
+    width: 80vw;
+    padding: 6vh;
+  }
+}
 .pathway-page .overview .overview-title {
   width: 130vh;
   max-width: 60vw;
@@ -1713,7 +1719,7 @@ body {
     width: 21.8vw;
   }
 }
-@media (max-aspect-ratio: 2) and (min-aspect-ratio: 1.5) {
+@media (max-aspect-ratio: 2) {
   .pathway-page .pathway-challenge .pathways-challenge .pathway-level, .pathway-page .pathway-challenge .pathways-focus .pathway-level, .pathway-page .pathway-focus .pathways-challenge .pathway-level, .pathway-page .pathway-focus .pathways-focus .pathway-level {
     width: 25vw;
   }
@@ -1782,7 +1788,7 @@ body {
   font-family: montserrat;
 }
 .pathway-detail-box {
-  width: 10%;
+  width: 10.5%;
   position: relative;
 }
 .pathway-detail-box:not(:last-child) {
@@ -2015,6 +2021,19 @@ body {
     font-size: 15px;
   }
 }
+@media (max-width: 1100px) {
+  .pathway-detail-title span {
+    font-size: 16px;
+  }
+  .pathway-detail-box-text {
+    font-size: 16px;
+    padding: 6px;
+  }
+  .pathway-detail-box-content {
+    width: 420px;
+    font-size: 15px;
+  }
+}
 
 .book-discovery .book-container {
   position: absolute;
@@ -2039,6 +2058,11 @@ body {
 .book-discovery > div {
   height: 55vh;
   cursor: pointer;
+}
+@media (max-aspect-ratio: 1.5) {
+  .book-discovery > div {
+    height: 50vh;
+  }
 }
 
 .pathway-book-content {
@@ -2092,13 +2116,14 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  /*width:fit-content;*/
 }
 .price-advice .btn-back-square {
   right: 25px;
   left: unset;
 }
 .price-advice-box {
-  width: 30%;
+  width: 30vw;
   margin-right: 24px;
 }
 .price-advice-box > :first-child {
@@ -2277,7 +2302,7 @@ body {
   margin: auto;
 }
 .teaching-method-title {
-  width: 25%;
+  width: 33%;
   margin-bottom: 20px !important;
 }
 .teaching-method-box {
@@ -2285,6 +2310,14 @@ body {
 }
 .teaching-method-box.teaching-method-challenge1 {
   margin-right: 40px;
+}
+@media (max-width: 1300px) and (max-aspect-ratio: 1.5) {
+  .teaching-method-box {
+    width: 45%;
+  }
+  .teaching-method-box.teaching-method-challenge1 {
+    margin-right: 30px !important;
+  }
 }
 .teaching-method-name {
   width: 70%;
@@ -2297,6 +2330,10 @@ body {
 }
 .teaching-method-content.active {
   opacity: 1;
+}
+
+.container-slick {
+  max-width: 90% !important;
 }
 
 .face {
@@ -2317,9 +2354,6 @@ body {
 }
 .face .btn-back-square img {
   height: 60px !important;
-}
-.face .container {
-  max-width: 90% !important;
 }
 .face .face-slick {
   /*transform:translateY(50px);*/
@@ -2424,4 +2458,62 @@ body {
 }
 .face .fade-slide {
   background-image: url("images/pathway-discovery-bg.png");
+}
+
+.achie .btn-back-square {
+  bottom: unset;
+  left: unset;
+  top: 25px;
+  right: 25px;
+  height: 60px;
+}
+.achie .btn-back-square img {
+  height: 60px !important;
+}
+
+.achie .achie-item .img-container {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.2) 15%, rgba(255, 255, 255, 0.2) 15%, rgba(255, 255, 255, 0.9) 35%, rgba(255, 255, 255, 0.9) 70%, rgba(255, 255, 255, 0.9) 70%, rgba(255, 255, 255, 0.6) 80%, rgba(255, 255, 255, 0.4) 100%);
+  aspect-ratio: 3/4;
+  padding: 25px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.achie .achie-item .img-container > :first-child {
+  max-width: 100%;
+  max-height: 100%;
+}
+.achie .achie-item .img-container .img-before {
+  position: absolute;
+  bottom: 0;
+  height: 75%;
+}
+.achie .achie-item .img-container .img-before1 {
+  left: 0;
+}
+.achie .achie-item .img-container .img-before2 {
+  right: 0;
+}
+.achie .achie-item .achie-btnlink img {
+  height: 30px;
+  display: block;
+  margin: auto;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+}
+.achie .achie-item .achie-name {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) calc(100% - 10px), rgba(255, 255, 255, 0.8) 100%);
+  line-height: 1.1;
+  height: calc(3.3em + 1.5rem);
+  padding: 0.75rem;
+  text-align: center;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-family: josefinsans;
+  font-weight: 600;
+  color: white;
+  text-shadow: 2px 2px 1px #2e3191;
+  font-size: 14px;
+  white-space: nowrap;
 }

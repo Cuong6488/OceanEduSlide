@@ -215,6 +215,10 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\images\8trithongminh.png" />
     <Content Include="Content\images\about-bg.png" />
+    <Content Include="Content\images\achie-btnlink.png" />
+    <Content Include="Content\images\achie-demo1.jpg" />
+    <Content Include="Content\images\achie-demo1.png" />
+    <Content Include="Content\images\achie-img-before.png" />
     <Content Include="Content\images\banner-index.png" />
     <Content Include="Content\images\btn-back-square.png" />
     <Content Include="Content\images\btn-back.png" />
@@ -381,8 +385,8 @@
     <Content Include="Content\images\slide-next.png" />
     <Content Include="Content\images\teaching-method-challenge-content1.png" />
     <Content Include="Content\images\teaching-method-challenge-content2.png" />
-    <Content Include="Content\images\teaching-method-challenge-name1.png" />
     <Content Include="Content\images\teaching-method-challenge-name2.png" />
+    <Content Include="Content\images\teaching-method-challenge-name1.png" />
     <Content Include="Content\images\teaching-method-challenge-title.png" />
     <Content Include="Content\images\text-1000000.png" />
     <Content Include="Content\images\text-3000.png" />

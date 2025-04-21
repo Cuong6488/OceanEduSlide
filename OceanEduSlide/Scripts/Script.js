@@ -68,6 +68,37 @@ function price() {
         minDate: today,
     });
 
+    $(".input-container-paychanel select").on("change", function (data) {
+        const paychanelVal = $(this).val();
+        var items = [];
+        items.push("<option value>Chọn kỳ hạn</option>");
+
+        if (paychanelVal !== "") {
+            if (paychanelVal === "Lotte") {
+                items.push('<option value="6">6 tháng</option>');
+                items.push('<option value="9">9 tháng</option>');
+                items.push('<option value="12">12 tháng</option>');
+            }
+            else if (paychanelVal === "MSB" || paychanelVal === "Sacombank") {
+                items.push('<option value="6">6 tháng</option>');
+                items.push('<option value="9">9 tháng</option>');
+                items.push('<option value="12">12 tháng</option>');
+                items.push('<option value="18">18 tháng</option>');
+                items.push('<option value="24">24 tháng</option>');
+            }
+            else if (paychanelVal === "VPbank") {
+                items.push('<option value="3">3 tháng</option>');
+                items.push('<option value="6">6 tháng</option>');
+                items.push('<option value="9">9 tháng</option>');
+                items.push('<option value="12">12 tháng</option>');
+            }
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").html(items.join(""));
+
+        }
+        else {
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").html(items.join(""));
+        }
+    });
     $(".input-container-cth select").on("change", function (data) {
         $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").prop("selectedIndex", 0);
         $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val("");
@@ -241,6 +272,7 @@ function price() {
             const unitPrice2 = calculateUnitPrice(levelValue2); // Tính đơn giá
             const totalPrice2 = calculateTotalPrice(unitPrice2, pathwayMonths2); // Tính thành tiền
             //Hiển thị thành tiền
+            $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
             $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
         });
 
@@ -825,6 +857,7 @@ function about() {
             $(".map-first").css("display", "flex");
         });
     });
+
     $(".map-first .btn-map").on("click", function () {
         $(".offices-number").fadeIn(300);
         $(".offices-number").css('transform', 'translateX(0)');
@@ -925,6 +958,44 @@ function about() {
             }, 400);
         });
     });
+    $(".btn-cup").on("click", function () {
+        $(".about-page > .slide:not(.achie)").fadeOut(300, function () {
+            $(".btns-text").fadeOut(0);
+            $(".logo-about").fadeOut(0);
+            $(".menu-btn").fadeOut(0);
+            $(".achie").fadeIn(300);
+
+            $('.achie-slick').slick({
+                autoplay: false,
+                dots: false,
+                infinite: true,
+                speed: 1000,
+                slidesToShow: 5,
+                slidesToScroll: 5,
+                autoplaySpeed: 2000,
+                arrows: true,
+                nextArrow: '<button type="button" class="slick-next"></button>',
+                prevArrow: '<button type="button" class="slick-prev"></button>',
+                responsive: [
+                    {
+                        breakpoint: 1400,
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 4,
+                        }
+                    }
+                ]
+            });
+        });
+    });
+    //$(".achie .btn-back-square").on("click", function () {
+    //    $(".about-page > .slide").fadeOut(300, function () {
+    //        $(".btns-text").fadeIn(300);
+    //        $(".logo-about").fadeIn(300);
+    //        $(".menu-btn").fadeIn(300);
+
+    //    });
+    //});
 }
 $("[data-item=city]").on("change", function (data) {
     const id = $(this).val();
