@@ -310,6 +310,20 @@ function price() {
                 }
             });
         });
+        $(".input-container-paymethod select").on("change", function () {
+            var paymethodVal = $(this).val();
+            if (paymethodVal === "paynow") {
+                $(this).closest(".price-advice-box").find(".input-container-paychanel").find("select").prop("selectedIndex", 0);
+                $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val("");
+                $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
+                $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+                var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                var paypermonth = Math.round(finalMoney / term);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            }
+            
+        });
         $(".input-container-prepay input").on("change", function () {
             //var thisElement = $(this);
             var prepay = $(this).val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
@@ -328,7 +342,7 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
 
         });
-        $(".price-advice-box-title").on("click", function () {
+        $(".price-advice-box-title > :first-child").on("click", function () {
             //var thisElement = $(this);
             var cth = $(this).closest(".price-advice-box").find(".input-container-cth").find("select option:selected").text();
             var level = $(this).closest(".price-advice-box").find(".input-container-level").find("select option:selected").text();
@@ -378,6 +392,22 @@ function price() {
         $(".input-giftprice").val("Quà tặng: ");
         $(".input-pricepermonth").val("Học phí/ tháng: ");
         $(".input-note").val("Ghi chú: ");
+    });
+
+    $(".btn-zoomin").on("click", function () {
+        $(".price-advice").css("width", "fit-content");
+        $(".price-advice").css("padding", "0 40px");
+        $(this).closest(".price-advice-box").css("width", "50vw");
+        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "170px");
+        $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "19px");
+
+    });
+    $(".btn-zoomout").on("click", function () {
+        $(".price-advice").css("width", "unset");
+        $(".price-advice").css("padding", "unset");
+        $(this).closest(".price-advice-box").css("width", "31vw");
+        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "130px");
+        $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "15px");
     });
 }
 function ExportPdf() {

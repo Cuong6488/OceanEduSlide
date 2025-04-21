@@ -3,14 +3,19 @@
 @{
     ViewBag.Title = "Học phí";
 }
-<div class="price-advice slide" style="min-height:100vh;height:unset">
+<div class="price-advice slide">
     <div class="price-advice-box">
         <div class="price-advice-box-title">
             <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
             <img src="~/Content/images/price-before.png" />
         </div>
-
         <div class="price-advice-box-container">
+            <div class="btn-zoom btn-zoomin">
+                <i class="fa-regular fa-magnifying-glass-plus"></i>
+            </div>
+            <div class="btn-zoom btn-zoomout">
+                <i class="fa-regular fa-magnifying-glass-minus"></i>
+            </div>
             <div class="input-container input-container-cth">
                 <div>
                     Chương trình học
@@ -48,15 +53,16 @@
                     <option value="72">72 tháng</option>
                 </select>
             </div>
-            <div class="input-container">
+            <div class="input-container start-date-container">
                 <div>
-                    Thời gian bắt đầu
+                    Thời gian <br /> bắt đầu
                 </div>
                 <input type="text" name="name" value="" class="form-control datepicker start-date" />
+                <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div class="input-container">
                 <div>
-                    Thời gian kết thúc
+                    Thời gian <br /> kết thúc
                 </div>
                 <input type="text" name="name" value="" class="form-control end-date" readonly />
             </div>
@@ -64,13 +70,13 @@
                 <div>
                     Đơn giá
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-totalprice">
                 <div>
                     Thành tiền
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-qdsale">
                 <div>
@@ -82,7 +88,7 @@
                 <div>
                     Số tiền ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-giftprice">
                 <div>
@@ -92,13 +98,13 @@
             </div>
             <div class="input-container input-container-finalprice">
                 <div>
-                    Học phí sau ưu đãi
+                    Học phí <br />sau ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-paymethod">
                 <div>
-                    Hình thức thanh toán
+                    Hình thức <br /> thanh toán
                 </div>
                 <select class="form-select">
                     <option value="">Chọn hình thức</option>
@@ -120,13 +126,13 @@
             </div>
             <div class="input-container input-container-prepay">
                 <div>
-                    Thanh toán trả trước
+                    Thanh toán <br />trả trước
                 </div>
                 <input type="text" name="name" value="" class="form-control input-number" />
             </div>
             <div class="input-container input-container-postpaid">
                 <div>
-                    Thanh toán trả sau
+                    Thanh toán <br />trả sau
                 </div>
                 <input type="text" name="name" value="" class="form-control" readonly />
             </div>
@@ -142,7 +148,7 @@
                 <div>
                     Học phí/tháng
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-note">
                 <div>
@@ -157,8 +163,13 @@
             <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
             <img src="~/Content/images/price-before.png" />
         </div>
-
         <div class="price-advice-box-container">
+            <div class="btn-zoom btn-zoomin">
+                <i class="fa-regular fa-magnifying-glass-plus"></i>
+            </div>
+            <div class="btn-zoom btn-zoomout">
+                <i class="fa-regular fa-magnifying-glass-minus"></i>
+            </div>
             <div class="input-container input-container-cth">
                 <div>
                     Chương trình học
@@ -196,15 +207,16 @@
                     <option value="72">72 tháng</option>
                 </select>
             </div>
-            <div class="input-container">
+            <div class="input-container start-date-container">
                 <div>
-                    Thời gian bắt đầu
+                    Thời gian <br /> bắt đầu
                 </div>
                 <input type="text" name="name" value="" class="form-control datepicker start-date" />
+                <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div class="input-container">
                 <div>
-                    Thời gian kết thúc
+                    Thời gian <br /> kết thúc
                 </div>
                 <input type="text" name="name" value="" class="form-control end-date" readonly />
             </div>
@@ -212,13 +224,13 @@
                 <div>
                     Đơn giá
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-totalprice">
                 <div>
                     Thành tiền
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-qdsale">
                 <div>
@@ -230,7 +242,7 @@
                 <div>
                     Số tiền ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-giftprice">
                 <div>
@@ -240,13 +252,13 @@
             </div>
             <div class="input-container input-container-finalprice">
                 <div>
-                    Học phí sau ưu đãi
+                    Học phí <br />sau ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-paymethod">
                 <div>
-                    Hình thức thanh toán
+                    Hình thức <br /> thanh toán
                 </div>
                 <select class="form-select">
                     <option value="">Chọn hình thức</option>
@@ -260,19 +272,21 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn kênh trả góp</option>
-                    <option value="value">Kênh 1</option>
-                    <option value="value">Kênh 2</option>
+                    <option value="Lotte">Lotte</option>
+                    <option value="MSB">MSB</option>
+                    <option value="VPbank">VPbank</option>
+                    <option value="Sacombank">Sacombank</option>
                 </select>
             </div>
             <div class="input-container input-container-prepay">
                 <div>
-                    Thanh toán trả trước
+                    Thanh toán <br />trả trước
                 </div>
                 <input type="text" name="name" value="" class="form-control input-number" />
             </div>
             <div class="input-container input-container-postpaid">
                 <div>
-                    Thanh toán trả sau
+                    Thanh toán <br />trả sau
                 </div>
                 <input type="text" name="name" value="" class="form-control" readonly />
             </div>
@@ -282,15 +296,13 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn kỳ hạn</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12">12 tháng</option>
                 </select>
             </div>
             <div class="input-container input-container-pricepermonth">
                 <div>
                     Học phí/tháng
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-note">
                 <div>
@@ -305,8 +317,13 @@
             <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
             <img src="~/Content/images/price-before.png" />
         </div>
-
         <div class="price-advice-box-container">
+            <div class="btn-zoom btn-zoomin">
+                <i class="fa-regular fa-magnifying-glass-plus"></i>
+            </div>
+            <div class="btn-zoom btn-zoomout">
+                <i class="fa-regular fa-magnifying-glass-minus"></i>
+            </div>
             <div class="input-container input-container-cth">
                 <div>
                     Chương trình học
@@ -344,15 +361,16 @@
                     <option value="72">72 tháng</option>
                 </select>
             </div>
-            <div class="input-container">
+            <div class="input-container start-date-container">
                 <div>
-                    Thời gian bắt đầu
+                    Thời gian <br /> bắt đầu
                 </div>
                 <input type="text" name="name" value="" class="form-control datepicker start-date" />
+                <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div class="input-container">
                 <div>
-                    Thời gian kết thúc
+                    Thời gian <br /> kết thúc
                 </div>
                 <input type="text" name="name" value="" class="form-control end-date" readonly />
             </div>
@@ -360,13 +378,13 @@
                 <div>
                     Đơn giá
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-totalprice">
                 <div>
                     Thành tiền
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-qdsale">
                 <div>
@@ -378,7 +396,7 @@
                 <div>
                     Số tiền ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-giftprice">
                 <div>
@@ -388,13 +406,13 @@
             </div>
             <div class="input-container input-container-finalprice">
                 <div>
-                    Học phí sau ưu đãi
+                    Học phí <br />sau ưu đãi
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-paymethod">
                 <div>
-                    Hình thức thanh toán
+                    Hình thức <br /> thanh toán
                 </div>
                 <select class="form-select">
                     <option value="">Chọn hình thức</option>
@@ -408,19 +426,21 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn kênh trả góp</option>
-                    <option value="value">Kênh 1</option>
-                    <option value="value">Kênh 2</option>
+                    <option value="Lotte">Lotte</option>
+                    <option value="MSB">MSB</option>
+                    <option value="VPbank">VPbank</option>
+                    <option value="Sacombank">Sacombank</option>
                 </select>
             </div>
             <div class="input-container input-container-prepay">
                 <div>
-                    Thanh toán trả trước
+                    Thanh toán <br />trả trước
                 </div>
                 <input type="text" name="name" value="" class="form-control input-number" />
             </div>
             <div class="input-container input-container-postpaid">
                 <div>
-                    Thanh toán trả sau
+                    Thanh toán <br />trả sau
                 </div>
                 <input type="text" name="name" value="" class="form-control" readonly />
             </div>
@@ -430,15 +450,13 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn kỳ hạn</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12">12 tháng</option>
                 </select>
             </div>
             <div class="input-container input-container-pricepermonth">
                 <div>
                     Học phí/tháng
                 </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
+                <input type="text" name="name" value="" class="form-control fw-bold" readonly />
             </div>
             <div class="input-container input-container-note">
                 <div>
@@ -478,7 +496,7 @@
                         <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Chuyên viên phụ trách: " />
                     </div>
                     <div class="price-overview-phone">
-                        <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Điện thoại: @(Model.Office?.Hotline)" readonly/>
+                        <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Điện thoại: " />
                     </div>
                 </div>
             </div>
