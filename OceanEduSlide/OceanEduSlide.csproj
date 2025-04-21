@@ -219,6 +219,7 @@
     <Content Include="Content\images\achie-demo1.jpg" />
     <Content Include="Content\images\achie-demo1.png" />
     <Content Include="Content\images\achie-img-before.png" />
+    <Content Include="Content\images\achie-banner.png" />
     <Content Include="Content\images\banner-index.png" />
     <Content Include="Content\images\btn-back-square.png" />
     <Content Include="Content\images\btn-back.png" />

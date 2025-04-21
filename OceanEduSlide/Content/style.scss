@@ -3044,7 +3044,27 @@ body {
         }
     }
 }
+.achie-index {
+background-image: url('images/achie-banner.png');
+    .btn-back-square {
+        height: 60px;
 
+        img {
+            height: 60px !important;
+        }
+    }
+
+    .btn-achie{
+        height:30px;
+        width:20px;
+        position:absolute;
+        left:108px;
+        bottom:60px;
+        img{
+            height:100%;
+        }
+    }
+}
 .achie {
     .achie-item {
         .img-container {

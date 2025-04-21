@@ -959,6 +959,42 @@ function about() {
         });
     });
     $(".btn-cup").on("click", function () {
+        $(".about-page > .slide:not(.achie-index)").fadeOut(300, function () {
+            $(".btns-text").fadeOut(0);
+            $(".logo-about").fadeOut(0);
+            $(".menu-btn").fadeOut(0);
+            $(".achie-index").fadeIn(300);
+        });
+        //$(".about-page > .slide:not(.achie)").fadeOut(300, function () {
+        //    $(".btns-text").fadeOut(0);
+        //    $(".logo-about").fadeOut(0);
+        //    $(".menu-btn").fadeOut(0);
+        //    $(".achie").fadeIn(300);
+
+        //    $('.achie-slick').slick({
+        //        autoplay: false,
+        //        dots: false,
+        //        infinite: true,
+        //        speed: 1000,
+        //        slidesToShow: 5,
+        //        slidesToScroll: 5,
+        //        autoplaySpeed: 2000,
+        //        arrows: true,
+        //        nextArrow: '<button type="button" class="slick-next"></button>',
+        //        prevArrow: '<button type="button" class="slick-prev"></button>',
+        //        responsive: [
+        //            {
+        //                breakpoint: 1400,
+        //                settings: {
+        //                    slidesToShow: 4,
+        //                    slidesToScroll: 4,
+        //                }
+        //            }
+        //        ]
+        //    });
+        //});
+    });
+    $(".btn-achie").on("click", function () {
         $(".about-page > .slide:not(.achie)").fadeOut(300, function () {
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
