@@ -200,14 +200,14 @@ function price() {
         // Khi thay đổi thời gian bắt đầu
         $(".start-date").on("change", function () {
             const startDateValue = $(this).val();
-            const pathwayMonths = $(".input-container-pathway select").val();
+            const pathwayMonths = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
 
             if (startDateValue && pathwayMonths) {
                 const startDate = parseDate(startDateValue);
                 startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
-                $(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+                $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
             } else {
-                $(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
+                $(this).closest(".price-advice-box").find(".end-date").val("");
             }
 
         });
@@ -224,14 +224,14 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             const pathwayMonths = $(this).val();
-            const startDateValue = $(".start-date").val();
+            const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
 
             if (startDateValue && pathwayMonths) {
                 const startDate = parseDate(startDateValue);
                 startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
-                $(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+                $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
             } else {
-                $(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
+                $(this).closest(".price-advice-box").find(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
             }
 
             const levelValue2 = $(this).closest(".input-container-pathway").siblings(".input-container-level").find("select").val(); // Cấp độ học
@@ -472,12 +472,18 @@ function face() {
 
     });
 }
+function text_title(text){
+
+    $(".btns-text p").text(text);
+}
 function pathway() {
     $(".logo-anchor.pathway-home-btn").on("click", function () {
         $(".pathway-index").fadeOut(300, function () {
             $(".pathway-mid").fadeIn(300);
+            $(".pathway-left").fadeIn(300);
             $(".logo-about").fadeIn(100);
             $(".logo-anchor.pathway-home-btn").fadeIn(300);
+            text_title("CHƯƠNG TRÌNH HỌC");
         });
     });
     var pathway = "";
@@ -545,8 +551,18 @@ function pathway() {
             pathway = $(this).attr("class").split(" ")[0];
             $(".pathway-mid,.pathway-left").fadeOut(300, function () {
                 $(".pathway-index").fadeIn(300);
+                $(".pathway-index .slide").fadeOut(0);
                 if (pathway === "discovery") {
-                    $(".btns-text p").text("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI");
+                    text_title("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI")
+                    //$(".btns-text p").text();
+                }
+                if (pathway === "challenge") {
+                    text_title("CHƯƠNG TRÌNH HỌC / CHALLENGE ENGLISH 6-11 TUỔI")
+                    //$(".btns-text p").text();
+                }
+                if (pathway === "focus") {
+                    text_title("CHƯƠNG TRÌNH HỌC / FOCUS ENGLISH 11-16 TUỔI")
+                    //$(".btns-text p").text();
                 }
             });
             $(".logo-about").fadeOut(100);

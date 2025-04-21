@@ -4,155 +4,7 @@
     ViewBag.Title = "Học phí";
 }
 <div class="price-advice slide" style="min-height:100vh;height:unset">
-    <div class="price-advice-box me-4">
-        <div class="price-advice-box-title">
-            <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
-            <img src="~/Content/images/price-before.png" />
-        </div>
-
-        <div class="price-advice-box-container">
-            <div class="input-container input-container-cth">
-                <div>
-                    Chương trình học
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn chương trình học</option>
-                    <option value="pre-primary">Anh văn nhi đồng</option>
-                    <option value="primary">Anh văn thiếu nhi</option>
-                    <option value="high-school">T.A học thuật Trung học</option>
-                    <option value="ielts">Luyện thi  IELTS</option>
-                    <option value="toeic">T.A giao tiếp quốc tế TOEIC</option>
-                </select>
-            </div>
-            <div class="input-container input-container-level">
-                <div>
-                    Cấp độ học
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn cấp độ học</option>
-                </select>
-            </div>
-            <div class="input-container input-container-pathway">
-                <div>
-                    Lộ trình
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn lộ trình</option>
-                    <option value="3">3 tháng</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12">12 tháng</option>
-                    <option value="18">18 tháng</option>
-                    <option value="24">24 tháng</option>
-                    <option value="36">36 tháng</option>
-                    <option value="48">48 tháng</option>
-                    <option value="72">72 tháng</option>
-                </select>
-            </div>
-            <div class="input-container">
-                <div>
-                    Thời gian bắt đầu
-                </div>
-                <input type="text" name="name" value="" class="form-control datepicker start-date" />
-            </div>
-            <div class="input-container">
-                <div>
-                    Thời gian kết thúc
-                </div>
-                <input type="text" name="name" value="" class="form-control end-date" readonly />
-            </div>
-            <div class="input-container input-container-unitprice">
-                <div>
-                    Đơn giá
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-totalprice">
-                <div>
-                    Thành tiền
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-qdsale">
-                <div>
-                    QĐ ưu đãi
-                </div>
-                @Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })
-            </div>
-            <div class="input-container input-container-moneyprice">
-                <div>
-                    Số tiền ưu đãi
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-giftprice">
-                <div>
-                    Quà tặng
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-finalprice">
-                <div>
-                    Học phí sau ưu đãi
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-paymethod">
-                <div>
-                    Hình thức thanh toán
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn hình thức</option>
-                    <option value="paynow">Trả thẳng</option>
-                    <option value="installment">Trả góp</option>
-                </select>
-            </div>
-            <div class="input-container input-container-paychanel">
-                <div>
-                    Kênh trả góp
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn kênh trả góp</option>
-                    <option value="value">Kênh 1</option>
-                    <option value="value">Kênh 2</option>
-                </select>
-            </div>
-            <div class="input-container input-container-prepay">
-                <div>
-                    Thanh toán trả trước
-                </div>
-                <input type="text" name="name" value="" class="form-control input-number" />
-            </div>
-            <div class="input-container input-container-postpaid">
-                <div>
-                    Thanh toán trả sau
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-term">
-                <div>
-                    Kỳ hạn
-                </div>
-                <select class="form-select">
-                    <option value="">Chọn kỳ hạn</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12">12 tháng</option>
-                </select>
-            </div>
-            <div class="input-container input-container-pricepermonth">
-                <div>
-                    Học phí/tháng
-                </div>
-                <input type="text" name="name" value="" class="form-control" readonly />
-            </div>
-            <div class="input-container input-container-note">
-                <div>
-                    Ghi chú
-                </div>
-                <textarea class="form-control"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="price-advice-box me-4">
+    <div class="price-advice-box">
         <div class="price-advice-box-title">
             <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
             <img src="~/Content/images/price-before.png" />
@@ -448,6 +300,154 @@
             </div>
         </div>
     </div>
+    <div class="price-advice-box me-0">
+        <div class="price-advice-box-title">
+            <img class="d-block m-auto w-50" src="~/Content/images/price-title.png" />
+            <img src="~/Content/images/price-before.png" />
+        </div>
+
+        <div class="price-advice-box-container">
+            <div class="input-container input-container-cth">
+                <div>
+                    Chương trình học
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn chương trình học</option>
+                    <option value="pre-primary">Anh văn nhi đồng</option>
+                    <option value="primary">Anh văn thiếu nhi</option>
+                    <option value="high-school">T.A học thuật Trung học</option>
+                    <option value="ielts">Luyện thi  IELTS</option>
+                    <option value="toeic">T.A giao tiếp quốc tế TOEIC</option>
+                </select>
+            </div>
+            <div class="input-container input-container-level">
+                <div>
+                    Cấp độ học
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn cấp độ học</option>
+                </select>
+            </div>
+            <div class="input-container input-container-pathway">
+                <div>
+                    Lộ trình
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn lộ trình</option>
+                    <option value="3">3 tháng</option>
+                    <option value="6">6 tháng</option>
+                    <option value="12">12 tháng</option>
+                    <option value="18">18 tháng</option>
+                    <option value="24">24 tháng</option>
+                    <option value="36">36 tháng</option>
+                    <option value="48">48 tháng</option>
+                    <option value="72">72 tháng</option>
+                </select>
+            </div>
+            <div class="input-container">
+                <div>
+                    Thời gian bắt đầu
+                </div>
+                <input type="text" name="name" value="" class="form-control datepicker start-date" />
+            </div>
+            <div class="input-container">
+                <div>
+                    Thời gian kết thúc
+                </div>
+                <input type="text" name="name" value="" class="form-control end-date" readonly />
+            </div>
+            <div class="input-container input-container-unitprice">
+                <div>
+                    Đơn giá
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-totalprice">
+                <div>
+                    Thành tiền
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-qdsale">
+                <div>
+                    QĐ ưu đãi
+                </div>
+                @Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })
+            </div>
+            <div class="input-container input-container-moneyprice">
+                <div>
+                    Số tiền ưu đãi
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-giftprice">
+                <div>
+                    Quà tặng
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-finalprice">
+                <div>
+                    Học phí sau ưu đãi
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-paymethod">
+                <div>
+                    Hình thức thanh toán
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn hình thức</option>
+                    <option value="paynow">Trả thẳng</option>
+                    <option value="installment">Trả góp</option>
+                </select>
+            </div>
+            <div class="input-container input-container-paychanel">
+                <div>
+                    Kênh trả góp
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn kênh trả góp</option>
+                    <option value="value">Kênh 1</option>
+                    <option value="value">Kênh 2</option>
+                </select>
+            </div>
+            <div class="input-container input-container-prepay">
+                <div>
+                    Thanh toán trả trước
+                </div>
+                <input type="text" name="name" value="" class="form-control input-number" />
+            </div>
+            <div class="input-container input-container-postpaid">
+                <div>
+                    Thanh toán trả sau
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-term">
+                <div>
+                    Kỳ hạn
+                </div>
+                <select class="form-select">
+                    <option value="">Chọn kỳ hạn</option>
+                    <option value="6">6 tháng</option>
+                    <option value="12">12 tháng</option>
+                </select>
+            </div>
+            <div class="input-container input-container-pricepermonth">
+                <div>
+                    Học phí/tháng
+                </div>
+                <input type="text" name="name" value="" class="form-control" readonly />
+            </div>
+            <div class="input-container input-container-note">
+                <div>
+                    Ghi chú
+                </div>
+                <textarea class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
     <div class="btn-back-square">
         <a href="/"><img src="~/Content/images/btn-back-square.png" /></a>
     </div>
@@ -478,7 +478,7 @@
                         <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Chuyên viên phụ trách: " />
                     </div>
                     <div class="price-overview-phone">
-                        <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Điện thoại: " />
+                        <input style=" padding: 0; font-weight: 300; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Điện thoại: @(Model.Office?.Hotline)" readonly/>
                     </div>
                 </div>
             </div>

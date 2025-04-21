@@ -480,9 +480,20 @@ body {
   padding: 1.5rem 100px;
   height: 90px;
 }
+@media (max-width: 1200px) {
+  .header {
+    padding: 1rem 50px;
+    height: 67px;
+  }
+}
 .header .logo {
   width: 250px;
   margin-right: 1.5rem;
+}
+@media (max-width: 1200px) {
+  .header .logo {
+    width: 180px;
+  }
 }
 .header .logo img {
   width: 100%;
@@ -507,11 +518,21 @@ body {
 .header ul li:not(:last-child) {
   margin-right: 1rem;
 }
+@media (max-width: 1200px) {
+  .header ul li {
+    font-size: 1rem;
+  }
+}
 
 .banner img {
   height: calc(100vh - 90px);
   width: 100%;
   object-fit: cover;
+}
+@media (max-width: 1200px) {
+  .banner img {
+    height: calc(100vh - 67px);
+  }
 }
 
 .page-100vh {
@@ -994,6 +1015,9 @@ body {
   .map-first .map-content .offices-number span {
     font-size: 3rem;
   }
+  .map-first .map-content-title {
+    font-size: 1.375rem;
+  }
   .map-first .map-content .office-list-title {
     font-size: 1.5rem;
   }
@@ -1006,44 +1030,42 @@ body {
 }
 @media (min-height: 800px) and (max-aspect-ratio: 1.59) {
   .map-first .map-container {
-    height: 700px;
+    height: 650px;
   }
   .map-first .map-container .btn-north {
-    top: 50px;
-    right: 280px;
+    top: 40px;
+    right: 260px;
   }
   .map-first .map-container .btn-mid {
-    top: 230px;
-    right: 245px;
+    top: 210px;
+    right: 225px;
   }
   .map-first .map-container .btn-south {
-    bottom: 120px;
-    right: 210px;
+    bottom: 105px;
+    right: 190px;
   }
   .map-first .map-container .locations-north {
-    top: 0;
-    right: 220px;
+    right: 200px;
   }
   .map-first .map-container .locations-north img {
-    width: 190px;
+    width: 180px;
   }
   .map-first .map-container .locations-mid {
-    top: 170px;
-    right: 139px;
+    top: 160px;
+    right: 130px;
   }
   .map-first .map-container .locations-mid img {
-    width: 190px;
+    width: 180px;
   }
   .map-first .map-container .locations-south {
-    bottom: 110px;
-    right: 205px;
+    bottom: 100px;
+    right: 190px;
   }
   .map-first .map-container .locations-south img {
-    width: 30px;
+    width: 27px;
   }
   .map-first .map-content {
     height: 550px;
-    padding: 0 1rem;
   }
   .map-first .map-content .content-slogan {
     font-size: 5rem;
@@ -1209,6 +1231,15 @@ body {
   }
   .slide-text .item .number {
     line-height: 0.9;
+  }
+}
+@media (max-width: 1100px) {
+  .slide-text .item {
+    padding: 75px 10px 35px 20px;
+    font-size: 15px;
+  }
+  .slide-text .item .number {
+    font-size: 4.5rem;
   }
 }
 .slide-text .item1 {
@@ -1465,6 +1496,11 @@ body {
   width: fit-content;
   height: 85vh;
   margin: auto;
+}
+@media (max-aspect-ratio: 1.59) {
+  .pathway-page .pathway-mid {
+    transform: scale(0.8);
+  }
 }
 .pathway-page .pathway-mid img {
   height: 100%;
@@ -1746,7 +1782,7 @@ body {
   font-family: montserrat;
 }
 .pathway-detail-box {
-  width: 9.5%;
+  width: 10%;
   position: relative;
 }
 .pathway-detail-box:not(:last-child) {
@@ -2063,6 +2099,7 @@ body {
 }
 .price-advice-box {
   width: 30%;
+  margin-right: 24px;
 }
 .price-advice-box > :first-child {
   position: relative;
@@ -2184,6 +2221,29 @@ body {
 }
 .price-advice-box-container .input-container-pricepermonth {
   background: #FCC672;
+}
+@media (max-width: 1300px) {
+  .price-advice-box {
+    margin-right: 16px;
+    width: 31%;
+  }
+  .price-advice-box-container {
+    padding: 16px 8px 8px 16px;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+  }
+  .price-advice-box-container .input-container {
+    padding-left: 0.5rem;
+    font-size: 12px;
+  }
+  .price-advice-box-container .input-container > :first-child {
+    width: 120px;
+  }
+  .price-advice-box-container .input-container input, .price-advice-box-container .input-container select, .price-advice-box-container .input-container textarea {
+    padding: 0.125rem 0.5rem;
+  }
+  .price-advice-box-container .input-container select {
+    padding: 0.125rem 2.25rem 0.125rem 0.5rem;
+  }
 }
 
 .price-overview .btn-back-square {
