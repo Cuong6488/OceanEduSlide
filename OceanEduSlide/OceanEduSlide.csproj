@@ -380,6 +380,19 @@
     <Content Include="Content\images\S-S.png" />
     <Content Include="Content\images\S-Side-Location.png" />
     <Content Include="Content\images\S-south-location.png" />
+    <Content Include="Content\images\setting-after.png" />
+    <Content Include="Content\images\setting-content1.png" />
+    <Content Include="Content\images\setting-content2.png" />
+    <Content Include="Content\images\setting-content3.png" />
+    <Content Include="Content\images\setting-content4.png" />
+    <Content Include="Content\images\setting-content5.png" />
+    <Content Include="Content\images\setting-item1.png" />
+    <Content Include="Content\images\setting-item2.png" />
+    <Content Include="Content\images\setting-item3.png" />
+    <Content Include="Content\images\setting-item4.png" />
+    <Content Include="Content\images\setting-item5.png" />
+    <Content Include="Content\images\setting-li-dot.png" />
+    <Content Include="Content\images\setting-title.png" />
     <Content Include="Content\images\slick-next.png" />
     <Content Include="Content\images\slick-prev.png" />
     <Content Include="Content\images\slide-back.png" />
@@ -412,6 +425,12 @@
     </Content>
     <Content Include="Content\style.min.css">
       <DependentUpon>style.css</DependentUpon>
+    </Content>
+    <Content Include="Content\style2.css">
+      <DependentUpon>style2.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\style2.min.css">
+      <DependentUpon>style2.css</DependentUpon>
     </Content>
     <Content Include="Content\tagify.css" />
     <Content Include="Content\tagmanager.css" />
@@ -508,6 +527,7 @@
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\style.scss" />
+    <Content Include="Content\style2.scss" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />

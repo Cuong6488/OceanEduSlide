@@ -1062,6 +1062,19 @@ function about() {
 
     //    });
     //});
+
+    $(".btn-setting").on("click", function () {
+        $(".about-page > .slide:not(.about-pathway)").fadeOut(300, function () {
+            $(".btns-text").fadeOut(0);
+            $(".logo-about").fadeOut(0);
+            $(".menu-btn").fadeOut(0);
+            $(".about-pathway").fadeIn(300);
+        });
+    });
+    $(".about-pathway-name").on("click", function () {
+        $(".about-pathway-content").removeClass("active");
+        $(this).siblings(".about-pathway-content").addClass("active");
+    });
 }
 $("[data-item=city]").on("change", function (data) {
     const id = $(this).val();

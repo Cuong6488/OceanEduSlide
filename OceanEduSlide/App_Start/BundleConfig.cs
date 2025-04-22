@@ -40,6 +40,7 @@ namespace OceanEduSlide
                           "~/Content/jquery.toast.css",
                           "~/Content/jquery.fancybox.css",
                           "~/Content/toctoc.min.css",
+                          "~/Content/style2.css",
                           "~/Content/style.css"));
 
             bundles.Add(new StyleBundle("~/Content/admincss").Include(
