@@ -795,7 +795,7 @@ function pathway() {
         $(".btn-book").trigger("click");
         $(".menu-btn").fadeIn(300);
     });
-    $(".btn-class").on("click", function () {
+    $(".btn-setting").on("click", function () {
         if (pathway === "discovery") {
             //$(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
             //    $(".book-discovery").fadeIn(300);
@@ -1027,14 +1027,6 @@ function about() {
             });
         });
     });
-    //$(".achie .btn-back-square").on("click", function () {
-    //    $(".about-page > .slide").fadeOut(300, function () {
-    //        $(".btns-text").fadeIn(300);
-    //        $(".logo-about").fadeIn(300);
-    //        $(".menu-btn").fadeIn(300);
-
-    //    });
-    //});
 
     $(".btn-user").on("click", function () {
         $(".about-page > .slide:not(.team)").fadeOut(300, function () {
@@ -1085,11 +1077,43 @@ function about() {
             $(".hand-slide-1").fadeIn(300);
         });
     });
+    $(".hand-slide-1 .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.hand-slide-2)").fadeOut(300, function () {
+            $(".hand-slide-2").fadeIn(300);
+        });
+    });
+    $(".hand-slide-2 .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".hand-slide-1").fadeIn(300);
+        });
+    });
+    $(".hand-slide-1 .handslide-title").on("click", function () {
+        $(".about-page > .slide:not(.promiss-1)").fadeOut(300, function () {
+            $(".promiss-1").fadeIn(300);
+            $(".menu-btn").fadeOut(300);
+        });
+    });
+
+    $(".promiss-1 .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.promiss-2)").fadeOut(300, function () {
+            $(".promiss-2").fadeIn(300);
+        });
+    });
+    $(".promiss-2 .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.promiss-1)").fadeOut(300, function () {
+            $(".promiss-1").fadeIn(300);
+        });
+    });
+    $(".promiss-2 .btn-back-square,.promiss-1 .btn-back-square").on("click", function () {
+        $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".hand-slide-1").fadeIn(300);
+            $(".menu-btn").fadeIn(300);
+        });
+    });
     $(".btn-setting").on("click", function () {
         $(".about-page > .slide:not(.about-pathway)").fadeOut(300, function () {
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
-            $(".menu-btn").fadeOut(0);
             $(".about-pathway").fadeIn(300);
         });
     });
