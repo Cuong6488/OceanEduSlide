@@ -436,7 +436,6 @@ body {
                         outline: none;
                     }
                 }
-               
             }
 
             button {
@@ -714,6 +713,23 @@ body {
         }
     }
 }*/
+
+.btn-slide {
+    position: absolute;
+    left: 80px;
+    bottom: 40px;
+    width: fit-content;
+    height: 50px;
+    display: flex;
+
+    & > :nth-child(2) {
+        transform: translateX(-5px);
+    }
+
+    img {
+        height: 50px;
+    }
+}
 
 .about-index {
     background-image: url('images/about-bg.png');
@@ -1755,24 +1771,8 @@ body {
                 margin-bottom: 2vh;
             }
         }
-
-        .btn-slide {
-            position: absolute;
-            left: 80px;
-            bottom: 40px;
-            width: fit-content;
-            height: 50px;
-            display: flex;
-
-            & > :nth-child(2) {
-                transform: translateX(-5px);
-            }
-
-            img {
-                height: 50px;
-            }
-        }
     }
+
 
     .menu-star {
         display: flex;
@@ -2962,128 +2962,140 @@ body {
             height: 60px !important;
         }
     }
+}
 
-    .face-slick {
+.face-slick {
+    /*transform:translateY(50px);*/
+    .face-item {
+        font-family: 'utm avo';
         /*transform:translateY(50px);*/
-        .face-item {
-            font-family: 'utm avo';
-            /*transform:translateY(50px);*/
-            .img-container {
-                padding: 1rem;
-                border-radius: 10px 10px 15px 15px;
-                transform: translateY(5px);
-                background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
-                padding-bottom: 0;
+        .img-container {
+            padding: 1rem;
+            border-radius: 10px 10px 15px 15px;
+            transform: translateY(5px);
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) calc(100% - 20px), rgba(255, 255, 255, 0.8) 100%);
+            padding-bottom: 0;
 
-                img {
-                    width: 100%;
-                    aspect-ratio: 3/4;
-                    object-fit: cover;
-                    object-position: bottom;
-                    background-image: url('images/face-img-bg.png');
-                    background-position: center;
-                    background-size: 100% 100%;
-                    transform: translateY(-24px);
-                }
+            img {
+                width: 100%;
+                aspect-ratio: 3/4;
+                object-fit: cover;
+                object-position: bottom;
+                background-image: url('images/face-img-bg.png');
+                background-position: center;
+                background-size: 100% 100%;
+                transform: translateY(-24px);
             }
+        }
 
-            .face-name {
-                background: linear-gradient(to right,$blue,$main-color);
-                text-align: center;
-                font-size: 21px;
-                text-transform: uppercase;
-                color: white;
-                padding: .5rem;
-                padding-top: 1rem;
-                position: relative;
-                box-shadow: 2px 2px 5px rgba(0,0,0,.3);
-                clip-path: polygon( 0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0 );
+        .face-name {
+            background: linear-gradient(to right,$blue,$main-color);
+            text-align: center;
+            font-size: 21px;
+            text-transform: uppercase;
+            color: white;
+            padding: .5rem;
+            padding-top: 1rem;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+            clip-path: polygon( 0 0, calc(50% - 7px) 0, calc(50% + 7px) 0, 100% 0, 100% 100%, 0 100%, 0 0, calc(50% - 7px) 0, 50% 10px, calc(50% + 7px) 0 );
 
 
-                &::after {
-                    position: absolute;
-                    content: '';
-                    height: 2px;
-                    width: 60%;
-                    bottom: 0;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background-image: url('images/face-name-after.png');
-                    @include custom-background();
-                }
+            &::after {
+                position: absolute;
+                content: '';
+                height: 2px;
+                width: 60%;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                background-image: url('images/face-name-after.png');
+                @include custom-background();
+            }
+        }
+
+        .face-office {
+            text-align: center;
+            padding: 5px;
+            color: $secondmain-color;
+            text-transform: uppercase;
+        }
+
+        .face-achie {
+            text-align: center;
+            width: fit-content;
+            min-width: 70%;
+            padding: 5px 35px;
+            background-image: url('images/face-achie.png');
+            @include custom-background();
+            margin: auto;
+            color: $red;
+            font-size: 21px;
+        }
+    }
+
+    @media(max-width:1700px) {
+        .face-item {
+            .face-name, .face-achie {
+                font-size: 18px;
             }
 
             .face-office {
-                text-align: center;
-                padding: 5px;
-                color: $secondmain-color;
-                text-transform: uppercase;
-            }
-
-            .face-achie {
-                text-align: center;
-                width: fit-content;
-                min-width: 70%;
-                padding: 5px 35px;
-                background-image: url('images/face-achie.png');
-                @include custom-background();
-                margin: auto;
-                color: $red;
-                font-size: 21px;
+                font-size: 14px;
             }
         }
+    }
 
-        @media(max-width:1700px) {
-            .face-item {
-                .face-name, .face-achie {
-                    font-size: 18px;
-                }
-
-                .face-office {
-                    font-size: 14px;
-                }
-            }
+    @media(max-width:1400px) {
+        .slick-slide {
+            margin: .5rem;
         }
 
-        @media(max-width:1400px) {
-            .slick-slide {
-                margin: .5rem;
-            }
-
-            .slick-list {
-                margin: -.5rem;
-            }
-
-            .face-item {
-                .img-container {
-                    padding: .75rem;
-                    border-radius: 10px 10px 15px 15px;
-                    transform: translateY(5px);
-                    padding-bottom: 0;
-
-                    img {
-                        transform: translateY(-18px);
-                    }
-                }
-            }
+        .slick-list {
+            margin: -.5rem;
         }
 
-        @media(max-width:1200px) {
-            .face-item {
-                .face-name, .face-achie {
-                    font-size: 16px;
-                }
+        .face-item {
+            .img-container {
+                padding: .75rem;
+                border-radius: 10px 10px 15px 15px;
+                transform: translateY(5px);
+                padding-bottom: 0;
 
-                .face-office {
-                    font-size: 13px;
+                img {
+                    transform: translateY(-18px);
                 }
             }
         }
     }
 
-    .fade-slide {
-        background-image: url('images/pathway-discovery-bg.png');
+    @media(max-width:1200px) {
+        .face-item {
+            .face-name, .face-achie {
+                font-size: 16px;
+            }
+
+            .face-office {
+                font-size: 13px;
+            }
+        }
     }
+
+    &.team-slick {
+        .face-item {
+
+            .face-name {
+                text-transform: unset;
+                padding: .75rem .5rem;
+                text-shadow: 2px 2px 1px $secondmain-color;
+                /*font-family:'Myriad Pro';*/
+            }
+        }
+    }
+}
+
+.fade-slide {
+    background-image: url('images/pathway-discovery-bg.png');
 }
 
 .achie {
@@ -3099,8 +3111,10 @@ body {
         }
     }
 }
+
 .achie-index {
-background-image: url('images/achie-banner.png');
+    background-image: url('images/achie-banner.png');
+
     .btn-back-square {
         height: 60px;
 
@@ -3109,17 +3123,19 @@ background-image: url('images/achie-banner.png');
         }
     }
 
-    .btn-achie{
-        height:30px;
-        width:20px;
-        position:absolute;
-        left:108px;
-        bottom:60px;
-        img{
-            height:100%;
+    .btn-achie {
+        height: 30px;
+        width: 20px;
+        position: absolute;
+        left: 108px;
+        bottom: 60px;
+
+        img {
+            height: 100%;
         }
     }
 }
+
 .achie {
     .achie-item {
         .img-container {
@@ -3163,8 +3179,8 @@ background-image: url('images/achie-banner.png');
 
         .achie-name {
             background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) calc(100% - 10px), rgba(255, 255, 255, 0.8) 100%);
-            line-height: 1.1;
-            height: calc(1.1 * 3em + 1.5rem);
+            line-height: 1.4;
+            height: calc(1.2 * 3em + 1.5rem);
             padding: .75rem;
             text-align: center;
             border-radius: 8px;
@@ -3173,8 +3189,162 @@ background-image: url('images/achie-banner.png');
             font-weight: 600;
             color: white;
             text-shadow: 2px 2px 1px $secondmain-color;
-            font-size:14px;
-            white-space:nowrap;
+            font-size: 14px;
+            white-space: nowrap;
+
+            @media(max-width:1700px) {
+                font-size: 12px;
+            }
+
+            @media(max-width:1200px) {
+                font-size: 11px;
+            }
+        }
+    }
+}
+
+.team {
+    background-image: url('images/pathway-discovery-bg.png');
+    background-image: url('images/about-bg.png');
+
+    &-container {
+    }
+
+    &-content {
+        width: fit-content;
+
+        & > :first-child {
+            width: 65vw;
+
+            @media(max-width:1200px) {
+                width: 75vw;
+            }
+        }
+    }
+
+    .stars {
+        width: fit-content;
+
+        img {
+            width: 50px;
+            opacity: 1;
+
+            &.active {
+                opacity: 0;
+            }
+        }
+    }
+
+    .star-content-container {
+        height: 300px;
+        width: 60vw;
+        position: relative;
+        font-family: josefinsans;
+        margin-top: 20px;
+
+
+        @media(max-width:1200px) {
+            width: 72vw;
+        }
+
+        & > * {
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+            padding: 8px 80px 16px 10px;
+            padding-right: 80px;
+            opacity: 0;
+            visibility: hidden;
+            transition: .3s;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: fit-content;
+            border-radius: 0 0 50px 0;
+
+            &.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            & > :first-child {
+                border-top: 1px dashed $blue;
+                height: 7px;
+                width: calc(100% + 8px);
+                transform: translateX(-8px);
+                position: relative;
+            }
+
+            & > :nth-child(2) {
+                text-align: start;
+
+                & > :first-child {
+                    img {
+                        width: 45px;
+                        object-fit: contain;
+                    }
+                }
+
+                & > :nth-child(2) {
+                    img {
+                        width: 30px;
+                        object-fit: contain;
+                    }
+                }
+
+                & > :nth-child(3) {
+                    background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+                    padding: .5rem 1rem;
+                    line-height: 1.2;
+
+                    img {
+                        width: 7px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.hand-slide {
+    &-content {
+        & > :first-child {
+            width: 70vw;
+        }
+
+        ul {
+            padding: 20px 30px 20px 40px;
+            background-image: url('images/hand-box-bg.png');
+            width: 70vw;
+            aspect-ratio: 3.5;
+            @include custom-background();
+
+            li {
+                position: relative;
+
+                img {
+                    position: absolute;
+                    left: -18px;
+                    top: 5px;
+                    width: 10px;
+                }
+            }
+        }
+    }
+
+    .handslide-title {
+        margin: auto;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    &-1 {
+        .handslide-title {
+            width: 45%;
+        }
+    }
+
+    &-2 {
+        .handslide-title {
+            width: 80%;
         }
     }
 }

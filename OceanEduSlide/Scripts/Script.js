@@ -322,7 +322,7 @@ function price() {
                 var paypermonth = Math.round(finalMoney / term);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
             }
-            
+
         });
         $(".input-container-prepay input").on("change", function () {
             //var thisElement = $(this);
@@ -534,7 +534,7 @@ function face() {
 
     });
 }
-function text_title(text){
+function text_title(text) {
 
     $(".btns-text p").text(text);
 }
@@ -544,7 +544,7 @@ function pathway() {
             $(".pathway-mid").fadeIn(300);
             $(".pathway-left").fadeIn(300);
             $(".logo-about").fadeIn(100);
-            $(".logo-anchor.pathway-home-btn").fadeIn(300);
+            //$(".logo-anchor.pathway-home-btn").fadeIn(300);
             text_title("CHƯƠNG TRÌNH HỌC");
         });
     });
@@ -728,6 +728,7 @@ function pathway() {
             $(".pathway-index ." + pwdetailClass).fadeIn(300);
 
         });
+
         if (pathway === "discovery") {
             //$(".discovery-text-star img").fadeOut(300);
             $(".title3").fadeOut(0);
@@ -995,34 +996,6 @@ function about() {
             $(".menu-btn").fadeOut(0);
             $(".achie-index").fadeIn(300);
         });
-        //$(".about-page > .slide:not(.achie)").fadeOut(300, function () {
-        //    $(".btns-text").fadeOut(0);
-        //    $(".logo-about").fadeOut(0);
-        //    $(".menu-btn").fadeOut(0);
-        //    $(".achie").fadeIn(300);
-
-        //    $('.achie-slick').slick({
-        //        autoplay: false,
-        //        dots: false,
-        //        infinite: true,
-        //        speed: 1000,
-        //        slidesToShow: 5,
-        //        slidesToScroll: 5,
-        //        autoplaySpeed: 2000,
-        //        arrows: true,
-        //        nextArrow: '<button type="button" class="slick-next"></button>',
-        //        prevArrow: '<button type="button" class="slick-prev"></button>',
-        //        responsive: [
-        //            {
-        //                breakpoint: 1400,
-        //                settings: {
-        //                    slidesToShow: 4,
-        //                    slidesToScroll: 4,
-        //                }
-        //            }
-        //        ]
-        //    });
-        //});
     });
     $(".btn-achie").on("click", function () {
         $(".about-page > .slide:not(.achie)").fadeOut(300, function () {
@@ -1063,6 +1036,55 @@ function about() {
     //    });
     //});
 
+    $(".btn-user").on("click", function () {
+        $(".about-page > .slide:not(.team)").fadeOut(300, function () {
+            $(".btns-text").fadeOut(0);
+            $(".logo-about").fadeOut(0);
+            $(".team").fadeIn(300);
+        });
+    });
+    $(".stars img").on("click", function () {
+        $(".stars img").removeClass("active");
+        $(this).addClass("active");
+        var contentStarClass = $(this).attr("class").split(" ")[0];
+        $(".star-content-container > *").removeClass("active");
+        $(".star-content-container ." + contentStarClass).addClass("active");
+    });
+    $(".team-content-title").on("click", function () {
+        $(".about-page> .slide:not(.team-slide)").fadeOut(300, function () {
+            $(".team-slide").fadeIn(300);
+
+            $('.team-slick').slick({
+                autoplay: true,
+                dots: false,
+                infinite: true,
+                speed: 1000,
+                slidesToShow: 5,
+                slidesToScroll: 5,
+                autoplaySpeed: 2000,
+                arrows: true,
+                nextArrow: '<button type="button" class="slick-next"></button>',
+                prevArrow: '<button type="button" class="slick-prev"></button>',
+                responsive: [
+                    {
+                        breakpoint: 1400,
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 4,
+                        }
+                    }
+                ]
+            });
+        });
+
+    });
+    $(".btn-hand").on("click", function () {
+        $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".btns-text").fadeOut(0);
+            $(".logo-about").fadeOut(0);
+            $(".hand-slide-1").fadeIn(300);
+        });
+    });
     $(".btn-setting").on("click", function () {
         $(".about-page > .slide:not(.about-pathway)").fadeOut(300, function () {
             $(".btns-text").fadeOut(0);

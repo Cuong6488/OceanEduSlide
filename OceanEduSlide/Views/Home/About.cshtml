@@ -8,7 +8,6 @@
         </a>
     </div>
     <div class="btns-text">
-        <p>GIỚI THIỆU OCEAN EDU</p>
         <div class="btn-file">
             <a href="javascript:;"><img src="~/Content/images/file-download.png" /></a>
         </div>
@@ -51,7 +50,7 @@
             </a>
         </li>
     </ul>
-    
+
     <div class="map-first hidden slide">
         <div class="logo-about">
             <a href="/">
@@ -59,7 +58,6 @@
             </a>
         </div>
         <div class="btns-text">
-            <p>GIỚI THIỆU OCEAN EDU</p>
             <div class="btn-file">
                 <a href="javascript:;"><img src="~/Content/images/file-download.png" /></a>
             </div>
@@ -310,7 +308,9 @@
         <div class="btn-achie">
             <img src="~/Content/images/slide-next.png" />
         </div>
-        
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
     </div>
     <div class="achie slide hidden">
         <a class="logo-anchor" href="@Url.Action("Index")">
@@ -323,36 +323,401 @@
         <div class="h-100 d-flex justify-content-center align-items-center">
             <div class="container-slick">
                 <div class="achie-slick">
-                    @for (int i = 1; i < 10; i++)
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-1.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU ĐẠT GIẢI THƯỞNG <br /> "TOP 10 THE BEST <br /> OF VIETNAM 2023"
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-2.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU ĐẠT GIẢI THƯỜNG <br /> "TOP 10 THƯƠNG HIỆU UY TÍN <br /> HÀNG ĐẦU VIỆT NAM 2024""
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-3.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG THƯƠNG HIỆU <br /> TRƯỜNG TỐN CÙNG DÂN TỘC
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-4.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU NHẬN DANH HIỆU <br /> *PEARSON CONNECTED SCHOOL*
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-5.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU ĐƯỢC VINH DANH <br /> "TOP 10 THƯƠNG HIỆU XUẤT SẮC <BR /> CHÂU Á - THÁI BÌNH DƯƠNG 2024"
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-6.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG <br /> "VÌ SỰ NGHIỆP PHÁT TRIỂN <br /> GIÁO DỤC NĂM 2015"
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-7.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG <br /> THƯƠNG HIỆU VIỆT NAM <br /> UY TÍN CHẤT LƯỢNG
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-8.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG TOP 100 <br /> DỊCH VỤ VÀNG VÌ CUỘC SỐNG VIỆT
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-9.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU NHẬN GIẢI THƯỞNG <br /> "DOANH NHÂN, DOANH NGHIỆP <br /> ĐỔI MỚI SÁNG TẠO NĂM 2023"
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-10.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG THƯƠNG HIỆU <br /> TRƯỜNG TỒN CÙNG DÂN TỘC
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-11.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG <BR /> DOANH NGHIỆP BỀN VỮNG
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-12.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG <br /> "TOP 10 THƯƠNG HIỆU <br /> TIN CẬY NĂM 2018"
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-13.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            GIẢI THƯỞNG TOP 100 <br /> DỊCH VỤ VÀNG VÌ CUỘC SỐNG VIỆT
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="achie-item">
+                        <div class="img-container">
+                            <img src="~/Content/images/achie-14.png" />
+                            <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
+                            <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        </div>
+                        <div class="achie-name">
+                            OCEAN EDU ĐẠT TOP 10 <br /> THƯƠNG HIỆU - NHÃN HIỆU XUẤT SẮC <br /> CHÂU Á - THÁI BÌNH DƯƠNG
+                        </div>
+                        <div class="achie-btnlink">
+                            <a target="blank" href="https://ocean.edu.vn/">
+                                <img src="~/Content/images/achie-btnlink.png" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="team slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="team-container h-100 d-flex justify-content-center align-items-center">
+            <div class="team-content">
+                <img class="team-content-title" src="~/Content/images/team-slogan-title.png" />
+                <div class="d-flex stars">
+                    @for (int i = 1; i <= 6; i++)
                     {
-                        <div class="achie-item">
-                            <div class="img-container">
-                                <img src="~/Content/images/achie-demo1.jpg" />
-                                <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
-                                <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                        <img class="team-star-@i" src="~/Content/images/team-star.png" />
+                    }
+                </div>
+                <div class="star-content-container">
+                    <div class="team-star-1">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
                             </div>
-                            <div class="achie-name">
-                                GIẢI THƯỞNG <br />"VÌ SỰ NGHIỆP PHÁT TRIỂN <BR /> GIÁO DỤC NĂM 2015"
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
                             </div>
-                            <div class="achie-btnlink">
-                                <a target="blank" href="https://ocean.edu.vn/">
-                                    <img src="~/Content/images/achie-btnlink.png" />
-                                </a>
+                            <div>
+                                Giáo viên Native và giáo viên Non-Native (là các thầy cô đến từ Philipin)
                             </div>
                         </div>
-                        <div class="achie-item">
+                    </div>
+                    <div class="team-star-2">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
+                            </div>
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
+                            </div>
+                            <div>
+                                100% giáo viên có giấy phép lao động, có chứng chỉ Tesol (chứng chỉ sư phạm ngoại ngữ)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-star-3">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
+                            </div>
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
+                            </div>
+                            <div>
+                                100% giáo viên có thâm niên và kinh nghiệm giảng dạy học sinh là người nước ngoài
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-star-4">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
+                            </div>
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
+                            </div>
+                            <ul class="ul-reset">
+                                <li class="fw-bold">
+                                    Giáo viên tại Ocean Edu được tuyển dụng vào đào tạo qua các bước:
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Bước 1: Lọc hồ sơ (giáo viên 100% tốt nghiệp từ đại học trở lên, có chứng chỉ giảng dạy tiếng anh cho người
+                                    nước ngoài)
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Bước 2: Phỏng vấn (đánh giá kinh nghiệm, trình độ và mức độ phù hợp với công việc tại Ocean Edu)
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Bước 3: Dạy thử (kiểm tra ngữ pháp, phát âm và kỹ năng giảng dạy)
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Bước 4: Tham gia khóa đào tạo (về: Nghiệp vụ chuyên sâu; Phẩm chất giáo viên; Văn hóa bản địa); có 1 tuần
+                                    chuẩn bị bài giảng và tham dự các lớp dự giảng để rút kinh nghiệm - học hỏi từ các giáo viên chính ở trung tâm
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Bước 5: Dạy thử và đánh giá theo tiêu chuẩn để trở thành giáo viên chính thức tại Ocean Edu
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="team-star-5">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
+                            </div>
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
+                            </div>
+                            <div>
+                                Đào tạo và tham gia các lớp huấn luyện đào tạo để nâng cao các kỹ năng - nghiệp vụ giảng
+                                dạy; nâng cao nghiệp vụ; nâng cao hiểu biết về văn hóa - học sinh người Việt Nam.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-star-6">
+                        <div>
+
+                        </div>
+                        <div class="d-flex">
+                            <div>
+                                <img src="~/Content/images/team-star.png" />
+                            </div>
+                            <div>
+                                <img src="~/Content/images/team-arrow.png" />
+                            </div>
+                            <ul class="ul-reset">
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Đất nước Philipin là đất nước nói Tiếng Anh là ngôn ngữ chính, song song với tiếng mẹ đẻ
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Philipin là đất nước có nhiều giáo viên giảng dạy tại các quốc gia trên thế giới, đứng thứ 2 sau Mỹ, phát
+                                    âm chuẩn Mỹ
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Đất nước Philipin là đất nước có giáo viên giảng dạy tiếng Anh và IELTS ở châu Á tốt nhất với điểm
+                                    trung bình IELTS cao
+                                </li>
+                                <li>
+                                    <img src="~/Content/images/team-li-dot.png" />
+                                    Giáo viên Philipin có kinh nghiệm giảng dạy phù hợp tính cách và văn hóa trẻ em Việt Nam; thân thiện
+                                    và có nhiều tài lẻ
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fade-slide team-slide slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btn-back-square">
+            <a href="@Url.Action("Index")"><img src="~/Content/images/btn-back-square.png" /></a>
+        </div>
+        <div class="h-100 d-flex justify-content-center align-items-center">
+            <div class="container-slick">
+                <div class="face-slick team-slick">
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <div class="face-item">
                             <div class="img-container">
-                                <img src="~/Content/images/achie-demo1.png" />
-                                <img class="img-before img-before1" src="~/Content/images/achie-img-before.png" />
-                                <img class="img-before img-before2" src="~/Content/images/achie-img-before.png" />
+                                <img src="~/Content/images/Teacher Charo.jpg" />
                             </div>
-                            <div class="achie-name">
-                                GIẢI THƯỞNG THƯƠNG HIỆU <BR /> TRƯỜNG TỒN CÙNG DÂN TỘC
+                            <div class="face-achie">
+                                THẦY/CÔ
                             </div>
-                            <div class="achie-btnlink">
-                                <a target="blank" href="https://ocean.edu.vn/">
-                                    <img src="~/Content/images/achie-btnlink.png" />
-                                </a>
+                            <div class="face-name">
+                                Nico James Alagasi
                             </div>
                         </div>
                     }
@@ -362,31 +727,61 @@
         </div>
     </div>
     <div class="about-pathway slide hidden">
-        <div class="d-flex justify-content-center align-items-center h-100">
-            <div class="container-about-pathway">
-                <img src="~/Content/images/setting-title.png" />
-                <div class="d-flex">
-                    <div class="about-pathway-item">
-                        <img class="about-pathway-name" src="~/Content/images/setting-item1.png" />
-                        <img class="about-pathway-content" src="~/Content/images/setting-content1.png" />
-                    </div>
-                    <div class="about-pathway-item">
-                        <img class="about-pathway-name" src="~/Content/images/setting-item2.png" />
-                        <img class="about-pathway-content" src="~/Content/images/setting-content2.png" />
-                    </div>
-                    <div class="about-pathway-item">
-                        <img class="about-pathway-name" src="~/Content/images/setting-item3.png" />
-                        <img class="about-pathway-content" src="~/Content/images/setting-content3.png" />
-                    </div>
-                    <div class="about-pathway-item">
-                        <img class="about-pathway-name" src="~/Content/images/setting-item4.png" />
-                        <img class="about-pathway-content" src="~/Content/images/setting-content4.png" />
-                    </div>
-                    <div class="about-pathway-item me-0">
-                        <img class="about-pathway-name" src="~/Content/images/setting-item5.png" />
-                        <img class="about-pathway-content content-reverse" src="~/Content/images/setting-content5.png" />
-                    </div>
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="container-about-pathway">
+            <img src="~/Content/images/setting-title.png" />
+            <div class="d-flex">
+                <div class="about-pathway-item">
+                    <img class="about-pathway-name" src="~/Content/images/setting-item1.png" />
+                    <img class="about-pathway-content" src="~/Content/images/setting-content1.png" />
                 </div>
+                <div class="about-pathway-item">
+                    <img class="about-pathway-name" src="~/Content/images/setting-item2.png" />
+                    <img class="about-pathway-content" src="~/Content/images/setting-content2.png" />
+                </div>
+                <div class="about-pathway-item">
+                    <img class="about-pathway-name" src="~/Content/images/setting-item3.png" />
+                    <img class="about-pathway-content" src="~/Content/images/setting-content3.png" />
+                </div>
+                <div class="about-pathway-item">
+                    <img class="about-pathway-name" src="~/Content/images/setting-item4.png" />
+                    <img class="about-pathway-content" src="~/Content/images/setting-content4.png" />
+                </div>
+                <div class="about-pathway-item me-0">
+                    <img class="about-pathway-name" src="~/Content/images/setting-item5.png" />
+                    <img class="about-pathway-content content-reverse" src="~/Content/images/setting-content5.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="hand-slide hand-slide-1 slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
+        <div class="btn-slide">
+            <a class="btn-next" href="javascript:;">
+                <img src="~/Content/images/slide-next.png" />
+            </a>
+        </div>
+        <div class="d-flex justify-content-center align-items-center hand-slide-content h-100">
+            <div>
+                <img class="handslide-title" src="~/Content/images/hand-camket-title1.png" />
+                <ul class="ul-reset">
+                    <li>
+                        <img src="~/Content/images/team-li-dot.png" />
+                        Là sự cam kết giúp học viên đạt được chuẩn Anh ngữ như mong đợi mà không cần lolắng về xuất phát điểm của từng học viên
+                    </li>
+                    <li>
+                        <img src="~/Content/images/team-li-dot.png" />
+                        Là sự đảm bảo rằng các khách hàng được hưởng quy trình chăm sóc đặc biệt
+                    </li>
+                    <li>
+                        <img src="~/Content/images/team-li-dot.png" />
+                        Là sự cam kết giúp khách hàng có được 1 lộ trình học tập và chương trình học mong
+                        muốn để có có được kết quả như mong đợi
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
