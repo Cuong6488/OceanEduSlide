@@ -1382,6 +1382,16 @@ body {
             }
         }
     }
+
+    @media (max-width:1200px) and (max-aspect-ratio: 1.59) {
+        .map-content {
+            padding: 0;
+
+            .content-slogan {
+                width: 600px;
+            }
+        }
+    }
 }
 
 .office-list {
@@ -2658,8 +2668,9 @@ body {
             position: relative;
             padding: 24px 12px 12px 24px;
             clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%);
-            height: 684px;
+            height: 500px;
             overflow: auto;
+            transition: .3s;
 
             &::-webkit-scrollbar {
                 width: 5px;
@@ -2778,6 +2789,23 @@ body {
 
                 &-finalprice {
                     background: #AEE340;
+
+                    .payment-open {
+                        position: absolute;
+                        bottom: -9px;
+                        left: -5px;
+                        transform: translate(-100%,0);
+                        color: $secondmain-color;
+                        width: 13px;
+                        height: 13px;
+                        cursor: pointer;
+
+                        i {
+                            font-size: 13px;
+                            cursor: pointer;
+                            transform: translate(100%,-50%);
+                        }
+                    }
                 }
 
                 &-paymethod {
@@ -2816,6 +2844,20 @@ body {
 
                 &out {
                     left: 55px;
+                }
+            }
+
+            .payment-container {
+                max-height: 0;
+                transition: .3s;
+                overflow: hidden;
+            }
+
+            &.active {
+                height: 684px;
+
+                .payment-container {
+                    max-height: unset;
                 }
             }
         }
@@ -3383,6 +3425,7 @@ body {
         }
     }
 }
+
 .promiss {
     & > :first-child {
         height: 86vh;
@@ -3407,5 +3450,197 @@ body {
         left: 40px;
         bottom: 20px;
         height: 50px;
+    }
+}
+
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content {
+    background-image: url('images/pathway-discovery-bg.png');
+
+    .btn-back-square {
+        height: 60px;
+        left: 17px;
+        bottom: 35px;
+
+        img {
+            height: 60px !important;
+        }
+    }
+
+    .btn-slide {
+        height: 50px;
+        width: 20px;
+        bottom: 40px;
+
+        img {
+            height: 100%;
+        }
+    }
+}
+
+.map-slide1 {
+
+    &-img {
+        position: absolute;
+        width: 90%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+}
+
+.map-slide2 {
+    background-image: url('images/pathway-discovery-bg.png');
+
+    &-img {
+        position: absolute;
+        height: 80%;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+}
+
+.teaching-method2 {
+    background-image: url('images/pathway-discovery-bg.png');
+
+    .teaching-name-container {
+        div {
+            padding: 0 5px;
+            width: 25%;
+
+            .teaching-name {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .teaching-after {
+                width: 20%;
+                display: block;
+                margin: auto;
+                opacity: 0;
+
+                &.active {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .teaching-content-container {
+        height: 200px;
+        position: relative;
+
+        img {
+            opacity: 0;
+            width: 90%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+
+            &.active {
+                opacity: 1;
+                z-index: 1;
+            }
+        }
+    }
+}
+
+.race {
+    background-image: url('images/pathway-discovery-bg.png');
+
+    &-item {
+        margin-right: 20px;
+        width: 21%;
+
+        &-img {
+            width: 100%;
+        }
+
+        &-link {
+            width: 50%;
+            margin: auto;
+            margin-top: 8px;
+            display: block;
+        }
+    }
+}
+
+.book-focus {
+    img {
+        height: 30vw;
+        margin-right: 20px;
+    }
+}
+
+.book-focus-content {
+    .book-content-img {
+        width: 90%;
+    }
+}
+
+.teaching-method-focus-content {
+    .teachingmethod-content-img {
+        width: 90%;
+    }
+}
+.course-outline {
+    padding: 30px 0;
+    font-family:'Times New Roman';
+    font-size:18px;
+    .course-outline-logo {
+        width: 200px;
+    }
+    &-infor{
+        font-size:20px;
+    }
+    table {
+        width: 100%;
+        font-size:16px;
+        tr {
+            td,th{
+                padding:.5rem;
+            }
+            td{
+                text-align:start;
+            }
+            th{
+                text-align:center;
+            }
+            & > :nth-child(1) {
+                width: 5%;
+                text-align: center
+            }
+
+            & > :nth-child(2) {
+                width: 5%;
+                text-align: center
+            }
+
+            & > :nth-child(3) {
+                width: 10%;
+            }
+
+            & > :nth-child(4) {
+                width: 10%;
+            }
+
+            & > :nth-child(5) {
+                width: 20%;
+            }
+
+            & > :nth-child(6) {
+                width: 10%;
+            }
+
+            & > :nth-child(7) {
+                width: 10%;
+            }
+
+            & > :nth-child(8) {
+                width: 30%;
+            }
+        }
     }
 }

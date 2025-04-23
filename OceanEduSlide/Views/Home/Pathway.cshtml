@@ -8,7 +8,6 @@
         </a>
     </div>
     <div class="btns-text">
-        <p>CHƯƠNG TRÌNH HỌC</p>
         <div class="btn-file">
             <a href="javascript:;"><img src="~/Content/images/file-download.png" /></a>
         </div>
@@ -181,10 +180,10 @@
                                 hoạt động bổ trợ hấp dẫn không chỉ giúp ôn tập, mở rộng kiến thức mà còn
                                 phát triển tư duy sáng tạo và kỹ năng mềm như:
                             </div>
-                            <a target="blank" class="me-2" href="https://ocean.edu.vn/"><img src="~/Content/images/discovery-overview-another1.png" /></a>
-                            <a target="blank" class="me-2" href="https://ocean.edu.vn/"><img src="~/Content/images/discovery-overview-another2.png" /></a>
+                            <a class="me-2" href="@Url.Action("Race")"><img src="~/Content/images/discovery-overview-another1.png" /></a>
+                            <a target="blank" class="me-2" href="https://ocean.edu.vn/english-project"><img src="~/Content/images/discovery-overview-another2.png" /></a>
                             <a target="blank" class="me-2" href="https://ocean.edu.vn/"><img src="~/Content/images/discovery-overview-another3.png" /></a>
-                            <a target="blank" href="https://ocean.edu.vn/"><img src="~/Content/images/discovery-overview-another4.png" /></a>
+                            <a target="blank" href="https://ocean.edu.vn/english-project"><img src="~/Content/images/discovery-overview-another4.png" /></a>
                         </div>
                     </div>
                 </div>
@@ -2329,7 +2328,46 @@
                 </div>
             </div>
         </div>
-
+        <div class="book-focus slide hidden">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="focus-book1" src="~/Content/images/focus-book1.png" />
+                <img class="focus-book2 me-0" src="~/Content/images/focus-book2.png" />
+            </div>
+        </div>
+        <div class="book-focus-content1 book-focus-content slide hidden">
+            <div class="btn-back-square">
+                <a href="javascript:;"><img src="~/Content/images/btn-back-square.png" /></a>
+            </div>
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="book-content-img" src="~/Content/images/focus-book-content1.png" />
+            </div>
+        </div>
+        <div class="book-focus-content2-1 book-focus-content slide hidden">
+            <div class="btn-slide">
+                <a class="btn-next" href="javascript:;">
+                    <img src="~/Content/images/slide-next.png" />
+                </a>
+            </div>
+            <div class="btn-back-square">
+                <a href="javascript:;"><img src="~/Content/images/btn-back-square.png" /></a>
+            </div>
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="book-content-img" src="~/Content/images/focus-book-content2-1.png" />
+            </div>
+        </div>
+        <div class="book-focus-content2-2 book-focus-content slide hidden">
+            <div class="btn-slide">
+                <a class="btn-back" href="javascript:;">
+                    <img src="~/Content/images/slide-back.png" />
+                </a>
+            </div>
+            <div class="btn-back-square">
+                <a href="javascript:;"><img src="~/Content/images/btn-back-square.png" /></a>
+            </div>
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="book-content-img" src="~/Content/images/focus-book-content2-2.png" />
+            </div>
+        </div>
         <div class="book-discovery slide hidden">
             <div class="d-flex justify-content-center book-container">
                 <div class="discovery-book-book1">
@@ -2370,7 +2408,35 @@
                 <img src="~/Content/images/btn-back-square.png" />
             </div>
         </div>
+        <div class="teaching-method2 teaching-method-discovery slide hidden">
+            <div class="d-flex align-items-center h-100">
+                <div>
+                    <div class="d-flex justify-content-center teaching-name-container">
+                        <div>
+                            <img class="teaching-name teaching-name1" src="~/Content/images/discovery-teachingmethod1.png" />
+                            <img class="teaching-after" src="~/Content/images/discovery-teachingmethod-after1.png" />
+                        </div>
+                        <div>
+                            <img class="teaching-name teaching-name2" src="~/Content/images/discovery-teachingmethod2.png" />
+                            <img class="teaching-after" src="~/Content/images/discovery-teachingmethod-after2.png" />
+                        </div>
+                        <div class="me-0">
+                            <img class="teaching-name teaching-name3" src="~/Content/images/discovery-teachingmethod3.png" />
+                            <img class="teaching-after" src="~/Content/images/discovery-teachingmethod-after3.png" />
+                        </div>
+                    </div>
+                    <div class="teaching-content-container">
+                        <img class="teaching-content teaching-content1" src="~/Content/images/discovery-teachingmethod-content1.png" />
+                        <img class="teaching-content teaching-content1-1" src="~/Content/images/discovery-teachingmethod-content1.1.png" />
+                        <img class="teaching-content teaching-content2" src="~/Content/images/discovery-teachingmethod-content2.png" />
+                        <img class="teaching-content teaching-content2-1" src="~/Content/images/discovery-teachingmethod-content2.1.png" />
+                        <img class="teaching-content teaching-content3" src="~/Content/images/discovery-teachingmethod-content3.png" />
+                        <img class="teaching-content teaching-content3-1" src="~/Content/images/discovery-teachingmethod-content3.1.png" />
+                    </div>
+                </div>
+            </div>
 
+        </div>
         <div class="teaching-method teaching-method-challenge slide hidden justify-content-center align-items-center">
             <div>
                 <img class="teaching-method-title" src="~/Content/images/teaching-method-challenge-title.png" />
@@ -2384,6 +2450,35 @@
                         <img class="teaching-method-content" src="~/Content/images/teaching-method-challenge-content2.png" />
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="teaching-method teaching-method-focus slide hidden justify-content-center align-items-center">
+            <div>
+                <img class="teaching-method-title" src="~/Content/images/teaching-method-focus-title.png" />
+                <div class="d-flex justify-content-center">
+                    <div class="teaching-method-box teaching-method-focus1">
+                        <img class="teaching-method-name" style="width:95%" src="~/Content/images/teaching-method-focus-name1.png" />
+                    </div>
+                    <div class="teaching-method-box teaching-method-focus2">
+                        <img class="teaching-method-name" style="width:95%" src="~/Content/images/teaching-method-focus-name2.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="teaching-method-focus-content teaching-method-focus-content1 slide hidden">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="teachingmethod-content-img" src="~/Content/images/teaching-method-focus-content1.png" />
+            </div>
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
+            </div>
+        </div>
+        <div class="teaching-method-focus-content teaching-method-focus-content2 slide hidden">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <img class="teachingmethod-content-img" src="~/Content/images/teaching-method-focus-content2.png" />
+            </div>
+            <div class="btn-back-square">
+                <img src="~/Content/images/btn-back-square.png" />
             </div>
         </div>
         <div class="overview overview-challenge slide hidden">
@@ -8141,7 +8236,7 @@
             </div>*@
             <div class="overview-content">
                 <div class="overview-challenge-title overview-title">
-                    <img src="~/Content/images/title-challenge.png" />
+                    <img src="~/Content/images/title-focus.png" />
                 </div>
                 <div class="overview2-challenge overview2">
                     <div>
@@ -8153,8 +8248,9 @@
                 </div>
             </div>
         </div>
+
     </div>
-   
+
 </div>
 </div>
 @section Scripts {

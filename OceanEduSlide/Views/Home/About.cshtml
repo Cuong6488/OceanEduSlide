@@ -2,6 +2,7 @@
     ViewBag.Title = "Giới thiệu";
 }
 <div class="about-page page-100vh">
+    @*<img src="~/Content/images/test-demoimg.jpg" style="height:80%;object-fit:contain;display:block;margin:auto;transform:translateY(10vh)"/>*@
     <div class="logo-about">
         <a href="/">
             <img src="~/Content/images/Logo-white.png" alt="Ocean Edu" />
@@ -52,6 +53,11 @@
     </ul>
 
     <div class="map-first hidden slide">
+        <div class="btn-slide">
+            <a class="btn-next" href="javascript:;">
+                <img src="~/Content/images/slide-next.png" />
+            </a>
+        </div>
         <div class="logo-about">
             <a href="/">
                 <img src="~/Content/images/Logo-white.png" alt="Ocean Edu" />
@@ -274,6 +280,23 @@
             </div>
         </div>
     </div>
+    <div class="map-slide1 slide hidden">
+        <div class="btn-slide">
+            <a class="btn-next" href="javascript:;">
+                <img src="~/Content/images/slide-next.png" />
+            </a>
+        </div>
+        <div class="btn-back-square">
+            <a href="javascript:;"><img src="~/Content/images/btn-back-square.png" /></a>
+        </div>
+        <img class="map-slide1-img" src="~/Content/images/map-slide1-img.png" />
+    </div>
+    <div class="map-slide2 slide hidden">
+        <div class="btn-back-square">
+            <a href="javascript:;"><img src="~/Content/images/btn-back-square.png" /></a>
+        </div>
+        <img class="map-slide2-img" src="~/Content/images/map-slide2-img.png" />
+    </div>
     <div class="slide-text slide hidden">
         <div class="item item1">
             <p class="d-flex justify-content-center align-items-center mb-1 text-center">HỆ THỐNG VỚI GẦN</p>
@@ -311,6 +334,7 @@
         <a class="logo-anchor" href="@Url.Action("Index")">
             <img src="~/Content/images/logo.png" />
         </a>
+
     </div>
     <div class="achie slide hidden">
         <a class="logo-anchor" href="@Url.Action("Index")">
@@ -702,7 +726,7 @@
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
-            <a href="@Url.Action("Index")"><img src="~/Content/images/btn-back-square.png" /></a>
+            <img src="~/Content/images/btn-back-square.png" />
         </div>
         <div class="h-100 d-flex justify-content-center align-items-center">
             <div class="container-slick">
@@ -727,6 +751,9 @@
         </div>
     </div>
     <div class="about-pathway slide hidden">
+        <a class="logo-anchor" href="@Url.Action("Index")">
+            <img src="~/Content/images/logo.png" />
+        </a>
         <div class="d-flex justify-content-center align-items-center h-100">
             <div class="container-about-pathway">
                 <img src="~/Content/images/setting-title.png" />

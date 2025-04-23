@@ -67,7 +67,6 @@ function price() {
         yearRange: "1900:2100",
         minDate: today,
     });
-
     $(".input-container-paychanel select").on("change", function (data) {
         const paychanelVal = $(this).val();
         var items = [];
@@ -273,7 +272,7 @@ function price() {
             const totalPrice2 = calculateTotalPrice(unitPrice2, pathwayMonths2); // Tính thành tiền
             //Hiển thị thành tiền
             $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
-            $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
+            $(this).closest(".input-container-pathway").siblings(".input-container-finalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
         });
 
         //Khi thay đổi cấp độ học
@@ -296,6 +295,7 @@ function price() {
             $(this).closest(".input-container-level").siblings(".input-container-unitprice").find("input").val(unitPrice ? `${unitPrice.toLocaleString()}đ` : "");
             //Hiển thị thành tiền
             $(this).closest(".input-container-level").siblings(".input-container-totalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
+            $(this).closest(".input-container-level").siblings(".input-container-finalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
         });
         $(".input-container-qdsale select").on("change", function () {
             var thisElement = $(this);
@@ -408,6 +408,20 @@ function price() {
         $(this).closest(".price-advice-box").css("width", "31vw");
         $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "130px");
         $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "15px");
+    });
+    var iPlus = 1;
+    $(".payment-open").on("click", function () {
+
+        $(this).closest(".price-advice-box-container").toggleClass("active");
+        if (iPlus === 1) {
+            $(this).html('<i class="fa-solid fa-minus"></i>')
+            iPlus = 2;
+        }
+        else {
+            $(this).html('<i class="fa-solid fa-plus"></i>')
+            iPlus = 1;
+        }
+        
     });
 }
 function ExportPdf() {
@@ -754,8 +768,35 @@ function pathway() {
                 $(".challenge-book1-content").css("display", "flex");
             });
         }
+        if (pathway === "focus") {
+            $(".pathway-index > .slide:not(.book-focus)").fadeOut(300, function () {
+                $(".book-focus").fadeIn(300);
+            });
+        }
     });
-
+    $(".focus-book1").on("click", function () {
+        $(".pathway-index > .slide:not(.book-focus-content1)").fadeOut(300, function () {
+            $(".book-focus-content1").fadeIn(300);
+        });
+    });
+    $(".focus-book2").on("click", function () {
+        $(".pathway-index > .slide:not(.book-focus-content2-1)").fadeOut(300, function () {
+            $(".book-focus-content2-1").fadeIn(300);
+        });
+    });
+    $(".book-focus-content2-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-focus-content2-2)").fadeOut(300, function () {
+            $(".book-focus-content2-2").fadeIn(300);
+        });
+    });
+    $(".book-focus-content2-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-focus-content2-1)").fadeOut(300, function () {
+            $(".book-focus-content2-1").fadeIn(300);
+        });
+    });
+    $(".book-focus-content .btn-back-square").on("click", function () {
+        $(".btn-book").trigger("click");
+    });
     $(".discovery-book-book1 .img").on("click", function () {
         $(".pathway-index > .slide:not(.discovery-book-book1-content)").fadeOut(300, function () {
             //$(".discovery-book1-content").fadeIn(300);
@@ -797,14 +838,20 @@ function pathway() {
     });
     $(".btn-setting").on("click", function () {
         if (pathway === "discovery") {
-            //$(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
-            //    $(".book-discovery").fadeIn(300);
-            //});
+            $(".pathway-index > .slide:not(.teaching-method-discovery)").fadeOut(300, function () {
+                $(".teaching-method-discovery").fadeIn(300);
+            });
         }
         if (pathway === "challenge") {
             $(".pathway-index > .slide:not(.teaching-method-challenge)").fadeOut(300, function () {
                 $(".teaching-method-challenge").fadeIn(300);
                 $(".teaching-method-challenge").css("display", "flex");
+            });
+        }
+        if (pathway === "focus") {
+            $(".pathway-index > .slide:not(.teaching-method-focus)").fadeOut(300, function () {
+                $(".teaching-method-focus").fadeIn(300);
+                $(".teaching-method-focus").css("display", "flex");
             });
         }
     });
@@ -817,6 +864,63 @@ function pathway() {
         if (pathway === "challenge") {
             $(this).siblings(".teaching-method-content").addClass("active");
 
+        }
+    });
+    $(".teaching-method-focus1").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-focus-content1)").fadeOut(300, function () {
+            $(".teaching-method-focus-content1").fadeIn(300);
+            $(".teaching-method-focus-content1").css("display", "flex");
+        });
+    });
+    $(".teaching-method-focus2").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-focus-content2)").fadeOut(300, function () {
+            $(".teaching-method-focus-content2").fadeIn(300);
+            $(".teaching-method-focus-content2").css("display", "flex");
+        });
+    });
+    $(".teaching-method-focus-content .btn-back-square").on("click", function () {
+        $(".btn-setting").trigger("click");
+    });
+    $(".teaching-method2 .teaching-name").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-after").removeClass("active");
+            $(this).siblings(".teaching-after").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-name1").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).closest(".teaching-method2").find(".teaching-content1").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-name2").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).closest(".teaching-method2").find(".teaching-content2").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-name3").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).closest(".teaching-method2").find(".teaching-content3").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-content1").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).siblings(".teaching-content1-1").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-content2").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).siblings(".teaching-content2-1").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-content3").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(this).siblings(".teaching-content3-1").addClass("active");
         }
     });
 }
@@ -888,7 +992,19 @@ function about() {
             $(".map-first").css("display", "flex");
         });
     });
-
+    $(".map-first .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.map-slide1)").fadeOut(300, function () {
+            $(".map-slide1").fadeIn(300);
+        });
+    });
+    $(".map-slide1 .btn-slide").on("click", function () {
+        $(".about-page > .slide:not(.map-slide2)").fadeOut(300, function () {
+            $(".map-slide2").fadeIn(300);
+        });
+    });
+    $(".map-slide1 .btn-back-square,.map-slide2 .btn-back-square").on("click", function () {
+        $(".btn-map").trigger("click");
+    });
     $(".map-first .btn-map").on("click", function () {
         $(".offices-number").fadeIn(300);
         $(".offices-number").css('transform', 'translateX(0)');
@@ -975,6 +1091,7 @@ function about() {
     $(".item").hide();
     $(".btn-mess").on("click", function () {
         $(".about-page > .slide:not(.slide-text)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.slide-text)").css("display", "none");
             $(".slide-text").fadeIn(300);
             $(".slide-text").css("display", "flex");
             $(".number span").countUp();
@@ -991,18 +1108,22 @@ function about() {
     });
     $(".btn-cup").on("click", function () {
         $(".about-page > .slide:not(.achie-index)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.achie-index)").css("display", "none");
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
             $(".menu-btn").fadeOut(0);
             $(".achie-index").fadeIn(300);
+            $(".achie-index").css("display","block");
         });
     });
     $(".btn-achie").on("click", function () {
         $(".about-page > .slide:not(.achie)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.achie)").css("display", "none");
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
             $(".menu-btn").fadeOut(0);
             $(".achie").fadeIn(300);
+            $(".achie").css("display", "block");
 
             $('.achie-slick').slick({
                 autoplay: false,
@@ -1030,9 +1151,12 @@ function about() {
 
     $(".btn-user").on("click", function () {
         $(".about-page > .slide:not(.team)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.team)").css("display", "none");
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
             $(".team").fadeIn(300);
+            $(".team").css("display", "block");
+            $(".team").css("opacity", "1");
         });
     });
     $(".stars img").on("click", function () {
@@ -1043,7 +1167,7 @@ function about() {
         $(".star-content-container ." + contentStarClass).addClass("active");
     });
     $(".team-content-title").on("click", function () {
-        $(".about-page> .slide:not(.team-slide)").fadeOut(300, function () {
+        $(".about-page > .slide:not(.team-slide)").fadeOut(300, function () {
             $(".team-slide").fadeIn(300);
 
             $('.team-slick').slick({
@@ -1070,51 +1194,71 @@ function about() {
         });
 
     });
+    $(".team-slide .btn-back-square").on("click", function () {
+
+        $(".btn-user").trigger("click");
+    });
     $(".btn-hand").on("click", function () {
         $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.hand-slide-1)").css("display", "none");
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
             $(".hand-slide-1").fadeIn(300);
+            $('.hand-slide-1').css("display", "block");
         });
     });
     $(".hand-slide-1 .btn-slide").on("click", function () {
         $(".about-page > .slide:not(.hand-slide-2)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.hand-slide-2)").css("display", "none");
             $(".hand-slide-2").fadeIn(300);
+            $(".hand-slide-2").css("display", "block");
         });
     });
     $(".hand-slide-2 .btn-slide").on("click", function () {
         $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.hand-slide-1)").css("display", "none");
             $(".hand-slide-1").fadeIn(300);
+            $(".hand-slide-1").css("display", "block");
         });
     });
     $(".hand-slide-1 .handslide-title").on("click", function () {
         $(".about-page > .slide:not(.promiss-1)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.promiss-1)").css("display", "none");
             $(".promiss-1").fadeIn(300);
+            $(".promiss-1").css("display","block");
             $(".menu-btn").fadeOut(300);
         });
     });
 
     $(".promiss-1 .btn-slide").on("click", function () {
         $(".about-page > .slide:not(.promiss-2)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.promiss-2)").css("display", "none");
             $(".promiss-2").fadeIn(300);
+            $(".promiss-2").css("display", "block");
         });
     });
     $(".promiss-2 .btn-slide").on("click", function () {
         $(".about-page > .slide:not(.promiss-1)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.promiss-1)").css("display", "none");
             $(".promiss-1").fadeIn(300);
+            $(".promiss-1").css("display", "block");
         });
     });
     $(".promiss-2 .btn-back-square,.promiss-1 .btn-back-square").on("click", function () {
         $(".about-page > .slide:not(.hand-slide-1)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.hand-slide-1)").css("display", "none");
             $(".hand-slide-1").fadeIn(300);
+            $(".hand-slide-1").css("display", "block");
             $(".menu-btn").fadeIn(300);
         });
     });
     $(".btn-setting").on("click", function () {
         $(".about-page > .slide:not(.about-pathway)").fadeOut(300, function () {
+            $(".about-page > .slide:not(.about-pathway)").css("display", "none");
             $(".btns-text").fadeOut(0);
             $(".logo-about").fadeOut(0);
             $(".about-pathway").fadeIn(300);
+            $('.about-pathway').css("display", "block");
         });
     });
     $(".about-pathway-name").on("click", function () {

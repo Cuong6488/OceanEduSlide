@@ -293,6 +293,18 @@
     <Content Include="Content\images\discovery-overview-another2.png" />
     <Content Include="Content\images\discovery-overview-another3.png" />
     <Content Include="Content\images\discovery-overview-another4.png" />
+    <Content Include="Content\images\discovery-teachingmethod-after1.png" />
+    <Content Include="Content\images\discovery-teachingmethod-after2.png" />
+    <Content Include="Content\images\discovery-teachingmethod-after3.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content1.1.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content1.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content2.1.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content2.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content3.1.png" />
+    <Content Include="Content\images\discovery-teachingmethod-content3.png" />
+    <Content Include="Content\images\discovery-teachingmethod1.png" />
+    <Content Include="Content\images\discovery-teachingmethod2.png" />
+    <Content Include="Content\images\discovery-teachingmethod3.png" />
     <Content Include="Content\images\discovery-text-star1.png" />
     <Content Include="Content\images\discovery-text-star2.png" />
     <Content Include="Content\images\discovery-text-star3.png" />
@@ -315,6 +327,11 @@
     <Content Include="Content\images\faceoe-ntxh.png" />
     <Content Include="Content\images\faceoe-vpta.png" />
     <Content Include="Content\images\file-download.png" />
+    <Content Include="Content\images\focus-book-content1.png" />
+    <Content Include="Content\images\focus-book-content2-1.png" />
+    <Content Include="Content\images\focus-book-content2-2.png" />
+    <Content Include="Content\images\focus-book1.png" />
+    <Content Include="Content\images\focus-book2.png" />
     <Content Include="Content\images\focus-pathway-1a.png" />
     <Content Include="Content\images\focus-pathway-1b.png" />
     <Content Include="Content\images\focus-pathway-2a.png" />
@@ -357,6 +374,8 @@
     <Content Include="Content\images\Logo-white.png" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\faceoe-ntg.png" />
+    <Content Include="Content\images\map-slide1-img.png" />
+    <Content Include="Content\images\map-slide2-img.png" />
     <Content Include="Content\images\overview-bg1.png" />
     <Content Include="Content\images\overview-bg2.png" />
     <Content Include="Content\images\overview-title.png" />
@@ -392,6 +411,10 @@
     <Content Include="Content\images\price-overview-title.png" />
     <Content Include="Content\images\price-select-arrow.png" />
     <Content Include="Content\images\price-title.png" />
+    <Content Include="Content\images\race1.png" />
+    <Content Include="Content\images\race2.png" />
+    <Content Include="Content\images\race3.png" />
+    <Content Include="Content\images\race4.png" />
     <Content Include="Content\images\S-bg.png" />
     <Content Include="Content\images\S-Location-yellow.png" />
     <Content Include="Content\images\S-mid-location.png" />
@@ -422,10 +445,16 @@
     <Content Include="Content\images\teaching-method-challenge-name2.png" />
     <Content Include="Content\images\teaching-method-challenge-name1.png" />
     <Content Include="Content\images\teaching-method-challenge-title.png" />
+    <Content Include="Content\images\teaching-method-focus-content1.png" />
+    <Content Include="Content\images\teaching-method-focus-content2.png" />
+    <Content Include="Content\images\teaching-method-focus-name1.png" />
+    <Content Include="Content\images\teaching-method-focus-name2.png" />
+    <Content Include="Content\images\teaching-method-focus-title.png" />
     <Content Include="Content\images\team-arrow.png" />
     <Content Include="Content\images\team-li-dot.png" />
     <Content Include="Content\images\team-slogan-title.png" />
     <Content Include="Content\images\team-star.png" />
+    <Content Include="Content\images\test-demoimg.jpg" />
     <Content Include="Content\images\text-1000000.png" />
     <Content Include="Content\images\text-3000.png" />
     <Content Include="Content\images\text-90.png" />
@@ -746,6 +775,8 @@
     <Content Include="Views\Shared\EditorTemplates\TextBox.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\UploadMultiFile.cshtml" />
     <Content Include="Views\Home\Face.cshtml" />
+    <Content Include="Views\Home\Race.cshtml" />
+    <Content Include="Views\Home\CourseOutline.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

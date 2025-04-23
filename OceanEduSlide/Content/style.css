@@ -1132,6 +1132,14 @@ body {
     font-size: 1.5rem;
   }
 }
+@media (max-width: 1200px) and (max-aspect-ratio: 1.59) {
+  .map-first .map-content {
+    padding: 0;
+  }
+  .map-first .map-content .content-slogan {
+    width: 600px;
+  }
+}
 
 .office-list {
   font-family: josefinsans;
@@ -2151,8 +2159,9 @@ body {
   position: relative;
   padding: 24px 12px 12px 24px;
   clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%);
-  height: 684px;
+  height: 500px;
   overflow: auto;
+  transition: 0.3s;
 }
 .price-advice-box-container::-webkit-scrollbar {
   width: 5px;
@@ -2253,6 +2262,21 @@ body {
 .price-advice-box-container .input-container-finalprice {
   background: #AEE340;
 }
+.price-advice-box-container .input-container-finalprice .payment-open {
+  position: absolute;
+  bottom: -9px;
+  left: -5px;
+  transform: translate(-100%, 0);
+  color: #2e3191;
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+}
+.price-advice-box-container .input-container-finalprice .payment-open i {
+  font-size: 13px;
+  cursor: pointer;
+  transform: translate(100%, -50%);
+}
 .price-advice-box-container .input-container-paymethod {
   background: #C0E346;
 }
@@ -2281,6 +2305,17 @@ body {
 }
 .price-advice-box-container .btn-zoomout {
   left: 55px;
+}
+.price-advice-box-container .payment-container {
+  max-height: 0;
+  transition: 0.3s;
+  overflow: hidden;
+}
+.price-advice-box-container.active {
+  height: 684px;
+}
+.price-advice-box-container.active .payment-container {
+  max-height: unset;
 }
 @media (max-width: 1300px) {
   .price-advice-box {
@@ -2758,4 +2793,162 @@ body {
   left: 40px;
   bottom: 20px;
   height: 50px;
+}
+
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.map-slide1 .btn-back-square, .map-slide2 .btn-back-square, .book-focus-content .btn-back-square, .teaching-method-focus-content .btn-back-square {
+  height: 60px;
+  left: 17px;
+  bottom: 35px;
+}
+.map-slide1 .btn-back-square img, .map-slide2 .btn-back-square img, .book-focus-content .btn-back-square img, .teaching-method-focus-content .btn-back-square img {
+  height: 60px !important;
+}
+.map-slide1 .btn-slide, .map-slide2 .btn-slide, .book-focus-content .btn-slide, .teaching-method-focus-content .btn-slide {
+  height: 50px;
+  width: 20px;
+  bottom: 40px;
+}
+.map-slide1 .btn-slide img, .map-slide2 .btn-slide img, .book-focus-content .btn-slide img, .teaching-method-focus-content .btn-slide img {
+  height: 100%;
+}
+
+.map-slide1-img {
+  position: absolute;
+  width: 90%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.map-slide2 {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.map-slide2-img {
+  position: absolute;
+  height: 80%;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.teaching-method2 {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.teaching-method2 .teaching-name-container div {
+  padding: 0 5px;
+  width: 25%;
+}
+.teaching-method2 .teaching-name-container div .teaching-name {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.teaching-method2 .teaching-name-container div .teaching-after {
+  width: 20%;
+  display: block;
+  margin: auto;
+  opacity: 0;
+}
+.teaching-method2 .teaching-name-container div .teaching-after.active {
+  opacity: 1;
+}
+.teaching-method2 .teaching-content-container {
+  height: 200px;
+  position: relative;
+}
+.teaching-method2 .teaching-content-container img {
+  opacity: 0;
+  width: 90%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+.teaching-method2 .teaching-content-container img.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.race {
+  background-image: url("images/pathway-discovery-bg.png");
+}
+.race-item {
+  margin-right: 20px;
+  width: 21%;
+}
+.race-item-img {
+  width: 100%;
+}
+.race-item-link {
+  width: 50%;
+  margin: auto;
+  margin-top: 8px;
+  display: block;
+}
+
+.book-focus img {
+  height: 30vw;
+  margin-right: 20px;
+}
+
+.book-focus-content .book-content-img {
+  width: 90%;
+}
+
+.teaching-method-focus-content .teachingmethod-content-img {
+  width: 90%;
+}
+
+.course-outline {
+  padding: 30px 0;
+  font-family: "Times New Roman";
+  font-size: 18px;
+}
+.course-outline .course-outline-logo {
+  width: 200px;
+}
+.course-outline-infor {
+  font-size: 20px;
+}
+.course-outline table {
+  width: 100%;
+  font-size: 16px;
+}
+.course-outline table tr td, .course-outline table tr th {
+  padding: 0.5rem;
+}
+.course-outline table tr td {
+  text-align: start;
+}
+.course-outline table tr th {
+  text-align: center;
+}
+.course-outline table tr > :nth-child(1) {
+  width: 5%;
+  text-align: center;
+}
+.course-outline table tr > :nth-child(2) {
+  width: 5%;
+  text-align: center;
+}
+.course-outline table tr > :nth-child(3) {
+  width: 10%;
+}
+.course-outline table tr > :nth-child(4) {
+  width: 10%;
+}
+.course-outline table tr > :nth-child(5) {
+  width: 20%;
+}
+.course-outline table tr > :nth-child(6) {
+  width: 10%;
+}
+.course-outline table tr > :nth-child(7) {
+  width: 10%;
+}
+.course-outline table tr > :nth-child(8) {
+  width: 30%;
 }

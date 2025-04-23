@@ -120,6 +120,14 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        public ActionResult Race()
+        {
+            return View();
+        }
+        public ActionResult CourseOutline()
+        {
+            return View();
+        }
 
         public ActionResult Contact()
         {
