@@ -106,6 +106,8 @@ function price() {
         $(this).closest(".price-advice-box").find(".input-container-paymethod").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-prepay").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-unitprice").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
         const id = $(this).val();
@@ -273,6 +275,13 @@ function price() {
             //Hiển thị thành tiền
             $(this).closest(".input-container-pathway").siblings(".input-container-totalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
             $(this).closest(".input-container-pathway").siblings(".input-container-finalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
+            if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+                var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+
+                var paypermonth = Math.round(finalMoney / term);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            }
         });
 
         //Khi thay đổi cấp độ học
@@ -296,6 +305,14 @@ function price() {
             //Hiển thị thành tiền
             $(this).closest(".input-container-level").siblings(".input-container-totalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
             $(this).closest(".input-container-level").siblings(".input-container-finalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
+            if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+                var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+
+                var paypermonth = Math.round(finalMoney / term);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            }
+
         });
         $(".input-container-qdsale select").on("change", function () {
             var thisElement = $(this);
@@ -306,9 +323,23 @@ function price() {
                     thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
                     thisElement.closest(".price-advice-box").find(".input-container-giftprice").find("input").val(data.gift);
                     thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val(data.finalMoney.toLocaleString() + 'đ');
+                    if (thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+                        var finalMoney = thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                        var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("select").val();
 
+                        var paypermonth = Math.round(finalMoney / term);
+                        thisElement.closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                    }
                 }
             });
+
+            if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+                var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+
+                var paypermonth = Math.round(finalMoney / term);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            }
         });
         $(".input-container-paymethod select").on("change", function () {
             var paymethodVal = $(this).val();
@@ -421,7 +452,7 @@ function price() {
             $(this).html('<i class="fa-solid fa-plus"></i>')
             iPlus = 1;
         }
-        
+
     });
 }
 function ExportPdf() {
@@ -923,6 +954,32 @@ function pathway() {
             $(this).siblings(".teaching-content3-1").addClass("active");
         }
     });
+    $(".btn-class").on("click", function () {
+        if (pathway === "discovery") {
+            $(".pathway-page").fadeOut(300, function () {
+                $(".course-outline-discovery").fadeIn(300);
+            });
+        }
+        //if (pathway === "challenge") {
+        //    $(".pathway-index > .slide:not(.teaching-method-challenge)").fadeOut(300, function () {
+        //        $(".teaching-method-challenge").fadeIn(300);
+        //        $(".teaching-method-challenge").css("display", "flex");
+        //    });
+        //}
+        //if (pathway === "focus") {
+        //    $(".pathway-index > .slide:not(.teaching-method-focus)").fadeOut(300, function () {
+        //        $(".teaching-method-focus").fadeIn(300);
+        //        $(".teaching-method-focus").css("display", "flex");
+        //    });
+        //}
+    });
+    $(".course-outline .btn-back-square").on("click", function () {
+        $(".course-outline-discovery").fadeOut(300, function () {
+            $(".pathway-index > .slide").fadeOut(0);
+            $(".pathway-page").fadeIn(300);
+        });
+
+    });
 }
 
 function tick() {
@@ -1113,7 +1170,7 @@ function about() {
             $(".logo-about").fadeOut(0);
             $(".menu-btn").fadeOut(0);
             $(".achie-index").fadeIn(300);
-            $(".achie-index").css("display","block");
+            $(".achie-index").css("display", "block");
         });
     });
     $(".btn-achie").on("click", function () {
@@ -1225,7 +1282,7 @@ function about() {
         $(".about-page > .slide:not(.promiss-1)").fadeOut(300, function () {
             $(".about-page > .slide:not(.promiss-1)").css("display", "none");
             $(".promiss-1").fadeIn(300);
-            $(".promiss-1").css("display","block");
+            $(".promiss-1").css("display", "block");
             $(".menu-btn").fadeOut(300);
         });
     });
