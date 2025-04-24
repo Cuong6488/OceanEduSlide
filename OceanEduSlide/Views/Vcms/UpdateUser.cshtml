@@ -1,0 +1,54 @@
+﻿@model OceanEduSlide.ViewModels.CreateUserViewModel
+@{
+    ViewBag.Title = "UpdateAdmiin";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    //int id = ViewBag.id;
+}
+<div class="box_content px-300 mt-4">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tbody>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Users.FirstOrDefault().Username)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.TextBoxFor(model => model.Users.FirstOrDefault().Username, new { @class = "form_control w300", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.Username)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+                    <td class="form_text">
+                        @Html.PasswordFor(model => model.Password, new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.Password)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.ConfirmPassword)</td>
+                    <td class="form_text">
+                        @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.OfficeId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Users.FirstOrDefault().OfficeId, Model.SelectOffices, "Chọn chi nhánh")
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Users.FirstOrDefault().Active)</td>
+                    <td class="form_text">
+                        @Html.CheckBoxFor(model => model.Users.FirstOrDefault().Active, new { @checked = "checked" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><input class="btn quick-link w-auto" type="submit" value="Cập nhật"></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>

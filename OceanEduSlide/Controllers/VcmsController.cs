@@ -268,6 +268,41 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
+        public ActionResult UpdateUser(int id)
+        {
+            var model = new CreateUserViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+
+                Users = _unitOfWork.UserRepository.Get(z => z.Id == id),
+
+            };
+            model.OfficeId = model.Users.FirstOrDefault()?.OfficeId ?? 0;
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult UpdateUser(CreateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _unitOfWork.UserRepository.GetQuery(z => z.Username == model.Username).FirstOrDefault();
+                if (user != null)
+                {
+                    user.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                    user.Active = model.Active;
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateUser", new { result = "update" });
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
         #endregion
 
         public ActionResult Index()

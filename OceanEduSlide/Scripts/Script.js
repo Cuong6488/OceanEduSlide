@@ -13,6 +13,14 @@ function login() {
     });
 }
 
+$("[data-fancybox]").fancybox({
+    zoomOpacity: "auto",
+    zoomSpeed: 11000,
+    wheel: "auto", // Cho phép phóng to bằng cuộn chuột
+    clickSlide: "zoom", // Cho phép phóng to bằng cách nhấp vào ảnh
+    maxScale: 2,
+    fitToView:false,
+});
 
 $(document).ready(function () {
     $.datepicker.regional['vi'] = {

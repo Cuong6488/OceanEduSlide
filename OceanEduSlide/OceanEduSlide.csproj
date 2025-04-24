@@ -368,7 +368,7 @@
     <Content Include="Content\images\ielt-pvd.png" />
     <Content Include="Content\images\ielt-tgl.png" />
     <Content Include="Content\images\ielt-tqh.png" />
-    <Content Include="Content\images\library-tieuchixettuyenielts.jpg" />
+    <Content Include="Content\images\library-tieuchixettuyenielts.png" />
     <Content Include="Content\images\librarycefr.png" />
     <Content Include="Content\images\login-btn-bg.png" />
     <Content Include="Content\images\login-title.png" />
@@ -831,6 +831,7 @@
     <Content Include="Views\Home\Face.cshtml" />
     <Content Include="Views\Home\Race.cshtml" />
     <Content Include="Views\Home\CourseOutline.cshtml" />
+    <Content Include="Views\Vcms\UpdateUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
