@@ -582,7 +582,7 @@ body {
         border-top: 1px solid #8dd8f8;
     }
 
-    ul {
+    .navbar {
         float: right;
         width: fit-content;
         height: 100%;
@@ -594,6 +594,7 @@ body {
             color: $main-color;
             font-weight: 500;
             font-size: 1.5rem;
+            position: relative;
 
             &:not(:last-child) {
                 margin-right: 1rem;
@@ -601,6 +602,38 @@ body {
 
             @media(max-width:1200px) {
                 font-size: 1rem;
+            }
+
+            ul {
+                position: absolute;
+                opacity: 0;
+                visibility: hidden;
+                top: 100%;
+                left: 0;
+                /*width: 200px;*/
+                white-space: nowrap;
+                transition: .3s;
+                z-index: 10;
+
+                li {
+                    background: rgba(238, 238, 238, 0.8);
+                    padding: 0px 15px;
+                    width: 100%;
+                    margin-bottom: 3px;
+                    color: black;
+                    width: 100%;
+
+                    a {
+                        width: 100%;
+                    }
+                }
+            }
+
+            &:hover {
+                ul {
+                    opacity: 1;
+                    visibility: visible;
+                }
             }
         }
     }
@@ -2161,6 +2194,10 @@ body {
         box-shadow: 3px 6px 10px rgba(0,0,0,.3);
         border-radius: 12px;
     }
+
+    &-pathway {
+        left: 100px;
+    }
 }
 
 .pathway-detail {
@@ -2692,7 +2729,7 @@ body {
                 margin-bottom: 2px;
                 /*padding: 0.375rem 0;*/
                 padding-left: 1rem;
-                font-size: 15px;
+                font-size: 14px;
                 position: relative;
 
                 & > :first-child {
@@ -2739,6 +2776,10 @@ body {
                         width: 200px;
                         height: 1px;
                         background: linear-gradient(to right, white 50%, rgba(255, 255, 255, 0.5), transparent);
+                    }
+
+                    textarea {
+                        height: 26.5px;
                     }
                 }
 
@@ -2837,6 +2878,18 @@ body {
                 &-pricepermonth {
                     background: #FCC672;
                 }
+
+                &-priceper2h {
+                    background: #f5b756;
+                }
+
+                &-priceper1-5h {
+                    background: #f7ae3b;
+                }
+
+                &-priceper45p {
+                    background: #f7a523;
+                }
             }
 
             .btn-zoom {
@@ -2849,7 +2902,7 @@ body {
                 }
 
                 &out {
-                    left: 55px;
+                    left: 65px;
                 }
             }
 
@@ -2860,7 +2913,7 @@ body {
             }
 
             &.active {
-                height: 684px;
+                height: 655px;
 
                 .payment-container {
                     max-height: unset;
@@ -2877,10 +2930,6 @@ body {
 
                 .input-container {
                     padding-left: .5rem;
-
-                    & > :first-child {
-                        width: 120px;
-                    }
 
                     input, select, textarea {
                         padding: 0.125rem 0.5rem
@@ -3597,6 +3646,7 @@ body {
     font-family: 'Times New Roman';
     font-size: 18px;
     height: unset;
+
     .course-outline-logo {
         width: 200px;
     }
@@ -3610,7 +3660,8 @@ body {
         left: 15px;
         bottom: 15px;
         opacity: .9;
-        position:fixed;
+        position: fixed;
+
         img {
             height: 60px !important;
         }
@@ -3623,12 +3674,11 @@ body {
         tr {
             td, th {
                 padding: .5rem;
-                vertical-align:top;
+                vertical-align: top;
             }
 
             td {
                 text-align: start;
-
                 /*&.noborder-bottom {
                     position: relative;
 
@@ -3647,6 +3697,7 @@ body {
 
             th {
                 text-align: center;
+                background: #eee;
             }
 
             & > :nth-child(1) {
@@ -3685,6 +3736,69 @@ body {
         }
     }
 
+    &.course-outline-challenge {
+        table {
+            tr {
+
+
+                & > :nth-child(6) {
+                    width: 20%;
+                }
+
+                & > :nth-child(7) {
+                    width: 25%;
+                }
+
+                & > :nth-child(8) {
+                    width: 10%;
+                }
+            }
+        }
+    }
+
+    &.course-outline-focus {
+        table {
+            tr {
+
+                & > :nth-child(3) {
+                    width: 6%;
+                }
+
+                & > :nth-child(4) {
+                    width: 6%;
+                }
+
+                & > :nth-child(5) {
+                    width: 10%;
+                }
+
+                & > :nth-child(6) {
+                    width: 10%;
+                }
+
+                & > :nth-child(7) {
+                    width: 10%;
+                }
+
+                & > :nth-child(8) {
+                    width: 10%;
+                }
+
+                & > :nth-child(9) {
+                    width: 30%;
+                }
+
+                & > :nth-child(10) {
+                    width: 10%;
+                }
+            }
+        }
+    }
+
+    span {
+        font-weight: bold;
+    }
+
     @media(max-width:1200px) {
         font-size: 16px;
 
@@ -3695,5 +3809,36 @@ body {
         table {
             font-size: 14px;
         }
+    }
+}
+/*.fancybox-content {*/
+/*height: 90vh !important;*/
+/*max-width: auto;*/
+/* display: block;
+    margin: auto;*/
+/*img{
+       height:100%;
+   }
+}*/
+.star-index {
+    position: absolute;
+    top: 150px;
+    right: 15px;
+
+    img {
+        height: 8vh;
+        display: block;
+        cursor: pointer;
+    }
+}
+
+.star-index-content {
+    & > :first-child {
+        position: absolute;
+        left: 7vw;
+        max-width: 86vw;
+        max-height: 90vh;
+        top: 45%;
+        transform: translateY(-50%);
     }
 }

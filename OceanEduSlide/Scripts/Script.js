@@ -116,76 +116,76 @@ function price() {
 
         if (id !== "") {
             if (id === "pre-primary") {
-                items.push('<option value="no-ielts">PRE-KINDY A</option>');
-                items.push('<option value="no-ielts">PRE-KINDY B</option>');
-                items.push('<option value="no-ielts">KINDY1A</option>');
-                items.push('<option value="no-ielts">KINDY1B</option>');
-                items.push('<option value="no-ielts">KINDY2A</option>');
-                items.push('<option value="no-ielts">KINDY2B</option>');
-                items.push('<option value="no-ielts">KINDY3A</option>');
-                items.push('<option value="no-ielts">KINDY3B</option>');
+                items.push('<option value="no-ielts-48">PRE-KINDY A</option>');
+                items.push('<option value="no-ielts-48">PRE-KINDY B</option>');
+                items.push('<option value="no-ielts-48">KINDY1A</option>');
+                items.push('<option value="no-ielts-48">KINDY1B</option>');
+                items.push('<option value="no-ielts-48">KINDY2A</option>');
+                items.push('<option value="no-ielts-48">KINDY2B</option>');
+                items.push('<option value="no-ielts-48">KINDY3A</option>');
+                items.push('<option value="no-ielts-48">KINDY3B</option>');
             }
             else if (id === "primary") {
-                items.push('<option value="no-ielts">PRE-KIDS A</option>');
-                items.push('<option value="no-ielts">PRE-KIDS B</option>');
-                items.push('<option value="no-ielts">PRE - KINDY B</option>');
-                items.push('<option value="no-ielts">KIDS1A</option>');
-                items.push('<option value="no-ielts">KIDS1B</option>');
-                items.push('<option value="no-ielts">KIDS2A</option>');
-                items.push('<option value="no-ielts">KIDS2B</option>');
-                items.push('<option value="no-ielts">KIDS3A</option>');
-                items.push('<option value="no-ielts">KIDS3B</option>');
-                items.push('<option value="no-ielts">KIDS4A</option>');
-                items.push('<option value="no-ielts">KIDS4B</option>');
-                items.push('<option value="no-ielts">KIDS5A</option>');
-                items.push('<option value="no-ielts">KIDS5B</option>');
+                items.push('<option value="no-ielts-48">PRE-KIDS A</option>');
+                items.push('<option value="no-ielts-48">PRE-KIDS B</option>');
+                items.push('<option value="no-ielts-48">PRE - KINDY B</option>');
+                items.push('<option value="no-ielts-48">KIDS1A</option>');
+                items.push('<option value="no-ielts-48">KIDS1B</option>');
+                items.push('<option value="no-ielts-48">KIDS2A</option>');
+                items.push('<option value="no-ielts-48">KIDS2B</option>');
+                items.push('<option value="no-ielts-48">KIDS3A</option>');
+                items.push('<option value="no-ielts-48">KIDS3B</option>');
+                items.push('<option value="no-ielts-48">KIDS4A</option>');
+                items.push('<option value="no-ielts-48">KIDS4B</option>');
+                items.push('<option value="no-ielts-48">KIDS5A</option>');
+                items.push('<option value="no-ielts-48">KIDS5B</option>');
             }
             else if (id === "high-school") {
-                items.push('<option value="no-ielts">TEENS1A</option>');
-                items.push('<option value="no-ielts">TEENS1B</option>');
-                items.push('<option value="no-ielts">TEENS2A</option>');
-                items.push('<option value="no-ielts">TEENS2B</option>');
-                items.push('<option value="ielts">PRE-IELTS</option>');
-                items.push('<option value="ielts">IELTS 4.0</option>');
-                items.push('<option value="ielts">IELTS 4.5</option>');
-                items.push('<option value="ielts">IELTS 5.0</option>');
-                items.push('<option value="ielts">IELTS 5.5</option>');
-                items.push('<option value="ielts">IELTS 6.0</option>');
+                items.push('<option value="no-ielts-72">TEENS1A</option>');
+                items.push('<option value="no-ielts-72">TEENS1B</option>');
+                items.push('<option value="no-ielts-72">TEENS2A</option>');
+                items.push('<option value="no-ielts-72">TEENS2B</option>');
+                items.push('<option value="ielts-72">PRE-ielts</option>');
+                items.push('<option value="ielts-72">ielts 4.0</option>');
+                items.push('<option value="ielts-72">ielts 4.5</option>');
+                items.push('<option value="ielts-72">ielts 5.0</option>');
+                items.push('<option value="ielts-72">ielts 5.5</option>');
+                items.push('<option value="ielts-72">ielts 6.0</option>');
             }
             else if (id === "ielts") {
-                items.push('<option value="ielts">GN1A</option>');
-                items.push('<option value="ielts">GN1B</option>');
-                items.push('<option value="ielts">GN2A</option>');
-                items.push('<option value="ielts">GN2B</option>');
-                items.push('<option value="ielts">PRE-IELTS</option>');
-                items.push('<option value="ielts">IELTS 4.0</option>');
-                items.push('<option value="ielts">IELTS 4.5</option>');
-                items.push('<option value="ielts">IELTS 5.0</option>');
-                items.push('<option value="ielts">IELTS 5.5</option>');
-                items.push('<option value="ielts">IELTS 6.0</option>');
-                items.push('<option value="ielts">IELTS 6.5</option>');
-                items.push('<option value="ielts">IELTS 7.0</option>');
-                items.push('<option value="ielts">IELTS 7.5</option>');
-                items.push('<option value="ielts">IELTS 8.0</option>');
-                items.push('<option value="ielts">IELTS 8.5</option>');
+                items.push('<option value="no-ielts-48">GN1A</option>');
+                items.push('<option value="no-ielts-48">GN1B</option>');
+                items.push('<option value="no-ielts-48">GN2A</option>');
+                items.push('<option value="no-ielts-48">GN2B</option>');
+                items.push('<option value="ielts-72">PRE-IELTS</option>');
+                items.push('<option value="ielts-72">IELTS 4.0</option>');
+                items.push('<option value="ielts-72">IELTS 4.5</option>');
+                items.push('<option value="ielts-72">IELTS 5.0</option>');
+                items.push('<option value="ielts-72">IELTS 5.5</option>');
+                items.push('<option value="ielts-72">IELTS 6.0</option>');
+                items.push('<option value="ielts-72">IELTS 6.5</option>');
+                items.push('<option value="ielts-72">IELTS 7.0</option>');
+                items.push('<option value="ielts-72">IELTS 7.5</option>');
+                items.push('<option value="ielts-72">IELTS 8.0</option>');
+                items.push('<option value="ielts-72">IELTS 8.5</option>');
             }
             else if (id === "toeic") {
-                items.push('<option value="no-ielts">GN1A</option>');
-                items.push('<option value="no-ielts">GN1B</option>');
-                items.push('<option value="no-ielts">GN2A</option>');
-                items.push('<option value="no-ielts">GN2B</option>');
-                items.push('<option value="no-ielts">TOEIC 400</option>');
-                items.push('<option value="no-ielts">TOEIC 450</option>');
-                items.push('<option value="no-ielts">TOEIC 500</option>');
-                items.push('<option value="no-ielts">TOEIC 550</option>');
-                items.push('<option value="no-ielts">TOEIC 600</option>');
-                items.push('<option value="no-ielts">TOEIC 650</option>');
-                items.push('<option value="no-ielts">TOEIC 700</option>');
-                items.push('<option value="no-ielts">TOEIC 750</option>');
-                items.push('<option value="no-ielts">TOEIC 800</option>');
-                items.push('<option value="no-ielts">TOEIC 850</option>');
-                items.push('<option value="no-ielts">TOEIC 900</option>');
-                items.push('<option value="no-ielts">TOEIC 950</option>');
+                items.push('<option value="no-ielts-48">GN1A</option>');
+                items.push('<option value="no-ielts-48">GN1B</option>');
+                items.push('<option value="no-ielts-48">GN2A</option>');
+                items.push('<option value="no-ielts-48">GN2B</option>');
+                items.push('<option value="no-ielts-48">TOEIC 400</option>');
+                items.push('<option value="no-ielts-48">TOEIC 450</option>');
+                items.push('<option value="no-ielts-48">TOEIC 500</option>');
+                items.push('<option value="no-ielts-48">TOEIC 550</option>');
+                items.push('<option value="no-ielts-48">TOEIC 600</option>');
+                items.push('<option value="no-ielts-48">TOEIC 650</option>');
+                items.push('<option value="no-ielts-48">TOEIC 700</option>');
+                items.push('<option value="no-ielts-48">TOEIC 750</option>');
+                items.push('<option value="no-ielts-48">TOEIC 800</option>');
+                items.push('<option value="no-ielts-48">TOEIC 850</option>');
+                items.push('<option value="no-ielts-48">TOEIC 900</option>');
+                items.push('<option value="no-ielts-48">TOEIC 950</option>');
             }
             $(this).closest(".input-container-cth").siblings(".input-container-level").find("select").html(items.join(""));
 
@@ -211,11 +211,20 @@ function price() {
 
         // Hàm tính toán đơn giá
         function calculateUnitPrice(levelValue) {
-            if (levelValue === "ielts") {
+            if (levelValue.includes("no-ielts")) {
+                return 2989000; // Đơn giá cho cấp độ có chứa "no-ielts"
+            }
+            else if (levelValue.includes("ielts")) {
                 return 3989000; // Đơn giá cho cấp độ "ielts"
-            } else if (levelValue === "no-ielts") {
-                return 2989000; // Đơn giá cho cấp độ "no-ielts"
-            } else {
+            }
+
+            //if (levelValue === "ielts") {
+            //    return 3989000; // Đơn giá cho cấp độ "ielts"
+            //}
+            //else if (levelValue === "no-ielts") {
+            //    return 2989000; // Đơn giá cho cấp độ "no-ielts"
+            //}
+            else {
                 return ""; // Đơn giá rỗng nếu không có giá trị
             }
         }
@@ -224,7 +233,8 @@ function price() {
         function calculateTotalPrice(unitPrice, pathwayMonths) {
             if (unitPrice && pathwayMonths) {
                 return unitPrice * pathwayMonths; // Thành tiền = đơn giá * số tháng
-            } else {
+            }
+            else {
                 return ""; // Thành tiền rỗng nếu thiếu giá trị
             }
         }
@@ -278,9 +288,16 @@ function price() {
             if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
                 var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
                 var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
-
                 var paypermonth = Math.round(finalMoney / term);
+                const lastTwoChars = levelValue2.slice(-2);
+                const hoursLevel = parseInt(lastTwoChars, 10);
+                var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+                var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+                var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
             }
         });
 
@@ -311,6 +328,15 @@ function price() {
 
                 var paypermonth = Math.round(finalMoney / term);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                const lastTwoChars = levelValue.slice(-2);
+                const hoursLevel = parseInt(lastTwoChars, 10);
+                var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+                var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+                var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
             }
 
         });
@@ -326,20 +352,29 @@ function price() {
                     if (thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
                         var finalMoney = thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
                         var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                        const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
 
                         var paypermonth = Math.round(finalMoney / term);
                         thisElement.closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                        const lastTwoChars = levelValue2.slice(-2);
+                        const hoursLevel = parseInt(lastTwoChars, 10);
+                        var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+                        var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+                        var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
                     }
                 }
             });
 
-            if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
-                var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+            //if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+            //    var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+            //    var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
 
-                var paypermonth = Math.round(finalMoney / term);
-                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
-            }
+            //    var paypermonth = Math.round(finalMoney / term);
+            //    $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            //}
         });
         $(".input-container-paymethod select").on("change", function () {
             var paymethodVal = $(this).val();
@@ -416,7 +451,7 @@ function price() {
         $(".input-cth").val("Chương trình học: ");
         $(".input-level").val("Cấp độ học: ");
         $(".input-pathway").val("Lộ trình học: ");
-        $(".input-chanel").val("Kênh trả góp: ");
+        $(".input-chanel").val("Kênh thanh toán: ");
         $(".input-paymethod").val("Hình thức thanh toán: ");
         $(".input-totalprice").val("Học phí: ");
         $(".input-moneyprice").val("Số tiền ưu đãi: ");
@@ -438,7 +473,7 @@ function price() {
         $(".price-advice").css("padding", "unset");
         $(this).closest(".price-advice-box").css("width", "31vw");
         $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "130px");
-        $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "15px");
+        $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "14px");
     });
     var iPlus = 1;
     $(".payment-open").on("click", function () {
@@ -584,13 +619,22 @@ function text_title(text) {
     $(".btns-text p").text(text);
 }
 function pathway() {
+    $(".star-index img").on("click", function () {
+        var classStar = $(this).attr("class");
+        $(".pathway-mid,.pathway-left,.logo-about,.star-index").fadeOut(300, function () {
+            $(".slide."+classStar).fadeIn(300);
+        });
+
+    });
+    $(".menu-btn").on("click", function () {
+        $(".btn-back-square-pathway").fadeOut(300);
+
+    });
     $(".logo-anchor.pathway-home-btn").on("click", function () {
         $(".pathway-index").fadeOut(300, function () {
             $(".pathway-mid").fadeIn(300);
             $(".pathway-left").fadeIn(300);
             $(".logo-about").fadeIn(100);
-            //$(".logo-anchor.pathway-home-btn").fadeIn(300);
-            text_title("CHƯƠNG TRÌNH HỌC");
         });
     });
     var pathway = "";
@@ -673,6 +717,7 @@ function pathway() {
                 }
             });
             $(".logo-about").fadeOut(100);
+            $(".star-index").fadeOut(100);
             //$(".logo-anchor").css("display", "flex");
         }
     });
@@ -960,23 +1005,22 @@ function pathway() {
                 $(".course-outline-discovery").fadeIn(300);
             });
         }
-        //if (pathway === "challenge") {
-        //    $(".pathway-index > .slide:not(.teaching-method-challenge)").fadeOut(300, function () {
-        //        $(".teaching-method-challenge").fadeIn(300);
-        //        $(".teaching-method-challenge").css("display", "flex");
-        //    });
-        //}
-        //if (pathway === "focus") {
-        //    $(".pathway-index > .slide:not(.teaching-method-focus)").fadeOut(300, function () {
-        //        $(".teaching-method-focus").fadeIn(300);
-        //        $(".teaching-method-focus").css("display", "flex");
-        //    });
-        //}
+        if (pathway === "challenge") {
+            $(".pathway-page").fadeOut(300, function () {
+                $(".course-outline-challenge").fadeIn(300);
+            });
+        }
+        if (pathway === "focus") {
+            $(".pathway-page").fadeOut(300, function () {
+                $(".course-outline-focus").fadeIn(300);
+            });
+        }
     });
     $(".course-outline .btn-back-square").on("click", function () {
-        $(".course-outline-discovery").fadeOut(300, function () {
+        $(".course-outline").fadeOut(300, function () {
             $(".pathway-index > .slide").fadeOut(0);
             $(".pathway-page").fadeIn(300);
+            $(".btn-back-square-pathway").fadeIn(300);
         });
 
     });
@@ -1034,8 +1078,16 @@ function tick() {
         }
     });
     $(".btn-file").on("click", function () {
+        $(".tick.activetick").addClass("hiddentick");
         $(".tick.activetick").fadeOut(300);
 
+        $(".tick.activetick").removeClass("activetick");
+        isTick = false;
+        $(".tick").css('cursor', '');
+    });
+    $(".btn-backtick").on("click", function () {
+        $(".tick.hiddentick").fadeIn(300);
+        $(".tick.hiddentick").removeClass("hiddentick");
         $(".tick.activetick").removeClass("activetick");
         isTick = false;
         $(".tick").css('cursor', '');
