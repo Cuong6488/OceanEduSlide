@@ -618,11 +618,25 @@ function text_title(text) {
 
     $(".btns-text p").text(text);
 }
+//function homeJs() {
+
+//    $('.banner').slick({
+//        autoplay: true,
+//        dots: true,
+//        infinite: true,
+//        speed: 1000,
+//        slidesToShow: 1,
+//        slidesToScroll: 1,
+//        autoplaySpeed: 2000,
+//        arrows: false,
+//        pauseOnHover: false,
+//    });
+//}
 function pathway() {
     $(".star-index img").on("click", function () {
         var classStar = $(this).attr("class");
         $(".pathway-mid,.pathway-left,.logo-about,.star-index").fadeOut(300, function () {
-            $(".slide."+classStar).fadeIn(300);
+            $(".slide." + classStar).fadeIn(300);
         });
 
     });

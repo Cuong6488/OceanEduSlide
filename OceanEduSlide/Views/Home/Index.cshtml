@@ -1,61 +1,78 @@
 ﻿@{
     ViewBag.Title = "Trang chủ";
 }
-    <div class="header d-flex">
-        <div class="logo" data-aos="fade-right" data-aos-delay="0">
-            <a href="/">
-                <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
-            </a>
-        </div>
-        <div class="navbar-container" data-aos="fade-left" data-aos-delay="300">
-            <ul class="navbar ul-reset d-flex">
-                <li>
-                    <a href="@Url.Action("About")">GIỚI THIỆU</a>
-                    
-                </li>
-                <li>
-                    <a href="@Url.Action("Pathway")">CHƯƠNG TRÌNH HỌC</a>
-                    
-                </li>
-                <li>
-                    <a href="@Url.Action("Race")">CUỘC THI</a>
-                   
-                </li>
-                <li>
-                    <a href="javascript:;">THƯ VIỆN</a>
-                    <ul class="ul-reset">
-                        <li>
-                            <a href="~/Content/images/library-tieuchixettuyenielts.jpg" data-fancybox data-type="image" data-caption="Tiêu chí xét tuyển IELTS">Tiêu chí xét tuyển IELTS</a>
-                        </li>
-                        <li>
-                            <a href="~/Content/images/librarycefr.png" data-fancybox data-type="image" data-caption="Bảng lộ trình CEFR">
-                                Bảng lộ trình CEFR
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://docs.google.com/spreadsheets/d/1hpkl87-L0CThvAdml917ypeXdFdFCCbv2G1zojb2DP4/edit?gid=1669476886#gid=1669476886">Bảng lộ trình học Ocean Edu</a>
-                            
-                        </li>
-                        <li>
-                            <a href="https://docs.google.com/document/d/1PjYnESL0k0mqEPtA_sZ3oS03M_lMjoFOh4EBLDHDtSM/edit?tab=t.0">Du học</a>
-                            
-                        </li>
-                        <li>
-                            <a href="https://docs.google.com/spreadsheets/d/1thWn-NSGkBBxKO4jztIMxUUJ4mkaET4uIjn5qViyVUI/edit?gid=1936300083#gid=1936300083">Xét tuyển trường CLC</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="@Url.Action("Face")">GƯƠNG MẶT OCEAN EDU</a>
-                    
-                </li>
-                <li>
-                    <a href="@Url.Action("Price")">HỌC PHÍ</a>
-                    
-                </li>
-            </ul>
-        </div>
+<div class="header d-flex">
+    <div class="logo" data-aos="fade-right" data-aos-delay="0">
+        <a href="/">
+            <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
+        </a>
     </div>
-<div class="banner" @*data-aos="fade-up" data-aos-delay="600"*@>
-    <img src="~/Content/images/banner-index.png" alt="banner" />
+    <div class="navbar-container" data-aos="fade-left" data-aos-delay="300">
+        <ul class="navbar ul-reset d-flex">
+            <li>
+                <a href="@Url.Action("About")">GIỚI THIỆU</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Pathway")">CHƯƠNG TRÌNH HỌC</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Race")">CUỘC THI</a>
+
+            </li>
+            <li>
+                <a href="javascript:;">THƯ VIỆN</a>
+                <ul class="ul-reset">
+                    <li>
+                        <a href="~/Content/images/library-tieuchixettuyenielts.jpg" data-fancybox data-type="image" data-caption="Tiêu chí xét tuyển IELTS">Tiêu chí xét tuyển IELTS</a>
+                    </li>
+                    <li>
+                        <a href="~/Content/images/librarycefr.png" data-fancybox data-type="image" data-caption="Bảng lộ trình CEFR">
+                            Bảng lộ trình CEFR
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/spreadsheets/d/1hpkl87-L0CThvAdml917ypeXdFdFCCbv2G1zojb2DP4/edit?gid=1669476886#gid=1669476886">Bảng lộ trình học Ocean Edu</a>
+
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/document/d/1PjYnESL0k0mqEPtA_sZ3oS03M_lMjoFOh4EBLDHDtSM/edit?tab=t.0">Du học</a>
+
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/spreadsheets/d/1thWn-NSGkBBxKO4jztIMxUUJ4mkaET4uIjn5qViyVUI/edit?gid=1936300083#gid=1936300083">Xét tuyển trường CLC</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="@Url.Action("Face")">GƯƠNG MẶT OCEAN EDU</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Price")">HỌC PHÍ</a>
+
+            </li>
+        </ul>
+    </div>
 </div>
+<div class="banner">
+    <img src="~/Content/images/banner-index.png" alt="banner">
+</div>
+@*<div class="banner">
+        @for (int i = 1; i <= 5; i++)
+        {
+            <a href="javascript:;">
+                <picture>
+                    <source srcset="~/Content/images/banner-index.png?w=600" media="(max-width: 600px)" />
+                    <img src="~/Content/images/banner-index.png?w=1900" alt="banner">
+                </picture>
+            </a>
+        }
+    </div>*@
+@*@section scripts
+    {
+        <script>
+            homeJs();
+        </script>
+    }*@
