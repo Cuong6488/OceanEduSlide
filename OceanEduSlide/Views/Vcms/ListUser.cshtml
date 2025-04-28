@@ -36,7 +36,7 @@
                 <th>Tên đăng nhập</th>
                 <th>Chi nhánh</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
-
+                <th>Face-Id</th>
                 <th style="width:100px">Hoạt động</th>
                 <th style="width: 130px"></th>
             </tr>
@@ -49,11 +49,25 @@
                     </td>
                     @*<td>@user.City.Name</td>*@
                     <td>@user.Office.Name</td>
+                    <td>
+                        @{
+                            var faceId = Model.MemberCredentials.Where(a => a.UserId == user.Id).FirstOrDefault();
+                        }
+                        @if (faceId != null)
+                        {
+                            @(faceId.CreatedAt.ToString("dd/MM/yyyy HH:mm") + " - " + faceId.DeviceName + " - " + faceId.Platform) <br />
+                            <button type="button" onclick="removeFaceId('@faceId.CredentialId')" class="btn btn-sm btn-danger"><i class="fal fa-times"></i></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" style="font-size:13px" onclick="checkBeforeRegister('@user.Id.ToString()', '@user.Username')">Đăng ký Face-Id</button>
+                        }
+                    </td>
                     <td>@Html.CheckBoxFor(model => user.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
                         @Html.ActionLink("Sửa", "UpdateUser", new { id = user.Id }) -
-                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a>
+                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a> -
                     </td>
                 </tr>
             }
@@ -113,6 +127,51 @@
                         window.location.reload();
                     };
                 });
+        }
+        async function checkBeforeRegister(userId,username) {
+            const supported = await isPlatformAuthenticatorAvailable();
+
+            if (!supported) {
+                alert("Thiết bị của bạn không hỗ trợ FaceID / TouchID / Passkey. Vui lòng sử dụng mật khẩu đăng nhập.");
+                return;
+            }
+
+            // Nếu có hỗ trợ ➔ tiến hành đăng ký FaceID
+            registerFaceId(userId, username);
+        }
+
+        async function registerFaceId(userId, username) {
+            const resp = await fetch(`/FaceId/BeginRegistration?userId=${userId}&username=${username}`);
+            const data = await resp.json();
+            const publicKey = preformatMakeCredReq(data);
+            //debugPublicKeyOptions(publicKey);
+            const cred = await navigator.credentials.create({ publicKey });
+            const response = formatMakeCredResp(cred);
+            const rs = await fetch(`/FaceId/CompleteRegistration?userId=${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response)
+            });
+            const rsData = await rs.json();
+            if (rsData.status === "ok") {
+                alert("Đăng ký FaceID thành công!");
+                window.location.reload();
+            } else {
+                alert("Đăng ký FaceID thất bại!");
+            }
+        }
+
+        function removeFaceId(credentialId) {
+            if (confirm("Bạn có chắc chắn xóa FaceId này?")) {
+                $.post("/FaceId/RemoveFaceId", { credentialId: credentialId }, function (data) {
+                    if (data.status === "ok") {
+                        alert("Xóa FaceId thành công!");
+                        window.location.reload();
+                    } else {
+                        alert("Xóa FaceId thất bại!");
+                    }
+                });
+            }
         }
     </script>
 }

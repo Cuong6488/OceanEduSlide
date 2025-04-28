@@ -84,6 +84,7 @@ namespace OceanEduSlide.ViewModels
         public SelectList SelectOffices { get; set; }
         public int? officeId { get; set; }
         public string Username { get; set; }
+        public IEnumerable<MemberCredential> MemberCredentials { get; set; }
     }
 
     public class CreateDiscountViewModel

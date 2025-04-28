@@ -265,7 +265,8 @@ namespace OceanEduSlide.Controllers
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 Users = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
-                Username = name
+                Username = name,
+                MemberCredentials = _unitOfWork.MemberCredentialRepository.GetQuery(),
             };
             return View(model);
         }
@@ -328,6 +329,7 @@ namespace OceanEduSlide.Controllers
 
         //}
         #endregion
+
 
         public ActionResult Index()
         {

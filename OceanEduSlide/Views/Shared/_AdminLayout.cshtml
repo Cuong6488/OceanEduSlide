@@ -76,12 +76,12 @@
                         </div>
                     </li>
                     @*<li data-id="4">
-            <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Quảng cáo</span><i class="fas fa-caret-down"></i></a>
-            <div class="sub hidden">
-                <div>@Html.ActionLink("Thêm mới quảng cáo", "Banner", "Banner", null, new { @class = "text_link" })</div>
-                <div>@Html.ActionLink("Danh sách quảng cáo", "ListBanner", "Banner", null, new { @class = "text_link" })</div>
-            </div>
-        </li>*@
+                            <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Quảng cáo</span><i class="fas fa-caret-down"></i></a>
+                            <div class="sub hidden">
+                                <div>@Html.ActionLink("Thêm mới quảng cáo", "Banner", "Banner", null, new { @class = "text_link" })</div>
+                                <div>@Html.ActionLink("Danh sách quảng cáo", "ListBanner", "Banner", null, new { @class = "text_link" })</div>
+                            </div>
+                        </li>*@
                     <li data-id="6">
                         <a class="root"><i class="fas fa-city icon"></i><span>Quản lý Địa danh</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
@@ -107,6 +107,7 @@
     <script src="~/Scripts/jquery.toast.js"></script>
     <script src="~/Scripts/jquery.cookie.js"></script>
     <script src="~/Scripts/jquery.fancybox.min.js"></script>
+    <script src="~/Scripts/webauthn-helper.js"></script>
     <script src="~/Scripts/scriptAdmin.js"></script>
     @RenderSection("scripts", false)
 </body>

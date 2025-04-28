@@ -17,31 +17,32 @@ using OceanEduSlide.Models;
 
 namespace OceanEduSlide.Controllers
 {
-    [MemberFilter]
+    //[MemberFilter]
+    [Authorize]
     public class FaceIdController : Controller
     {
-        private string UserId => RouteData.Values["MemberId"].ToString();
+        //private string UserId => RouteData.Values["MemberId"].ToString();
         //private string MemberEmail => RouteData.Values["MemberEmail"].ToString();
-        private string MemberName => RouteData.Values["Username"].ToString();
+        //private string MemberName => RouteData.Values["Username"].ToString();
 
         private static readonly Fido2 _fido2 = new Fido2(new Fido2Configuration
         {
-            ServerDomain = "vceo.org.vn", // ✍️ domain app thật
-            ServerName = "OceanEduSlide App",
-            Origin = "https://vceo.org.vn" // HTTPS chuẩn
+            ServerDomain = "salekit.ocean.edu.vn", // ✍️ domain app thật
+            ServerName = "Sale Kit App",
+            Origin = "https://salekit.ocean.edu.vn" // HTTPS chuẩn
         });
 
         // =========================================
         // 🚀 Bắt đầu đăng ký FaceID
         //[OverrideActionFilters]
-        public JsonResult BeginRegistration()
+        public JsonResult BeginRegistration(string userId,string username)
         {
             var user = new Fido2User
             {
-                DisplayName = MemberName,
+                DisplayName = username,
                 //Name = MemberEmail,
-                Name = MemberName,
-                Id = Encoding.UTF8.GetBytes(UserId) // Lấy từ User.Identity
+                Name = username,
+                Id = Encoding.UTF8.GetBytes(userId) // Lấy từ User.Identity
             };
 
             var authenticatorSelection = new AuthenticatorSelection
@@ -75,7 +76,7 @@ namespace OceanEduSlide.Controllers
         // =========================================
         // 🚀 Hoàn thành đăng ký FaceID
         [HttpPost]
-        public async Task<ActionResult> CompleteRegistration()
+        public async Task<ActionResult> CompleteRegistration(string userId)
         {
             var jsonOptions = new JsonSerializerSettings { };
             var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(
@@ -97,18 +98,19 @@ namespace OceanEduSlide.Controllers
             var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, (args) => Task.FromResult(true));
 
             // 🔥 Lưu Credential vào Database
-            SaveCredential(success.Result);
+            SaveCredential(success.Result,userId);
 
             return Json(new { status = "ok" });
         }
 
-        [OverrideActionFilters]
+        //[OverrideActionFilters]
+        [AllowAnonymous]
         // =========================================
         // 🚀 Bắt đầu đăng nhập bằng FaceID
         public JsonResult BeginLogin(string email)
         {
             //email = email ?? MemberEmail;
-            email = email ?? MemberName;
+            //email = email ?? MemberName;
             var userHandle = Encoding.UTF8.GetBytes(email);
 
             var existingKeys = LoadUserKeys(userHandle); // Load từ database
@@ -130,7 +132,8 @@ namespace OceanEduSlide.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-        [OverrideActionFilters]
+        //[OverrideActionFilters]
+        [AllowAnonymous]
         // =========================================
         // 🚀 Xác thực đăng nhập
         [HttpPost]
@@ -180,13 +183,12 @@ namespace OceanEduSlide.Controllers
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 //Lưu theo phiên - not set expired
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket) { SameSite = SameSiteMode.Lax, Secure = true, /*Expires = ticket.Expiration*/ });
-                return Json(new { status = "ok", redirectUrl = Url.Action("Index", "Member") });
+                return Json(new { status = "ok", redirectUrl = Url.Action("Index", "Home") });
             }
         }
-
         // =========================================
         // 🔥 Các hàm DB giả lập
-        private void SaveCredential(AttestationVerificationSuccess cred)
+        private void SaveCredential(AttestationVerificationSuccess cred,string userId)
         {
             using (var db = new UnitOfWork())
             {
@@ -201,7 +203,7 @@ namespace OceanEduSlide.Controllers
                 }
                 db.MemberCredentialRepository.Insert(new MemberCredential
                 {
-                    UserId = Convert.ToInt32(UserId),
+                    UserId = Convert.ToInt32(userId),
                     CredentialId = Convert.ToBase64String(cred.CredentialId),
                     PublicKey = Convert.ToBase64String(cred.PublicKey),
                     SignatureCounter = cred.Counter,
@@ -239,7 +241,7 @@ namespace OceanEduSlide.Controllers
                 return list.Select(x => new PublicKeyCredentialDescriptor(Convert.FromBase64String(x.CredentialId))).ToArray();
             }
         }
-        //[HttpPost]
+        [HttpPost]
         //public async Task<JsonResult> RemoveFaceId(string credentialId)
         //{
         //    using (var db = new UnitOfWork())
@@ -249,7 +251,7 @@ namespace OceanEduSlide.Controllers
 
         //        db.MemberCredentialRepository.Delete(entity);
         //        await db.SaveAsync();
-        //        return Json(new{ status = "ok", msg = "Thông tin FaceId không chính xác" });
+        //        return Json(new { status = "ok", msg = "Thông tin FaceId không chính xác" });
         //    }
         //}
 
