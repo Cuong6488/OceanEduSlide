@@ -41,6 +41,7 @@
                 <button class="btn-login" type="submit">
                     <img src="~/Content/images/login-btn-bg.png" />
                 </button>
+                <a class="faceId-btn" href="javascript:;">FaceId</a>
             }
         </div>
     </div>
@@ -54,5 +55,34 @@
 @section Scripts {
     <script>
         login();
+    </script>
+    <script>
+        $(".faceId-btn").on("click", function () {
+            loginFaceId();
+        });
+        async function loginFaceId() {
+            const email = $("[name=Username]").val();
+            const resp = await fetch('/FaceId/BeginLogin?email=' + email);
+            const data = await resp.json();
+            const publicKey = preformatGetAssertReq(data);
+            const assertion = await navigator.credentials.get({ publicKey });
+            const response = formatGetAssertResp(assertion);
+            const rs = await fetch('/FaceId/CompleteLogin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response)
+            });
+            const rsData = await rs.json();
+            if (rsData.status === "ok") {
+                //alert("Đăng nhập FaceID thành công!");
+                window.location.href = rsData.redirectUrl;
+            }
+            else if (rsData.status === "error") {
+                alert(rsData.message);
+            }
+            else {
+                alert("Đăng nhập FaceID thất bại!");
+            }
+        }
     </script>
 }

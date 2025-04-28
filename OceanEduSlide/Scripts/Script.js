@@ -462,31 +462,24 @@ function price() {
         $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "130px");
         $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "14px");
     });
-    var iPlus = 1;
     $(".payment-open").on("click", function () {
 
         $(this).closest(".price-advice-box-container").find(".payment-container").toggleClass("active");
-        if (iPlus === 1) {
+        if ($(this).html().includes("plus")) {
             $(this).html('<i class="fa-solid fa-minus"></i>')
-            iPlus = 2;
         }
         else {
             $(this).html('<i class="fa-solid fa-plus"></i>')
-            iPlus = 1;
         }
     });
-
-    var iPlus2 = 1;
     $(".price-open").on("click", function () {
 
         $(this).closest(".price-advice-box-container").find(".price-container").toggleClass("active");
-        if (iPlus2 === 1) {
+        if ($(this).html().includes("plus")) {
             $(this).html('<i class="fa-solid fa-minus"></i>')
-            iPlus2 = 2;
         }
         else {
             $(this).html('<i class="fa-solid fa-plus"></i>')
-            iPlus2 = 1;
         }
     });
 }

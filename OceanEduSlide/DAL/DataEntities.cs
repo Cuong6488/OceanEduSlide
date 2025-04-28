@@ -10,5 +10,6 @@ namespace OceanEduSlide.DAL
         public DbSet<Admin> Admins { get; set; }
         public DbSet<ConfigSite> ConfigSites { get; set; }
         public DbSet<Office> Offices { get; set; }
+        public DbSet<MemberCredential> MemberCredentials { get; set; }
     }
 }

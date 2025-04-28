@@ -11,6 +11,7 @@ namespace OceanEduSlide.DAL
         private GenericRepository<User> _userRepository;
         private GenericRepository<Office> _officeRepository;
         private GenericRepository<Discount> _discountRepository;
+        private GenericRepository<MemberCredential> _memberCredentialRepository;
         public GenericRepository<Office> OfficeRepository =>
            _officeRepository ?? (_officeRepository = new GenericRepository<Office>(_context));
         public GenericRepository<ConfigSite> ConfigSiteRepository =>
@@ -21,6 +22,8 @@ namespace OceanEduSlide.DAL
             _discountRepository ?? (_discountRepository = new GenericRepository<Discount>(_context));
         public GenericRepository<User> UserRepository =>
             _userRepository ?? (_userRepository = new GenericRepository<User>(_context));
+        public GenericRepository<MemberCredential> MemberCredentialRepository =>
+            _memberCredentialRepository ?? (_memberCredentialRepository = new GenericRepository<MemberCredential>(_context));
         public void Save()
         {
             _context.SaveChanges();
