@@ -216,7 +216,8 @@ namespace OceanEduSlide.Controllers
                 if (exist)
                 {
                     ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
-                    return View();
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    return View(model);
                 }
                 else
                 {
@@ -229,7 +230,7 @@ namespace OceanEduSlide.Controllers
                     };
                     _unitOfWork.UserRepository.Insert(m);
                     _unitOfWork.Save();
-                    //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                    //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
 
                     return RedirectToAction("CreateUser", new { result = "add" });
                 }
@@ -302,6 +303,15 @@ namespace OceanEduSlide.Controllers
             {
                 return HttpNotFound();
             }
+        }
+        [HttpPost]
+        public JsonResult DeleteUser(int userId)
+        {
+                var user = _unitOfWork.UserRepository.GetById(userId);
+                _unitOfWork.UserRepository.Delete(user);
+                _unitOfWork.Save();
+                return Json(new { status = true, msg = "Xóa tài khoản thành công" });
+
         }
         #endregion
 
