@@ -33,6 +33,7 @@ namespace OceanEduSlide.Controllers
 
         // =========================================
         // 🚀 Bắt đầu đăng ký FaceID
+        //[OverrideActionFilters]
         public JsonResult BeginRegistration()
         {
             var user = new Fido2User

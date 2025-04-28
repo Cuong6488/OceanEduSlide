@@ -30,6 +30,7 @@ namespace OceanEduSlide
                         "~/Scripts/jquery.toast.js",
                         "~/Scripts/jquery.fancybox.min.js",
                         "~/Scripts/toctoc.min.js",
+                        "~/Scripts/webauthn-helper.js",
                         "~/Scripts/Script.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(

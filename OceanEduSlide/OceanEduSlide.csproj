@@ -873,6 +873,7 @@
     <Content Include="Scripts\umd\popper.min.js" />
     <Content Include="Scripts\vanillaTilt.js" />
     <Content Include="Scripts\waypoints.min.js" />
+    <Content Include="Scripts\webauthn-helper.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
