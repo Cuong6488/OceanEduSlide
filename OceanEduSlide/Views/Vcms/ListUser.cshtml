@@ -13,7 +13,7 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật tài khoản thành công</strong></div>
 }
-<a class="btn quick-link" href="@Url.Action("User")"><i class="fal fa-plus-circle me-1"></i>Thêm tài khoản</a>
+<a class="btn quick-link" href="@Url.Action("CreateUser")"><i class="fal fa-plus-circle me-1"></i>Thêm tài khoản</a>
 <div class="box_content">
     <form action="@Url.Action("ListUser")" method="get">
         <div class="row">
@@ -74,7 +74,7 @@
                 $.post("/Vcms/DeleteUser",
                     { userId: id },
                     function (data) {
-                        if (data === "True") {
+                        if (data.status === "True") {
                             $.toast({
                                 text: 'Xóa tài khoản thành công',
                                 position: 'bottom-right',

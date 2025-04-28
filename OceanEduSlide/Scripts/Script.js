@@ -46,27 +46,6 @@ $(document).ready(function () {
     };
     $.datepicker.setDefaults($.datepicker.regional['vi']);
 
-    var activeLinkId = sessionStorage.getItem('activeLinkId');
-    if (activeLinkId) {
-        $('#' + activeLinkId).addClass('active');
-    }
-    var currentPath = window.location.pathname;
-    $('.footer-item').each(function () {
-        if ($(this).attr('href') === currentPath) {
-            $('.footer-item').removeClass('active');
-            $(this).addClass('active');
-            sessionStorage.setItem('activeLinkId', this.id);
-        }
-
-    });
-    $('.footer-item').click(function (event) {
-        event.preventDefault();
-        $('.footer-item').removeClass('active');
-        $(this).addClass('active');
-        sessionStorage.setItem('activeLinkId', this.id);
-        var url = $(this).attr('href');
-        window.location.href = url;
-    });
 });
 function price() {
     var today = new Date();
@@ -486,7 +465,7 @@ function price() {
     var iPlus = 1;
     $(".payment-open").on("click", function () {
 
-        $(this).closest(".price-advice-box-container").toggleClass("active");
+        $(this).closest(".price-advice-box-container").find(".payment-container").toggleClass("active");
         if (iPlus === 1) {
             $(this).html('<i class="fa-solid fa-minus"></i>')
             iPlus = 2;
@@ -495,7 +474,20 @@ function price() {
             $(this).html('<i class="fa-solid fa-plus"></i>')
             iPlus = 1;
         }
+    });
 
+    var iPlus2 = 1;
+    $(".price-open").on("click", function () {
+
+        $(this).closest(".price-advice-box-container").find(".price-container").toggleClass("active");
+        if (iPlus2 === 1) {
+            $(this).html('<i class="fa-solid fa-minus"></i>')
+            iPlus2 = 2;
+        }
+        else {
+            $(this).html('<i class="fa-solid fa-plus"></i>')
+            iPlus2 = 1;
+        }
     });
 }
 function ExportPdf() {

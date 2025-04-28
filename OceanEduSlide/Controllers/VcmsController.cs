@@ -313,6 +313,20 @@ namespace OceanEduSlide.Controllers
                 return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
         }
+        //public ActionResult ClearOffice()
+        //{
+        //    var offices = _unitOfWork.OfficeRepository.Get();
+        //    if(offices.Count() < 30)
+        //    {
+        //        foreach(var item in offices)
+        //        {
+        //            _unitOfWork.OfficeRepository.Delete(item);
+        //        }
+        //    }
+        //    _unitOfWork.Save();
+        //    return RedirectToAction("ListOffice");
+
+        //}
         #endregion
 
         public ActionResult Index()
@@ -427,7 +441,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
-            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: l => l.OrderByDescending(a => a.Id));
+            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: l => l.OrderBy(a => a.Sort));
 
             //if (cityId.HasValue)
             //{

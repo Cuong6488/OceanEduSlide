@@ -46,7 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CKFinder">
-      <HintPath>..\..\..\..\Documents\Zalo Received Files\CKFinder.dll</HintPath>
+      <HintPath>C:\Users\cuong\Downloads\CKFinder.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
@@ -55,7 +55,7 @@
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Helpers">
-      <HintPath>..\..\..\.NET MVC\Helpers\bin\Release\Helpers.dll</HintPath>
+      <HintPath>C:\Users\cuong\Downloads\Helpers.dll</HintPath>
     </Reference>
     <Reference Include="ImageResizer, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageResizer.4.2.8\lib\net45\ImageResizer.dll</HintPath>
@@ -158,6 +158,10 @@
     <Compile Include="Migrations\202504160715391_a1.cs" />
     <Compile Include="Migrations\202504160715391_a1.Designer.cs">
       <DependentUpon>202504160715391_a1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504280327328_update_Office.cs" />
+    <Compile Include="Migrations\202504280327328_update_Office.Designer.cs">
+      <DependentUpon>202504280327328_update_Office.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -903,6 +907,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202504160715391_a1.resx">
       <DependentUpon>202504160715391_a1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504280327328_update_Office.resx">
+      <DependentUpon>202504280327328_update_Office.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

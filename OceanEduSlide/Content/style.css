@@ -2189,9 +2189,10 @@ body {
   position: relative;
   padding: 24px 12px 12px 24px;
   clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%);
-  height: 500px;
+  /*height: 500px;*/
   overflow: auto;
   transition: 0.3s;
+  max-height: 670px;
 }
 .price-advice-box-container::-webkit-scrollbar {
   width: 5px;
@@ -2257,6 +2258,26 @@ body {
 .price-advice-box-container .input-container-note textarea {
   height: 26.5px;
 }
+.price-advice-box-container .input-container-note .price-open {
+  position: absolute;
+  bottom: 12px;
+  left: -5px;
+  transform: translate(-100%, 0);
+  color: #2e3191;
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+}
+.price-advice-box-container .input-container-note .price-open i {
+  font-size: 13px;
+  cursor: pointer;
+  transform: translate(100%, -50%);
+}
+@media (max-width: 1300px) {
+  .price-advice-box-container .input-container-note .price-open i {
+    transform: translate(135%, -60%);
+  }
+}
 .price-advice-box-container .input-container i {
   position: absolute;
   top: 50%;
@@ -2297,7 +2318,7 @@ body {
 }
 .price-advice-box-container .input-container-finalprice .payment-open {
   position: absolute;
-  bottom: -9px;
+  bottom: 6px;
   left: -5px;
   transform: translate(-100%, 0);
   color: #2e3191;
@@ -2358,10 +2379,15 @@ body {
   transition: 0.3s;
   overflow: hidden;
 }
-.price-advice-box-container.active {
-  height: 655px;
+.price-advice-box-container .payment-container.active {
+  max-height: unset;
 }
-.price-advice-box-container.active .payment-container {
+.price-advice-box-container .price-container {
+  max-height: 0;
+  transition: 0.3s;
+  overflow: hidden;
+}
+.price-advice-box-container .price-container.active {
   max-height: unset;
 }
 @media (max-width: 1300px) {
