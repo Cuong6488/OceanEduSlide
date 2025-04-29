@@ -270,6 +270,11 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
+        public ActionResult ListFaceId(int userId)
+        {
+            var model = _unitOfWork.MemberCredentialRepository.Get(a => a.UserId == userId);
+            return View(model);
+        }
         public ActionResult UpdateUser(int id)
         {
             var model = new CreateUserViewModel

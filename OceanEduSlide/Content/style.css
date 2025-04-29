@@ -363,7 +363,7 @@ body {
   position: relative;
   margin-bottom: 1rem;
 }
-.second-login .login-form form .input-container span {
+.second-login .login-form form .input-container > :first-child {
   position: absolute;
   left: 10px;
   top: 50%;

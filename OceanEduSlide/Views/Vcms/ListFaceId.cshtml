@@ -1,10 +1,10 @@
-﻿@model OceanEduSlide.ViewModels.ListUserViewModel
+﻿@model IEnumerable<OceanEduSlide.Models.MemberCredential>
 @using PagedList.Mvc
 @{
-    ViewBag.Title = "Danh sách tài khoản";
+    ViewBag.Title = "Danh sách FaceId";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 class="mt-0">Danh sách tài khoản</h2>
+<h2 class="mt-0">Danh sách khóa bảo mật</h2>
 @if (ViewBag.Result == "success")
 {
     <div id="AlertBox" class="alert alert-success"><strong>Thêm mới tài khoản thành công</strong></div>
@@ -13,59 +13,25 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật tài khoản thành công</strong></div>
 }
-<a class="btn quick-link" href="@Url.Action("CreateUser")"><i class="fal fa-plus-circle me-1"></i>Thêm tài khoản</a>
+<a class="btn quick-link" href="@Url.Action("CreateFaceId")"><i class="fal fa-plus-circle me-1"></i>Thêm khóa bảo mật</a>
 <div class="box_content">
-    <form action="@Url.Action("ListUser")" method="get">
-        <div class="row">
-            @*<div class="col-lg-4">
-                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
-                </div>*@
-            <div class="col-lg-4">
-                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
-            </div>
-            <div class="col-lg-4 align-self-center">
-                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
-            </div>
-        </div>
-    </form>
-    <p>Có tổng số <strong>@Model.Users.TotalItemCount</strong> tài khoản</p>
+    <p>Có tổng số <strong>@Model.Count()</strong> khóa bảo mật</p>
     <table class="list_table tablecenter table-striped">
         <tbody>
             <tr>
-                @*<th style="width: 80px">Thứ tự</th>*@
-                <th>Tên đăng nhập</th>
-                <th>Chi nhánh</th>
-                @*<th style="width:150px">Tỉnh thành</th>*@
-                <th>Face-Id</th>
-                <th style="width:100px">Hoạt động</th>
+                <th style="width: 60px;">Ngày tạo</th>
+                <th>Thiết bị</th>
+                <th>Nền tảng</th>
                 <th style="width: 130px"></th>
             </tr>
-            @foreach (var user in Model.Users)
-            {
-                <tr data-id="@user.Id">
-                    @*<td>@Html.EditorFor(model => user.Sort)</td>*@
-                    <td class="left">
-                        <a href="@Url.Action("UpdateUser", new { userId = user.Id })">@user.Username</a>
-                    </td>
-                    @*<td>@user.City.Name</td>*@
-                    <td>@user.Office.Name</td>
-                    <td>
-                            <button type="button" class="btn btn-success" style="font-size:13px" onclick="checkBeforeRegister('@user.Id.ToString()', '@user.Username')">Đăng ký Face-Id</button>
-                        
-                    </td>
-                    <td>@Html.CheckBoxFor(model => user.Active)</td>
-                    <td>
-                        <a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
-                        @Html.ActionLink("Sửa", "UpdateUser", new { id = user.Id }) -
-                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a> -
-                        <a href="@Url.Action("ListFaceId", new {userId = user.Id})">Danh sách Face-Id</a>
-                    </td>
-                </tr>
-            }
-            @if (Model.Users.PageCount > 1)
+            @foreach (var credential in Model)
             {
                 <tr>
-                    <td colspan="5">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Users }))</td>
+                    <td>@credential.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@credential.DeviceName</td>
+                    <td>@credential.Platform</td>
+                    @*<td>@credential.SignatureCounter</td>*@
+                    <td><button type="button" onclick="removeFaceId('@credential.CredentialId')" class="btn btn-sm btn-danger"><i class="fal fa-times"></i></button></td>
                 </tr>
             }
         </tbody>
@@ -74,10 +40,10 @@
 @section scripts
 {
     <script type="text/javascript">
-        function deleteUser(id) {
+        function deleteFaceId(id) {
             if (confirm("Bạn có chắc chắn xóa tài khoản này không?")) {
-                $.post("/Vcms/DeleteUser",
-                    { userId: id },
+                $.post("/Vcms/DeleteFaceId",
+                    { faceIdId: id },
                     function (data) {
                         if (data.status === "True") {
                             $.toast({
@@ -98,10 +64,10 @@
 
         function updateInfo(id) {
             const elm = $('tr[data-id="' + id + '"]');
-            const sort = elm.find("#user_Sort").val();
-            const active = elm.find("input#user_Active").prop("checked");
-            $.post("/Vcms/QuickUpdateUser",
-                { userId: id, sort, active },
+            const sort = elm.find("#faceId_Sort").val();
+            const active = elm.find("input#faceId_Active").prop("checked");
+            $.post("/Vcms/QuickUpdateFaceId",
+                { faceIdId: id, sort, active },
                 function (data) {
                     if (data) {
                         $.toast({
@@ -119,7 +85,7 @@
                     };
                 });
         }
-        async function checkBeforeRegister(userId, username) {
+        async function checkBeforeRegister(faceIdId, faceIdname) {
             const supported = await isPlatformAuthenticatorAvailable();
 
             if (!supported) {
@@ -128,17 +94,17 @@
             }
 
             // Nếu có hỗ trợ ➔ tiến hành đăng ký FaceID
-            registerFaceId(userId, username);
+            registerFaceId(faceIdId, faceIdname);
         }
 
-        async function registerFaceId(userId, username) {
-            const resp = await fetch(`/FaceId/BeginRegistration?userId=${userId}&username=${username}`);
+        async function registerFaceId(faceIdId, faceIdname) {
+            const resp = await fetch(`/FaceId/BeginRegistration?faceIdId=${faceIdId}&faceIdname=${faceIdname}`);
             const data = await resp.json();
             const publicKey = preformatMakeCredReq(data);
             //debugPublicKeyOptions(publicKey);
             const cred = await navigator.credentials.create({ publicKey });
             const response = formatMakeCredResp(cred);
-            const rs = await fetch(`/FaceId/CompleteRegistration?userId=${userId}`, {
+            const rs = await fetch(`/FaceId/CompleteRegistration?faceIdId=${faceIdId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(response)

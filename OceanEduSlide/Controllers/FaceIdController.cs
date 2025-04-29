@@ -27,9 +27,9 @@ namespace OceanEduSlide.Controllers
 
         private static readonly Fido2 _fido2 = new Fido2(new Fido2Configuration
         {
-            ServerDomain = "salekit.ocean.edu.vn", // ✍️ domain app thật
+            ServerDomain = "localhost:44375", // ✍️ domain app thật
             ServerName = "Sale Kit App",
-            Origin = "https://salekit.ocean.edu.vn" // HTTPS chuẩn
+            Origin = "https://localhost:44375/" // HTTPS chuẩn
         });
 
         // =========================================
@@ -81,7 +81,8 @@ namespace OceanEduSlide.Controllers
             var jsonOptions = new JsonSerializerSettings { };
             var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(
                 new StreamReader(Request.InputStream).ReadToEnd(), jsonOptions);
-
+            var jsonData = new StreamReader(Request.InputStream).ReadToEnd();
+            Console.WriteLine(jsonData);
             if (attestationResponse == null)
             {
                 return new HttpStatusCodeResult(400, "Invalid attestation response");
