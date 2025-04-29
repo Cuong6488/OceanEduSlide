@@ -79,10 +79,11 @@ namespace OceanEduSlide.Controllers
         public async Task<ActionResult> CompleteRegistration(string userId)
         {
             var jsonOptions = new JsonSerializerSettings { };
-            var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(
-                new StreamReader(Request.InputStream).ReadToEnd(), jsonOptions);
+            Request.InputStream.Position = 0;
+
             var jsonData = new StreamReader(Request.InputStream).ReadToEnd();
-            Console.WriteLine(jsonData);
+            var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(
+                jsonData, jsonOptions);
             if (attestationResponse == null)
             {
                 return new HttpStatusCodeResult(400, "Invalid attestation response");
@@ -97,7 +98,6 @@ namespace OceanEduSlide.Controllers
 
             var options = (CredentialCreateOptions)Session["fido2.options"];
             var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, (args) => Task.FromResult(true));
-
             // 🔥 Lưu Credential vào Database
             SaveCredential(success.Result,userId);
 
