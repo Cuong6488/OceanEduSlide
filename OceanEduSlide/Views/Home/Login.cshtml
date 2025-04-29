@@ -38,11 +38,15 @@
                     @Html.ValidationMessageFor(model => model.Password)
                 </div>
 
-                <a class=" p-2 me-5" style="width:20px;height:20px" href="javascript:;"></a>
-                <button class="btn-login" type="submit">
-                    <img src="~/Content/images/login-btn-bg.png" />
-                </button>
-                <a class="faceId-btn p-2 ms-5" style="width:20px;height:20px" href="javascript:;"></a>
+                
+                <div class="d-flex align-items-center justify-content-center mt-xl-5 mt-4">
+                    <a class=" p-2 me-4" style="width:20px;height:20px" href="javascript:;"></a>
+                    <button class="btn-login mt-0" type="submit">
+                        <img src="~/Content/images/login-btn-bg.png" />
+                    </button>
+                    <a class="faceId-btn p-2 ms-4" style="font-size:30px" href="javascript:;"><i class="fa-solid fa-face-viewfinder"></i></a>
+                </div>
+               
             }
         </div>
     </div>
@@ -67,6 +71,8 @@
                 const resp = await fetch('/FaceId/BeginLogin?email=' + email);
                 const data = await resp.json();
                 const publicKey = preformatGetAssertReq(data);
+
+                console.log(publicKey);
                 const assertion = await navigator.credentials.get({ publicKey });
                 const response = formatGetAssertResp(assertion);
                 const rs = await fetch('/FaceId/CompleteLogin', {
