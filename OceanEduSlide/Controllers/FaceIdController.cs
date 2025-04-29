@@ -27,9 +27,9 @@ namespace OceanEduSlide.Controllers
 
         private static readonly Fido2 _fido2 = new Fido2(new Fido2Configuration
         {
-            ServerDomain = "localhost:44375", // ✍️ domain app thật
+            ServerDomain = "localhost", // ✍️ domain app thật
             ServerName = "Sale Kit App",
-            Origin = "https://localhost:44375/" // HTTPS chuẩn
+            Origin = "https://localhost:44375" // HTTPS chuẩn
         });
 
         // =========================================
@@ -42,7 +42,7 @@ namespace OceanEduSlide.Controllers
                 DisplayName = username,
                 //Name = MemberEmail,
                 Name = username,
-                Id = Encoding.UTF8.GetBytes(userId) // Lấy từ User.Identity
+                Id = Encoding.UTF8.GetBytes(username) // Lấy từ User.Identity
             };
 
             var authenticatorSelection = new AuthenticatorSelection
@@ -50,6 +50,8 @@ namespace OceanEduSlide.Controllers
                 UserVerification = UserVerificationRequirement.Required,
                 AuthenticatorAttachment = AuthenticatorAttachment.CrossPlatform,
             };
+
+
 
             var options = _fido2.RequestNewCredential(user, new List<PublicKeyCredentialDescriptor>(), authenticatorSelection, AttestationConveyancePreference.None);
 
@@ -78,11 +80,15 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public async Task<ActionResult> CompleteRegistration(string userId)
         {
+            Request.InputStream.Position = 0;
+            string body;
+            using (var reader = new StreamReader(Request.InputStream))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
             var jsonOptions = new JsonSerializerSettings { };
-            var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(
-                new StreamReader(Request.InputStream).ReadToEnd(), jsonOptions);
-            var jsonData = new StreamReader(Request.InputStream).ReadToEnd();
-            Console.WriteLine(jsonData);
+            var attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(body, jsonOptions);
             if (attestationResponse == null)
             {
                 return new HttpStatusCodeResult(400, "Invalid attestation response");
@@ -99,7 +105,7 @@ namespace OceanEduSlide.Controllers
             var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, (args) => Task.FromResult(true));
 
             // 🔥 Lưu Credential vào Database
-            SaveCredential(success.Result,userId);
+            SaveCredential(success.Result, userId);
 
             return Json(new { status = "ok" });
         }
@@ -189,7 +195,7 @@ namespace OceanEduSlide.Controllers
         }
         // =========================================
         // 🔥 Các hàm DB giả lập
-        private void SaveCredential(AttestationVerificationSuccess cred,string userId)
+        private void SaveCredential(AttestationVerificationSuccess cred, string userId)
         {
             using (var db = new UnitOfWork())
             {
@@ -242,7 +248,8 @@ namespace OceanEduSlide.Controllers
                 return list.Select(x => new PublicKeyCredentialDescriptor(Convert.FromBase64String(x.CredentialId))).ToArray();
             }
         }
-        [HttpPost]
+
+        //[HttpPost]
         //public async Task<JsonResult> RemoveFaceId(string credentialId)
         //{
         //    using (var db = new UnitOfWork())
@@ -326,6 +333,15 @@ namespace OceanEduSlide.Controllers
                 return "Internet Explorer";
 
             return "Unknown Browser";
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose of any resources here if needed
+            }
+            base.Dispose(disposing);
         }
     }
 }

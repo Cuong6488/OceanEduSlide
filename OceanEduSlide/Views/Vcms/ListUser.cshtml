@@ -119,6 +119,7 @@
                     };
                 });
         }
+
         async function checkBeforeRegister(userId, username) {
             const supported = await isPlatformAuthenticatorAvailable();
 
@@ -138,7 +139,7 @@
             //debugPublicKeyOptions(publicKey);
             const cred = await navigator.credentials.create({ publicKey });
             const response = formatMakeCredResp(cred);
-            console.log(JSON.stringify(response));
+            //console.log(JSON.stringify(response));
             const rs = await fetch(`/FaceId/CompleteRegistration?userId=${userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
