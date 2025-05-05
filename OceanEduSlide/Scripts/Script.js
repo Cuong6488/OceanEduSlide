@@ -1003,7 +1003,13 @@ function pathway() {
     $(".teaching-method2 .teaching-content3").on("click", function () {
         if (pathway === "discovery") {
             $(".teaching-content").removeClass("active");
-            $(this).siblings(".teaching-content3-1").addClass("active");
+            $(".teaching-content3-1").addClass("active");
+        }
+    });
+    $(".teaching-method2 .teaching-content3-2-btn").on("click", function () {
+        if (pathway === "discovery") {
+            $(".teaching-content").removeClass("active");
+            $(".teaching-content3-2").addClass("active");
         }
     });
     $(".btn-class").on("click", function () {

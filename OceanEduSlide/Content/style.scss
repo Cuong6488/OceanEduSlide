@@ -3620,7 +3620,7 @@ body {
         height: 200px;
         position: relative;
 
-        img {
+        .teaching-content {
             opacity: 0;
             width: 90%;
             position: absolute;
@@ -3632,6 +3632,30 @@ body {
             &.active {
                 opacity: 1;
                 z-index: 1;
+            }
+        }
+
+        div {
+            height: fit-content;
+            width: fit-content;
+            display: block;
+            margin: auto;
+            width:90%;
+            position:relative;
+            & > :nth-child(2) {
+                width: 100%;
+                display: block;
+                margin: auto;
+                position: relative;
+                z-index: -3;
+            }
+            div{
+                position:absolute;
+                left:8%;
+                bottom:22%;
+                height:10%;
+                width:50%;
+                z-index:3;
             }
         }
     }

@@ -2935,7 +2935,7 @@ body {
   height: 200px;
   position: relative;
 }
-.teaching-method2 .teaching-content-container img {
+.teaching-method2 .teaching-content-container .teaching-content {
   opacity: 0;
   width: 90%;
   position: absolute;
@@ -2944,9 +2944,32 @@ body {
   transform: translateX(-50%);
   z-index: 0;
 }
-.teaching-method2 .teaching-content-container img.active {
+.teaching-method2 .teaching-content-container .teaching-content.active {
   opacity: 1;
   z-index: 1;
+}
+.teaching-method2 .teaching-content-container div {
+  height: fit-content;
+  width: fit-content;
+  display: block;
+  margin: auto;
+  width: 90%;
+  position: relative;
+}
+.teaching-method2 .teaching-content-container div > :nth-child(2) {
+  width: 100%;
+  display: block;
+  margin: auto;
+  position: relative;
+  z-index: -3;
+}
+.teaching-method2 .teaching-content-container div div {
+  position: absolute;
+  left: 8%;
+  bottom: 22%;
+  height: 10%;
+  width: 50%;
+  z-index: 3;
 }
 
 .race {
