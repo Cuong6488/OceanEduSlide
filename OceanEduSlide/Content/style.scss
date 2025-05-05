@@ -3021,43 +3021,45 @@ body {
 .teaching-method {
     background-image: url('images/pathway-discovery-bg.png');
 
-    img {
-        display: block;
-        margin: auto;
+    & > :first-child {
+        width: 80%;
     }
 
     &-title {
         width: 33%;
+        display: block;
+        margin: auto;
         margin-bottom: 20px !important;
-    }
-
-    &-box {
-        width: 40%;
-
-        &.teaching-method-challenge1 {
-            margin-right: 40px;
-        }
-
-        @media(max-width:1300px) and (max-aspect-ratio:1.5) {
-            width: 45%;
-
-            &.teaching-method-challenge1 {
-                margin-right: 30px !important;
-            }
-        }
     }
 
     &-name {
-        width: 70%;
+        height: 4.5vw;
         margin-bottom: 20px !important;
+        margin-right: 10%;
     }
 
     &-content {
-        width: 100%;
-        opacity: 0;
-        /*visibility:hidden;*/
-        &.active {
-            opacity: 1;
+        position:relative;
+        img {
+            opacity: 0;
+            width: 100%;
+            position:relative;
+            &.active {
+                opacity: 1;
+                z-index:3;
+            }
+        }
+        & > :not(:first-child){
+            position:absolute;
+            top:0;
+            left:0;
+        }
+        div{
+            bottom:5%;
+            z-index:4;
+            top:unset !important;
+            height:10%;
+            width:80%;
         }
     }
 }
@@ -3640,8 +3642,9 @@ body {
             width: fit-content;
             display: block;
             margin: auto;
-            width:90%;
-            position:relative;
+            width: 90%;
+            position: relative;
+
             & > :nth-child(2) {
                 width: 100%;
                 display: block;
@@ -3649,13 +3652,14 @@ body {
                 position: relative;
                 z-index: -3;
             }
-            div{
-                position:absolute;
-                left:8%;
-                bottom:22%;
-                height:10%;
-                width:50%;
-                z-index:3;
+
+            div {
+                position: absolute;
+                left: 8%;
+                bottom: 22%;
+                height: 10%;
+                width: 50%;
+                z-index: 3;
             }
         }
     }
@@ -3690,7 +3694,7 @@ body {
 
 .book-focus-content {
     .book-content-img {
-        width: 90%;
+        width: 85%;
     }
 }
 
@@ -3899,5 +3903,28 @@ body {
         max-height: 90vh;
         top: 45%;
         transform: translateY(-50%);
+    }
+}
+.book3-content {
+    .book-content {
+        opacity: 0;
+        position: relative;
+
+        &.active {
+            opacity: 1;
+            z-index: 3;
+        }
+    }
+
+    img:not(:first-child) {
+        position: absolute;
+        top: 0;
+        left: 7.5%;
+    }
+
+    &.book-focus-content1{
+        img{
+            width:85%;
+        }
     }
 }

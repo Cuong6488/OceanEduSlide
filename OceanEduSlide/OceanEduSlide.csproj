@@ -377,6 +377,9 @@
     <Content Include="Content\images\cambridge-pnkn.png" />
     <Content Include="Content\images\cambridge-tbu.png" />
     <Content Include="Content\images\challenge-book-content.png" />
+    <Content Include="Content\images\challenge-book-content2.png" />
+    <Content Include="Content\images\challenge-book-content3.png" />
+    <Content Include="Content\images\challenge-book-content4.png" />
     <Content Include="Content\images\challenge-book-text.png" />
     <Content Include="Content\images\challenge-book1.png" />
     <Content Include="Content\images\challenge-book2.png" />
@@ -450,6 +453,9 @@
     <Content Include="Content\images\focus-book-content1.png" />
     <Content Include="Content\images\focus-book-content2-1.png" />
     <Content Include="Content\images\focus-book-content2-2.png" />
+    <Content Include="Content\images\focus-book-content2.png" />
+    <Content Include="Content\images\focus-book-content3.png" />
+    <Content Include="Content\images\focus-book-content4.png" />
     <Content Include="Content\images\focus-book1.png" />
     <Content Include="Content\images\focus-book2.png" />
     <Content Include="Content\images\focus-pathway-1a.png" />
@@ -616,6 +622,7 @@
     <Content Include="Content\images\TeacherJohn-Dominic.jpg" />
     <Content Include="Content\images\teaching-method-challenge-content1.png" />
     <Content Include="Content\images\teaching-method-challenge-content2.png" />
+    <Content Include="Content\images\teaching-method-challenge-content3.png" />
     <Content Include="Content\images\teaching-method-challenge-name2.png" />
     <Content Include="Content\images\teaching-method-challenge-name1.png" />
     <Content Include="Content\images\teaching-method-challenge-title.png" />

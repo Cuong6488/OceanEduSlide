@@ -859,7 +859,7 @@ function pathway() {
     });
     $(".focus-book1").on("click", function () {
         $(".pathway-index > .slide:not(.book-focus-content1)").fadeOut(300, function () {
-            $(".book-focus-content1").fadeIn(300);
+            $(".book-focus-content1").css("display", "flex");
         });
     });
     $(".focus-book2").on("click", function () {
@@ -911,10 +911,44 @@ function pathway() {
     $(".book2-challenge-text").on("click", function () {
         $(".pathway-index > .slide:not(.challenge-book3-content)").fadeOut(300, function () {
             $(".challenge-book3-content").css("display", "flex");
+            //$(".book-content-1").addClass("active");
             //$(".discovery-book1-content").fadeIn(300);
             //$(".menu-btn").fadeOut(300);
         });
     });
+    $(".challenge-book3-content .book-content-1").on("click", function () {
+        $(".challenge-book3-content .book-content").removeClass("active");
+        $(".challenge-book3-content .book-content-2").addClass("active");
+    });
+    $(".challenge-book3-content .book-content-2").on("click", function () {
+        $(".challenge-book3-content .book-content").removeClass("active");
+        $(".challenge-book3-content .book-content-3").addClass("active");
+    });
+    $(".challenge-book3-content .book-content-3").on("click", function () {
+        $(".challenge-book3-content .book-content").removeClass("active");
+        $(".challenge-book3-content .book-content-4").addClass("active");
+    });
+    $(".challenge-book3-content .book-content-4").on("click", function () {
+        $(".challenge-book3-content .book-content").removeClass("active");
+        $(".challenge-book3-content .book-content-1").addClass("active");
+    });
+    $(".book-focus-content1 .book-content-1").on("click", function () {
+        $(".book-focus-content1 .book-content").removeClass("active");
+        $(".book-focus-content1 .book-content-2").addClass("active");
+    });
+    $(".book-focus-content1 .book-content-2").on("click", function () {
+        $(".book-focus-content1 .book-content").removeClass("active");
+        $(".book-focus-content1 .book-content-3").addClass("active");
+    });
+    $(".book-focus-content1 .book-content-3").on("click", function () {
+        $(".book-focus-content1 .book-content").removeClass("active");
+        $(".book-focus-content1 .book-content-4").addClass("active");
+    });
+    $(".book-focus-content1 .book-content-4").on("click", function () {
+        $(".book-focus-content1 .book-content").removeClass("active");
+        $(".book-focus-content1 .book-content-1").addClass("active");
+    });
+
     $(".pathway-book-content .btn-back-square").on("click", function () {
         $(".btn-book").trigger("click");
         $(".menu-btn").fadeIn(300);
@@ -938,16 +972,25 @@ function pathway() {
             });
         }
     });
-    $(".teaching-method-name").on("click", function () {
-        if (pathway === "discovery") {
-            //$(".pathway-index > .slide:not(.book-discovery)").fadeOut(300, function () {
-            //    $(".book-discovery").fadeIn(300);
-            //});
-        }
-        if (pathway === "challenge") {
-            $(this).siblings(".teaching-method-content").addClass("active");
-
-        }
+    $(".teaching-method-name1").on("click", function () {
+        $(".teaching-method-content img").removeClass("active");
+        $(".teaching-method-content1").addClass("active");
+    });
+    $(".teaching-method-content1").on("click", function () {
+        $(".teaching-method-content img").removeClass("active");
+        $(".teaching-method-content2").addClass("active");
+    });
+    $(".teaching-method-content div").on("click", function () {
+        $(".teaching-method-content img").removeClass("active");
+        $(".teaching-method-content3").addClass("active");
+    });
+    $(".teaching-method-content2, .teaching-method-content3").on("click", function () {
+        $(".teaching-method-content img").removeClass("active");
+        $(".teaching-method-content1").addClass("active");
+    });
+    $(".teaching-method-name2").on("click", function () {
+        pathway = "discovery";
+        $(".btn-setting").trigger("click");
     });
     $(".teaching-method-focus1").on("click", function () {
         $(".pathway-index > .slide:not(.teaching-method-focus-content1)").fadeOut(300, function () {
