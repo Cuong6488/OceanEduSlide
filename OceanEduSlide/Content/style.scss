@@ -3039,27 +3039,38 @@ body {
     }
 
     &-content {
-        position:relative;
+        position: relative;
+
         img {
             opacity: 0;
             width: 100%;
-            position:relative;
+            position: relative;
+
             &.active {
                 opacity: 1;
-                z-index:3;
+                z-index: 3;
             }
         }
-        & > :not(:first-child){
-            position:absolute;
-            top:0;
-            left:0;
+
+        & > :not(:first-child) {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-        div{
-            bottom:5%;
-            z-index:4;
-            top:unset !important;
-            height:10%;
-            width:80%;
+
+        div {
+            bottom: 5%;
+            z-index: 4;
+            top: unset !important;
+            height: 10%;
+            width: 80%;
+        }
+    }
+
+    &-focus {
+        .teaching-method-name {
+            height: unset;
+            width: 40%;
         }
     }
 }
@@ -3889,7 +3900,7 @@ body {
     right: 15px;
 
     img {
-        height: 8vh;
+        height: 7.5vh;
         display: block;
         cursor: pointer;
     }
@@ -3905,6 +3916,7 @@ body {
         transform: translateY(-50%);
     }
 }
+
 .book3-content {
     .book-content {
         opacity: 0;
@@ -3922,9 +3934,88 @@ body {
         left: 7.5%;
     }
 
-    &.book-focus-content1{
-        img{
-            width:85%;
+    &.book-focus-content1 {
+        img {
+            width: 85%;
+        }
+    }
+}
+
+.five-value {
+    &-title {
+        display: block;
+        margin: auto;
+        width: 80%;
+        margin-bottom: 15px;
+    }
+
+    &-item {
+        position: relative;
+
+        &.active {
+            .five-value-content, .five-value-after {
+                opacity: 1;
+                z-index: 3;
+            }
+        }
+    }
+
+    &-name {
+        width: 18vw;
+    }
+
+    &-after {
+        position: absolute;
+        width: 30%;
+        bottom: -12%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+    }
+
+    &-content {
+        position: absolute;
+        bottom: -90%;
+        width: 80vw;
+        opacity: 0;
+    }
+
+    &-container {
+        & > :last-child {
+            height: 200px;
+        }
+    }
+
+    &-item1 {
+        .five-value-content {
+            left: 0;
+        }
+    }
+
+    &-item2 {
+        .five-value-content {
+            left: -25%;
+        }
+    }
+
+    &-item3 {
+        .five-value-content {
+            left: -50%;
+            width: 65vw;
+        }
+    }
+
+    &-item4 {
+        .five-value-content {
+            left: -100%;
+            width: 55vw;
+        }
+    }
+
+    &-item5 {
+        .five-value-content {
+            right: 0;
+            width: 60vw;
         }
     }
 }

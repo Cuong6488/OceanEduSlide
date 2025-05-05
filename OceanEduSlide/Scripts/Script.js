@@ -631,7 +631,10 @@ function pathway() {
         $(".pathway-mid,.pathway-left,.logo-about,.star-index").fadeOut(300, function () {
             $(".slide." + classStar).fadeIn(300);
         });
-
+    });
+    $(".five-value-item").on("click", function () {
+        $(".five-value-item").removeClass("active");
+        $(this).addClass("active");
     });
     $(".menu-btn").on("click", function () {
         $(".btn-back-square-pathway").fadeOut(300);

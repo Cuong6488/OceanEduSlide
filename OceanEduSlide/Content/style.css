@@ -2484,6 +2484,10 @@ body {
   height: 10%;
   width: 80%;
 }
+.teaching-method-focus .teaching-method-name {
+  height: unset;
+  width: 40%;
+}
 
 .container-slick {
   max-width: 90% !important;
@@ -3146,7 +3150,7 @@ body {
   right: 15px;
 }
 .star-index img {
-  height: 8vh;
+  height: 7.5vh;
   display: block;
   cursor: pointer;
 }
@@ -3175,4 +3179,56 @@ body {
 }
 .book3-content.book-focus-content1 img {
   width: 85%;
+}
+
+.five-value-title {
+  display: block;
+  margin: auto;
+  width: 80%;
+  margin-bottom: 15px;
+}
+.five-value-item {
+  position: relative;
+}
+.five-value-item.active .five-value-content, .five-value-item.active .five-value-after {
+  opacity: 1;
+  z-index: 3;
+}
+.five-value-name {
+  width: 18vw;
+}
+.five-value-after {
+  position: absolute;
+  width: 30%;
+  bottom: -12%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+.five-value-content {
+  position: absolute;
+  bottom: -90%;
+  width: 80vw;
+  opacity: 0;
+}
+.five-value-container > :last-child {
+  height: 200px;
+}
+.five-value-item1 .five-value-content {
+  left: 0;
+}
+.five-value-item2 .five-value-content {
+  left: -25%;
+}
+.five-value-item3 .five-value-content {
+  left: -50%;
+  width: 65vw;
+}
+.five-value-item4 .five-value-content {
+  left: -100%;
+  width: 55vw;
+}
+.five-value-item5 .five-value-content {
+  right: 0;
+  width: 60vw;
 }

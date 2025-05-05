@@ -12,6 +12,7 @@ using System.Web.Security;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using OceanEduSlide.Migrations;
 
 namespace OceanEduSlide.Controllers
 {
@@ -313,10 +314,10 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public JsonResult DeleteUser(int userId)
         {
-                var user = _unitOfWork.UserRepository.GetById(userId);
-                _unitOfWork.UserRepository.Delete(user);
-                _unitOfWork.Save();
-                return Json(new { status = true, msg = "Xóa tài khoản thành công" });
+            var user = _unitOfWork.UserRepository.GetById(userId);
+            _unitOfWork.UserRepository.Delete(user);
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
         }
         //public ActionResult ClearOffice()
@@ -571,6 +572,19 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Discount
+        public ActionResult DeleteDiscount()
+        {
+
+            var model = _unitOfWork.DiscountRepository.Get(a => a.Username == "QĐ 200" || a.Username == "QĐ 400" || a.Username == "QĐ 300");
+            foreach (var item in model)
+            {
+                _unitOfWork.DiscountRepository.Delete(item);
+            }
+            _unitOfWork.Save();
+
+
+            return RedirectToAction("Index");
+        }
         public ActionResult CreateDiscount(string result = "")
         {
             ViewBag.Result = result;
