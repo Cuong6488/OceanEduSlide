@@ -101,7 +101,7 @@ namespace OceanEduSlide.Controllers
         {
 
             var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && a.Offices.Contains(OfficeCode) && a.Cth == cth && (a.Pathway <= pathway && pathway <= a.PathwayTo), q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+                .GetQuery(a => a.Active && (","+a.Offices+",").Contains(","+OfficeCode+",") && a.Cth == cth && (a.Pathway <= pathway && pathway <= a.PathwayTo), q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
             return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]

@@ -143,7 +143,7 @@ function price() {
                 items.push('<option value="ielts-72">ielts 5.5</option>');
                 items.push('<option value="ielts-72">ielts 6.0</option>');
             }
-            else if (id === "Luyện thi  IELTS") {
+            else if (id === "Luyện thi IELTS") {
                 items.push('<option value="no-ielts-48">GN1A</option>');
                 items.push('<option value="no-ielts-48">GN1B</option>');
                 items.push('<option value="no-ielts-48">GN2A</option>');

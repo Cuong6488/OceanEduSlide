@@ -25,7 +25,7 @@
                     <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
                     <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
                     <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
-                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="Luyện thi IELTS">Luyện thi IELTS</option>
                     <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
@@ -73,7 +73,7 @@
                     QĐ ưu đãi
                 </div>
                 <select class="form-select" id="">
-                    <option value="value" disabled selected>Chọn ưu đãi</option>
+                    <option value="value" selected>Chọn ưu đãi</option>
                 </select>
                 @*@Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })*@
             </div>
@@ -202,7 +202,7 @@
                     <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
                     <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
                     <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
-                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="Luyện thi IELTS">Luyện thi IELTS</option>
                     <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
@@ -386,7 +386,7 @@
                     <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
                     <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
                     <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
-                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="Luyện thi IELTS">Luyện thi IELTS</option>
                     <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
@@ -558,17 +558,17 @@
         <img src="~/Content/images/btn-back-square.png" />
     </div>
     <div class="d-flex align-items-center justify-content-center h-100" style="padding:0 5%">
-        <div class="price-overview-ticket" id="source-html" style="clip-path: polygon(0 -3px, calc(100% - 36px) -3px, 100% 36px, 100% 100%, 0 100%); position: relative; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0.9)); padding: 0 50px 70px 50px; border-bottom: 1px solid #81dbfc">
+        <div class="price-overview-ticket" id="source-html" style="clip-path: polygon(0 -3px, calc(100% - 36px) -3px, 100% 36px, 100% 100%, 0 100%); position: relative; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0.9)); padding: 0 50px 70px 50px;">
             <div class="price-overview-header" style="display: flex; justify-content: space-between;">
                 <div class="logo-anchor me-5" style="position: unset; width: 120px; height: 120px; transform: translateY(-3px);">
                     <img style="width: 90px;" src="~/Content/images/logo.png" />
                 </div>
                 @*<div class="price-overview-title me-5" style="width: 45%; display: flex; align-items: center; transform: translateY(-5px);">
-                </div>*@
+                    </div>*@
                 <div class="price-overview-headinfor" style="width: 55%; margin-top: 10px; font-weight: 300; font-size: 0.875rem; line-height: 1.2; ">
 
                     <img class="w-100" src="~/Content/images/price-overview-title.png" />
-                    <div class="price-overview-headname" style="font-weight: bold; font-size: 1.125rem; font-family: montserrat;text-transform:uppercase; margin-bottom: .375rem; color: #2e3191;">
+                    <div class="price-overview-headname" style="font-weight: bold; font-size: 1.1rem; font-family: montserrat;text-transform:uppercase; margin-bottom: .375rem; color: #2e3191;">
                         @(Model?.Name)
                     </div>
                     <div class="price-overview-place" style="color: #2e3191;">
@@ -585,38 +585,38 @@
             </div>
             <div class="price-overview-body" style=" background: white; padding-top: 30px; border-radius: 0 30px 0 0; font-family: josefinsans;">
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; flex:1;" type="text" name="name" value="Họ và tên: " />
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" type="text" name="name" value="SĐT liên hệ: " />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; flex:1;" type="text" name="name" value="Họ và tên: " />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" type="text" name="name" value="SĐT liên hệ: " />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Địa chỉ: " />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Địa chỉ: " />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Trường: " />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" type="text" name="name" value="Trường: " />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-cth" type="text" name="name" value="Chương trình học: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-cth" type="text" name="name" value="Chương trình học: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-level" type="text" name="name" value="Cấp độ học: " readonly />
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-pathway" type="text" name="name" value="Lộ trình học: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-level" type="text" name="name" value="Cấp độ học: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-pathway" type="text" name="name" value="Lộ trình học: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-totalprice" type="text" name="name" value="Học phí: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-totalprice" type="text" name="name" value="Học phí: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-moneyprice" type="text" name="name" value="Số tiền ưu đãi: " readonly />
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-giftprice" type="text" name="name" value="Quà tặng: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-moneyprice" type="text" name="name" value="Số tiền ưu đãi: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-giftprice" type="text" name="name" value="Quà tặng: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-paymethod" type="text" name="name" value="Hình thức thanh toán: " readonly />
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-chanel" type="text" name="name" value="Kênh thanh toán: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; flex: 1;" class="input-paymethod" type="text" name="name" value="Hình thức thanh toán: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 35%;" class="input-chanel" type="text" name="name" value="Kênh thanh toán: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-pricepermonth" type="text" name="name" value="Học phí/ tháng: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-pricepermonth" type="text" name="name" value="Học phí/ tháng: " readonly />
                 </div>
                 <div class="group-input" style="display: flex; border-bottom: 1px solid #81dbfc; ">
-                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.125rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-note" type="text" name="name" value="Ghi chú: " readonly />
+                    <input style=" padding: 3px 10px; font-weight: 350; font-size: 1.1rem; color: #2e3191; background: transparent; border: none; outline: none; width: 100%;" class="input-note" type="text" name="name" value="Ghi chú: " readonly />
                 </div>
             </div>
             <div class="price-overview-slogan" style="position: absolute; right: 0; bottom: 10px;">

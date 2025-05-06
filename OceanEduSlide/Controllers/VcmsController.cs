@@ -319,20 +319,34 @@ namespace OceanEduSlide.Controllers
             return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
         }
-        //public ActionResult ClearOffice()
-        //{
-        //    var offices = _unitOfWork.OfficeRepository.Get();
-        //    if(offices.Count() < 30)
-        //    {
-        //        foreach(var item in offices)
-        //        {
-        //            _unitOfWork.OfficeRepository.Delete(item);
-        //        }
-        //    }
-        //    _unitOfWork.Save();
-        //    return RedirectToAction("ListOffice");
+        public ActionResult ClearOffice()
+        {
+            var offices = _unitOfWork.OfficeRepository.Get();
+            if (offices.Count() < 30)
+            {
+                foreach (var item in offices)
+                {
+                    _unitOfWork.OfficeRepository.Delete(item);
+                }
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListOffice");
 
-        //}
+        }
+        public ActionResult ClearDiscount()
+        {
+            var offices = _unitOfWork.DiscountRepository.Get();
+            if (offices.Count() < 30)
+            {
+                foreach (var item in offices)
+                {
+                    _unitOfWork.DiscountRepository.Delete(item);
+                }
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListDiscount");
+
+        }
         #endregion
 
 
@@ -757,8 +771,8 @@ namespace OceanEduSlide.Controllers
                         int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
                         int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
                         var cth = tbl.Rows[i][12].ToString().Trim();
-                        var countDiscount = discounts.Count(a => a.Username == fullname);
-                        if (countDiscount > 0) continue;
+                        //var countDiscount = discounts.Count(a => a.Username == fullname);
+                        //if (countDiscount > 0) continue;
                         var discount = new Discount
                         {
                             Username = fullname,
