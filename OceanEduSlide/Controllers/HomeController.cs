@@ -88,7 +88,7 @@ namespace OceanEduSlide.Controllers
         {
             var model = new PriceViewModel
             {
-                SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(a => a.OfficeId == User.OfficeId), "Id", "Username"),
+                SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(/*a => a.OfficeId == User.OfficeId*/), "Id", "Username"),
                 Office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId)
             };
             return View(model);

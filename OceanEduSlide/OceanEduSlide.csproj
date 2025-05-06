@@ -284,6 +284,10 @@
     <Compile Include="Migrations\202504280826070_faceId.Designer.cs">
       <DependentUpon>202504280826070_faceId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505060358096_office.cs" />
+    <Compile Include="Migrations\202505060358096_office.Designer.cs">
+      <DependentUpon>202505060358096_office.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -980,6 +984,7 @@
     <Content Include="Views\Home\CourseOutline.cshtml" />
     <Content Include="Views\Vcms\UpdateUser.cshtml" />
     <Content Include="Views\Vcms\ListFaceId.cshtml" />
+    <Content Include="Views\Vcms\InsertOfficeExcel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1057,6 +1062,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202504280826070_faceId.resx">
       <DependentUpon>202504280826070_faceId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505060358096_office.resx">
+      <DependentUpon>202505060358096_office.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

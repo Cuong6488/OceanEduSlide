@@ -34,6 +34,8 @@
             <tr>
                 <th style="width: 80px">Thứ tự</th>
                 <th>Tên chi nhánh</th>
+                <th>Mã chi nhánh</th>
+                <th>Tên ngắn</th>
                 <th>Địa chỉ</th>
                 <th>Số điện thoại</th>
                 <th>Email</th>
@@ -50,6 +52,8 @@
                         <a href="@Url.Action("UpdateOffice", new { officeId = office.Id })">@office.Name</a>
                     </td>
                     @*<td>@office.City.Name</td>*@
+                    <td>@office.ShortCode</td>
+                    <td>@office.ShortName</td>
                     <td>@office.Place</td>
                     <td>@office.Hotline</td>
                     <td>@office.Email</td>
