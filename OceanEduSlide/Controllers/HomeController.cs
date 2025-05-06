@@ -1,6 +1,7 @@
 ﻿using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using System;
@@ -16,6 +17,7 @@ namespace OceanEduSlide.Controllers
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private string Username => RouteData.Values["Username"].ToString();
+        private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         public ActionResult Index()
         {
@@ -36,6 +38,7 @@ namespace OceanEduSlide.Controllers
             {
                 var usernameVal = model.Username.Trim();
                 var user = _unitOfWork.UserRepository.GetQuery(a => a.Username == usernameVal).SingleOrDefault();
+
                 if (user == null)
                 {
                     ModelState.AddModelError("", @"Tên đăng nhập không chính xác.");
@@ -52,7 +55,8 @@ namespace OceanEduSlide.Controllers
                     return View(model);
                 }
 
-                var userData = user.Username + "|" + user.OfficeId;
+                var office = _unitOfWork.OfficeRepository.GetById(user.OfficeId);
+                var userData = user.Username + "|" + user.OfficeId + "|" + office.ShortCode;
                 var ticket = new FormsAuthenticationTicket(2, user.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
@@ -86,12 +90,19 @@ namespace OceanEduSlide.Controllers
         [Route("hoc-phi")]
         public ActionResult Price()
         {
-            var model = new PriceViewModel
-            {
-                SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(/*a => a.OfficeId == User.OfficeId*/), "Id", "Username"),
-                Office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId)
-            };
-            return View(model);
+            //var model = new PriceViewModel
+            //{
+            //    SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(a => a.Active), "Id", "Username"),
+            //};
+            var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
+            return View(office);
+        }
+        public JsonResult GetDiscount(string cth, double pathway)
+        {
+
+            var discounts = _unitOfWork.DiscountRepository
+                .GetQuery(a => a.Active && a.Offices.Contains(OfficeCode) && a.Cth == cth && (a.Pathway <= pathway && pathway <= a.PathwayTo), q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+            return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult CalcMoney(int id, string totalMoney)
@@ -104,9 +115,9 @@ namespace OceanEduSlide.Controllers
                 moneyDiscount = discount.MoneyDiscount ?? 0;
                 if (discount.PercentDiscount != null)
                 {
-                    decimal? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
+                    double? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
                     moneyDiscount += (int)Math.Round((double)decimalMoney);
-                    return Json(new { status = true, moneyDiscount, gift = discount.Gift??"Chưa có",finalMoney = intTotalMoney - moneyDiscount });
+                    return Json(new { status = true, moneyDiscount, gift = discount.Gift ?? "Chưa có", finalMoney = intTotalMoney - moneyDiscount });
 
                 }
             }

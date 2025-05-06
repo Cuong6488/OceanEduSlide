@@ -25,4 +25,10 @@ namespace OceanEduSlide.ViewModels
         //    DistrictSelectList = new SelectList(new List<District>(), "Id", "Name");
         //}
     }
+
+    public class ListDiscountViewModel
+    {
+        public PagedList.IPagedList<Discount> Discounts { get; set; }
+        public string Name { get; set; }
+    }
 }

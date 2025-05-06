@@ -288,6 +288,22 @@
     <Compile Include="Migrations\202505060358096_office.Designer.cs">
       <DependentUpon>202505060358096_office.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505060641053_discount.cs" />
+    <Compile Include="Migrations\202505060641053_discount.Designer.cs">
+      <DependentUpon>202505060641053_discount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505060912304_discountfloat.cs" />
+    <Compile Include="Migrations\202505060912304_discountfloat.Designer.cs">
+      <DependentUpon>202505060912304_discountfloat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505060915288_discountdecimal.cs" />
+    <Compile Include="Migrations\202505060915288_discountdecimal.Designer.cs">
+      <DependentUpon>202505060915288_discountdecimal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505060927529_discountdouble.cs" />
+    <Compile Include="Migrations\202505060927529_discountdouble.Designer.cs">
+      <DependentUpon>202505060927529_discountdouble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -985,6 +1001,8 @@
     <Content Include="Views\Vcms\UpdateUser.cshtml" />
     <Content Include="Views\Vcms\ListFaceId.cshtml" />
     <Content Include="Views\Vcms\InsertOfficeExcel.cshtml" />
+    <Content Include="Views\Vcms\ListDiscount.cshtml" />
+    <Content Include="Views\Vcms\InsertDiscountExcel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1065,6 +1083,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202505060358096_office.resx">
       <DependentUpon>202505060358096_office.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505060641053_discount.resx">
+      <DependentUpon>202505060641053_discount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505060912304_discountfloat.resx">
+      <DependentUpon>202505060912304_discountfloat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505060915288_discountdecimal.resx">
+      <DependentUpon>202505060915288_discountdecimal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505060927529_discountdouble.resx">
+      <DependentUpon>202505060927529_discountdouble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

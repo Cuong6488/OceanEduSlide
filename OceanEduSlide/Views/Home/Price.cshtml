@@ -1,5 +1,5 @@
-﻿@using OceanEduSlide.ViewModels
-@model PriceViewModel
+﻿@using OceanEduSlide.Models
+@model Office
 @{
     ViewBag.Title = "Học phí";
 }
@@ -22,11 +22,11 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn chương trình học</option>
-                    <option value="pre-primary">Anh văn nhi đồng</option>
-                    <option value="primary">Anh văn thiếu nhi</option>
-                    <option value="high-school">T.A học thuật Trung học</option>
-                    <option value="ielts">Luyện thi  IELTS</option>
-                    <option value="toeic">T.A giao tiếp quốc tế TOEIC</option>
+                    <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
+                    <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
+                    <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
+                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
             <div class="input-container input-container-level">
@@ -41,23 +41,13 @@
                 <div>
                     Lộ trình
                 </div>
-                <select class="form-select">
-                    <option value="">Chọn lộ trình</option>
-                    <option value="3">3 tháng</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12">12 tháng</option>
-                    <option value="18">18 tháng</option>
-                    <option value="24">24 tháng</option>
-                    <option value="36">36 tháng</option>
-                    <option value="48">48 tháng</option>
-                    <option value="72">72 tháng</option>
-                </select>
+                <input type="number" name="name" value="" class="form-control" placeholder="Nhập số tháng" />
             </div>
             <div class="input-container start-date-container">
                 <div>
                     Thời gian bắt đầu
                 </div>
-                <input type="text" name="name" value="" class="form-control datepicker start-date" />
+                <input type="text" name="name" value="" class="form-control datepicker start-date" placeholder="Chọn ngày bắt đầu" />
                 <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div class="input-container">
@@ -82,7 +72,10 @@
                 <div>
                     QĐ ưu đãi
                 </div>
-                @Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })
+                <select class="form-select" id="">
+                    <option value="value" disabled selected>Chọn ưu đãi</option>
+                </select>
+                @*@Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })*@
             </div>
             <div class="input-container input-container-moneyprice">
                 <div>
@@ -206,11 +199,11 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn chương trình học</option>
-                    <option value="pre-primary">Anh văn nhi đồng</option>
-                    <option value="primary">Anh văn thiếu nhi</option>
-                    <option value="high-school">T.A học thuật Trung học</option>
-                    <option value="ielts">Luyện thi  IELTS</option>
-                    <option value="toeic">T.A giao tiếp quốc tế TOEIC</option>
+                    <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
+                    <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
+                    <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
+                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
             <div class="input-container input-container-level">
@@ -266,7 +259,7 @@
                 <div>
                     QĐ ưu đãi
                 </div>
-                @Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })
+                @*@Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })*@
             </div>
             <div class="input-container input-container-moneyprice">
                 <div>
@@ -390,11 +383,11 @@
                 </div>
                 <select class="form-select">
                     <option value="">Chọn chương trình học</option>
-                    <option value="pre-primary">Anh văn nhi đồng</option>
-                    <option value="primary">Anh văn thiếu nhi</option>
-                    <option value="high-school">T.A học thuật Trung học</option>
-                    <option value="ielts">Luyện thi  IELTS</option>
-                    <option value="toeic">T.A giao tiếp quốc tế TOEIC</option>
+                    <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
+                    <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
+                    <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
+                    <option value="Luyện thi  IELTS">Luyện thi  IELTS</option>
+                    <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
                 </select>
             </div>
             <div class="input-container input-container-level">
@@ -450,7 +443,7 @@
                 <div>
                     QĐ ưu đãi
                 </div>
-                @Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })
+                @*@Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })*@
             </div>
             <div class="input-container input-container-moneyprice">
                 <div>
@@ -576,10 +569,10 @@
 
                     <img class="w-100" src="~/Content/images/price-overview-title.png" />
                     <div class="price-overview-headname" style="font-weight: bold; font-size: 1.125rem; font-family: montserrat;text-transform:uppercase; margin-bottom: .375rem; color: #2e3191;">
-                        @(Model.Office?.Name)
+                        @(Model?.Name)
                     </div>
                     <div class="price-overview-place" style="color: #2e3191;">
-                        @(Model.Office?.Place)
+                        @(Model?.Place)
                     </div>
 
                     <div class="price-overview-teacher">

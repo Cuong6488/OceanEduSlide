@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OceanEduSlide.Models
 {
@@ -18,13 +19,13 @@ namespace OceanEduSlide.Models
         //public int OfficeId { get; set; }
         [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy nhập các chi nhánh")]
         public string Offices { get; set; }
-        [Display(Name = "% ưu đãi"),RegularExpression(@"^(?!0(\.0+)?$)\d+(\.\d+)?$", ErrorMessage = "Nhập số dương"), UIHint("NumberBox")]
-        public decimal? PercentDiscount { get; set; }
+        [Display(Name = "% ưu đãi")]
+        public double? PercentDiscount { get; set; }
         [Display(Name = "Ưu đãi tiền mặt"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public int? MoneyDiscount { get; set; }
-        [Display(Name = "Số tháng từ"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy nhập số tháng")]
+        [Display(Name = "Số tháng từ"), Required(ErrorMessage = "Hãy nhập số tháng")]
         public int Pathway { get; set; }
-        [Display(Name = "Số tháng đến"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy nhập số tháng")]
+        [Display(Name = "Số tháng đến"), Required(ErrorMessage = "Hãy nhập số tháng")]
         public int PathwayTo { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]
         public string Gift { get; set; }

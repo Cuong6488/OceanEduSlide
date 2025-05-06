@@ -627,6 +627,33 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Discount
+
+        public ActionResult ListDiscount(int? page, string name, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var discounts = _unitOfWork.DiscountRepository.GetQuery(orderBy: l => l.OrderBy(a => a.Id));
+
+            //if (cityId.HasValue)
+            //{
+            //    discounts = discounts.Where(l => l.CityId == cityId);
+            //}
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    discounts = discounts.Where(l => l.Username.Contains(newkey));
+                }
+            }
+            var model = new ListDiscountViewModel
+            {
+                Discounts = discounts.ToPagedList(pageNumber, pageSize),
+                Name = name
+            };
+            return View(model);
+        }
         public ActionResult DeleteDiscount()
         {
 
@@ -681,6 +708,76 @@ namespace OceanEduSlide.Controllers
             {
                 return HttpNotFound();
             }
+        }
+        public ActionResult InsertDiscountExcel()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertDiscountsExcel()
+        {
+            var file = Request.Files["DiscountFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                //var tbl = result.Tables[0];
+                    var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                foreach (DataTable tbl in result.Tables)
+                {
+                    for (var i = 1; i < tbl.Rows.Count; i++)
+                    {
+                        //var username = tbl.Rows[i][3].ToString().Trim();
+                        //var countUser = members.Count(a => a.Username == username);
+                        //if (countUser > 0) continue;
+                        var fullname = tbl.Rows[i][0].ToString().Trim();
+                        if (fullname == null) continue;
+                        int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
+                        double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
+
+                        var gift = tbl.Rows[i][7].ToString().Trim();
+                        var offices = tbl.Rows[i][9].ToString().Trim();
+                        if (offices == null) continue;
+                        int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
+                        int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
+                        var cth = tbl.Rows[i][12].ToString().Trim();
+                        var countDiscount = discounts.Count(a => a.Username == fullname);
+                        if (countDiscount > 0) continue;
+                        var discount = new Discount
+                        {
+                            Username = fullname,
+                            MoneyDiscount = moneyDiscount,
+                            PercentDiscount = percentDiscount,
+                            Gift = gift,
+                            Offices = offices,
+                            Pathway = pathway,
+                            PathwayTo = pathwayTo,
+                            Cth = cth,
+                            Active = true
+                        };
+                        _unitOfWork.DiscountRepository.Insert(discount);
+                        _unitOfWork.Save();
+                    }
+                }
+
+            }
+            return RedirectToAction("ListDiscount");
         }
         #endregion
         //[HttpPost]

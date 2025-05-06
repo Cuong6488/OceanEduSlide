@@ -1,0 +1,128 @@
+﻿@model OceanEduSlide.ViewModels.ListDiscountViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách ưu đãi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Danh sách ưu đãi</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới ưu đãi thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật ưu đãi thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("CreateDiscount")"><i class="fal fa-plus-circle me-1"></i>Thêm ưu đãi</a>
+<div class="box_content">
+    <form action="@Url.Action("ListDiscount")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
+            </div>*@
+            <div class="col-lg-4">
+                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg-4 align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.Discounts.TotalItemCount</strong> ưu đãi</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Tên ưu đãi</th>
+                <th>Phần trăm ưu đãi</th>
+                <th>Ưu đãi tiền mặt</th>
+                <th>Quà tặng</th>
+                <th>Số tháng từ</th>
+                <th>Số tháng đến</th>
+                <th>Chi nhánh</th>
+                <th>Chương trình học</th>
+                @*<th style="width:150px">Tỉnh thành</th>*@
+
+                <th style="width:100px">Hoạt động</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var discount in Model.Discounts)
+            {
+                <tr data-id="@discount.Id">
+                    <td class="left">
+                        <a href="@Url.Action("UpdateDiscount", new { discountId = discount.Id })">@discount.Username</a>
+                    </td>
+                    @*<td>@discount.City.Name</td>*@
+                    <td>@(discount.PercentDiscount)</td>
+                    <td>@(discount.MoneyDiscount.HasValue ? discount.MoneyDiscount.Value.ToString("N0") + "đ" : "")</td>
+                    <td>@discount.Gift</td>
+                    <td>@discount.Pathway</td>
+                    <td>@discount.PathwayTo</td>
+                    <td style="max-width:300px;overflow:hidden">@discount.Offices</td>
+                    <td>@discount.Cth</td>
+                    <td>@Html.CheckBoxFor(model => discount.Active)</td>
+                    <td>
+                        <a href="javascript:;" onclick="updateInfo('@discount.Id')">Cập nhật</a> -
+                        @Html.ActionLink("Sửa", "UpdateDiscount", new { discountId = discount.Id }) -
+                        <a href="javascript:;" onclick="deleteDiscount('@discount.Id')" style="color: red;">Xóa</a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Discounts.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="5">@Html.PagedListPager(Model.Discounts, page => Url.Action("ListDiscount", new { page, name = Model.Name }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteDiscount(id) {
+            if (confirm("Bạn có chắc chắn xóa ưu đãi này không?")) {
+                $.post("/Vcms/DeleteDiscount",
+                    { discountId: id },
+                    function (data) {
+                        if (data === "True") {
+                            $.toast({
+                                text: 'Xóa ưu đãi thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+
+        function updateInfo(id) {
+            const elm = $('tr[data-id="' + id + '"]');
+            const sort = elm.find("#discount_Sort").val();
+            const active = elm.find("input#discount_Active").prop("checked");
+            $.post("/Vcms/QuickUpdateDiscount",
+                { discountId: id, sort, active },
+                function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error'
+                        });
+                        window.location.reload();
+                    };
+                });
+        }
+    </script>
+}

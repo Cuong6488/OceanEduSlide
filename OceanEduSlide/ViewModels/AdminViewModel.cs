@@ -97,7 +97,7 @@ namespace OceanEduSlide.ViewModels
         [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
         public int OfficeId { get; set; }
         [Display(Name = "% ưu đãi"), RegularExpression(@"^(?!0(\.0+)?$)\d+(\.\d+)?$", ErrorMessage = "Nhập số dương"), UIHint("NumberBox")]
-        public decimal? PercentDiscount { get; set; }
+        public double? PercentDiscount { get; set; }
         [Display(Name = "Ưu đãi tiền mặt")]
         public string MoneyDiscount { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]

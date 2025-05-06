@@ -19,7 +19,7 @@ $("[data-fancybox]").fancybox({
     wheel: "auto", // Cho phép phóng to bằng cuộn chuột
     clickSlide: "zoom", // Cho phép phóng to bằng cách nhấp vào ảnh
     maxScale: 2,
-    fitToView:false,
+    fitToView: false,
 });
 
 $(document).ready(function () {
@@ -48,6 +48,8 @@ $(document).ready(function () {
 
 });
 function price() {
+
+    $('.input-container-qdsale select').select2({allowClear: true });
     var today = new Date();
     $(".datepicker").datepicker({
         dateFormat: "dd/mm/yy",
@@ -96,13 +98,15 @@ function price() {
         $(this).closest(".price-advice-box").find(".input-container-unitprice").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val("");
+        $(this).closest(".price-advice-box").find(".start-date").val("");
+        $(this).closest(".price-advice-box").find(".end-date").val("");
         $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
         const id = $(this).val();
         var items = [];
         items.push("<option value>Chọn cấp độ học</option>");
-
         if (id !== "") {
-            if (id === "pre-primary") {
+            if (id === "Anh văn nhi đồng") {
                 items.push('<option value="no-ielts-48">PRE-KINDY A</option>');
                 items.push('<option value="no-ielts-48">PRE-KINDY B</option>');
                 items.push('<option value="no-ielts-48">KINDY1A</option>');
@@ -112,7 +116,7 @@ function price() {
                 items.push('<option value="no-ielts-48">KINDY3A</option>');
                 items.push('<option value="no-ielts-48">KINDY3B</option>');
             }
-            else if (id === "primary") {
+            else if (id === "Anh văn thiếu nhi") {
                 items.push('<option value="no-ielts-48">PRE-KIDS A</option>');
                 items.push('<option value="no-ielts-48">PRE-KIDS B</option>');
                 items.push('<option value="no-ielts-48">PRE - KINDY B</option>');
@@ -127,7 +131,7 @@ function price() {
                 items.push('<option value="no-ielts-48">KIDS5A</option>');
                 items.push('<option value="no-ielts-48">KIDS5B</option>');
             }
-            else if (id === "high-school") {
+            else if (id === "T.A học thuật Trung học") {
                 items.push('<option value="no-ielts-72">TEENS1A</option>');
                 items.push('<option value="no-ielts-72">TEENS1B</option>');
                 items.push('<option value="no-ielts-72">TEENS2A</option>');
@@ -139,7 +143,7 @@ function price() {
                 items.push('<option value="ielts-72">ielts 5.5</option>');
                 items.push('<option value="ielts-72">ielts 6.0</option>');
             }
-            else if (id === "ielts") {
+            else if (id === "Luyện thi  IELTS") {
                 items.push('<option value="no-ielts-48">GN1A</option>');
                 items.push('<option value="no-ielts-48">GN1B</option>');
                 items.push('<option value="no-ielts-48">GN2A</option>');
@@ -156,7 +160,7 @@ function price() {
                 items.push('<option value="ielts-72">IELTS 8.0</option>');
                 items.push('<option value="ielts-72">IELTS 8.5</option>');
             }
-            else if (id === "toeic") {
+            else if (id === "T.A giao tiếp quốc tế TOEIC") {
                 items.push('<option value="no-ielts-48">GN1A</option>');
                 items.push('<option value="no-ielts-48">GN1B</option>');
                 items.push('<option value="no-ielts-48">GN2A</option>');
@@ -180,6 +184,7 @@ function price() {
         else {
             $(this).closest(".input-container-cth").siblings(".input-container-level").find("select").html(items.join(""));
         }
+
     });
     $(document).ready(function () {
         // Hàm chuyển đổi từ chuỗi ngày dạng "dd/mm/yy" thành đối tượng Date
@@ -228,21 +233,41 @@ function price() {
 
         // Khi thay đổi thời gian bắt đầu
         $(".start-date").on("change", function () {
-            const startDateValue = $(this).val();
-            const pathwayMonths = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+            //const startDateValue = $(this).val();
+            //const pathwayMonths = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
 
-            if (startDateValue && pathwayMonths) {
+            //if (startDateValue && pathwayMonths) {
+            //    const startDate = parseDate(startDateValue);
+            //    startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+            //    $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+            //} else {
+            //    $(this).closest(".price-advice-box").find(".end-date").val("");
+            //}
+            const pathwayMonths = parseFloat($(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val());
+            const startDateValue = $(this).val();
+
+            if (startDateValue && !isNaN(pathwayMonths)) {
                 const startDate = parseDate(startDateValue);
-                startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+
+                // Lấy phần nguyên và phần thập phân của số tháng
+                const wholeMonths = Math.floor(pathwayMonths);
+                const fractionalMonths = pathwayMonths - wholeMonths;
+
+                // Thêm tháng
+                startDate.setMonth(startDate.getMonth() + wholeMonths);
+
+                // Thêm ngày từ phần thập phân (giả sử 1 tháng = 30 ngày)
+                const extraDays = Math.round(fractionalMonths * 30);
+                startDate.setDate(startDate.getDate() + extraDays);
+
                 $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
             } else {
-                $(this).closest(".price-advice-box").find(".end-date").val("");
+                $(this).closest(".price-advice-box").find(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
             }
-
         });
 
         //Khi thay đổi lộ trình
-        $(".input-container-pathway select").on("change", function () {
+        $(".input-container-pathway input").on("change", function () {
             $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").prop("selectedIndex", 0);
             $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-giftprice").find("input").val("");
@@ -252,12 +277,33 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
-            const pathwayMonths = $(this).val();
+            //const pathwayMonths = $(this).val();
+            //const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
+
+            //if (startDateValue && pathwayMonths) {
+            //    const startDate = parseDate(startDateValue);
+            //    startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+            //    $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
+            //} else {
+            //    $(this).closest(".price-advice-box").find(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
+            //}
+            const pathwayMonths = parseFloat($(this).val());
             const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
 
-            if (startDateValue && pathwayMonths) {
+            if (startDateValue && !isNaN(pathwayMonths)) {
                 const startDate = parseDate(startDateValue);
-                startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
+
+                // Lấy phần nguyên và phần thập phân của số tháng
+                const wholeMonths = Math.floor(pathwayMonths);
+                const fractionalMonths = pathwayMonths - wholeMonths;
+
+                // Thêm tháng
+                startDate.setMonth(startDate.getMonth() + wholeMonths);
+
+                // Thêm ngày từ phần thập phân (giả sử 1 tháng = 30 ngày)
+                const extraDays = Math.round(fractionalMonths * 30);
+                startDate.setDate(startDate.getDate() + extraDays);
+
                 $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
             } else {
                 $(this).closest(".price-advice-box").find(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
@@ -274,7 +320,7 @@ function price() {
             $(this).closest(".input-container-pathway").siblings(".input-container-finalprice").find("input").val(totalPrice2 ? `${totalPrice2.toLocaleString()}đ` : "");
             if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
                 var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
                 var paypermonth = Math.round(finalMoney / term);
                 const lastTwoChars = levelValue2.slice(-2);
                 const hoursLevel = parseInt(lastTwoChars, 10);
@@ -286,6 +332,25 @@ function price() {
                 $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
                 $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
             }
+
+            const pathway = $(this).val();
+            const cth = $(this).closest(".price-advice-box").find(".input-container-cth").find("select").val();
+            console.log("Pathway:", pathway);
+            console.log("CTH:", cth);
+            var items = [];
+            items.push("<option value>Chọn ưu đãi</option>");
+            var thisElement = $(this);
+            //if (pathway !== "" && cth !== "") {
+            $.getJSON("/Home/GetDiscount", { pathway: pathway, cth: cth }, function (data) {
+                $.each(data, function (key, val) {
+                    items.push("<option value='" + val.Id + "'>" + val.Username + "</option>");
+                });
+                thisElement.closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items.join(""));
+            });
+            //}
+            //else {
+            //    $("[data-item=district]").html(items.join(""));
+            //}
         });
 
         //Khi thay đổi cấp độ học
@@ -300,7 +365,7 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             const levelValue = $(this).val(); // Cấp độ học
-            const pathwayMonths = $(this).closest(".input-container-level").siblings(".input-container-pathway").find("select").val(); // Lộ trình
+            const pathwayMonths = $(this).closest(".input-container-level").siblings(".input-container-pathway").find("input").val(); // Lộ trình
 
             const unitPrice = calculateUnitPrice(levelValue); // Tính đơn giá
             const totalPrice = calculateTotalPrice(unitPrice, pathwayMonths); // Tính thành tiền
@@ -311,7 +376,7 @@ function price() {
             $(this).closest(".input-container-level").siblings(".input-container-finalprice").find("input").val(totalPrice ? `${totalPrice.toLocaleString()}đ` : "");
             if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
                 var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
 
                 var paypermonth = Math.round(finalMoney / term);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
@@ -338,7 +403,7 @@ function price() {
                     thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val(data.finalMoney.toLocaleString() + 'đ');
                     if (thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
                         var finalMoney = thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                        var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                        var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("input").val();
                         const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
 
                         var paypermonth = Math.round(finalMoney / term);
@@ -371,7 +436,7 @@ function price() {
                 $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
                 $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
                 var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
                 var paypermonth = Math.round(finalMoney / term);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
             }
@@ -399,7 +464,7 @@ function price() {
             //var thisElement = $(this);
             var cth = $(this).closest(".price-advice-box").find(".input-container-cth").find("select option:selected").text();
             var level = $(this).closest(".price-advice-box").find(".input-container-level").find("select option:selected").text();
-            var pathway = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select option:selected").text();
+            var pathway = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
             var paymethod = $(this).closest(".price-advice-box").find(".input-container-paymethod").find("select option:selected").text();
             var term = $(this).closest(".price-advice-box").find(".input-container-term").find("select option:selected").text();
             var qdsale = $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select option:selected").text();

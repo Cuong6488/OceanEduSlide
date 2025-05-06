@@ -28,6 +28,7 @@ namespace OceanEduSlide.Filters
                 filterContext.RouteData.Values["Username"] = ticketInfo?.Name;
 
                 filterContext.RouteData.Values["OfficeId"] = data.Split('|')[1];
+                filterContext.RouteData.Values["OfficeCode"] = data.Split('|')[2];
                 //filterContext.RouteData.Values["MemberId"] = data.Split('|')[2];
             }
             base.OnActionExecuting(filterContext);
