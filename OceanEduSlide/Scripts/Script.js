@@ -508,7 +508,7 @@ function ExportPdf() {
             scale: 3,
             useCORS: true // Hỗ trợ tải tệp CSS
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        jsPDF: { unit: 'mm', format: 'a5', orientation: 'landscape' }
     };
 
     // Đảm bảo CSS được áp dụng trước khi xuất

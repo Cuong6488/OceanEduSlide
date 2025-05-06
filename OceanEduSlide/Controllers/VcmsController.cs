@@ -13,7 +13,8 @@ using OceanEduSlide.DAL;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using OceanEduSlide.Migrations;
-
+using System.Text.RegularExpressions;
+using ExcelDataReader;
 namespace OceanEduSlide.Controllers
 {
     [Authorize]
@@ -569,6 +570,130 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return true;
         }
+        public ActionResult InsertOfficeExcel()
+        {
+            return View();
+        }
+        //[HttpPost]
+        //public ActionResult InsertOfficeExcel()
+        //{
+
+        //    var file = Request.Files["MemberFile"];
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+        //        var stream = file.InputStream;
+        //        IExcelDataReader reader;
+        //        if (file.FileName.EndsWith(".xls"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+        //        }
+        //        else if (file.FileName.EndsWith(".xlsx"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("File", @"This file format is not supported");
+        //            return View();
+        //        }
+        //        var result = reader.AsDataSet();
+        //        reader.Close();
+
+        //        var tbl = result.Tables[0];
+        //        var members = _unitOfWork.UserRepository.GetQuery(a => a.Active, o => o.OrderByDescending(a => a.CreateDate));
+        //        for (var i = 1; i < tbl.Rows.Count; i++)
+        //        {
+        //            //var username = tbl.Rows[i][3].ToString().Trim();
+        //            //var countUser = members.Count(a => a.Username == username);
+        //            //if (countUser > 0) continue;
+
+        //            var fullname = tbl.Rows[i][0].ToString().Trim();
+        //            if (fullname == null) continue;
+
+        //            var company = tbl.Rows[i][1].ToString().Trim();
+        //            var businessLicense = tbl.Rows[i][2].ToString().Trim();
+        //            var jobTitle = tbl.Rows[i][3].ToString().Trim();
+
+
+        //            var address = tbl.Rows[i][4].ToString().Trim();
+        //            var website = tbl.Rows[i][5].ToString().Trim();
+
+
+
+        //            var phone = tbl.Rows[i][6];
+        //            if (phone == null) continue;
+
+        //            var phoneVal = phone.ToString().Trim();
+
+        //            // Bước 2: Chuyển +84 thành 0
+        //            if (phoneVal.StartsWith("+84"))
+        //            {
+        //                phoneVal = "0" + phoneVal.Substring(3);
+        //            }
+
+        //            // Bước 3: Xoá dấu cách và dấu chấm
+        //            phoneVal = phoneVal.Replace(" ", "").Replace(".", "").Replace("-", "");
+        //            phoneVal = Regex.Replace(phoneVal, @"[^0-9]", "");
+        //            if (!phoneVal.StartsWith("0"))
+        //            {
+        //                phoneVal = "0" + phoneVal;
+        //            }
+        //            if (!Regex.IsMatch(phoneVal, @"^\d{10,11}$"))
+        //            {
+        //                continue; // Bỏ qua nếu không đúng định dạng
+        //            }
+
+        //            var countPhone = members.Count(a => a.PhoneNumber != null && a.PhoneNumber == phoneVal);
+        //            if (countPhone > 0) continue;
+
+        //            var email = tbl.Rows[i][7];
+        //            //if (email == null) continue;
+        //            var emailVal = email.ToString().Trim();
+        //            var countEmail = members.Count(a => a.Email != null && a.Email == emailVal);
+        //            if (countEmail > 0) continue;
+
+
+
+        //            //var companyHotline = tbl.Rows[i][10].ToString().Trim();
+        //            //var mst = tbl.Rows[i][11].ToString().Trim();
+        //            var member = new User
+        //            {
+        //                Fullname = fullname,
+        //                //Address = tbl.Rows[i][4].ToString().Trim(),
+        //                PhoneNumber = phoneVal == "" ? null : phoneVal,
+        //                Email = emailVal == "" ? "ceo.vefglobal@gmail.com" : emailVal,
+        //                Company = company == "" ? null : company,
+        //                BusinessLicense = businessLicense == "" ? null : businessLicense,
+        //                JobTitle = jobTitle == "" ? null : jobTitle,
+        //                Address = address == "" ? null : address,
+        //                CompanyWebsite = website == "" ? null : website,
+        //                //CompanyHotline = companyHotline == "" ? null : companyHotline,
+        //                //CompanyNumber = mst == "" ? null : mst,
+        //                Password = HtmlHelpers.ComputeHash("123456", "SHA256", null),
+        //                Active = true,
+        //                TypeUser = TypeUser.Normal,
+        //            };
+        //            _unitOfWork.UserRepository.Insert(member);
+        //            _unitOfWork.Save();
+        //            if (Forum() != null)
+        //            {
+        //                var memberForum = new MemberForum
+        //                {
+        //                    CreateDate = DateTime.Now,
+        //                    ForumId = Forum().Id,
+        //                    UserId = member.Id,
+        //                    Office = "Thành viên",
+        //                    TypeStatus = TypeStatus.Approved,
+
+        //                    Hot = false,
+        //                };
+        //                _unitOfWork.MemberForumRepository.Insert(memberForum);
+        //                _unitOfWork.Save();
+        //            }
+        //        }
+        //    }
+        //    return RedirectToAction("ListUser", "Vcms");
+        //}
         #endregion
 
         #region Discount
@@ -628,6 +753,126 @@ namespace OceanEduSlide.Controllers
             }
         }
         #endregion
+        //[HttpPost]
+        //public ActionResult InsertUserExcel()
+        //{
+
+        //    var file = Request.Files["MemberFile"];
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+        //        var stream = file.InputStream;
+        //        IExcelDataReader reader;
+        //        if (file.FileName.EndsWith(".xls"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+        //        }
+        //        else if (file.FileName.EndsWith(".xlsx"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("File", @"This file format is not supported");
+        //            return View();
+        //        }
+        //        var result = reader.AsDataSet();
+        //        reader.Close();
+
+        //        var tbl = result.Tables[0];
+        //        var members = _unitOfWork.UserRepository.GetQuery(a => a.Active, o => o.OrderByDescending(a => a.CreateDate));
+        //        for (var i = 1; i < tbl.Rows.Count; i++)
+        //        {
+        //            //var username = tbl.Rows[i][3].ToString().Trim();
+        //            //var countUser = members.Count(a => a.Username == username);
+        //            //if (countUser > 0) continue;
+
+        //            var fullname = tbl.Rows[i][0].ToString().Trim();
+        //            if (fullname == null) continue;
+
+        //            var company = tbl.Rows[i][1].ToString().Trim();
+        //            var businessLicense = tbl.Rows[i][2].ToString().Trim();
+        //            var jobTitle = tbl.Rows[i][3].ToString().Trim();
+
+
+        //            var address = tbl.Rows[i][4].ToString().Trim();
+        //            var website = tbl.Rows[i][5].ToString().Trim();
+
+
+
+        //            var phone = tbl.Rows[i][6];
+        //            if (phone == null) continue;
+
+        //            var phoneVal = phone.ToString().Trim();
+
+        //            // Bước 2: Chuyển +84 thành 0
+        //            if (phoneVal.StartsWith("+84"))
+        //            {
+        //                phoneVal = "0" + phoneVal.Substring(3);
+        //            }
+
+        //            // Bước 3: Xoá dấu cách và dấu chấm
+        //            phoneVal = phoneVal.Replace(" ", "").Replace(".", "").Replace("-", "");
+        //            phoneVal = Regex.Replace(phoneVal, @"[^0-9]", "");
+        //            if (!phoneVal.StartsWith("0"))
+        //            {
+        //                phoneVal = "0" + phoneVal;
+        //            }
+        //            if (!Regex.IsMatch(phoneVal, @"^\d{10,11}$"))
+        //            {
+        //                continue; // Bỏ qua nếu không đúng định dạng
+        //            }
+
+        //            var countPhone = members.Count(a => a.PhoneNumber != null && a.PhoneNumber == phoneVal);
+        //            if (countPhone > 0) continue;
+
+        //            var email = tbl.Rows[i][7];
+        //            //if (email == null) continue;
+        //            var emailVal = email.ToString().Trim();
+        //            var countEmail = members.Count(a => a.Email != null && a.Email == emailVal);
+        //            if (countEmail > 0) continue;
+
+
+
+        //            //var companyHotline = tbl.Rows[i][10].ToString().Trim();
+        //            //var mst = tbl.Rows[i][11].ToString().Trim();
+        //            var member = new User
+        //            {
+        //                Fullname = fullname,
+        //                //Address = tbl.Rows[i][4].ToString().Trim(),
+        //                PhoneNumber = phoneVal == "" ? null : phoneVal,
+        //                Email = emailVal == "" ? "ceo.vefglobal@gmail.com" : emailVal,
+        //                Company = company == "" ? null : company,
+        //                BusinessLicense = businessLicense == "" ? null : businessLicense,
+        //                JobTitle = jobTitle == "" ? null : jobTitle,
+        //                Address = address == "" ? null : address,
+        //                CompanyWebsite = website == "" ? null : website,
+        //                //CompanyHotline = companyHotline == "" ? null : companyHotline,
+        //                //CompanyNumber = mst == "" ? null : mst,
+        //                Password = HtmlHelpers.ComputeHash("123456", "SHA256", null),
+        //                Active = true,
+        //                TypeUser = TypeUser.Normal,
+        //            };
+        //            _unitOfWork.UserRepository.Insert(member);
+        //            _unitOfWork.Save();
+        //            if (Forum() != null)
+        //            {
+        //                var memberForum = new MemberForum
+        //                {
+        //                    CreateDate = DateTime.Now,
+        //                    ForumId = Forum().Id,
+        //                    UserId = member.Id,
+        //                    Office = "Thành viên",
+        //                    TypeStatus = TypeStatus.Approved,
+
+        //                    Hot = false,
+        //                };
+        //                _unitOfWork.MemberForumRepository.Insert(memberForum);
+        //                _unitOfWork.Save();
+        //            }
+        //        }
+        //    }
+        //    return RedirectToAction("ListUser", "Vcms");
+        //}
 
         protected override void Dispose(bool disposing)
         {
