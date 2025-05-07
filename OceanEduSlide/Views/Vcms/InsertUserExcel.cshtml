@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "Thêm mới User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Thêm mới user</h2>
+<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách user</a>
+<div class="box_content">
+    @using (Html.BeginForm("InsertUsersExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tr>
+                <td class="form_name">Đính kèm File</td>
+                <td class="form_text"><input type="file" name="UserFile" value="" /></td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Xác nhận" />
+                </td>
+            </tr>
+        </table>
+    }
+</div>

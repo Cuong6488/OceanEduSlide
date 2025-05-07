@@ -241,7 +241,7 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ListUser(int? page, string name, int? officeId, string result = "")
+        public ActionResult ListUser(int? page, string username, int? officeId, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -252,9 +252,9 @@ namespace OceanEduSlide.Controllers
             {
                 users = users.Where(l => l.OfficeId == officeId);
             }
-            if (name != null)
+            if (username != null)
             {
-                var newkey = name.Trim();
+                var newkey = username.Trim();
                 if (!string.IsNullOrEmpty(newkey))
                 {
                     users = users.Where(l => l.Username.Contains(newkey));
@@ -265,7 +265,7 @@ namespace OceanEduSlide.Controllers
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 Users = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
-                Username = name,
+                Username = username,
                 MemberCredentials = _unitOfWork.MemberCredentialRepository.GetQuery(),
             };
             return View(model);
@@ -346,6 +346,64 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListDiscount");
 
+        }
+        public ActionResult InsertUserExcel()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertUsersExcel()
+        {
+            var file = Request.Files["UserFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                var tbl = result.Tables[0];
+                var users = _unitOfWork.UserRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                for (var i = 1; i < tbl.Rows.Count; i++)
+                {
+                    //var username = tbl.Rows[i][3].ToString().Trim();
+                    //var countUser = members.Count(a => a.Username == username);
+                    //if (countUser > 0) continue;
+                    var officename = tbl.Rows[i][0].ToString().Trim();
+                    var username = tbl.Rows[i][1].ToString().Trim();
+                    if (username == null) continue;
+                    var countUser = users.Count(a => a.Username == username);
+                    if (countUser > 0) continue;
+                    var password = tbl.Rows[i][2].ToString().Trim();
+                    if (username == null) continue;
+                    var password2 = HtmlHelpers.ComputeHash(password, "SHA256", null);
+                    var office = _unitOfWork.OfficeRepository.Get(a => a.Name == officename).FirstOrDefault();
+                    if (office == null) continue;
+                    var user = new User
+                    {
+                        Username = username,
+                        Password = password2,
+                        Active = true,
+                        OfficeId = office.Id,
+                    };
+                    _unitOfWork.UserRepository.Insert(user);
+                    _unitOfWork.Save();
+                }
+            }
+            return RedirectToAction("ListUser");
         }
         #endregion
 

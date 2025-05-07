@@ -36,7 +36,7 @@
                 <th>Tên đăng nhập</th>
                 <th>Chi nhánh</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
-                <th>Face-Id</th>
+                @*<th>Face-Id</th>*@
                 <th style="width:100px">Hoạt động</th>
                 <th style="width: 130px"></th>
             </tr>
@@ -49,23 +49,23 @@
                     </td>
                     @*<td>@user.City.Name</td>*@
                     <td>@user.Office.Name</td>
-                    <td>
+                    @*<td>
                             <button type="button" class="btn btn-success" style="font-size:13px" onclick="checkBeforeRegister('@user.Id.ToString()', '@user.Username')">Đăng ký Face-Id</button>
                         
-                    </td>
+                    </td>*@
                     <td>@Html.CheckBoxFor(model => user.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
                         @Html.ActionLink("Sửa", "UpdateUser", new { id = user.Id }) -
-                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a> -
-                        <a href="@Url.Action("ListFaceId", new {userId = user.Id})">Danh sách Face-Id</a>
+                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a> 
+                        @*<a href="@Url.Action("ListFaceId", new {userId = user.Id})">Danh sách Face-Id</a>*@
                     </td>
                 </tr>
             }
             @if (Model.Users.PageCount > 1)
             {
                 <tr>
-                    <td colspan="5">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Users }))</td>
+                    <td colspan="5">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username }))</td>
                 </tr>
             }
         </tbody>
