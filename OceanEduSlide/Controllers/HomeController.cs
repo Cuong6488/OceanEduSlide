@@ -101,7 +101,7 @@ namespace OceanEduSlide.Controllers
         {
 
             var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && (","+a.Offices+",").Contains(","+OfficeCode+",") && a.Cth == cth && (a.Pathway <= pathway && pathway <= a.PathwayTo), q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+                .GetQuery(a => a.Active && (","+a.Offices+",").Contains(","+OfficeCode+",") && a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
             return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
@@ -123,6 +123,25 @@ namespace OceanEduSlide.Controllers
             }
             return Json(new { status = false });
         }
+        //[HttpPost]
+        //public JsonResult CalcMoneyType(string cash, string percent)
+        //{
+        //    int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace(",", "").Replace("đ", ""));
+        //    var discount = _unitOfWork.DiscountRepository.GetById(id);
+        //    int moneyDiscount = 0;
+        //    if (discount != null)
+        //    {
+        //        moneyDiscount = discount.MoneyDiscount ?? 0;
+        //        if (discount.PercentDiscount != null)
+        //        {
+        //            double? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
+        //            moneyDiscount += (int)Math.Round((double)decimalMoney);
+        //            return Json(new { status = true, moneyDiscount, gift = discount.Gift ?? "Chưa có", finalMoney = intTotalMoney - moneyDiscount });
+
+        //        }
+        //    }
+        //    return Json(new { status = false });
+        //}
         public ActionResult Pathway()
         {
             return View();

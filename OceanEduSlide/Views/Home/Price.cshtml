@@ -77,6 +77,18 @@
                 </select>
                 @*@Html.DropDownListFor(model => model.DiscountId, Model.SelectDiscounts, "Chọn ưu đãi", new { @class = "form-select" })*@
             </div>
+            <div class="input-container input-container-percent">
+                <div>
+                    % Ưu đãi
+                </div>
+                <input type="number" name="name" value="" class="form-control fw-bold" />
+            </div>
+            <div class="input-container input-container-cash">
+                <div>
+                    Ưu đãi tiền mặt
+                </div>
+                <input type="text" name="name" value="" class="form-control fw-bold input-number" />
+            </div>
             <div class="input-container input-container-moneyprice">
                 <div>
                     Số tiền ưu đãi

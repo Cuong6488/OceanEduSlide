@@ -48,7 +48,12 @@ $(document).ready(function () {
 
 });
 function price() {
-
+    $(".input-number").maskMoney({
+        precision: 0,
+        thousands: ',',
+        suffix: ' đ',
+        affixesStay: false
+    });
     $('.input-container-qdsale select').select2({allowClear: true });
     var today = new Date();
     $(".datepicker").datepicker({
@@ -396,6 +401,63 @@ function price() {
             var thisElement = $(this);
             var idDiscount = $(this).val();
             var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
+            $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney }, function (data) {
+                if (data.status) {
+                    thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
+                    thisElement.closest(".price-advice-box").find(".input-container-giftprice").find("input").val(data.gift);
+                    thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val(data.finalMoney.toLocaleString() + 'đ');
+                    if (thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+                        var finalMoney = thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+                        var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("input").val();
+                        const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
+
+                        var paypermonth = Math.round(finalMoney / term);
+                        thisElement.closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                        const lastTwoChars = levelValue2.slice(-2);
+                        const hoursLevel = parseInt(lastTwoChars, 10);
+                        var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+                        var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+                        var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+                        thisElement.closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
+                    }
+                }
+            });
+
+            //if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
+            //    var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
+            //    var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
+
+            //    var paypermonth = Math.round(finalMoney / term);
+            //    $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            //}
+        });
+
+        $(".input-container-cash input,.input-container-percent input").on("change", function () {
+            var thisElement = $(this);
+           
+            var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
+            var totalMoneyInt = parseInt(totalMoney.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
+
+            var cash = $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val();
+            var cashInt = parseInt(cash.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
+            var percent = $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val();
+
+            var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
+            const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
+
+            var paypermonth = Math.round(finalMoney / term);
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            const lastTwoChars = levelValue2.slice(-2);
+            const hoursLevel = parseInt(lastTwoChars, 10);
+            var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+            var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+            var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
+            $(this).closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+            $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+            $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
+            var finalMoney = totalMoneyInt - cashInt - (totalMoneyInt * percent);
             $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney }, function (data) {
                 if (data.status) {
                     thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
