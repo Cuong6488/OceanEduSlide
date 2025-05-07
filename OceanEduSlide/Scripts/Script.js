@@ -54,7 +54,7 @@ function price() {
         suffix: ' đ',
         affixesStay: false
     });
-    $('.input-container-qdsale select').select2({allowClear: true });
+    $('.input-container-qdsale select').select2({ allowClear: true });
     var today = new Date();
     $(".datepicker").datepicker({
         dateFormat: "dd/mm/yy",
@@ -104,9 +104,14 @@ function price() {
         $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
         $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
+        $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
         $(this).closest(".price-advice-box").find(".start-date").val("");
         $(this).closest(".price-advice-box").find(".end-date").val("");
         $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+        var items1 = [];
+        items1.push("<option value>Chọn ưu đãi</option>");
+        $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items1.join(""));
         const id = $(this).val();
         var items = [];
         items.push("<option value>Chọn cấp độ học</option>");
@@ -282,6 +287,8 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+            $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
             //const pathwayMonths = $(this).val();
             //const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
 
@@ -345,17 +352,17 @@ function price() {
             var items = [];
             items.push("<option value>Chọn ưu đãi</option>");
             var thisElement = $(this);
-            //if (pathway !== "" && cth !== "") {
-            $.getJSON("/Home/GetDiscount", { pathway: pathway, cth: cth }, function (data) {
-                $.each(data, function (key, val) {
-                    items.push("<option value='" + val.Id + "'>" + val.Username + "</option>");
+            if (pathway !== "" && cth !== "") {
+                $.getJSON("/Home/GetDiscount", { pathway: pathway, cth: cth }, function (data) {
+                    $.each(data, function (key, val) {
+                        items.push("<option value='" + val.Id + "'>" + val.Username + "</option>");
+                    });
+                    thisElement.closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items.join(""));
                 });
+            }
+            else {
                 thisElement.closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items.join(""));
-            });
-            //}
-            //else {
-            //    $("[data-item=district]").html(items.join(""));
-            //}
+            }
         });
 
         //Khi thay đổi cấp độ học
@@ -369,6 +376,27 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-postpaid").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+            $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
+            const pathway = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
+            const cth = $(this).closest(".price-advice-box").find(".input-container-cth").find("select").val();
+            console.log("Pathway:", pathway);
+            console.log("CTH:", cth);
+            var items1 = [];
+            items1.push("<option value>Chọn ưu đãi</option>");
+            var thisElement = $(this);
+            if (pathway !== "" && cth !== "") {
+                $.getJSON("/Home/GetDiscount", { pathway: pathway, cth: cth }, function (data) {
+                    $.each(data, function (key, val) {
+                        items1.push("<option value='" + val.Id + "'>" + val.Username + "</option>");
+                    });
+                    thisElement.closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items1.join(""));
+                });
+            }
+            else {
+                thisElement.closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items1.join(""));
+            }
+
             const levelValue = $(this).val(); // Cấp độ học
             const pathwayMonths = $(this).closest(".input-container-level").siblings(".input-container-pathway").find("input").val(); // Lộ trình
 
@@ -398,6 +426,9 @@ function price() {
 
         });
         $(".input-container-qdsale select").on("change", function () {
+
+            $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
+            $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
             var thisElement = $(this);
             var idDiscount = $(this).val();
             var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
@@ -435,60 +466,32 @@ function price() {
         });
 
         $(".input-container-cash input,.input-container-percent input").on("change", function () {
-            var thisElement = $(this);
-           
+
             var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
             var totalMoneyInt = parseInt(totalMoney.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
-
             var cash = $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val();
+            var percent = $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val();
             var cashInt = parseInt(cash.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
-            var percent = $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val();
+            if (cash !== "" && percent !== "") {
+                var moneyDiscount = Math.round(cashInt + totalMoneyInt * percent / 100);
+                var finalMoney = totalMoneyInt - moneyDiscount;
+                $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(moneyDiscount.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val(finalMoney.toLocaleString() + 'đ');
+                var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
+                const levelValue2 = $(this).closest(".price-advice-box").find(".input-container-level").find("select").val(); // Cấp độ học
 
-            var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
-            const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
+                var paypermonth = Math.round(finalMoney / term);
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                const lastTwoChars = levelValue2.slice(-2);
+                const hoursLevel = parseInt(lastTwoChars, 10);
+                var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
+                var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
+                var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
+                $(this).closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
+            }
 
-            var paypermonth = Math.round(finalMoney / term);
-            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
-            const lastTwoChars = levelValue2.slice(-2);
-            const hoursLevel = parseInt(lastTwoChars, 10);
-            var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
-            var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
-            var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
-            $(this).closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
-            $(this).closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
-            $(this).closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
-            var finalMoney = totalMoneyInt - cashInt - (totalMoneyInt * percent);
-            $.post("/Home/CalcMoney", { id: idDiscount, totalMoney: totalMoney }, function (data) {
-                if (data.status) {
-                    thisElement.closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(data.moneyDiscount.toLocaleString() + 'đ');
-                    thisElement.closest(".price-advice-box").find(".input-container-giftprice").find("input").val(data.gift);
-                    thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val(data.finalMoney.toLocaleString() + 'đ');
-                    if (thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
-                        var finalMoney = thisElement.closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-                        var term = thisElement.closest(".price-advice-box").find(".input-container-pathway").find("input").val();
-                        const levelValue2 = thisElement.closest(".input-container-qdsale").siblings(".input-container-level").find("select").val(); // Cấp độ học
-
-                        var paypermonth = Math.round(finalMoney / term);
-                        thisElement.closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
-                        const lastTwoChars = levelValue2.slice(-2);
-                        const hoursLevel = parseInt(lastTwoChars, 10);
-                        var moneyFor2h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 2);
-                        var moneyFor1h = Math.round(finalMoney / (hoursLevel * (term / 3)) * 1.5);
-                        var moneyFor45p = Math.round(finalMoney / (hoursLevel * (term / 3)) * 0.75);
-                        thisElement.closest(".price-advice-box").find(".input-container-priceper2h").find("input").val(moneyFor2h.toLocaleString() + 'đ');
-                        thisElement.closest(".price-advice-box").find(".input-container-priceper1-5h").find("input").val(moneyFor1h.toLocaleString() + 'đ');
-                        thisElement.closest(".price-advice-box").find(".input-container-priceper45p").find("input").val(moneyFor45p.toLocaleString() + 'đ');
-                    }
-                }
-            });
-
-            //if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
-            //    var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-            //    var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
-
-            //    var paypermonth = Math.round(finalMoney / term);
-            //    $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
-            //}
         });
         $(".input-container-paymethod select").on("change", function () {
             var paymethodVal = $(this).val();
@@ -578,7 +581,7 @@ function price() {
         $(".price-advice").css("width", "fit-content");
         $(".price-advice").css("padding", "0 40px");
         $(this).closest(".price-advice-box").css("width", "50vw");
-        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "170px");
+        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "200px");
         $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "19px");
 
     });
@@ -586,7 +589,7 @@ function price() {
         $(".price-advice").css("width", "unset");
         $(".price-advice").css("padding", "unset");
         $(this).closest(".price-advice-box").css("width", "31vw");
-        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "130px");
+        $(this).closest(".price-advice-box-container").find(".input-container > :first-child").css("width", "140px");
         $(this).closest(".price-advice-box-container").find(".input-container").css("font-size", "14px");
     });
     $(".payment-open").on("click", function () {
@@ -602,6 +605,16 @@ function price() {
     $(".price-open").on("click", function () {
 
         $(this).closest(".price-advice-box-container").find(".price-container").toggleClass("active");
+        if ($(this).html().includes("plus")) {
+            $(this).html('<i class="fa-solid fa-minus"></i>')
+        }
+        else {
+            $(this).html('<i class="fa-solid fa-plus"></i>')
+        }
+    });
+    $(".type-open").on("click", function () {
+
+        $(this).closest(".price-advice-box-container").find(".type-container").toggleClass("active");
         if ($(this).html().includes("plus")) {
             $(this).html('<i class="fa-solid fa-minus"></i>')
         }
@@ -665,6 +678,13 @@ function face() {
                                 slidesToShow: 4,
                                 slidesToScroll: 4,
                             }
+                        },
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 3,
+                            }
                         }
                     ]
                 });
@@ -692,6 +712,13 @@ function face() {
                             settings: {
                                 slidesToShow: 4,
                                 slidesToScroll: 4,
+                            }
+                        },
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 3,
                             }
                         }
                     ]
@@ -721,12 +748,54 @@ function face() {
                                 slidesToShow: 4,
                                 slidesToScroll: 4,
                             }
+                        },
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 3,
+                            }
                         }
                     ]
                 });
             });
         }
     });
+    //$(".face-student").on("click", function () {
+    //    if (isTick === false) {
+    //        $(".face-index").fadeOut(300, function () {
+    //            $(".face-student-slide").fadeIn(300);
+    //            $('.face-student-slick').slick({
+    //                autoplay: false,
+    //                dots: false,
+    //                infinite: true,
+    //                speed: 1000,
+    //                slidesToShow: 3,
+    //                slidesToScroll: 1,
+    //                autoplaySpeed: 2000,
+    //                arrows: true,
+    //                nextArrow: '<button type="button" class="slick-next"></button>',
+    //                prevArrow: '<button type="button" class="slick-prev"></button>',
+    //                responsive: [
+    //                    {
+    //                        breakpoint: 1300,
+    //                        settings: {
+    //                            slidesToShow: 2,
+    //                            slidesToScroll: 1,
+    //                        }
+    //                    },
+    //                    {
+    //                        breakpoint: 1100,
+    //                        settings: {
+    //                            slidesToShow: 3,
+    //                            slidesToScroll: 3,
+    //                        }
+    //                    }
+    //                ]
+    //            });
+    //        });
+    //    }
+    //});
     $(".face .btn-back-square").on("click", function () {
         $(".face > .slide:not(.face-index)").fadeOut(300, function () {
             $(".face-index").fadeIn(300);

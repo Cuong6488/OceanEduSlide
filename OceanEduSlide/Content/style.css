@@ -2192,7 +2192,27 @@ body {
   /*height: 500px;*/
   overflow: auto;
   transition: 0.3s;
-  max-height: 670px;
+  max-height: 680px;
+  /*
+              .payment-container {
+                  max-height: 0;
+                  transition: .3s;
+                  overflow: hidden;
+
+                  &.active {
+                      max-height: unset;
+                  }
+              }
+
+              .price-container {
+                  max-height: 0;
+                  transition: .3s;
+                  overflow: hidden;
+
+                  &.active {
+                      max-height: unset;
+                  }
+              }*/
 }
 .price-advice-box-container::-webkit-scrollbar {
   width: 5px;
@@ -2215,7 +2235,7 @@ body {
   position: relative;
 }
 .price-advice-box-container .input-container > :first-child {
-  width: 130px;
+  width: 140px;
   /*border-right: 1px solid white;*/
   position: relative;
 }
@@ -2307,6 +2327,26 @@ body {
 .price-advice-box-container .input-container-qdsale {
   background: #83E431;
 }
+.price-advice-box-container .input-container-qdsale .type-open {
+  position: absolute;
+  bottom: -7px;
+  left: -5px;
+  transform: translate(-100%, 0);
+  color: #2e3191;
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+}
+.price-advice-box-container .input-container-qdsale .type-open i {
+  font-size: 13px;
+  cursor: pointer;
+  transform: translate(100%, -50%);
+}
+@media (max-width: 1300px) {
+  .price-advice-box-container .input-container-qdsale .type-open i {
+    transform: translate(135%, -60%);
+  }
+}
 .price-advice-box-container .input-container-moneyprice {
   background: #83E431;
 }
@@ -2374,20 +2414,12 @@ body {
 .price-advice-box-container .btn-zoomout {
   left: 65px;
 }
-.price-advice-box-container .payment-container {
+.price-advice-box-container .group-container {
   max-height: 0;
   transition: 0.3s;
   overflow: hidden;
 }
-.price-advice-box-container .payment-container.active {
-  max-height: unset;
-}
-.price-advice-box-container .price-container {
-  max-height: 0;
-  transition: 0.3s;
-  overflow: hidden;
-}
-.price-advice-box-container .price-container.active {
+.price-advice-box-container .group-container.active {
   max-height: unset;
 }
 @media (max-width: 1300px) {
@@ -3249,4 +3281,29 @@ body {
 
 .select2-selection--single {
   background: transparent !important;
+}
+
+.video-thumbnail {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.video-thumbnail img {
+  border-radius: 10px;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
