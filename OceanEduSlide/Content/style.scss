@@ -2952,7 +2952,7 @@ body {
                     left: 65px;
                 }
             }
-/*
+            /*
             .payment-container {
                 max-height: 0;
                 transition: .3s;
@@ -4052,31 +4052,35 @@ body {
         }
     }
 }
-.select2-selection__clear{
-    display:none !important;
+
+.select2-selection__clear {
+    display: none !important;
 }
+
 .select2-container {
     & * {
         outline: none !important;
-        font-family:josefinsans;
-        font-size:14px;
+        font-family: josefinsans;
+        font-size: 14px;
     }
 }
-.select2-selection{
 
-        border: none !important;
+.select2-selection {
+    border: none !important;
 }
+
 .select2-selection--single {
     background: transparent !important;
 }
+
 .video-thumbnail {
     position: relative;
     display: inline-block;
     cursor: pointer;
-    img{
-border-radius:10px;
+
+    img {
+        border-radius: 10px;
     }
-    
 }
 
 .play-button {
@@ -4093,4 +4097,60 @@ border-radius:10px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.change-password-form {
+    position: absolute;
+    width: 500px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 30px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+
+    button {
+        width: 100%;
+        padding: 6px 12px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 20px;
+    }
+
+    span {
+        color: $red;
+        font-size: 14px;
+        display: none;
+    }
+
+    .close-form{
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(220px,-180px);
+        cursor:pointer;
+        i{
+            font-size:20px;
+        }
+    }
 }

@@ -97,11 +97,33 @@ namespace OceanEduSlide.Controllers
             var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
             return View(office);
         }
+        [HttpPost]
+        public JsonResult ChangePassword(string oldpassword, string newpassword, string confirmpassword)
+        {
+            if (!HtmlHelpers.VerifyHash(oldpassword, "SHA256", User.Password))
+            {
+                return Json(new { status = false, msg = "Mật khẩu cũ không chính xác. Hãy kiểm tra lại." });
+            }
+            else if (confirmpassword != newpassword)
+            {
+                return Json(new { status = false, msg = "Xác nhận mật khẩu không chính xác. Hãy kiểm tra lại." });
+            }
+            else if (newpassword.Length > 60)
+            {
+                return Json(new { status = false, msg = "Mật khẩu không được quá 60 ký tự." });
+
+            }
+
+            User.Password = HtmlHelpers.ComputeHash(newpassword, "SHA256", null);
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Đổi mật khẩu thành công." });
+
+        }
         public JsonResult GetDiscount(string cth, double pathway)
         {
 
             var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && (","+a.Offices+",").Contains(","+OfficeCode+",") && a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") && a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
             return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]

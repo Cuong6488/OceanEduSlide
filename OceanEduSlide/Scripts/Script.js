@@ -12,7 +12,36 @@ function login() {
         });
     });
 }
+$(".change-password").on("click", function () {
+    $(".change-password-form").toggleClass("active");
+});
+$(".close-form").on("click", function () {
+    $(".change-password-form").removeClass("active");
+});
 
+$(".change-password-form form").on("submit", function (e) {
+    e.preventDefault();
+    if ($(this).valid()) {
+        $.post("/Home/ChangePassword", $(this).serialize(), function (data) {
+            if (data.status) {
+                $.toast({
+                    heading: 'Đổi mật khẩu thành công',
+                    text: data.msg,
+                    icon: 'success'
+                })
+                $(".change-password-form form").trigger("reset");
+                $(".change-password-form").removeClass("active");
+            } else {
+                $.toast({
+                    heading: 'Đổi mật khẩu thất bại',
+                    text: data.msg,
+                    icon: 'error'
+                })
+
+            }
+        });
+    }
+});
 $("[data-fancybox]").fancybox({
     zoomOpacity: "auto",
     zoomSpeed: 11000,
