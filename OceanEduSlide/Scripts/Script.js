@@ -232,12 +232,19 @@ function price() {
         }
 
         // Hàm tính toán thành tiền
+        //function calculateTotalPrice(unitPrice, pathwayMonths) {
+        //    if (unitPrice && pathwayMonths) {
+        //        return unitPrice * pathwayMonths; // Thành tiền = đơn giá * số tháng
+        //    }
+        //    else {
+        //        return ""; // Thành tiền rỗng nếu thiếu giá trị
+        //    }
+        //}
         function calculateTotalPrice(unitPrice, pathwayMonths) {
             if (unitPrice && pathwayMonths) {
-                return unitPrice * pathwayMonths; // Thành tiền = đơn giá * số tháng
-            }
-            else {
-                return ""; // Thành tiền rỗng nếu thiếu giá trị
+                return Math.round(unitPrice * pathwayMonths); // Làm tròn đến số nguyên gần nhất
+            } else {
+                return ""; // Trả về chuỗi rỗng nếu thiếu giá trị
             }
         }
 
@@ -470,9 +477,9 @@ function price() {
             var totalMoney = $(this).closest(".price-advice-box").find(".input-container-totalprice").find("input").val();
             var totalMoneyInt = parseInt(totalMoney.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
             var cash = $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val();
-            var percent = $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val();
-            var cashInt = parseInt(cash.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10);
-            if (cash !== "" && percent !== "") {
+            var percent = $(this).closest(".price-advice-box").find(".input-container-percent input").val() || 0;
+            var cashInt = parseInt(cash?.replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim(), 10) || 0;
+            if (cash !== "" || percent !== "") {
                 var moneyDiscount = Math.round(cashInt + totalMoneyInt * percent / 100);
                 var finalMoney = totalMoneyInt - moneyDiscount;
                 $(this).closest(".price-advice-box").find(".input-container-moneyprice").find("input").val(moneyDiscount.toLocaleString() + 'đ');
