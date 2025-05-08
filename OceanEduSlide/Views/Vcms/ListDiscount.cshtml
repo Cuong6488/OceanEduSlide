@@ -13,13 +13,13 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật ưu đãi thành công</strong></div>
 }
-<a class="btn quick-link" href="@Url.Action("CreateDiscount")"><i class="fal fa-plus-circle me-1"></i>Thêm ưu đãi</a>
+<a class="btn quick-link" href="@Url.Action("InsertDiscountExcel")"><i class="fal fa-plus-circle me-1"></i>Thêm ưu đãi</a>
 <div class="box_content">
     <form action="@Url.Action("ListDiscount")" method="get">
         <div class="row">
             @*<div class="col-lg-4">
-                <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
-            </div>*@
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
+                </div>*@
             <div class="col-lg-4">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
             </div>
@@ -28,7 +28,8 @@
             </div>
         </div>
     </form>
-    <p>Có tổng số <strong>@Model.Discounts.TotalItemCount</strong> ưu đãi</p>
+    <p>Có tổng số <strong>@Model.Discounts.TotalItemCount</strong> QĐ ưu đãi</p>
+    <a onclick="clearDiscount()" href="javascript:;" class="btn btn-danger mb-3" style="font-size:13px;">Xóa toàn bộ QĐ</a>
     <table class="list_table tablecenter table-striped">
         <tbody>
             <tr>
@@ -38,6 +39,8 @@
                 <th>Quà tặng</th>
                 <th>Số tháng từ</th>
                 <th>Số tháng đến</th>
+                <th>Ngày hiệu lực</th>
+                <th>Ngày hết hạn</th>
                 <th>Chi nhánh</th>
                 <th>Chương trình học</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
@@ -57,7 +60,9 @@
                     <td>@discount.Gift</td>
                     <td>@discount.Pathway</td>
                     <td>@discount.PathwayTo</td>
-                    <td style="max-width:300px;overflow:hidden">@discount.Offices</td>
+                    <td>@discount.StartDate</td>
+                    <td>@discount.EndDate</td>
+                    <td style="max-width:300px;word-break:break-word;text-align:start">@discount.Offices</td>
                     <td>@discount.Cth</td>
                     <td>@Html.CheckBoxFor(model => discount.Active)</td>
                     <td>
@@ -98,6 +103,13 @@
                             })
                         }
                     });
+            }
+        }
+        function clearDiscount() {
+            if (confirm("Hành động này sẽ xóa toàn bộ dữ liệu về QĐ ưu đãi!")) {
+                if (confirm("Bạn có chắc chắn xóa toàn bộ QĐ ưu đãi không?")) {
+                    window.location.href = "/Vcms/ClearDiscount";
+                }
             }
         }
 

@@ -4,6 +4,7 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -122,7 +123,10 @@ namespace OceanEduSlide.Controllers
         {
 
             var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") && a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
+                (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
+                (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) &&
+                a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
             return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]

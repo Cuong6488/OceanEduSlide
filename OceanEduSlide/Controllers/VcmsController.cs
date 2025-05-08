@@ -13,6 +13,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Z.EntityFramework.Plus;
+
 namespace OceanEduSlide.Controllers
 {
     [Authorize]
@@ -319,33 +321,25 @@ namespace OceanEduSlide.Controllers
             return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
         }
-        public ActionResult ClearOffice()
-        {
-            var offices = _unitOfWork.OfficeRepository.Get();
-            if (offices.Count() < 30)
-            {
-                foreach (var item in offices)
-                {
-                    _unitOfWork.OfficeRepository.Delete(item);
-                }
-            }
-            _unitOfWork.Save();
-            return RedirectToAction("ListOffice");
+        //public ActionResult ClearOffice()
+        //{
+        //    var offices = _unitOfWork.OfficeRepository.Get();
+        //    if (offices.Count() < 30)
+        //    {
+        //        foreach (var item in offices)
+        //        {
+        //            _unitOfWork.OfficeRepository.Delete(item);
+        //        }
+        //    }
+        //    _unitOfWork.Save();
+        //    return RedirectToAction("ListOffice");
 
-        }
+        //}
         public ActionResult ClearDiscount()
         {
-            var offices = _unitOfWork.DiscountRepository.Get();
-            if (offices.Count() < 30)
-            {
-                foreach (var item in offices)
-                {
-                    _unitOfWork.DiscountRepository.Delete(item);
-                }
-            }
-            _unitOfWork.Save();
+            var discounts = _unitOfWork.DiscountRepository.GetQuery();
+            discounts.Delete();
             return RedirectToAction("ListDiscount");
-
         }
         public ActionResult InsertUserExcel()
         {
@@ -406,7 +400,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListUser");
         }
         #endregion
-        
+
         public ActionResult Index()
         {
             var model = new InfoAdminViewModel
@@ -809,7 +803,7 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 //var tbl = result.Tables[0];
-                    var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
                 foreach (DataTable tbl in result.Tables)
                 {
                     for (var i = 1; i < tbl.Rows.Count; i++)
@@ -822,6 +816,8 @@ namespace OceanEduSlide.Controllers
                         int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
                         double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
 
+                        var startDateStr = tbl.Rows[i][4].ToString().Trim();
+                        var endDateStr = tbl.Rows[i][5].ToString().Trim();
                         var gift = tbl.Rows[i][7].ToString().Trim();
                         var offices = tbl.Rows[i][9].ToString().Trim();
                         if (offices == null) continue;
@@ -840,6 +836,8 @@ namespace OceanEduSlide.Controllers
                             Pathway = pathway,
                             PathwayTo = pathwayTo,
                             Cth = cth,
+                            StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
+                            EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
                             Active = true
                         };
                         _unitOfWork.DiscountRepository.Insert(discount);

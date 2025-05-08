@@ -27,6 +27,10 @@ namespace OceanEduSlide.Models
         public int Pathway { get; set; }
         [Display(Name = "Số tháng đến"), Required(ErrorMessage = "Hãy nhập số tháng")]
         public int PathwayTo { get; set; }
+        [Display(Name = "Ngày hết hạn")]
+        public DateTime? EndDate { get; set; }
+        [Display(Name = "Ngày hiệu lực")]
+        public DateTime? StartDate { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]
         public string Gift { get; set; }
         [Display(Name = "Chương trình học"), UIHint("Textbox")]

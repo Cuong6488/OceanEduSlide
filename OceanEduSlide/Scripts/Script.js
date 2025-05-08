@@ -138,6 +138,7 @@ function price() {
         $(this).closest(".price-advice-box").find(".start-date").val("");
         $(this).closest(".price-advice-box").find(".end-date").val("");
         $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+        $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("div").text("Học phí/tháng");
         var items1 = [];
         items1.push("<option value>Chọn ưu đãi</option>");
         $(this).closest(".price-advice-box").find(".input-container-qdsale").find("select").html(items1.join(""));
@@ -463,6 +464,8 @@ function price() {
         });
         $(".input-container-qdsale select").on("change", function () {
 
+            $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("div").text("Học phí/tháng");
             $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
             var thisElement = $(this);
@@ -540,8 +543,8 @@ function price() {
                 var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
                 var paypermonth = Math.round(finalMoney / term);
                 $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+                $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("div").text("Học phí/tháng");
             }
-
         });
         $(".input-container-prepay input").on("change", function () {
             //var thisElement = $(this);
@@ -559,6 +562,7 @@ function price() {
             var paypermonth = Math.round(remainpay / term);
 
             $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
+            $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("div").text("HP trả góp/tháng");
 
         });
         $(".price-advice-box-title > :first-child").on("click", function () {
