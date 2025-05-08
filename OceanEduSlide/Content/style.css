@@ -3322,6 +3322,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transition: 0.3s;
+  font-family: montserrat;
 }
 .change-password-form.active {
   opacity: 1;
