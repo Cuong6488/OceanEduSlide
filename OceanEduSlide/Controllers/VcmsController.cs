@@ -352,7 +352,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult InsertUsersExcel()
+        public ActionResult InsertUserExcel(FormCollection fc)
         {
             var file = Request.Files["UserFile"];
             if (file != null && file.ContentLength > 0)
@@ -384,13 +384,13 @@ namespace OceanEduSlide.Controllers
                     //if (countUser > 0) continue;
                     var officename = tbl.Rows[i][0].ToString().Trim();
                     var username = tbl.Rows[i][1].ToString().Trim();
-                    if (username == null) continue;
+                    if (username == "") continue;
                     var countUser = users.Count(a => a.Username == username);
                     if (countUser > 0) continue;
                     var password = tbl.Rows[i][2].ToString().Trim();
-                    if (username == null) continue;
+                    if (password == "") continue;
                     var password2 = HtmlHelpers.ComputeHash(password, "SHA256", null);
-                    var office = _unitOfWork.OfficeRepository.Get(a => a.Name == officename).FirstOrDefault();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Name == officename).FirstOrDefault();
                     if (office == null) continue;
                     var user = new User
                     {
@@ -406,8 +406,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListUser");
         }
         #endregion
-
-
+        
         public ActionResult Index()
         {
             var model = new InfoAdminViewModel
@@ -645,7 +644,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult InsertOfficesExcel()
+        public ActionResult InsertOfficeExcel(FormCollection fc)
         {
             var file = Request.Files["OfficeFile"];
             if (file != null && file.ContentLength > 0)
@@ -679,7 +678,7 @@ namespace OceanEduSlide.Controllers
                     var shortcode = tbl.Rows[i][1].ToString().Trim();
                     var shortname = tbl.Rows[i][2].ToString().Trim();
                     var fullname = tbl.Rows[i][3].ToString().Trim();
-                    if (fullname == null) continue;
+                    if (fullname == "") continue;
                     var countOffice = offices.Count(a => a.Name == fullname);
                     if (countOffice > 0) continue;
                     var office = new Office
@@ -786,7 +785,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult InsertDiscountsExcel()
+        public ActionResult InsertDiscountExcel(FormCollection fc)
         {
             var file = Request.Files["DiscountFile"];
             if (file != null && file.ContentLength > 0)
@@ -852,6 +851,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListDiscount");
         }
         #endregion
+
         //[HttpPost]
         //public ActionResult InsertUserExcel()
         //{

@@ -6,7 +6,7 @@
 <h2 class="mt-0">Thêm mới user</h2>
 <a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách user</a>
 <div class="box_content">
-    @using (Html.BeginForm("InsertUsersExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("InsertUserExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)
         <table class="form_table">
