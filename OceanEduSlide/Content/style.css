@@ -2074,25 +2074,29 @@ body {
   }
 }
 
-.book-discovery .book-container {
+.book-discovery a, .book-focus a {
+  display: block;
+  width: fit-content;
+  height: 12vh;
+  margin: auto;
+  margin-top: 10px;
+}
+.book-discovery a img, .book-focus a img {
+  height: 100% !important;
+}
+.book-discovery .book-container, .book-focus .book-container {
   position: absolute;
   top: 50%;
   left: 0;
   transform: translateY(-50%);
   width: 100%;
 }
+
 .book-discovery img {
   height: 100%;
 }
 .book-discovery .discovery-book-book1 {
   margin-right: 20px;
-}
-.book-discovery a {
-  display: block;
-  width: fit-content;
-  height: 12vh;
-  margin: auto;
-  margin-top: 10px;
 }
 .book-discovery > div {
   height: 55vh;
