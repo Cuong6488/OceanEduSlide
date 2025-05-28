@@ -19,10 +19,28 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh")]
         public int OfficeId { get; set; }
+        [Display(Name = "Phân quyền")]
+        public TypeUser? TypeUser { get; set; }
+        [Display(Name = "Các chi nhánh quản lý")]
+        public string OfficeIds { get; set; }
         public virtual Office Office { get; set; }
         public User()
         {
             Active = true;
         }
+    }
+    public enum TypeUser
+    {
+        [Display(Name = "User")]
+        User,
+        [Display(Name = "HO")]
+        HO,
+        [Display(Name = "ASM")]
+        ASM,
+        [Display(Name = "BM")]
+        BM,
+        [Display(Name = "EC")]
+        EC,
+
     }
 }
