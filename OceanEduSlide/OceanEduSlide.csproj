@@ -259,6 +259,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\FaceIdController.cs" />
+    <Compile Include="Controllers\TuyenSinhController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
     <Compile Include="DAL\DataEntities.cs" />
@@ -317,15 +318,25 @@
     <Compile Include="Migrations\202505080837464_dateDisscount.Designer.cs">
       <DependentUpon>202505080837464_dateDisscount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505290912295_revenue.cs" />
+    <Compile Include="Migrations\202505290912295_revenue.Designer.cs">
+      <DependentUpon>202505290912295_revenue.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
+    <Compile Include="Models\RevenueOffice_BM.cs" />
+    <Compile Include="Models\RevenueUser_Month_BM.cs" />
+    <Compile Include="Models\RevenueUser_Week.cs" />
+    <Compile Include="Models\RevenueUser_Month.cs" />
+    <Compile Include="Models\RevenueOffice.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
+    <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\OfficeViewModel.cs" />
     <Compile Include="ViewModels\PriceViewModel.cs" />
     <Compile Include="ViewModels\UserViewModel.cs" />
@@ -1017,6 +1028,7 @@
     <Content Include="Views\Vcms\ListDiscount.cshtml" />
     <Content Include="Views\Vcms\InsertDiscountExcel.cshtml" />
     <Content Include="Views\Vcms\InsertUserExcel.cshtml" />
+    <Content Include="Views\TuyenSinh\Revenue.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1112,6 +1124,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202505080837464_dateDisscount.resx">
       <DependentUpon>202505080837464_dateDisscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505290912295_revenue.resx">
+      <DependentUpon>202505290912295_revenue.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -46,6 +46,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.TypeUser)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.TypeUser, "Chọn phân quyền")
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Active)</td>
                     <td class="form_text">
                         @Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })

@@ -1,6 +1,8 @@
-﻿using ExcelDataReader;
+﻿using Antlr.Runtime.Misc;
+using ExcelDataReader;
 using Helpers;
 using OceanEduSlide.DAL;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
@@ -229,6 +231,7 @@ namespace OceanEduSlide.Controllers
                         Username = model.Username,
                         OfficeId = model.OfficeId,
                         Active = model.Active,
+                        TypeUser = model.TypeUser,
                     };
                     _unitOfWork.UserRepository.Insert(m);
                     _unitOfWork.Save();
@@ -287,6 +290,7 @@ namespace OceanEduSlide.Controllers
 
             };
             model.OfficeId = model.Users.FirstOrDefault()?.OfficeId ?? 0;
+            model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
             return View(model);
         }
         [HttpPost]
@@ -298,7 +302,9 @@ namespace OceanEduSlide.Controllers
                 if (user != null)
                 {
                     user.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                    user.OfficeId = model.OfficeId;
                     user.Active = model.Active;
+                    user.TypeUser = model.TypeUser;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateUser", new { result = "update" });
                 }

@@ -19,10 +19,7 @@ namespace OceanEduSlide.Controllers
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
-        public ActionResult Index()
-        {
-            return View();
-        }
+        #region Account
         [OverrideActionFilters]
         [Route("dang-nhap")]
         public ActionResult Login()
@@ -60,7 +57,10 @@ namespace OceanEduSlide.Controllers
                 var ticket = new FormsAuthenticationTicket(2, user.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
-
+                if (user.TypeUser == TypeUser.BM || user.TypeUser == TypeUser.HO)
+                {
+                    return RedirectToAction("Revenue", "Tuyensinh");
+                }
                 if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                     && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                 {
@@ -81,6 +81,13 @@ namespace OceanEduSlide.Controllers
                 Response.Cookies.Add(cookie);
             }
             return RedirectToAction("Index", "Home");
+        }
+        #endregion
+       
+        #region Salekit
+        public ActionResult Index()
+        {
+            return View();
         }
         [Route("gioi-thieu")]
         public ActionResult About()
@@ -183,12 +190,20 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        #endregion
 
-        public ActionResult Contact()
+        #region Tuyen_sinh
+
+
+        public ActionResult RevenueOffice()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
+        public ActionResult Revenue()
+        {
+            return View();
+        }
+        #endregion
+
     }
 }

@@ -24,6 +24,9 @@ namespace OceanEduSlide.Models
         [Display(Name = "Các chi nhánh quản lý")]
         public string OfficeIds { get; set; }
         public virtual Office Office { get; set; }
+        public virtual ICollection<RevenueUser_Month> RevenueUser_Months { get; set; }
+        public virtual ICollection<RevenueUser_Month_BM> GetRevenueUser_Month_BMs { get; set; }
+        public virtual ICollection<RevenueUser_Week> RevenueUser_Weeks { get; set; }
         public User()
         {
             Active = true;
@@ -41,6 +44,12 @@ namespace OceanEduSlide.Models
         BM,
         [Display(Name = "EC")]
         EC,
+        [Display(Name = "SL")]
+        SL,
+        [Display(Name = "SAB")]
+        SAB,
+        [Display(Name = "CM")]
+        CM,
 
     }
 }

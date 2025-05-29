@@ -29,6 +29,8 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; }
         public virtual ICollection<Discount> Discounts { get; set; }
         public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<RevenueOffice> RevenueOffices { get; set; }
+        public virtual ICollection<RevenueOffice_BM> RevenueOffice_BMs { get; set; }
         public Office()
         {
             Active = true;

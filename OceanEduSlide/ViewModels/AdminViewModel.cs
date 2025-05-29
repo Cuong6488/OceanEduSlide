@@ -71,6 +71,8 @@ namespace OceanEduSlide.ViewModels
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
         public int OfficeId { get; set; }
+        [Display(Name = "Phân quyền")]
+        public TypeUser? TypeUser { get; set; }
         public SelectList SelectOffices { get; set; }
         public CreateUserViewModel()
         {
