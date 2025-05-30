@@ -12,6 +12,21 @@ namespace OceanEduSlide.DAL
         private GenericRepository<Office> _officeRepository;
         private GenericRepository<Discount> _discountRepository;
         private GenericRepository<MemberCredential> _memberCredentialRepository;
+        private GenericRepository<RevenueOffice> _revenueOfficeRepository;
+        private GenericRepository<RevenueOffice_BM> _revenueOffice_BMRepository;
+        private GenericRepository<RevenueUser_Month> _revenueUser_MonthRepository;
+        private GenericRepository<RevenueUser_Month_BM> _revenueUser_Month_BMRepository;
+        private GenericRepository<RevenueUser_Week> _revenueUser_WeekRepository;
+        public GenericRepository<RevenueOffice> RevenueOfficeRepository =>
+           _revenueOfficeRepository ?? (_revenueOfficeRepository = new GenericRepository<RevenueOffice>(_context));
+        public GenericRepository<RevenueOffice_BM> RevenueOffice_BMRepository =>
+           _revenueOffice_BMRepository ?? (_revenueOffice_BMRepository = new GenericRepository<RevenueOffice_BM>(_context));
+        public GenericRepository<RevenueUser_Month> RevenueUser_MonthRepository =>
+           _revenueUser_MonthRepository ?? (_revenueUser_MonthRepository = new GenericRepository<RevenueUser_Month>(_context));
+        public GenericRepository<RevenueUser_Month_BM> RevenueUser_Month_BMRepository =>
+           _revenueUser_Month_BMRepository ?? (_revenueUser_Month_BMRepository = new GenericRepository<RevenueUser_Month_BM>(_context));
+        public GenericRepository<RevenueUser_Week> RevenueUser_WeekRepository =>
+           _revenueUser_WeekRepository ?? (_revenueUser_WeekRepository = new GenericRepository<RevenueUser_Week>(_context));
         public GenericRepository<Office> OfficeRepository =>
            _officeRepository ?? (_officeRepository = new GenericRepository<Office>(_context));
         public GenericRepository<ConfigSite> ConfigSiteRepository =>

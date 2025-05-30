@@ -1,0 +1,84 @@
+﻿@using OceanEduSlide.ViewModels
+@model RevenueOfficeViewModel
+@Html.Action("Header", new {name = "Kinh doanh/ Phân bổ doanh số"})
+<div class="container py-3">
+    @if (ViewBag.Result == "add")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>}
+    @if (ViewBag.Result == "update")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>}
+    <h2 class="">Thêm mới chỉ tiêu doanh số</h2>
+    <a class="btn quick-link" href="@Url.Action("ListRevenueOffice")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>
+    <div class="box_content px-5 mb-5">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <table class="form_table">
+                <tbody>
+                    <tr>
+                        <td class="form-name w-25">@Html.LabelFor(model => model.RevenueOffice.Year)</td>
+                        <td class="form_text">
+                            <select name="RevenueOffice.Year" class="form_control" required onchange="formfilter_submit()">
+                                <option value="">Chọn năm</option>
+                                @for (int i = 2025; i <= 2030; i++)
+                                {
+                                    <option value="@i" @(ViewBag.Year == i ? "selected" : "")>@i</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.Month)</td>
+                        <td class="form_text">
+                            <select name="RevenueOffice.Month" class="form_control" required onchange="formfilter_submit()">
+                                <option value="">Chọn tháng</option>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    <option value="@i" @(Model.RevenueOffice.Month == i ? "selected" : "")>Tháng @i</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.OfficeId)</td>
+                        <td class="form_text">
+                            @Html.DropDownListFor(model => model.RevenueOffice.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form_control w-100" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.Target_TS)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.RevenueOffice.Target_TS, new { @class = "form_control form-name", @type = "number" })
+                            @Html.ValidationMessageFor(model => model.RevenueOffice.Target_TS)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.Target_HV)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.RevenueOffice.Target_HV, new { @class = "form_control form-name", @type = "number" })
+                            @Html.ValidationMessageFor(model => model.RevenueOffice.Target_HV)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.Target_SAB)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.RevenueOffice.Target_SAB, new { @class = "form_control form-name", @type = "number" })
+                            @Html.ValidationMessageFor(model => model.RevenueOffice.Target_SAB)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueOffice.Active)</td>
+                        <td class="form_text">
+                            @Html.CheckBoxFor(model => model.RevenueOffice.Active, new { @checked = "checked" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-name"></td>
+                        <td class="form_text"><input class="btn quick-link w-auto" type="submit" value="Thêm mới"></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

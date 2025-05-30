@@ -31,7 +31,8 @@ namespace OceanEduSlide
                         "~/Scripts/jquery.fancybox.min.js",
                         "~/Scripts/toctoc.min.js",
                         "~/Scripts/webauthn-helper.js",
-                        "~/Scripts/Script.js"));
+                        "~/Scripts/Script.js",
+                        "~/Scripts/Script2.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                         "~/Content/bootstrap.css",
@@ -42,7 +43,9 @@ namespace OceanEduSlide
                           "~/Content/jquery.fancybox.css",
                           "~/Content/toctoc.min.css",
                           "~/Content/style2.css",
-                          "~/Content/style.css"));
+                          "~/Content/style.css",
+                          "~/Content/style3.css",
+                          "~/Content/adminSite.css"));
 
             bundles.Add(new StyleBundle("~/Content/admincss").Include(
                           "~/Content/bootstrap.css",

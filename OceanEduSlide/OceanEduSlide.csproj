@@ -322,6 +322,14 @@
     <Compile Include="Migrations\202505290912295_revenue.Designer.cs">
       <DependentUpon>202505290912295_revenue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505300314569_week.cs" />
+    <Compile Include="Migrations\202505300314569_week.Designer.cs">
+      <DependentUpon>202505300314569_week.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505300731048_createdate.cs" />
+    <Compile Include="Migrations\202505300731048_createdate.Designer.cs">
+      <DependentUpon>202505300731048_createdate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -729,6 +737,12 @@
     <Content Include="Content\style2.min.css">
       <DependentUpon>style2.css</DependentUpon>
     </Content>
+    <Content Include="Content\style3.css">
+      <DependentUpon>style3.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\style3.min.css">
+      <DependentUpon>style3.css</DependentUpon>
+    </Content>
     <Content Include="Content\tagify.css" />
     <Content Include="Content\tagmanager.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -825,6 +839,7 @@
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\style.scss" />
     <Content Include="Content\style2.scss" />
+    <Content Include="Content\style3.scss" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -869,6 +884,7 @@
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\Script.js" />
+    <Content Include="Scripts\Script2.js" />
     <Content Include="Scripts\scriptAdmin.js" />
     <Content Include="Scripts\scrollreveal.js" />
     <Content Include="Scripts\slick.js" />
@@ -1029,6 +1045,10 @@
     <Content Include="Views\Vcms\InsertDiscountExcel.cshtml" />
     <Content Include="Views\Vcms\InsertUserExcel.cshtml" />
     <Content Include="Views\TuyenSinh\Revenue.cshtml" />
+    <Content Include="Views\TuyenSinh\RevenueOffice.cshtml" />
+    <Content Include="Views\TuyenSinh\ListRevenueOffice.cshtml" />
+    <Content Include="Views\TuyenSinh\Header.cshtml" />
+    <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Month.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1127,6 +1147,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202505290912295_revenue.resx">
       <DependentUpon>202505290912295_revenue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505300314569_week.resx">
+      <DependentUpon>202505300314569_week.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505300731048_createdate.resx">
+      <DependentUpon>202505300731048_createdate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

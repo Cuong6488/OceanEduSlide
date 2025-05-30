@@ -1,0 +1,20 @@
+﻿@model IEnumerable<OceanEduSlide.Models.RevenueUser_Month_BM>
+<table class="list_table tablecenter table-striped">
+    <tbody>
+        <tr>
+            <th style="width: 100px">Ngày</th>
+            <th style="width: 50px">Chỉ tiêu</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(a => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.TargetBM)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

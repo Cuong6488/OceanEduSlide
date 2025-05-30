@@ -33,14 +33,14 @@ namespace OceanEduSlide.Models
         //public decimal TargetBM_New_Percent { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [Display(Name = "Ngày tạo")]
+        public DateTime CreateDate { get; set; }
         public virtual Office Office { get; set; }
-        //public RevenueOffice()
-        //{
-        //    Active = true;
-        //    TargetBM_TS_Percent = TargetBM_TS == null ? null : (TargetBM_TS / Target_TS * 100);
-        //    TargetBM_HV_Percent = TargetBM_HV == null ? null : (TargetBM_HV / Target_HV * 100);
-        //    TargetBM_SAB_Percent = TargetBM_SAB == null ? null : (TargetBM_SAB / Target_SAB * 100);
-        //    TargetBM_New_Percent = TargetBM_New == null ? null : (TargetBM_New / Target_TS * 100);
-        //}
+        public RevenueOffice_BM()
+        {
+            Active = true;
+            CreateDate = DateTime.Now;
+        }
     }
 }

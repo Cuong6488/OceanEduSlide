@@ -1,1 +1,180 @@
-﻿
+﻿@using OceanEduSlide.ViewModels
+@model RevenueViewModel
+<style>
+    #OfficeId-error, #Month-error, #OfficeId-error {
+        display: none !important;
+    }
+</style>
+<div class="logo-title">
+    <div class="container">
+        <div class="d-flex justify-content-between align-content-center align-items-center px-lg-5 py-3">
+            <a href="@Url.Action("Index","TuyenSinh")">
+                <img src="~/Content/images/logo-index.png" />
+            </a>
+            <p class="m-0">Kinh doanh/ Phân bổ doanh số</p>
+        </div>
+    </div>
+</div>
+<div class="container py-3">
+    <div class="form-filter">
+        <form action="@Url.Action("Revenue")" method="get" class="d-flex">
+            <select name="Year" class="form-select w-25 me-3" required onchange="formfilter_submit()">
+                <option value="">Chọn năm</option>
+                @for (int i = 2025; i <= 2030; i++)
+                {
+                    <option value="@i" @(ViewBag.Year == i ? "selected" : "")>@i</option>
+                }
+            </select>
+            <select name="Month" class="form-select w-25 me-3" required>
+                <option value="">Chọn tháng</option>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+                }
+            </select>
+            <select name="OfficeId" class="form-select w-25" required>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+            @*@Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select w-25" })*@
+        </form>
+    </div>
+    @if (Model.User.TypeUser == OceanEduSlide.Models.TypeUser.HO)
+    {
+        <a class="py-3 d-inline-block add-revenue-office" href="@Url.Action("RevenueOffice")">
+            Thêm chỉ tiêu doanh số
+        </a>
+    }
+    @if (Model.RevenueOffice != null)
+    {
+        <div class="revenue-office d-lg-flex">
+            <div class="mb-3 me-4">
+                Chỉ tiêu doanh số tuyển sinh: <span>@Model.RevenueOffice.Target_TS.ToString("N0")đ</span>
+            </div>
+            <div class="mb-3 me-4">
+                Chỉ tiêu doanh số học vụ: <span>@Model.RevenueOffice.Target_HV.ToString("N0")đ</span>
+            </div>
+            <div class="mb-3">
+                Chỉ tiêu doanh số kế toán: <span>@Model.RevenueOffice.Target_SAB.ToString("N0")đ</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success mb-3">
+            Chưa cập nhật chỉ tiêu doanh số
+        </div>
+    }
+    <div class="box_content mt-0">
+        <table class="list_table tablecenter table-striped listrevenue-user">
+            <tbody>
+                <tr class="text-center">
+                    <th rowspan="2" style="width: 120px">Họ tên nhân sự</th>
+                    <th rowspan="2" style="width: 50px">Chức vụ</th>
+                    <th rowspan="2" style="width: 90px">Chỉ tiêu doanh số</th>
+                    <th colspan="2">Tháng</th>
+                    <th colspan="2">Tuần 1</th>
+                    <th colspan="2">Tuần 2</th>
+                    <th colspan="2">Tuần 3</th>
+                    <th colspan="2">Tuần 4</th>
+                    <th colspan="2">Tuần 5</th>
+                </tr>
+                <tr class="text-center">
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                </tr>
+                @if (Model.UserItems != null)
+                {
+
+                    foreach (var revenueOffice in Model.UserItems)
+                    {
+                        <tr data-id="@revenueOffice.User.Id">
+                            <td>
+                                @revenueOffice.User.Username
+                            </td>
+                            <td>
+                                @revenueOffice.User.TypeUser
+                            </td>
+                            <td>
+                                @if (revenueOffice.RevenueUser_Month != null)
+                                {
+                                    @:@revenueOffice.RevenueUser_Month.Target.ToString("N0")
+                                }
+                                else
+                                {
+                                    @:Chưa cập nhật
+                                }
+                            </td>
+                            <td>
+                                @if (revenueOffice.RevenueUser_Month_BMs.Any())
+                                {
+
+                                    <div class="btnhistory-input">
+                                        <i class="fa-regular fa-files"></i>
+                                    </div>
+                                    <div class="revenue-value">
+                                        @(revenueOffice.RevenueUser_Month_BMs.First().TargetBM.ToString("N0"))
+                                    </div>
+                                    <div class="btnedit-input">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </div>
+                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs hidden" value=" @(revenueOffice.RevenueUser_Month_BMs.First().TargetBM.ToString("N0"))" />
+                                }
+                                else
+                                {
+                                    <div class="btnhistory-input">
+                                        <i class="fa-regular fa-files"></i>
+                                    </div>
+                                    <div class="revenue-value hidden">
+
+                                    </div>
+                                    <div class="btnedit-input hidden">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </div>
+                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs" />
+                                }
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/tagmanager.js"></script>
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+
+    </script>
+}

@@ -12,20 +12,21 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Tên tuần"), Required(ErrorMessage = "Hãy nhập tuần"), StringLength(100, ErrorMessage = "Tối đa 20 ký tự"), UIHint("TextBox")]
         public string Name { get; set; }
-        //[Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
-        //public int Month { get; set; }
-        //[Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
-        //public int Year { get; set; }
-        //[Display(Name = "Bảng tháng"), Required]
+        public int Month { get; set; }
+        public int Year { get; set; }
         public int UserId { get; set; }
         [Display(Name = "Chỉ tiêu doanh số dự kiến hoàn thành"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal TargetBM { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [Display(Name = "Ngày tạo")]
+        public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
         public RevenueUser_Week()
         {
-            Active = true;
+            CreateDate = DateTime.Now;
+            //Active = true;
         }
     }
 }

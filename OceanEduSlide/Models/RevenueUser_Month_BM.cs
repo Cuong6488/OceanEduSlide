@@ -22,10 +22,14 @@ namespace OceanEduSlide.Models
         public decimal TargetBM { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [Display(Name = "Ngày tạo")]
+        public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
         public RevenueUser_Month_BM()
         {
-            Active = true;
+            CreateDate = DateTime.Now;
+            //Active = true;
         }
     }
 }
