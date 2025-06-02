@@ -1053,6 +1053,8 @@
     <Content Include="Views\TuyenSinh\ListRevenueOffice.cshtml" />
     <Content Include="Views\TuyenSinh\Header.cshtml" />
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Month.cshtml" />
+    <Content Include="Views\TuyenSinh\RevenueOffice_BM.cshtml" />
+    <Content Include="Views\TuyenSinh\LoadHistoryRevenueOffice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

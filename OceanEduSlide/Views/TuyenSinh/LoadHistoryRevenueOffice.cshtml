@@ -1,0 +1,35 @@
+﻿@model OceanEduSlide.ViewModels.LoadHistoryRevenueOfficeViewModel
+<div class="box_content">
+    <h2>Lịch sử cập nhật phân bổ doanh số tháng @Model.Month - @Model.Year chi nhánh @(Model.Office.Name)</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="text-align:center">Thời gian</th>
+                <th style="text-align: center">Cam kết hoàn thành doanh số</th>
+                <th style="text-align: center">Phân bổ DS dự kiến theo ghi danh mới</th>
+                <th style="text-align: center">Phân bổ DS dự kiến theo tái phí</th>
+                <th style="text-align: center">Phân bổ DS dự kiến theo SAB</th>
+            </tr>
+            @foreach (var item in Model.Revenues)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TargetBM_TS)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TargetBM_New)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TargetBM_HV)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TargetBM_SAB)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

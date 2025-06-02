@@ -56,9 +56,14 @@
   text-decoration: underline;
 }
 
+.revenue-office {
+  background: #ccc;
+  padding: 10px;
+}
 .revenue-office span {
   color: #DE0000;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .input-noborder {

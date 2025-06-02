@@ -5,6 +5,12 @@
     #OfficeId-error, #Month-error, #OfficeId-error {
         display: none !important;
     }
+    .list_table tr th, .list_table tr td{
+        padding:3px;
+    }
+    .box_content{
+        overflow:auto;
+    }
 </style>
 <div class="logo-title">
     <div class="container">
@@ -17,6 +23,10 @@
     </div>
 </div>
 <div class="container py-3">
+    @if (ViewBag.Result == "add")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+    }
     <div class="form-filter">
         <form action="@Url.Action("Revenue")" method="get" class="d-flex">
             <select name="Year" class="form-select w-25 me-3" required onchange="formfilter_submit()">
@@ -49,53 +59,95 @@
             Thêm chỉ tiêu doanh số
         </a>
     }
+    <div class="fw-bold mb-1">
+        Chỉ tiêu doanh số
+    </div>
     @if (Model.RevenueOffice != null)
     {
-        <div class="revenue-office d-lg-flex">
-            <div class="mb-3 me-4">
+        <div class="revenue-office d-lg-flex mb-3">
+            <div class="mb-2 mb-lg-0 me-4">
                 Chỉ tiêu doanh số tuyển sinh: <span>@Model.RevenueOffice.Target_TS.ToString("N0")đ</span>
             </div>
-            <div class="mb-3 me-4">
+            <div class="mb-2 mb-lg-0 me-4">
                 Chỉ tiêu doanh số học vụ: <span>@Model.RevenueOffice.Target_HV.ToString("N0")đ</span>
             </div>
-            <div class="mb-3">
+            <div>
                 Chỉ tiêu doanh số kế toán: <span>@Model.RevenueOffice.Target_SAB.ToString("N0")đ</span>
             </div>
         </div>
+        <div class="fw-bold mb-1">
+            Kế hoạch phân bổ doanh số
+        </div>
+        var revenueOffice_BM = Model.RevenueOffice_BMs.FirstOrDefault();
+
+        if (revenueOffice_BM != null)
+        {
+            decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
+            decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / revenueOffice_BM.TargetBM_TS * 1000) / 10;
+            decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
+            decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
+            <div class="revenue-office d-lg-flex mb-3">
+                <div class="mb-2 mb-lg-0 me-4">
+                    Cam kết hoàn thành doanh số: <span>@revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)</span>
+                </div>
+                <div class="mb-2 mb-lg-0 me-4">
+                    Phân bổ DS theo ghi danh mới: <span>@revenueOffice_BM.TargetBM_New.ToString("N0")đ (@New_percent%)</span>
+                </div>
+                <div class="mb-2 mb-lg-0 me-4">
+                    Phân bổ DS theo tái phí: <span>@revenueOffice_BM.TargetBM_HV.ToString("N0")đ (@HV_percent%)</span>
+                </div>
+                <div class="mb-2 mb-lg-0 me-4">
+                    Phân bổ DS theo SAB: <span>@revenueOffice_BM.TargetBM_SAB.ToString("N0")đ (@SAB_percent%)</span>
+                </div>
+
+                <div class="btnhistory-input">
+                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueOffice",  new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId})"
+                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success mb-3">
+                Chưa cập nhật kế hoạch phân bổ doanh số
+            </div>
+        }
     }
     else
     {
         <div class="alert alert-success mb-3">
-            Chưa cập nhật chỉ tiêu doanh số
+            Chưa có chỉ tiêu doanh số
         </div>
     }
+
+
     <div class="box_content mt-0">
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
                 <tr class="text-center">
                     <th rowspan="2" style="width: 120px">Họ tên nhân sự</th>
-                    <th rowspan="2" style="width: 50px">Chức vụ</th>
+                    <th rowspan="2" style="width: 40px">Chức vụ</th>
                     <th rowspan="2" style="width: 90px">Chỉ tiêu doanh số</th>
                     <th colspan="2">Tháng</th>
-                    <th colspan="2">Tuần 1</th>
-                    <th colspan="2">Tuần 2</th>
-                    <th colspan="2">Tuần 3</th>
-                    <th colspan="2">Tuần 4</th>
-                    <th colspan="2">Tuần 5</th>
+                    @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
+                    {
+                        <th colspan="2">Tuần @i</th>
+                    }
+
                 </tr>
                 <tr class="text-center">
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
-                    <th style="width:90px">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="width:65px">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important ">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important ">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
+                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
                 </tr>
                 @if (Model.UserItems != null)
                 {
@@ -148,8 +200,12 @@
                             </td>
                             <td class="percent_user_month">
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td class="week-target week1">
+
+                            </td>
+                            <td class="week-percent">
+
+                            </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -164,24 +220,13 @@
             </tbody>
         </table>
     </div>
-    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO)
+    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO && Model.RevenueOffice != null && (Model.Month != null && Model.Year != null && Model.OfficeId != null))
     {
         <div class="d-flex justify-content-end mt-3">
-            <a class="btn quick-link" href="">Cập nhật kế hoạch phân bổ doanh số</a>
+            <a class="btn quick-link" href="@Url.Action("RevenueOffice_BM", new {officeId = Model.OfficeId, month = Model.Month,year = Model.Year})">Cập nhật kế hoạch phân bổ doanh số</a>
         </div>
     }
 </div>
 @section scripts{
-    <script src="~/Scripts/tagmanager.js"></script>
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>
-    <script>
-        revenue();
-        $(function () {
-            $(".input-number").maskMoney({
-                precision: 0,
-                thousands: ','
-            });
-        });
-
-    </script>
 }

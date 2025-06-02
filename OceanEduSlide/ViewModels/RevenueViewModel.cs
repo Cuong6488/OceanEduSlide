@@ -35,6 +35,19 @@ namespace OceanEduSlide.ViewModels
         public RevenueOffice RevenueOffice { get; set; }
         public SelectList SelectOffices { get; set; }
     }
+    public class RevenueOffice_BMViewModel
+    {
+        public RevenueOffice_BM RevenueOffice { get; set; }
+        [Display(Name = "Cam kết hoàn thành doanh số"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string TargetBM_TS { get; set; }
+        [Display(Name = "Phân bổ doanh số dự kiến theo tái phí"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string TargetBM_HV { get; set; }
+        [Display(Name = "Phân bổ doanh số dự kiến theo SAB"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string TargetBM_SAB { get; set; }
+        [Display(Name = "Phân bổ doanh số dự kiến theo ghi danh mới"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string TargetBM_New { get; set; }
+        public string OfficeName { get; set; }
+    }
     public class ListRevenueOfficeViewModel
     {
         public PagedList.IPagedList<RevenueOffice> RevenueOffices { get; set; }
@@ -45,6 +58,13 @@ namespace OceanEduSlide.ViewModels
     {
         public User User { get; set; }
         public IEnumerable<RevenueUser_Month_BM> Revenues { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+    }
+    public class LoadHistoryRevenueOfficeViewModel
+    {
+        public Office Office { get; set; }
+        public IEnumerable<RevenueOffice_BM> Revenues { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
     }

@@ -30,7 +30,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Name = name;
             return PartialView();
         }
-        public ActionResult Revenue(int? Month, int? OfficeId, int? Year)
+        public ActionResult Revenue(int? Month, int? OfficeId, int? Year,string Result = "")
         {
             //if (User.TypeUser != TypeUser.HO)
             //    return RedirectToAction("Index");
@@ -44,13 +44,16 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name))
             };
-            if(Month != null && OfficeId != null && Year != null)
+            ViewBag.Result = Result;
+            ViewBag.Year = DateTime.Now.Year;
+            ViewBag.WorkingWeeks = 5;
+            if (Month != null && OfficeId != null && Year != null)
             {
                 office = _unitOfWork.OfficeRepository.GetById(OfficeId);
-                if(office != null)
+                if (office != null)
                 {
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == OfficeId && a.Month == Month && a.Year == Year).FirstOrDefault();
-                    model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == OfficeId && a.Month == Month && a.Year == Year,q => q.OrderByDescending(a => a.CreateDate));
+                    model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == OfficeId && a.Month == Month && a.Year == Year, q => q.OrderByDescending(a => a.CreateDate));
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == OfficeId).ToList();
                     var userItems = users.Select(a => new RevenueViewModel.UserItem
                     {
@@ -62,9 +65,60 @@ namespace OceanEduSlide.Controllers
                     });
                     model.UserItems = userItems;
                 }
+                DateTime firstDay = new DateTime(Year??1, Month??1, 1);
+                DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+
+                int workingWeeks = 0;
+                DateTime currentDay = firstDay;
+
+                while (currentDay <= lastDay)
+                {
+                    if (currentDay.DayOfWeek == DayOfWeek.Monday)
+                    {
+                        workingWeeks++;
+                    }
+                    currentDay = currentDay.AddDays(1);
+                }
+
+                if (firstDay.DayOfWeek != DayOfWeek.Monday)
+                {
+                    workingWeeks++;
+                }
+
+                ViewBag.WorkingWeeks = workingWeeks;
             }
-            ViewBag.Year = DateTime.Now.Year;
+
             return View(model);
+        }
+        public ActionResult CalculateWorkWeeks(int year, int month)
+        {
+            int workingWeeks = CountWorkingWeeks(year, month);
+            return Json(new { Year = year, Month = month, WorkWeeks = workingWeeks }, JsonRequestBehavior.AllowGet);
+        }
+
+        private int CountWorkingWeeks(int year, int month)
+        {
+            DateTime firstDay = new DateTime(year, month, 1);
+            DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+
+            int workingWeeks = 0;
+            DateTime currentDay = firstDay;
+
+            while (currentDay <= lastDay)
+            {
+                if (currentDay.DayOfWeek == DayOfWeek.Monday)
+                {
+                    workingWeeks++;
+                }
+                currentDay = currentDay.AddDays(1);
+            }
+
+            if (firstDay.DayOfWeek != DayOfWeek.Monday)
+            {
+                workingWeeks++;
+            }
+
+            return workingWeeks;
         }
         public ActionResult RevenueOffice()
         {
@@ -83,16 +137,41 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser != TypeUser.HO)
                 return RedirectToAction("Index");
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _unitOfWork.RevenueOfficeRepository.Insert(model.RevenueOffice);
                 _unitOfWork.Save();
-            return RedirectToAction("ListRevenueOffice", new { result = "add" });
+                return RedirectToAction("ListRevenueOffice", new { result = "add" });
             }
             ViewBag.Year = DateTime.Now.Year;
             return View(model);
         }
 
+        public ActionResult RevenueOffice_BM(int officeId, int month, int year)
+        {
+            var office = _unitOfWork.OfficeRepository.GetById(officeId);
+            if (office == null || (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO))
+                return RedirectToAction("Index");
+            var model = new RevenueOffice_BMViewModel
+            {
+                RevenueOffice = new RevenueOffice_BM { Active = true, OfficeId = officeId, Month = month, Year = year },
+                OfficeName = office.Name,
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult RevenueOffice_BM(RevenueOffice_BMViewModel model)
+        {
+
+            model.RevenueOffice.TargetBM_New = Convert.ToDecimal(model.TargetBM_New.Replace(",", ""));
+            model.RevenueOffice.TargetBM_HV = Convert.ToDecimal(model.TargetBM_HV.Replace(",", ""));
+            model.RevenueOffice.TargetBM_SAB = Convert.ToDecimal(model.TargetBM_SAB.Replace(",", ""));
+            model.RevenueOffice.TargetBM_TS = Convert.ToDecimal(model.TargetBM_TS.Replace(",", ""));
+
+            _unitOfWork.RevenueOffice_BMRepository.Insert(model.RevenueOffice);
+            _unitOfWork.Save();
+            return RedirectToAction("Revenue", new {Result = "add",Month=model.RevenueOffice.Month,Year = model.RevenueOffice.Year, OfficeId = model.RevenueOffice.OfficeId});
+        }
         public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
         {
             ViewBag.Result = result;
@@ -135,10 +214,22 @@ namespace OceanEduSlide.Controllers
                 Year = year,
                 Month = month,
                 User = _unitOfWork.UserRepository.GetById(userId),
-                Revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId, q=> q.OrderBy(a => a.CreateDate)),
+                Revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId, q => q.OrderBy(a => a.CreateDate)),
             };
             return PartialView(model);
         }
+        public PartialViewResult LoadHistoryRevenueOffice(int year, int month, int officeId)
+        {
+            var model = new LoadHistoryRevenueOfficeViewModel
+            {
+                Year = year,
+                Month = month,
+                Office = _unitOfWork.OfficeRepository.GetById(officeId),
+                Revenues = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.OfficeId == officeId, q => q.OrderBy(a => a.CreateDate)),
+            };
+            return PartialView(model);
+        }
+
         #endregion
 
     }

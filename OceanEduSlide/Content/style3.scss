@@ -87,15 +87,22 @@ $blue: #2D3AE2;
         text-decoration: underline;
     }
 }
-.revenue-office{
-    span{
-        color:$red;
-        font-weight:bold;
+
+.revenue-office {
+    background: #ccc;
+    padding: 10px;
+
+    span {
+        color: $red;
+        font-weight: bold;
+        white-space:nowrap;
     }
 }
-.input-noborder{
-    border:none !important;
+
+.input-noborder {
+    border: none !important;
 }
+
 .listrevenue-user {
     td {
         height: 42px;
