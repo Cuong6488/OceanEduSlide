@@ -334,6 +334,10 @@
     <Compile Include="Migrations\202506020121069_Fullname.Designer.cs">
       <DependentUpon>202506020121069_Fullname.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506020701401_weeknumber.cs" />
+    <Compile Include="Migrations\202506020701401_weeknumber.Designer.cs">
+      <DependentUpon>202506020701401_weeknumber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1055,6 +1059,7 @@
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Month.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueOffice_BM.cshtml" />
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueOffice.cshtml" />
+    <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Week.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1162,6 +1167,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506020121069_Fullname.resx">
       <DependentUpon>202506020121069_Fullname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506020701401_weeknumber.resx">
+      <DependentUpon>202506020701401_weeknumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

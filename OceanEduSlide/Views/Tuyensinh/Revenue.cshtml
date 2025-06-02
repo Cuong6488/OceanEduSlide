@@ -5,11 +5,13 @@
     #OfficeId-error, #Month-error, #OfficeId-error {
         display: none !important;
     }
-    .list_table tr th, .list_table tr td{
-        padding:3px;
+
+    .list_table tr th, .list_table tr td {
+        padding: 2px;
     }
-    .box_content{
-        overflow:auto;
+
+    .box_content {
+        overflow: auto;
     }
 </style>
 <div class="logo-title">
@@ -27,7 +29,7 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-    <div class="form-filter">
+    <div class="form-filter mb-3">
         <form action="@Url.Action("Revenue")" method="get" class="d-flex">
             <select name="Year" class="form-select w-25 me-3" required onchange="formfilter_submit()">
                 <option value="">Chọn năm</option>
@@ -43,13 +45,28 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            <select name="OfficeId" class="form-select w-25" required>
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
+            @if (Model.User.TypeUser == TypeUser.HO)
+            {
+                <select name="OfficeId" class="form-select w-25" required>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+            }
+            @if (Model.User.TypeUser == TypeUser.BM)
+            {
+                <select name="" class="form-select w-25" disabled>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+
+            }
             @*@Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select w-25" })*@
         </form>
     </div>
@@ -126,8 +143,8 @@
             <tbody>
                 <tr class="text-center">
                     <th rowspan="2" style="width: 120px">Họ tên nhân sự</th>
-                    <th rowspan="2" style="width: 40px">Chức vụ</th>
-                    <th rowspan="2" style="width: 90px">Chỉ tiêu doanh số</th>
+                    <th rowspan="2" style="max-width: 40px">Chức vụ</th>
+                    <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu <br /> doanh số</th>
                     <th colspan="2">Tháng</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                     {
@@ -136,18 +153,11 @@
 
                 </tr>
                 <tr class="text-center">
-                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
-                    <th style="min-width: 90px !important ">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
-                    <th style="min-width: 90px !important ">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
-                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
-                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
-                    <th style="min-width: 90px !important">Chỉ tiêu DS dự kiến hoàn thành</th>
-                    <th style="min-width: 65px !important">% HT dự kiến/ tháng</th>
+                    @for (var i = 0; i <= ViewBag.WorkingWeeks; i++)
+                    {
+                        <th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>
+                        <th style="min-width: 55px !important">% HT <br /> dự kiến/ <br />tháng</th>
+                    }
                 </tr>
                 @if (Model.UserItems != null)
                 {
@@ -161,66 +171,117 @@
                             <td>
                                 @revenueOffice.User.TypeUser
                             </td>
-                            <td class="targetuser_month_HO">
-                                @if (revenueOffice.RevenueUser_Month != null)
-                                {
-                                    @:@revenueOffice.RevenueUser_Month.Target.ToString("N0")
-                                }
-                                else
-                                {
-                                    @:Chưa cập nhật
-                                }
-                            </td>
-                            <td>
-                                @if (revenueOffice.RevenueUser_Month_BMs.Any())
-                                {
+                            @if (revenueOffice.RevenueUser_Month != null)
+                            {
+                                <td class="targetuser_month_HO">
+                                    @revenueOffice.RevenueUser_Month.Target.ToString("N0")
 
-                                    <div class="btnhistory-input">
-                                        <a href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id})"
-                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                    </div>
-                                    <div class="revenue-value">
-                                        @(revenueOffice.RevenueUser_Month_BMs.First().TargetBM.ToString("N0"))
-                                    </div>
-                                    <div class="btnedit-input">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </div>
-                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs hidden" value=" @(revenueOffice.RevenueUser_Month_BMs.First().TargetBM.ToString("N0"))" />
-                                }
-                                else
+                                </td>
+                                var revenueUser_Month_BM = revenueOffice.RevenueUser_Month_BMs.FirstOrDefault();
+                                <td>
+                                    @if (revenueUser_Month_BM != null)
+                                    {
+
+                                        <div class="btnhistory-input">
+                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id})"
+                                               data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                        </div>
+                                        <div class="revenue-value">
+                                            @revenueUser_Month_BM.TargetBM.ToString("N0")
+                                        </div>
+                                        if (Model.User.TypeUser == TypeUser.BM && Model.Month >= DateTime.Now.Month)
+                                        {
+                                            <div class="btnedit-input btn-edit-month">
+                                                <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                            </div>
+                                            <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs hidden" value=" @(revenueUser_Month_BM.TargetBM.ToString("N0"))" />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Model.User.TypeUser == TypeUser.BM && Model.Month >= DateTime.Now.Month)
+                                        {
+                                            <div class="revenue-value hidden">
+
+                                            </div>
+                                            <div class="btnedit-input btn-edit-month hidden">
+                                                <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                            </div>
+                                            <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs " />
+                                        }
+                                    }
+                                </td>
+                                <td class="percent_user_month">
+                                </td>
+                                for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
-                                    <div class="revenue-value hidden">
+                                    var revenueUser_Week = revenueOffice.RevenueUser_Weeks.FirstOrDefault(a => (int)a.WeekNumber == i);
+                                    <td class="week-target week-@i">
+                                        <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
+                                        @if (revenueUser_Week != null)
+                                        {
+                                            <div class="btnhistory-input">
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                            </div>
+                                            <div class="revenue-value">
+                                                @(revenueUser_Week.TargetBM.ToString("N0"))
+                                            </div>
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeeks < i && Model.Month >= DateTime.Now.Month)
+                                            {
+                                                {
+                                                    <div class="btnedit-input btn-edit-week">
+                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                    </div>
+                                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
+                                                }
 
-                                    </div>
-                                    <div class="btnedit-input hidden">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </div>
-                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs" />
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeeks < i && Model.Month >= DateTime.Now.Month)
+                                            {
+                                                <div class="revenue-value hidden">
+
+                                                </div>
+                                                <div class="btnedit-input hidden">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </div>
+                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
+                                            }
+
+                                        }
+                                    </td>
+                                    <td class="week-percent">
+                                    </td>
                                 }
-                            </td>
-                            <td class="percent_user_month">
-                            </td>
-                            <td class="week-target week1">
-
-                            </td>
-                            <td class="week-percent">
-
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            }
+                            else
+                            {
+                                <td>
+                                    Chưa cập nhật
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
+                                {
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                }
+                            }
                         </tr>
                     }
                 }
             </tbody>
         </table>
     </div>
-    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO && Model.RevenueOffice != null && (Model.Month != null && Model.Year != null && Model.OfficeId != null))
+    @if (Model.User.TypeUser == TypeUser.BM && Model.RevenueOffice != null && (Model.Month != null && Model.Year != null && Model.OfficeId != null))
     {
         <div class="d-flex justify-content-end mt-3">
             <a class="btn quick-link" href="@Url.Action("RevenueOffice_BM", new {officeId = Model.OfficeId, month = Model.Month,year = Model.Year})">Cập nhật kế hoạch phân bổ doanh số</a>

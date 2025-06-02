@@ -61,6 +61,14 @@ namespace OceanEduSlide.ViewModels
         public int Month { get; set; }
         public int Year { get; set; }
     }
+    public class LoadHistoryRevenueUser_WeekViewModel
+    {
+        public User User { get; set; }
+        public IEnumerable<RevenueUser_Week> Revenues { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public WeekNumber WeekNumber { get; set; }
+    }
     public class LoadHistoryRevenueOfficeViewModel
     {
         public Office Office { get; set; }

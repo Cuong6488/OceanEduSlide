@@ -30,10 +30,10 @@ namespace OceanEduSlide.Controllers
             ViewBag.Name = name;
             return PartialView();
         }
-        public ActionResult Revenue(int? Month, int? OfficeId, int? Year,string Result = "")
+        public ActionResult Revenue(int? Month, int? OfficeId, int? Year, string Result = "")
         {
-            //if (User.TypeUser != TypeUser.HO)
-            //    return RedirectToAction("Index");
+            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
+                return RedirectToAction("Index");
             Office office = null;
             var model = new RevenueViewModel
             {
@@ -44,9 +44,12 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name))
             };
+            if (User.TypeUser == TypeUser.BM)
+                model.OfficeId = User.OfficeId;
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
             ViewBag.WorkingWeeks = 5;
+            ViewBag.CurrentWeeks = 0;
             if (Month != null && OfficeId != null && Year != null)
             {
                 office = _unitOfWork.OfficeRepository.GetById(OfficeId);
@@ -65,27 +68,41 @@ namespace OceanEduSlide.Controllers
                     });
                     model.UserItems = userItems;
                 }
-                DateTime firstDay = new DateTime(Year??1, Month??1, 1);
+                DateTime firstDay = new DateTime(Year ?? 1, Month ?? 1, 1);
                 DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+                DateTime today = DateTime.Now;
 
-                int workingWeeks = 0;
+                int workingWeeks = 1; // Bắt đầu từ tuần 1
+                int currentWeek = 0;
+
                 DateTime currentDay = firstDay;
 
+                // Duyệt từng ngày trong tháng
                 while (currentDay <= lastDay)
                 {
-                    if (currentDay.DayOfWeek == DayOfWeek.Monday)
+                    // Nếu là thứ Hai và không phải ngày đầu tháng => bắt đầu tuần mới
+                    if (currentDay.DayOfWeek == DayOfWeek.Monday && currentDay != firstDay)
                     {
                         workingWeeks++;
                     }
+
+                    // Nếu ngày hiện tại trùng với `today`, cập nhật `currentWeek`
+                    if (currentDay.Year == today.Year && currentDay.Month == today.Month && currentDay.Day == today.Day)
+                    {
+                        currentWeek = workingWeeks;
+                    }
+
                     currentDay = currentDay.AddDays(1);
                 }
 
-                if (firstDay.DayOfWeek != DayOfWeek.Monday)
+                // Nếu hôm nay không nằm trong tháng xét, gán `currentWeek = 0`
+                if (today.Month != Month || today.Year != Year)
                 {
-                    workingWeeks++;
+                    currentWeek = 0;
                 }
 
                 ViewBag.WorkingWeeks = workingWeeks;
+                ViewBag.CurrentWeeks = currentWeek;
             }
 
             return View(model);
@@ -170,7 +187,7 @@ namespace OceanEduSlide.Controllers
 
             _unitOfWork.RevenueOffice_BMRepository.Insert(model.RevenueOffice);
             _unitOfWork.Save();
-            return RedirectToAction("Revenue", new {Result = "add",Month=model.RevenueOffice.Month,Year = model.RevenueOffice.Year, OfficeId = model.RevenueOffice.OfficeId});
+            return RedirectToAction("Revenue", new { Result = "add", Month = model.RevenueOffice.Month, Year = model.RevenueOffice.Year, OfficeId = model.RevenueOffice.OfficeId });
         }
         public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
         {
@@ -207,6 +224,44 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return Json(new { status = true });
         }
+        [HttpPost]
+        public JsonResult AddOrUpdateRevenueWeek(int year, int month, int userId, decimal targetBM, int weekNumber)
+        {
+            var revenue = new RevenueUser_Week
+            {
+                Year = year,
+                Month = month,
+                UserId = userId,
+                TargetBM = targetBM,
+                Active = true,
+            };
+            switch (weekNumber)
+            {
+                case 1:
+                    revenue.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    revenue.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    revenue.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    revenue.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    revenue.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    revenue.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            _unitOfWork.RevenueUser_WeekRepository.Insert(revenue);
+            _unitOfWork.Save();
+            return Json(new { status = true });
+        }
         public PartialViewResult LoadHistoryRevenueUser_Month(int year, int month, int userId)
         {
             var model = new LoadHistoryRevenueUser_MonthViewModel
@@ -218,6 +273,40 @@ namespace OceanEduSlide.Controllers
             };
             return PartialView(model);
         }
+        public PartialViewResult LoadHistoryRevenueUser_Week(int year, int month, int userId, int weekNumber)
+        {
+            var model = new LoadHistoryRevenueUser_WeekViewModel
+            {
+                Year = year,
+                Month = month,
+                User = _unitOfWork.UserRepository.GetById(userId),
+                Revenues = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber, q => q.OrderBy(a => a.CreateDate)),
+            };
+            switch (weekNumber)
+            {
+                case 1:
+                    model.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    model.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    model.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    model.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    model.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    model.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            return PartialView(model);
+        }
         public PartialViewResult LoadHistoryRevenueOffice(int year, int month, int officeId)
         {
             var model = new LoadHistoryRevenueOfficeViewModel
@@ -227,6 +316,7 @@ namespace OceanEduSlide.Controllers
                 Office = _unitOfWork.OfficeRepository.GetById(officeId),
                 Revenues = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.OfficeId == officeId, q => q.OrderBy(a => a.CreateDate)),
             };
+
             return PartialView(model);
         }
 

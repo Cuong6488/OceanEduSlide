@@ -194,15 +194,6 @@ namespace OceanEduSlide.Controllers
 
         #region Tuyen_sinh
 
-
-        public ActionResult RevenueOffice()
-        {
-            return View();
-        }
-        public ActionResult Revenue()
-        {
-            return View();
-        }
         #endregion
 
     }
