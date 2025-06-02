@@ -1,4 +1,5 @@
 ﻿@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
 @model RevenueViewModel
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error {
@@ -42,7 +43,7 @@
             @*@Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select w-25" })*@
         </form>
     </div>
-    @if (Model.User.TypeUser == OceanEduSlide.Models.TypeUser.HO)
+    @if (Model.User.TypeUser == TypeUser.HO)
     {
         <a class="py-3 d-inline-block add-revenue-office" href="@Url.Action("RevenueOffice")">
             Thêm chỉ tiêu doanh số
@@ -108,7 +109,7 @@
                             <td>
                                 @revenueOffice.User.TypeUser
                             </td>
-                            <td>
+                            <td class="targetuser_month_HO">
                                 @if (revenueOffice.RevenueUser_Month != null)
                                 {
                                     @:@revenueOffice.RevenueUser_Month.Target.ToString("N0")
@@ -123,7 +124,8 @@
                                 {
 
                                     <div class="btnhistory-input">
-                                        <i class="fa-regular fa-files"></i>
+                                        <a href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id})"
+                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                     </div>
                                     <div class="revenue-value">
                                         @(revenueOffice.RevenueUser_Month_BMs.First().TargetBM.ToString("N0"))
@@ -135,9 +137,6 @@
                                 }
                                 else
                                 {
-                                    <div class="btnhistory-input">
-                                        <i class="fa-regular fa-files"></i>
-                                    </div>
                                     <div class="revenue-value hidden">
 
                                     </div>
@@ -147,7 +146,8 @@
                                     <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BMs" />
                                 }
                             </td>
-                            <td></td>
+                            <td class="percent_user_month">
+                            </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -164,11 +164,18 @@
             </tbody>
         </table>
     </div>
+    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO)
+    {
+        <div class="d-flex justify-content-end mt-3">
+            <a class="btn quick-link" href="">Cập nhật kế hoạch phân bổ doanh số</a>
+        </div>
+    }
 </div>
 @section scripts{
     <script src="~/Scripts/tagmanager.js"></script>
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>
     <script>
+        revenue();
         $(function () {
             $(".input-number").maskMoney({
                 precision: 0,

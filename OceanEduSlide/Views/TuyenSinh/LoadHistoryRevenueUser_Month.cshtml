@@ -1,20 +1,23 @@
-﻿@model IEnumerable<OceanEduSlide.Models.RevenueUser_Month_BM>
-<table class="list_table tablecenter table-striped">
-    <tbody>
-        <tr>
-            <th style="width: 100px">Ngày</th>
-            <th style="width: 50px">Chỉ tiêu</th>
-        </tr>
-        @foreach (var item in Model)
-        {
+﻿@model OceanEduSlide.ViewModels.LoadHistoryRevenueUser_MonthViewModel
+<div class="box_content">
+    <h2>Lịch sử chỉnh sửa chỉ tiêu tháng @Model.Month - @Model.Year của nhân sự @(Model.User.Fullname ?? Model.User.Username)</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
             <tr>
-                <td>
-                    @Html.DisplayFor(a => item.CreateDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.TargetBM)
-                </td>
+                <th style="text-align:center">Thời gian sửa</th>
+                <th style="text-align: center">Chỉ tiêu</th>
             </tr>
-        }
-    </tbody>
-</table>
+            @foreach (var item in Model.Revenues)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TargetBM)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

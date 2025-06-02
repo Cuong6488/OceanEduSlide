@@ -330,6 +330,10 @@
     <Compile Include="Migrations\202505300731048_createdate.Designer.cs">
       <DependentUpon>202505300731048_createdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506020121069_Fullname.cs" />
+    <Compile Include="Migrations\202506020121069_Fullname.Designer.cs">
+      <DependentUpon>202506020121069_Fullname.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1153,6 +1157,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202505300731048_createdate.resx">
       <DependentUpon>202505300731048_createdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506020121069_Fullname.resx">
+      <DependentUpon>202506020121069_Fullname.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

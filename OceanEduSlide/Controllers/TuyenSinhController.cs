@@ -130,10 +130,14 @@ namespace OceanEduSlide.Controllers
         }
         public PartialViewResult LoadHistoryRevenueUser_Month(int year, int month, int userId)
         {
-            var revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId);
-            ViewBag.Year = year;
-            ViewBag.Month = month;
-            return PartialView(revenues);
+            var model = new LoadHistoryRevenueUser_MonthViewModel
+            {
+                Year = year,
+                Month = month,
+                User = _unitOfWork.UserRepository.GetById(userId),
+                Revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId, q=> q.OrderBy(a => a.CreateDate)),
+            };
+            return PartialView(model);
         }
         #endregion
 

@@ -13,6 +13,8 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Tên đăng nhập", Description = "Tên đăng nhập"), Required(ErrorMessage = "Hãy điền tên đăng nhập"), UIHint("TextBox")]
         public string Username { get; set; }
+        [Display(Name = "Họ và tên", Description = "Họ và tên"), UIHint("TextBox")]
+        public string Fullname { get; set; }
         [DisplayName("Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự"), UIHint("Password")]
         public string Password { get; set; }
         [Display(Name = "Hoạt động")]
