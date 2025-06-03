@@ -33,9 +33,9 @@
         <form action="@Url.Action("Revenue")" method="get" class="d-flex">
             <select name="Year" class="form-select w-25 me-3" required onchange="formfilter_submit()">
                 <option value="">Chọn năm</option>
-                @for (int i = 2025; i <= 2030; i++)
+                @for (int i = 2025; i <= ViewBag.Year + 1; i++)
                 {
-                    <option value="@i" @(ViewBag.Year == i ? "selected" : "")>@i</option>
+                    <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
                 }
             </select>
             <select name="Month" class="form-select w-25 me-3" required>
@@ -216,44 +216,44 @@
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
                                     var revenueUser_Week = revenueOffice.RevenueUser_Weeks.FirstOrDefault(a => (int)a.WeekNumber == i);
-                                    <td class="week-target week-@i">
-                                        <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
-                                        @if (revenueUser_Week != null)
-                                        {
-                                            <div class="btnhistory-input">
-                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
-                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                            </div>
-                                            <div class="revenue-value">
-                                                @(revenueUser_Week.TargetBM.ToString("N0"))
-                                            </div>
-                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeeks < i && Model.Month >= DateTime.Now.Month)
-                                            {
-                                                {
-                                                    <div class="btnedit-input btn-edit-week">
-                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                    </div>
-                                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
-                                                }
+                        <td class="week-target week-@i">
+                            <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
+                            @if (revenueUser_Week != null)
+                            {
+                                <div class="btnhistory-input">
+                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
+                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                </div>
+                                <div class="revenue-value">
+                                    @(revenueUser_Week.TargetBM.ToString("N0"))
+                                </div>
+                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                {
+                                    {
+                                        <div class="btnedit-input btn-edit-week">
+                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                        </div>
+                                    }
 
-                                            }
+                                }
+                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
 
-                                        }
-                                        else
-                                        {
-                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeeks < i && Model.Month >= DateTime.Now.Month)
-                                            {
-                                                <div class="revenue-value hidden">
+                            }
+                            else
+                            {
+                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                {
+                                    <div class="revenue-value hidden">
 
-                                                </div>
-                                                <div class="btnedit-input hidden">
-                                                    <i class="fa-regular fa-pen-to-square"></i>
-                                                </div>
-                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
-                                            }
+                                    </div>
+                                    <div class="btnedit-input hidden">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </div>
+                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
+                                }
 
-                                        }
-                                    </td>
+                            }
+                        </td>
                                     <td class="week-percent">
                                     </td>
                                 }

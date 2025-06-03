@@ -38,8 +38,8 @@ namespace OceanEduSlide.Controllers
             var model = new RevenueViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
-                Month = Month,
-                Year = Year,
+                Month = Month ?? DateTime.Now.Month,
+                Year = Year ?? DateTime.Now.Year,
                 OfficeId = OfficeId,
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name))
@@ -50,92 +50,105 @@ namespace OceanEduSlide.Controllers
             ViewBag.Year = DateTime.Now.Year;
             ViewBag.WorkingWeeks = 5;
             ViewBag.CurrentWeeks = 0;
-            if (Month != null && OfficeId != null && Year != null)
+            if (model.OfficeId != null)
             {
-                office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+                office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-                    model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == OfficeId && a.Month == Month && a.Year == Year).FirstOrDefault();
-                    model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == OfficeId && a.Month == Month && a.Year == Year, q => q.OrderByDescending(a => a.CreateDate));
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == OfficeId).ToList();
+                    model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();
+                    model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId).ToList();
                     var userItems = users.Select(a => new RevenueViewModel.UserItem
                     {
                         User = a,
-                        RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.UserId == a.Id && p.Month == Month && p.Year == Year).FirstOrDefault(),
-                        RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == Month && p.Year == Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == Month && p.Year == Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
+                        RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
 
                     });
                     model.UserItems = userItems;
                 }
-                DateTime firstDay = new DateTime(Year ?? 1, Month ?? 1, 1);
-                DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
-                DateTime today = DateTime.Now;
 
-                int workingWeeks = 1; // Bắt đầu từ tuần 1
-                int currentWeek = 0;
-
-                DateTime currentDay = firstDay;
-
-                // Duyệt từng ngày trong tháng
-                while (currentDay <= lastDay)
-                {
-                    // Nếu là thứ Hai và không phải ngày đầu tháng => bắt đầu tuần mới
-                    if (currentDay.DayOfWeek == DayOfWeek.Monday && currentDay != firstDay)
-                    {
-                        workingWeeks++;
-                    }
-
-                    // Nếu ngày hiện tại trùng với `today`, cập nhật `currentWeek`
-                    if (currentDay.Year == today.Year && currentDay.Month == today.Month && currentDay.Day == today.Day)
-                    {
-                        currentWeek = workingWeeks;
-                    }
-
-                    currentDay = currentDay.AddDays(1);
-                }
-
-                // Nếu hôm nay không nằm trong tháng xét, gán `currentWeek = 0`
-                if (today.Month != Month || today.Year != Year)
-                {
-                    currentWeek = 0;
-                }
-
-                ViewBag.WorkingWeeks = workingWeeks;
-                ViewBag.CurrentWeeks = currentWeek;
             }
+            //DateTime firstDay = new DateTime(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month, 1);
+            //DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+            //DateTime today = DateTime.Now;
+
+            //int workingWeeks = 1; // Bắt đầu từ tuần 1
+            //int currentWeek = 0;
+
+            //DateTime currentDay = firstDay;
+
+            //// Duyệt từng ngày trong tháng
+            //while (currentDay <= lastDay)
+            //{
+            //    // Nếu là thứ Hai và không phải ngày đầu tháng => bắt đầu tuần mới
+            //    if (currentDay.DayOfWeek == DayOfWeek.Monday && currentDay != firstDay)
+            //    {
+            //        workingWeeks++;
+            //    }
+
+            //    // Nếu ngày hiện tại trùng với `today`, cập nhật `currentWeek`
+            //    if (currentDay.Year == today.Year && currentDay.Month == today.Month && currentDay.Day == today.Day)
+            //    {
+            //        currentWeek = workingWeeks;
+            //    }
+
+            //    currentDay = currentDay.AddDays(1);
+            //}
+
+            //// Nếu hôm nay không nằm trong tháng xét, gán `currentWeek = 0`
+            //if (today.Month != model.Month || today.Year != model.Year)
+            //{
+            //    currentWeek = 0;
+            //}
+
+            //ViewBag.WorkingWeeks = workingWeeks;
+            //ViewBag.CurrentWeeks = currentWeek;
+            var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
+
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.CurrentWeek = currentWeek;
+
 
             return View(model);
         }
-        public ActionResult CalculateWorkWeeks(int year, int month)
-        {
-            int workingWeeks = CountWorkingWeeks(year, month);
-            return Json(new { Year = year, Month = month, WorkWeeks = workingWeeks }, JsonRequestBehavior.AllowGet);
-        }
-
-        private int CountWorkingWeeks(int year, int month)
+        public static (int, int) CalculateWeeks(int year, int month)
         {
             DateTime firstDay = new DateTime(year, month, 1);
             DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+            DateTime today = DateTime.Now;
 
-            int workingWeeks = 0;
+            int workingWeeks = 1; // Bắt đầu từ tuần 1
+            int currentWeek = 0;
+
             DateTime currentDay = firstDay;
 
+            // Duyệt từng ngày trong tháng
             while (currentDay <= lastDay)
             {
-                if (currentDay.DayOfWeek == DayOfWeek.Monday)
+                // Nếu là thứ Hai và không phải ngày đầu tháng => bắt đầu tuần mới
+                if (currentDay.DayOfWeek == DayOfWeek.Monday && currentDay != firstDay)
                 {
                     workingWeeks++;
                 }
+
+                // Nếu ngày hiện tại trùng với `today`, cập nhật `currentWeek`
+                if (currentDay.Year == today.Year && currentDay.Month == today.Month && currentDay.Day == today.Day)
+                {
+                    currentWeek = workingWeeks;
+                }
+
                 currentDay = currentDay.AddDays(1);
             }
 
-            if (firstDay.DayOfWeek != DayOfWeek.Monday)
+            // Nếu hôm nay không nằm trong tháng xét, gán `currentWeek = 0`
+            if (today.Month != month || today.Year != year)
             {
-                workingWeeks++;
+                currentWeek = 0;
             }
 
-            return workingWeeks;
+            return (workingWeeks, currentWeek);
         }
         public ActionResult RevenueOffice()
         {
