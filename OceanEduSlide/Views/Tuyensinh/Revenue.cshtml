@@ -14,16 +14,7 @@
         overflow: auto;
     }
 </style>
-<div class="logo-title">
-    <div class="container">
-        <div class="d-flex justify-content-between align-content-center align-items-center px-lg-5 py-3">
-            <a href="@Url.Action("Index","TuyenSinh")">
-                <img src="~/Content/images/logo-index.png" />
-            </a>
-            <p class="m-0">Kinh doanh/ Phân bổ doanh số</p>
-        </div>
-    </div>
-</div>
+@Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })
 <div class="container py-3">
     @if (ViewBag.Result == "add")
     {
@@ -148,15 +139,19 @@
                     <th colspan="2">Tháng</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                     {
-                        <th colspan="2">Tuần @i</th>
+                        <th colspan="4">Tuần @i</th>
                     }
 
                 </tr>
                 <tr class="text-center">
-                    @for (var i = 0; i <= ViewBag.WorkingWeeks; i++)
+                    <th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>
+                    <th style="min-width: 55px !important">% HT <br /> dự kiến/ <br />tháng</th>
+                    @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                     {
                         <th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>
                         <th style="min-width: 55px !important">% HT <br /> dự kiến/ <br />tháng</th>
+                        <th style="min-width: 90px !important">DS hoàn thành <br />thực tế</th>
+                        <th style="min-width: 55px !important">% HT <br /> thực tế/ <br />tháng</th>
                     }
                 </tr>
                 @if (Model.UserItems != null)
@@ -216,45 +211,55 @@
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
                                     var revenueUser_Week = revenueOffice.RevenueUser_Weeks.FirstOrDefault(a => (int)a.WeekNumber == i);
-                        <td class="week-target week-@i">
-                            <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
-                            @if (revenueUser_Week != null)
-                            {
-                                <div class="btnhistory-input">
-                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
-                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                </div>
-                                <div class="revenue-value">
-                                    @(revenueUser_Week.TargetBM.ToString("N0"))
-                                </div>
-                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
-                                {
-                                    {
-                                        <div class="btnedit-input btn-edit-week">
-                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                        </div>
-                                    }
+                                    <td class="week-target week-@i">
+                                        <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
+                                        @if (revenueUser_Week != null)
+                                        {
+                                            <div class="btnhistory-input">
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                            </div>
+                                            <div class="revenue-value">
+                                                @(revenueUser_Week.TargetBM.ToString("N0"))
+                                            </div>
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                            {
+                                                {
+                                                    <div class="btnedit-input btn-edit-week">
+                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                    </div>
+                                                }
 
-                                }
-                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
+                                            }
+                                            <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
 
-                            }
-                            else
-                            {
-                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
-                                {
-                                    <div class="revenue-value hidden">
+                                        }
+                                        else
+                                        {
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                            {
+                                                <div class="revenue-value hidden">
 
-                                    </div>
-                                    <div class="btnedit-input hidden">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </div>
-                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
-                                }
+                                                </div>
+                                                <div class="btnedit-input hidden">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </div>
+                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
+                                            }
 
-                            }
-                        </td>
+                                        }
+                                    </td>
                                     <td class="week-percent">
+                                    </td>
+
+                                    var revenueUser_Week_Real = revenueOffice.RevenueUser_Week_Reals.FirstOrDefault(a => (int)a.WeekNumber == i);
+                                    <td class="week-real week-real-@i">
+                                        @if (revenueUser_Week_Real != null)
+                                        {
+                                            @: @revenueUser_Week_Real.TargetBM.ToString("N0")
+                                        }
+                                    </td>
+                                    <td class="week-real-percent">
                                     </td>
                                 }
                             }

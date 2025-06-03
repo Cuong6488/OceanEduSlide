@@ -25,6 +25,7 @@ namespace OceanEduSlide.Controllers
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
 
         #region Tuyen_sinh
+
         public PartialViewResult Header(string name)
         {
             ViewBag.Name = name;
@@ -64,47 +65,13 @@ namespace OceanEduSlide.Controllers
                         RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
                         RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
 
                     });
                     model.UserItems = userItems;
                 }
 
             }
-            //DateTime firstDay = new DateTime(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month, 1);
-            //DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
-            //DateTime today = DateTime.Now;
-
-            //int workingWeeks = 1; // Bắt đầu từ tuần 1
-            //int currentWeek = 0;
-
-            //DateTime currentDay = firstDay;
-
-            //// Duyệt từng ngày trong tháng
-            //while (currentDay <= lastDay)
-            //{
-            //    // Nếu là thứ Hai và không phải ngày đầu tháng => bắt đầu tuần mới
-            //    if (currentDay.DayOfWeek == DayOfWeek.Monday && currentDay != firstDay)
-            //    {
-            //        workingWeeks++;
-            //    }
-
-            //    // Nếu ngày hiện tại trùng với `today`, cập nhật `currentWeek`
-            //    if (currentDay.Year == today.Year && currentDay.Month == today.Month && currentDay.Day == today.Day)
-            //    {
-            //        currentWeek = workingWeeks;
-            //    }
-
-            //    currentDay = currentDay.AddDays(1);
-            //}
-
-            //// Nếu hôm nay không nằm trong tháng xét, gán `currentWeek = 0`
-            //if (today.Month != model.Month || today.Year != model.Year)
-            //{
-            //    currentWeek = 0;
-            //}
-
-            //ViewBag.WorkingWeeks = workingWeeks;
-            //ViewBag.CurrentWeeks = currentWeek;
             var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
 
             ViewBag.WorkingWeeks = workingWeeks;
@@ -334,6 +301,5 @@ namespace OceanEduSlide.Controllers
         }
 
         #endregion
-
     }
 }

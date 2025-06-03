@@ -13,10 +13,22 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Tên đăng nhập", Description = "Tên đăng nhập"), Required(ErrorMessage = "Hãy điền tên đăng nhập"), UIHint("TextBox")]
         public string Username { get; set; }
+        [Display(Name = "Mã nhân viên", Description = "Mã nhân viên"), UIHint("TextBox")]
+        public string MaNhanVien { get; set; }
         [Display(Name = "Họ và tên", Description = "Họ và tên"), UIHint("TextBox")]
         public string Fullname { get; set; }
         [DisplayName("Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự"), UIHint("Password")]
         public string Password { get; set; }
+        [DisplayName("Tỉ lệ số lượng data confirm lần 1"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        public decimal Confirm1 { get; set; }
+        [DisplayName("Tỉ lệ số lượng data confirm lần 2"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        public decimal Confirm2 { get; set; }
+        [DisplayName("Tỉ lệ số lượng data confirm lần 3"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        public decimal Confirm3 { get; set; }
+        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi check in"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        public decimal CI { get; set; }
+        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        public decimal DT { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh")]
@@ -29,6 +41,7 @@ namespace OceanEduSlide.Models
         public virtual ICollection<RevenueUser_Month> RevenueUser_Months { get; set; }
         public virtual ICollection<RevenueUser_Month_BM> GetRevenueUser_Month_BMs { get; set; }
         public virtual ICollection<RevenueUser_Week> RevenueUser_Weeks { get; set; }
+        public virtual ICollection<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
         public User()
         {
             Active = true;

@@ -259,6 +259,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\FaceIdController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\TuyenSinhController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
@@ -338,13 +339,20 @@
     <Compile Include="Migrations\202506020701401_weeknumber.Designer.cs">
       <DependentUpon>202506020701401_weeknumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506030957522_event.cs" />
+    <Compile Include="Migrations\202506030957522_event.Designer.cs">
+      <DependentUpon>202506030957522_event.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
+    <Compile Include="Models\Event.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
     <Compile Include="Models\RevenueUser_Month_BM.cs" />
+    <Compile Include="Models\RevenueUser_DayOfWeek.cs" />
+    <Compile Include="Models\RevenueUser_Week_Real.cs" />
     <Compile Include="Models\RevenueUser_Week.cs" />
     <Compile Include="Models\RevenueUser_Month.cs" />
     <Compile Include="Models\RevenueOffice.cs" />
@@ -1060,6 +1068,7 @@
     <Content Include="Views\TuyenSinh\RevenueOffice_BM.cshtml" />
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueOffice.cshtml" />
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Week.cshtml" />
+    <Content Include="Views\Event\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1170,6 +1179,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506020701401_weeknumber.resx">
       <DependentUpon>202506020701401_weeknumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506030957522_event.resx">
+      <DependentUpon>202506030957522_event.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

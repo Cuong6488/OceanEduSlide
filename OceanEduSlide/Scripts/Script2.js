@@ -2,7 +2,16 @@
 $("#AlertBox").removeClass('hide');
 $("#AlertBox").delay(5000).slideUp(500);
 
-
+//$('#timepicker22').timepicker({
+//    timeFormat: 'HH:mm',
+//    interval: 30,
+//    minTime: '00:00',
+//    maxTime: '23:59',
+//    startTime: '00:00',
+//    dynamic: false,
+//    dropdown: true,
+//    scrollbar: true
+//});
 $(".form-filter select").on("change", function (data) {
 
     let form = $('.form-filter form');
@@ -43,15 +52,22 @@ $(".targetuser_month_HO").each(function () {
         var targetuser_month_HO = targetuser_month_HO_text.replace(/\,/g, "");
         var targetuser_month_BM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs").val().replace(/\,/g, "");
         if (targetuser_month_BM !== "" && targetuser_month_HO !== "") {
-            var percent_user_month = Math.ceil(targetuser_month_BM / targetuser_month_HO * 100);
+            var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
             $(this).siblings(".percent_user_month").text(percent_user_month);
         }
     }
     $(this).closest("tr").find(".input-RevenueUser_Week").each(function () {
         var weekTarget = $(this).val().trim().replace(/\,/g, "");
         if (weekTarget !== "") {
-            var percent_user_week = Math.ceil(weekTarget / targetuser_month_BM * 100);
+            var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
             $(this).closest("td").next(".week-percent").text(percent_user_week);
+        }
+    });
+    $(this).closest("tr").find(".week-real").each(function () {
+        var weekReal = $(this).text().trim().replace(/\,/g, "");
+        if (weekReal !== "") {
+            var percent_user_week = Math.round(weekReal / targetuser_month_BM * 100);
+            $(this).closest("td").next("td").text(percent_user_week);
         }
     });
 
@@ -115,7 +131,7 @@ $(".input-RevenueUser_Week").on("change", function () {
                     var percent_user_week = Math.round(targetuser_week / targetuser_month_BM * 100);
                     thisElement.closest("td").next(".week-percent").text(percent_user_week);
                 }
-                
+
             } else {
                 $.toast({
                     heading: 'Cập nhật thất bại',
@@ -126,4 +142,3 @@ $(".input-RevenueUser_Week").on("change", function () {
         });
     }
 });
-

@@ -3,6 +3,7 @@ using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using PagedList;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -57,16 +58,16 @@ namespace OceanEduSlide.Controllers
                 var ticket = new FormsAuthenticationTicket(2, user.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
-                if (user.TypeUser == TypeUser.BM || user.TypeUser == TypeUser.HO)
-                {
-                    return RedirectToAction("Revenue", "Tuyensinh");
-                }
+                //if (user.TypeUser == TypeUser.BM || user.TypeUser == TypeUser.HO)
+                //{
+                //    return RedirectToAction("Revenue", "Tuyensinh");
+                //}
                 if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                     && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
 
             }
             return View();
@@ -80,121 +81,13 @@ namespace OceanEduSlide.Controllers
                 cookie.Expires = DateTime.Now.AddDays(-1);
                 Response.Cookies.Add(cookie);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login");
         }
         #endregion
-       
-        #region Salekit
         public ActionResult Index()
         {
             return View();
         }
-        [Route("gioi-thieu")]
-        public ActionResult About()
-        {
-            return View();
-        }
-        [Route("hoc-phi")]
-        public ActionResult Price()
-        {
-            //var model = new PriceViewModel
-            //{
-            //    SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(a => a.Active), "Id", "Username"),
-            //};
-            var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
-            return View(office);
-        }
-        [HttpPost]
-        public JsonResult ChangePassword(string oldpassword, string newpassword, string confirmpassword)
-        {
-            if (!HtmlHelpers.VerifyHash(oldpassword, "SHA256", User.Password))
-            {
-                return Json(new { status = false, msg = "Mật khẩu cũ không chính xác. Hãy kiểm tra lại." });
-            }
-            else if (confirmpassword != newpassword)
-            {
-                return Json(new { status = false, msg = "Xác nhận mật khẩu không chính xác. Hãy kiểm tra lại." });
-            }
-            else if (newpassword.Length > 60)
-            {
-                return Json(new { status = false, msg = "Mật khẩu không được quá 60 ký tự." });
-
-            }
-
-            User.Password = HtmlHelpers.ComputeHash(newpassword, "SHA256", null);
-            _unitOfWork.Save();
-            return Json(new { status = true, msg = "Đổi mật khẩu thành công." });
-
-        }
-        public JsonResult GetDiscount(string cth, double pathway)
-        {
-
-            var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
-                (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
-                (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) &&
-                a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
-            return Json(discounts, JsonRequestBehavior.AllowGet);
-        }
-        [HttpPost]
-        public JsonResult CalcMoney(int id, string totalMoney)
-        {
-            int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace(",", "").Replace("đ", ""));
-            var discount = _unitOfWork.DiscountRepository.GetById(id);
-            int moneyDiscount = 0;
-            if (discount != null)
-            {
-                moneyDiscount = discount.MoneyDiscount ?? 0;
-                if (discount.PercentDiscount != null)
-                {
-                    double? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
-                    moneyDiscount += (int)Math.Round((double)decimalMoney);
-                    return Json(new { status = true, moneyDiscount, gift = discount.Gift ?? "Chưa có", finalMoney = intTotalMoney - moneyDiscount });
-
-                }
-            }
-            return Json(new { status = false });
-        }
-        //[HttpPost]
-        //public JsonResult CalcMoneyType(string cash, string percent)
-        //{
-        //    int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace(",", "").Replace("đ", ""));
-        //    var discount = _unitOfWork.DiscountRepository.GetById(id);
-        //    int moneyDiscount = 0;
-        //    if (discount != null)
-        //    {
-        //        moneyDiscount = discount.MoneyDiscount ?? 0;
-        //        if (discount.PercentDiscount != null)
-        //        {
-        //            double? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
-        //            moneyDiscount += (int)Math.Round((double)decimalMoney);
-        //            return Json(new { status = true, moneyDiscount, gift = discount.Gift ?? "Chưa có", finalMoney = intTotalMoney - moneyDiscount });
-
-        //        }
-        //    }
-        //    return Json(new { status = false });
-        //}
-        public ActionResult Pathway()
-        {
-            return View();
-        }
-        public ActionResult Face()
-        {
-            return View();
-        }
-        public ActionResult Race()
-        {
-            return View();
-        }
-        public ActionResult CourseOutline()
-        {
-            return View();
-        }
-        #endregion
-
-        #region Tuyen_sinh
-
-        #endregion
 
     }
 }
