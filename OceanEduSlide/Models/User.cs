@@ -42,6 +42,7 @@ namespace OceanEduSlide.Models
         public virtual ICollection<RevenueUser_Month_BM> GetRevenueUser_Month_BMs { get; set; }
         public virtual ICollection<RevenueUser_Week> RevenueUser_Weeks { get; set; }
         public virtual ICollection<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
+        public virtual ICollection<RevenueUser_DayOfWeek> RevenueUser_DayOfWeeks { get; set; }
         public User()
         {
             Active = true;

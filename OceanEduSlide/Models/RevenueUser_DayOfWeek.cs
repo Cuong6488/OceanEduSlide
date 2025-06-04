@@ -20,22 +20,22 @@ namespace OceanEduSlide.Models
         public DayofWeek DayofWeek { get; set; }
         [Display(Name = "Chỉ tiêu doanh số dự kiến hoàn thành"),DisplayFormat(DataFormatString = "{0:N0}đ"),RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
         public decimal TargetBM { get; set; }
-        [DisplayName("Số lượng data khai thác"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng data khai thác"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal DataQuantity { get; set; }
 
-        [DisplayName("Số lượng data confirm lần 1"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng data confirm lần 1"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal Confirm1 { get; set; }
 
-        [DisplayName("Số lượng data confirm lần 2"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng data confirm lần 2"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal Confirm2 { get; set; }
 
-        [DisplayName("Số lượng data confirm lần 3"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng data confirm lần 3"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal Confirm3 { get; set; }
 
-        [DisplayName("Số lượng khách hàng check in dự kiến"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng khách hàng check in dự kiến"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal CI { get; set; }
 
-        [DisplayName("Số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), DisplayFormat(DataFormatString = "{0:N0}"), RegularExpression(@"^\d*[1-9]\d*$", ErrorMessage = "Giá trị phải là số nguyên dương.")]
+        [DisplayName("Số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal DT { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }

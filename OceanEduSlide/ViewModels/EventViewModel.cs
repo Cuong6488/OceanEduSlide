@@ -44,4 +44,13 @@ namespace OceanEduSlide.ViewModels
         [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu (%)"), Required(ErrorMessage = "Hãy nhập tỉ lệ"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal DT { get; set; }
     }
+    public class LoadHistoryRevenueUser_DayViewModel
+    {
+        public User User { get; set; }
+        public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public WeekNumber WeekNumber { get; set; }
+        public DayofWeek DayofWeek { get; set; }
+    }
 }

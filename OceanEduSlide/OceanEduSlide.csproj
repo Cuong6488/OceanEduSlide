@@ -343,6 +343,10 @@
     <Compile Include="Migrations\202506030957522_event.Designer.cs">
       <DependentUpon>202506030957522_event.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506040543403_dbset.cs" />
+    <Compile Include="Migrations\202506040543403_dbset.Designer.cs">
+      <DependentUpon>202506040543403_dbset.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1072,6 +1076,7 @@
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Week.cshtml" />
     <Content Include="Views\Event\Index.cshtml" />
     <Content Include="Views\Event\UpdatePercent.cshtml" />
+    <Content Include="Views\Event\LoadHistoryRevenueUser_Day.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1185,6 +1190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506030957522_event.resx">
       <DependentUpon>202506030957522_event.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506040543403_dbset.resx">
+      <DependentUpon>202506040543403_dbset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

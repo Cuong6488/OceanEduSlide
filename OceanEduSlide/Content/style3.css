@@ -70,26 +70,26 @@
   border: none !important;
 }
 
-.listrevenue-user td {
-  height: 42px;
+.box_content td {
+  height: 40px;
   position: relative;
 }
-.listrevenue-user td .btnedit-input {
+.box_content td .btnedit-input {
   position: absolute;
   top: 2px;
   right: 2px;
   cursor: pointer;
 }
-.listrevenue-user td .btnedit-input i {
+.box_content td .btnedit-input i {
   font-size: 10px;
 }
-.listrevenue-user td .btnhistory-input {
+.box_content td .btnhistory-input {
   position: absolute;
   top: 2px;
   left: 2px;
   cursor: pointer;
 }
-.listrevenue-user td .btnhistory-input i {
+.box_content td .btnhistory-input i {
   font-size: 10px;
 }
 

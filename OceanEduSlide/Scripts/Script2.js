@@ -35,7 +35,7 @@ $(".btn-edit-month").on("click", function () {
     });
     //$(".input-note").val($(".input-note").val() + note);
 });
-$(".btn-edit-week").on("click", function () {
+$(".btnedit-input").on("click", function () {
     $(this).css("display", "none");
     $(this).siblings(".revenue-value").css("display", "none");
     $(this).siblings("input").css("display", "block").focus().val(function (_, val) {
@@ -130,6 +130,119 @@ $(".input-RevenueUser_Week").on("change", function () {
                     var percent_user_week = Math.round(targetuser_week / targetuser_month_BM * 100);
                     thisElement.closest("td").next(".week-percent").text(percent_user_week);
                 }
+
+            } else {
+                $.toast({
+                    heading: 'Cập nhật thất bại',
+                    icon: 'error'
+                })
+                location.reload();
+            }
+        });
+    }
+});
+
+$(".input-RevenueUser_Day").on("change", function () {
+    var thisElement = $(this);
+    if ($('.form-filter').valid()) {
+        var userId = $(this).closest("tr").data("id");
+        var targetBM = $(this).val().replace(/\,/g, "");
+        var targetBM_DT = $(this).closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").val();
+        if (targetBM === "")
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Vui lòng nhập chỉ tiêu doanh số dự kiến',
+                icon: 'warning'
+            })
+        else if (targetBM_DT === "")
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Vui lòng nhập số lượng khách hàng chuyển đổi số dự kiến',
+                icon: 'warning'
+            })
+
+        else if (targetBM_DT.includes(",") || targetBM_DT.includes(".") || targetBM_DT.includes("-"))
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Số lượng khách hàng chuyển đổi số dự kiến phải là số nguyên dương',
+                icon: 'warning'
+            })
+
+        year = $("select[name='Year']").val();
+        month = $("select[name='Month']").val();
+        week = $("select[name='Week']").val();
+        dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
+        $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+            if (data.status) {
+                $.toast({
+                    heading: 'Cập nhật thành công',
+                    icon: 'success'
+                })
+                thisElement.siblings(".btnedit-input").css("display", "block");
+                thisElement.siblings(".revenue-value").css("display", "block");
+                thisElement.css("display", "none");
+                thisElement.siblings(".revenue-value").text(thisElement.val());
+
+                thisElement.closest("td").next(".day-target-number").find(".btnedit-input").css("display", "block");
+                thisElement.closest("td").next(".day-target-number").find(".revenue-value").css("display", "block");
+                thisElement.closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").css("display", "none");
+                thisElement.closest("td").next(".day-target-number").find(".revenue-value").text(targetBM_DT);
+
+            } else {
+                $.toast({
+                    heading: 'Cập nhật thất bại',
+                    icon: 'error'
+                })
+                location.reload();
+            }
+        });
+    }
+});
+$(".input-RevenueUser_Day_DT").on("change", function () {
+    var thisElement = $(this);
+    if ($('.form-filter').valid()) {
+        var userId = $(this).closest("tr").data("id");
+        var targetBM_DT = $(this).val();
+        var targetBM_text = $(this).closest("td").prev(".day-target").find(".input-RevenueUser_Day").val();
+        var targetBM = targetBM_text.replace(/\,/g, "");
+        if (targetBM === "")
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Vui lòng nhập chỉ tiêu doanh số dự kiến',
+                icon: 'warning'
+            })
+        else if (targetBM_DT === "")
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Vui lòng nhập số lượng khách hàng chuyển đổi số dự kiến',
+                icon: 'warning'
+            })
+
+        else if (targetBM_DT.includes(",") || targetBM_DT.includes(".") || targetBM_DT.includes("-"))
+            $.toast({
+                //heading: 'Cập nhật thất bại',
+                text: 'Số lượng khách hàng chuyển đổi số dự kiến phải là số nguyên dương',
+                icon: 'warning'
+            })
+
+        year = $("select[name='Year']").val();
+        month = $("select[name='Month']").val();
+        week = $("select[name='Week']").val();
+        dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
+        $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+            if (data.status) {
+                $.toast({
+                    heading: 'Cập nhật thành công',
+                    icon: 'success'
+                })
+                thisElement.siblings(".btnedit-input").css("display", "block");
+                thisElement.siblings(".revenue-value").css("display", "block");
+                thisElement.css("display", "none");
+                thisElement.siblings(".revenue-value").text(thisElement.val());
+                thisElement.closest("td").prev(".day-target").find(".btnedit-input").css("display", "block");
+                thisElement.closest("td").prev(".day-target").find(".revenue-value").css("display", "block");
+                thisElement.closest("td").prev(".day-target").find(".input-RevenueUser_Day").css("display", "none");
+                thisElement.closest("td").prev(".day-target").find(".revenue-value").text(targetBM_text);
 
             } else {
                 $.toast({
