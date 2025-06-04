@@ -13,8 +13,7 @@ $("#AlertBox").delay(5000).slideUp(500);
 //    scrollbar: true
 //});
 $(".form-filter select").on("change", function (data) {
-
-    let form = $('.form-filter form');
+    let form = $(this).closest("form");
     if (form.valid()) { // Kiểm tra nếu form hợp lệ
         form.trigger('submit'); // Gọi sự kiện submit
     }

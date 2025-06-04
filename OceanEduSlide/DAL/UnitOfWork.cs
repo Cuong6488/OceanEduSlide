@@ -18,6 +18,12 @@ namespace OceanEduSlide.DAL
         private GenericRepository<RevenueUser_Month_BM> _revenueUser_Month_BMRepository;
         private GenericRepository<RevenueUser_Week> _revenueUser_WeekRepository;
         private GenericRepository<RevenueUser_Week_Real> _revenueUser_Week_RealRepository;
+        private GenericRepository<RevenueUser_DayOfWeek> _revenueUser_DayOfWeekRepository;
+        private GenericRepository<Event> _eventRepository;
+        public GenericRepository<RevenueUser_DayOfWeek> RevenueUser_DayOfWeekRepository =>
+           _revenueUser_DayOfWeekRepository ?? (_revenueUser_DayOfWeekRepository = new GenericRepository<RevenueUser_DayOfWeek>(_context));
+        public GenericRepository<Event> EventRepository =>
+           _eventRepository ?? (_eventRepository = new GenericRepository<Event>(_context));
         public GenericRepository<RevenueOffice> RevenueOfficeRepository =>
            _revenueOfficeRepository ?? (_revenueOfficeRepository = new GenericRepository<RevenueOffice>(_context));
         public GenericRepository<RevenueOffice_BM> RevenueOffice_BMRepository =>

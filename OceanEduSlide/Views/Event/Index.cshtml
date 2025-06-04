@@ -1,10 +1,233 @@
-﻿
+﻿@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model EventViewModel
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<style>
+    #OfficeId-error, #Month-error, #OfficeId-error, #Week-error {
+        display: none !important;
+    }
+</style>
 
+@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+<div class="container py-3">
 
+    <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5">
+        <select name="Year" class="form-select me-3" required">
+            <option value="">Chọn năm</option>
+            @for (int i = 2025; i <= ViewBag.Year + 1; i++)
+            {
+                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+            }
+        </select>
+        <select name="Month" class="form-select me-3" required>
+            <option value="">Chọn tháng</option>
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+            }
+        </select>
+        <select name="Week" class="form-select me-3" required>
+            <option value="">Chọn tuần</option>
+            @for (int i = 1; i <= ViewBag.WorkingWeeks; i++)
+            {
+                <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
+            }
+        </select>
+        @if (Model.User.TypeUser == TypeUser.HO)
+        {
+            <select name="OfficeId" class="form-select" required>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        @if (Model.User.TypeUser == TypeUser.BM)
+        {
+            <select name="" class="form-select" disabled>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
+    </form>
+    @if (Model.OfficeId != null)
+    {
+        <h2>BẢNG THEO DÕI TỶ LỆ CHUYỂN ĐỔI CỦA NHÂN SỰ CHI NHÁNH</h2>
+        <div class="box_content mt-0 mb-5">
+            <table class="list_table tablecenter table-striped">
+                <tbody>
+                    <tr>
+                        <th rowspan="2" class="col-w90">Họ tên nhân sự</th>
+                        <th rowspan="2" style="width: 70px">Chức vụ</th>
+                        <th rowspan="2" class="col-w90">Mã nhân viên</th>
+                        <th colspan="5" class="text-center">Tỉ lệ chuyển đổi</th>
+                        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                        {
+                            <th rowspan="2"></th>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Tỉ lệ SL data confirm lần 1 (%)</th>
+                        <th>Tỉ lệ SL data confirm lần 2 (%)</th>
+                        <th>Tỉ lệ SL data confirm lần 3 (%)</th>
+                        <th>Tỉ lệ SL KH chuyển đổi CI (%)</th>
+                        <th>Tỉ lệ SL KH chuyển đổi ra cọc/DT (%)</th>
+                    </tr>
 
+                    @foreach (var item in Model.Users)
+                    {
+                        <tr data-id="@item.Id">
+                            <td>
+                                @(item.Fullname??item.Username)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(a => item.TypeUser)
+                            </td>
+                            <td>
+                                @item.MaNhanVien
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Confirm1)<br />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Confirm2)<br />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Confirm3)<br />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.CI)<br />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.DT)<br />
+                            </td>
+                            @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                            {
+                                <td>
+                                    <a href="@Url.Action("UpdatePercent", new {userId = item.Id})">Sửa</a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
+        <h2>BẢNG THEO DÕI DOANH THU DỰ KIẾN TUẦN @Model.Week - Tháng @Model.Month - @Model.Year </h2>
+        <div class="box_content mt-0">
+            <table class="list_table tablecenter table-striped text-center">
+                <tbody>
+                    <tr>
+                        <th rowspan="2" class="col-w90">Họ tên nhân sự</th>
+                        <th rowspan="2" style="width: 70px">Chức vụ</th>
+                        <th rowspan="2" class="col-w90">Mã nhân viên</th>
+                        @if (ViewBag.WorkingWeeks != Model.Week)
+                        {
+                            for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                            {
+                                <th colspan="2">@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                            {
+                                <th colspan="2">@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                            }
 
+                        }
+
+                    </tr>
+                    <tr>
+                        @for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                        {
+
+                            <th class="col-w90 text-center">Chỉ tiêu <br /> doanh số <br /> dự kiến</th>
+                            <th class="col-w90">Số lượng KH <br /> chuyển đổi số <br /> dự kiến</th>
+                        }
+                    </tr>
+                    @if (Model.UserItems != null)
+                    {
+
+                        foreach (var item in Model.UserItems)
+                        {
+                            <tr data-id="@item.User.Id">
+                                <td>
+                                    @(item.User.Fullname ?? item.User.Username)
+                                </td>
+                                <td>
+                                    @item.User.TypeUser
+                                </td>
+                                @if (ViewBag.WorkingWeeks != Model.Week)
+                                {
+                                    for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                                    {
+                                        var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i );
+                                        <td class="week-target week-@i">
+                                            <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
+                                            @if (revenueUser_Day != null)
+                                            {
+                                                <div class="btnhistory-input">
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = (int)revenueUser_Day.WeekNumber})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                </div>
+                                                <div class="revenue-value">
+                                                    @(revenueUser_Day.TargetBM.ToString("N0"))
+                                                </div>
+                                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                                {
+                                                    {
+                                                        <div class="btnedit-input btn-edit-week">
+                                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                        </div>
+                                                    }
+
+                                                }
+                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Day.TargetBM.ToString("N0"))" />
+
+                                            }
+                                            else
+                                            {
+                                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                                {
+                                                    <div class="revenue-value hidden">
+
+                                                    </div>
+                                                    <div class="btnedit-input hidden">
+                                                        <i class="fa-regular fa-pen-to-square"></i>
+                                                    </div>
+                                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
+                                                }
+
+                                            }
+                                        </td>
+                                        <td class="week-percent">
+                                        </td>
+ }
+                                }
+                                else
+                                {
+                                    for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                                    {
+                                        <th colspan="2">@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                                    }
+
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    }
+</div>
 @section scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
     <script>

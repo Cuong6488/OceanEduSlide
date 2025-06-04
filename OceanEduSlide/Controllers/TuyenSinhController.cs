@@ -24,7 +24,7 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
 
-        #region Tuyen_sinh
+        #region Kinh_Doanh
 
         public PartialViewResult Header(string name)
         {
@@ -35,7 +35,6 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
                 return RedirectToAction("Index");
-            Office office = null;
             var model = new RevenueViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
@@ -53,7 +52,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.CurrentWeeks = 0;
             if (model.OfficeId != null)
             {
-                office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
+                var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();

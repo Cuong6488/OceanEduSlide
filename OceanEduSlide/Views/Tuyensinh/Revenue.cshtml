@@ -6,13 +6,7 @@
         display: none !important;
     }
 
-    .list_table tr th, .list_table tr td {
-        padding: 2px;
-    }
 
-    .box_content {
-        overflow: auto;
-    }
 </style>
 @Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })
 <div class="container py-3">
@@ -22,7 +16,7 @@
     }
     <div class="form-filter mb-3">
         <form action="@Url.Action("Revenue")" method="get" class="d-flex">
-            <select name="Year" class="form-select w-25 me-3" required onchange="formfilter_submit()">
+            <select name="Year" class="form-select w-25 me-3" required">
                 <option value="">Chọn năm</option>
                 @for (int i = 2025; i <= ViewBag.Year + 1; i++)
                 {

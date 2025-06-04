@@ -19,15 +19,15 @@ namespace OceanEduSlide.Models
         public string Fullname { get; set; }
         [DisplayName("Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự"), UIHint("Password")]
         public string Password { get; set; }
-        [DisplayName("Tỉ lệ số lượng data confirm lần 1"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        [DisplayName("Tỉ lệ số lượng data confirm lần 1 (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal Confirm1 { get; set; }
-        [DisplayName("Tỉ lệ số lượng data confirm lần 2"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        [DisplayName("Tỉ lệ số lượng data confirm lần 2 (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal Confirm2 { get; set; }
-        [DisplayName("Tỉ lệ số lượng data confirm lần 3"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        [DisplayName("Tỉ lệ số lượng data confirm lần 3 (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal Confirm3 { get; set; }
-        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi check in"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi check in (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal CI { get; set; }
-        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
+        [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal DT { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
