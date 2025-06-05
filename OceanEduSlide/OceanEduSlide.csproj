@@ -347,6 +347,14 @@
     <Compile Include="Migrations\202506040543403_dbset.Designer.cs">
       <DependentUpon>202506040543403_dbset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506050243271_nameActivity.cs" />
+    <Compile Include="Migrations\202506050243271_nameActivity.Designer.cs">
+      <DependentUpon>202506050243271_nameActivity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506050348064_rangestring.cs" />
+    <Compile Include="Migrations\202506050348064_rangestring.Designer.cs">
+      <DependentUpon>202506050348064_rangestring.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1077,6 +1085,8 @@
     <Content Include="Views\Event\Index.cshtml" />
     <Content Include="Views\Event\UpdatePercent.cshtml" />
     <Content Include="Views\Event\LoadHistoryRevenueUser_Day.cshtml" />
+    <Content Include="Views\Event\AddEvent.cshtml" />
+    <Content Include="Views\Event\UpdateEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1193,6 +1203,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506040543403_dbset.resx">
       <DependentUpon>202506040543403_dbset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506050243271_nameActivity.resx">
+      <DependentUpon>202506050243271_nameActivity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506050348064_rangestring.resx">
+      <DependentUpon>202506050348064_rangestring.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

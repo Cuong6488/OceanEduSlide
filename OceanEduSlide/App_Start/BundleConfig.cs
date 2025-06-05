@@ -44,8 +44,8 @@ namespace OceanEduSlide
                           "~/Content/toctoc.min.css",
                           "~/Content/style2.css",
                           "~/Content/style.css",
-                          "~/Content/style3.css",
-                          "~/Content/adminSite.css"));
+                          "~/Content/adminSite.css",
+                          "~/Content/style3.css"));
 
             bundles.Add(new StyleBundle("~/Content/admincss").Include(
                           "~/Content/bootstrap.css",

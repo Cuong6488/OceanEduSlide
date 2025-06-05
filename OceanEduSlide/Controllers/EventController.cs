@@ -8,6 +8,7 @@ using PagedList;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -32,6 +33,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.Year = DateTime.Now.Year;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek(Week ?? currentWeek, Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month);
+            ViewBag.Result = Result;
             var model = new EventViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
@@ -48,6 +50,7 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
+
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId).ToList();
                     var userItems = users.Select(a => new EventViewModel.UserItem
                     {
@@ -56,8 +59,9 @@ namespace OceanEduSlide.Controllers
                     });
                     model.Users = users;
                     model.UserItems = userItems;
+                    model.Events = _unitOfWork.EventRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate));
+                    model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
                 }
-
             }
             return View(model);
         }
@@ -85,7 +89,7 @@ namespace OceanEduSlide.Controllers
                 user.CI = model.CI;
                 user.DT = model.DT;
                 _unitOfWork.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { Result = "add" });
             }
             return View(model);
         }
@@ -233,6 +237,123 @@ namespace OceanEduSlide.Controllers
             }
 
             return PartialView(model);
+        }
+        public ActionResult AddEvent(int month, int year, int week, int dayOfWeek, int typeEvent, int officeId)
+        {
+            var ev = new Event
+            {
+                Month = month,
+                Year = year,
+                OfficeId = officeId,
+            };
+            switch (typeEvent)
+            {
+                case 1:
+                    ev.TypeEvent = TypeEvent.HDDT;
+                    break;
+                case 2:
+                    ev.TypeEvent = TypeEvent.SKDT;
+                    break;
+                case 3:
+                    ev.TypeEvent = TypeEvent.HDSale;
+                    break;
+                case 4:
+                    ev.TypeEvent = TypeEvent.SKSale;
+                    break;
+                default:
+                    break;
+            }
+            switch (week)
+            {
+                case 1:
+                    ev.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    ev.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    ev.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    ev.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    ev.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    ev.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            switch (dayOfWeek)
+            {
+                case 2:
+                    ev.DayofWeek = DayofWeek.Monday;
+                    break;
+                case 3:
+                    ev.DayofWeek = DayofWeek.Tuesday;
+                    break;
+                case 4:
+                    ev.DayofWeek = DayofWeek.Wednessday;
+                    break;
+                case 5:
+                    ev.DayofWeek = DayofWeek.Thursday;
+                    break;
+                case 6:
+                    ev.DayofWeek = DayofWeek.Friday;
+                    break;
+                case 7:
+                    ev.DayofWeek = DayofWeek.Saturday;
+                    break;
+                case 8:
+                    ev.DayofWeek = DayofWeek.Sunday;
+                    break;
+                default:
+                    break;
+            }
+
+            return View(ev);
+        }
+        [HttpPost]
+        public ActionResult AddEvent(Event model)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.EventRepository.Insert(model);
+                _unitOfWork.Save();
+                return RedirectToAction("Index", new { result = "add" });
+            }
+            return View(model);
+        }
+        public ActionResult UpdateEvent(int evId)
+        {
+            var ev = _unitOfWork.EventRepository.GetById(evId);
+            if (ev == null)
+                return RedirectToAction("Index");
+            return View(ev);
+        }
+        [HttpPost]
+        public ActionResult UpdateEvent(Event model)
+        {
+            var ev = _unitOfWork.EventRepository.GetById(model.Id);
+            if (ev == null)
+                return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                ev.TimeFrom = model.TimeFrom;
+                ev.TimeTo = model.TimeTo;
+                ev.Ages = model.Ages;
+                ev.TypeJoin = model.TypeJoin;
+                ev.TypeEvent = model.TypeEvent;
+                ev.LinkUrl = model.LinkUrl;
+                ev.LinkName = model.LinkName;
+                ev.Range = model.Range;
+                ev.Name = model.Name;
+                _unitOfWork.Save();
+                return RedirectToAction("Index", new { result = "add" });
+            }
+            return View(model);
         }
     }
 }

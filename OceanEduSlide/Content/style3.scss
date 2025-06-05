@@ -136,13 +136,16 @@ $blue: #2D3AE2;
     overflow: auto !important;
 }
 .list_table tr th, .list_table tr td {
-    padding: 2px !important;
+    padding: 2px;
 }
 .col-w90 {
     min-width: 90px !important;
 }
 .col-w65 {
     min-width: 65px !important;
+}
+.col-w200 {
+    min-width: 250px !important;
 }
 h2{
     margin-bottom:5px !important;

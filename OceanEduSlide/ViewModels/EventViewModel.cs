@@ -1,4 +1,5 @@
-﻿using OceanEduSlide.Models;
+﻿using OceanEduSlide.Migrations;
+using OceanEduSlide.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Event> Events { get; set; }
         public IEnumerable<User> Users { get; set; }
+        public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
         public User User { get; set; }
         public class UserItem
         {
@@ -27,7 +29,10 @@ namespace OceanEduSlide.ViewModels
             public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
 
         }
-
+        public decimal? SumRevenue(int dayOfWeek)
+        {
+            return Revenues?.Where(r => (int)r.DayofWeek == dayOfWeek).Sum(r => r.TargetBM) ?? null;
+        }
     }
     public class UpdatePercentViewModel
     {

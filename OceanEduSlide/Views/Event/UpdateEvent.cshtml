@@ -1,0 +1,92 @@
+﻿@model OceanEduSlide.Models.Event
+@{
+    ViewBag.Title = "Cập nhật hoạt động";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+<div class="container py-3">
+    <h2 class="mb-3">Cập nhật hoạt động @Html.DisplayFor(a => Model.DayofWeek) - @Html.DisplayFor(a => Model.WeekNumber) - Tháng @Model.Month - @Model.Year </h2>
+    <a class="btn quick-link" href="@Url.Action("Index", new {month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.WeekNumber})"><i class="far fa-list me-1"></i> Kế hoạch hoạt động</a>
+    <div class="box_content">
+        @using (Html.BeginForm("UpdateEvent", "Event", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+        <table class="form_table">
+            @Html.HiddenFor(a => a.Id)
+            @*@Html.HiddenFor(a => a.OfficeId)
+            @Html.HiddenFor(a => a.Month)
+            @Html.HiddenFor(a => a.DayofWeek)
+            @Html.HiddenFor(a => a.WeekNumber)
+            @Html.HiddenFor(a => a.Year)*@
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.TypeEvent)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.TypeEvent, "Chọn loại hoạt động", new { @class = "form_control" })
+                    @Html.ValidationMessageFor(model => model.TypeEvent)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Name)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Name)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.TypeJoin)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.TypeJoin, "Chọn đối tượng tham gia", new { @class = "form_control" })
+                    @Html.ValidationMessageFor(model => model.TypeJoin)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Ages)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Ages)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Range)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Range)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.TimeFrom)</td>
+                <td class="form_text">
+                    @Html.TextBoxFor(model => model.TimeFrom, new { @class = "timepicker", @style = "width:100px" })
+                    @Html.ValidationMessageFor(model => model.TimeFrom)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.TimeTo)</td>
+                <td class="form_text">
+                    @Html.TextBoxFor(model => model.TimeTo, new { @class = "timepicker", @style = "width:100px" })
+                    @Html.ValidationMessageFor(model => model.TimeTo)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.LinkName)</td>
+                <td class="form_text">@Html.EditorFor(model => model.LinkName)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
+                <td class="form_text">@Html.EditorFor(model => model.LinkUrl)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+
+        </table>
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script>
+        flatpickr(".timepicker", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+
+    </script>
+}

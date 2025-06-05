@@ -24,6 +24,8 @@ namespace OceanEduSlide.Models
         public TypeEvent TypeEvent { get; set; }
         [Display(Name = "Đối tượng tham gia"), Required(ErrorMessage = "Hãy chọn đối tượng tham gia")]
         public TypeJoin TypeJoin { get; set; }
+        [Display(Name = "Tên hoạt động"), Required(ErrorMessage = "Hãy tên hoạt động"), StringLength(35, ErrorMessage = "Tối đa 35 ký tự"), UIHint("TextBox")]
+        public string Name { get; set; }
         [Display(Name = "Lứa tuổi"), Required(ErrorMessage = "Hãy nhập lừa tuổi"), StringLength(15, ErrorMessage = "Tối đa 15 ký tự"), UIHint("TextBox")]
         public string Ages { get; set; }
         [Display(Name = "Quy mô số lượng dự kiến"), Required(ErrorMessage = "Hãy nhập quy mô số lượng dự kiến"), UIHint("NumberBox")]
@@ -53,7 +55,7 @@ namespace OceanEduSlide.Models
     public enum TypeEvent
     {
         [Display(Name = "Hoạt động của Đào tạo")]
-        HDDT,
+        HDDT = 1,
         [Display(Name = "Sự kiện của Đào tạo")]
         SKDT,
         [Display(Name = "Hoạt động của sale")]
