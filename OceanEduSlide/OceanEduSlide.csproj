@@ -355,13 +355,19 @@
     <Compile Include="Migrations\202506050348064_rangestring.Designer.cs">
       <DependentUpon>202506050348064_rangestring.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506061026219_debt.cs" />
+    <Compile Include="Migrations\202506061026219_debt.Designer.cs">
+      <DependentUpon>202506061026219_debt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
+    <Compile Include="Models\DownPathway.cs" />
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
+    <Compile Include="Models\Debt.cs" />
     <Compile Include="Models\RevenueUser_Month_BM.cs" />
     <Compile Include="Models\RevenueUser_DayOfWeek.cs" />
     <Compile Include="Models\RevenueUser_Week_Real.cs" />
@@ -1209,6 +1215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506050348064_rangestring.resx">
       <DependentUpon>202506050348064_rangestring.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506061026219_debt.resx">
+      <DependentUpon>202506061026219_debt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
