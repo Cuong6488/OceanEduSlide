@@ -1,5 +1,8 @@
 ﻿@using OceanEduSlide.ViewModels
 @model RevenueOffice_BMViewModel
+@{
+    ViewBag.Title = "Cập nhật kế hoạch phân bổ doanh số";
+}
 @Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })
 <div class="container py-3">
     @if (ViewBag.Result == "add")
@@ -9,7 +12,7 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>}
     <h2 class="">Cập nhật kế hoạch phân bổ doanh số tháng @Model.RevenueOffice.Month - @Model.RevenueOffice.Year chi nhánh @Model.OfficeName</h2>
-    <a class="btn quick-link" href="@Url.Action("ListRevenueOffice_BM")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>
+    <a class="btn quick-link" href="@Url.Action("Revenue")"><i class="far fa-list me-1"></i> Kế hoạch phân bổ doanh số tháng @Model.RevenueOffice.Month</a>
     <div class="box_content px-5 mb-5">
         @using (Html.BeginForm())
         {

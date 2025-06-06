@@ -48,8 +48,6 @@ namespace OceanEduSlide.Controllers
                 model.OfficeId = User.OfficeId;
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
-            ViewBag.WorkingWeeks = 5;
-            ViewBag.CurrentWeeks = 0;
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);

@@ -45,21 +45,36 @@ $(".btnedit-input").on("click", function () {
     });
     //$(".input-note").val($(".input-note").val() + note);
 });
+
 $(".targetuser_month_HO").each(function () {
     var targetuser_month_HO_text = $(this).text().trim();
+    var targetuser_month_BM = 0;
     if (targetuser_month_HO_text !== "Chưa cập nhật") {
         var targetuser_month_HO = targetuser_month_HO_text.replace(/\,/g, "");
-        var targetuser_month_BM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs").val().replace(/\,/g, "");
+        targetuser_month_BM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs").val().replace(/\,/g, "");
         if (targetuser_month_BM !== "" && targetuser_month_HO !== "") {
             var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
             $(this).siblings(".percent_user_month").text(percent_user_month);
         }
     }
-    $(this).closest("tr").find(".input-RevenueUser_Week").each(function () {
+    var currentWeek = $("input[name='CurrentWeek']").val();
+    var totalWeekTarget = 0;
+    $(this).closest("tr").find(".input-RevenueUser_Week").each(function (index) {
         var weekTarget = $(this).val().trim().replace(/\,/g, "");
         if (weekTarget !== "") {
             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
             $(this).closest("td").next(".week-percent").text(percent_user_week);
+            totalWeekTarget += parseFloat(weekTarget) || 0;
+        }
+        if (targetuser_month_BM > 0 && totalWeekTarget !== targetuser_month_BM) {
+            if (index >= currentWeek) {
+                $(this).siblings(".revenue-value-week_BM").text("");
+                //$(this).siblings(".btnedit-input").css("display","none");
+                $(this).closest("td").next("td").text("");
+                $(this).val("");
+                //$(this).css("display", "block");
+
+            }
         }
     });
     $(this).closest("tr").find(".week-real").each(function () {
@@ -78,6 +93,7 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
         month = $("select[name='Month']").val();
+
         $.post("/TuyenSinh/AddOrUpdateRevenueMonth", { year: year, month: month, targetBM: targetBM, userId: userId }, function (data) {
             if (data.status) {
                 $.toast({
@@ -94,6 +110,15 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
                     var targetuser_month_BM = thisElement.val().replace(/\,/g, "");
                     var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
                     thisElement.closest("td").siblings(".percent_user_month").text(percent_user_month);
+                    var currentWeek = $("input[name='CurrentWeek']").val();
+                    thisElement.closest("tr").find(".revenue-value-week_BM").each(function (index) {
+                        if (index >= currentWeek) {
+                            $(this).siblings(".input-RevenueUser_Week").val("");
+                            $(this).closest("td").next("td").text("");
+                            $(this).text("");
+                        }
+
+                    });
                 }
             } else {
                 $.toast({
@@ -113,32 +138,78 @@ $(".input-RevenueUser_Week").on("change", function () {
         year = $("select[name='Year']").val();
         month = $("select[name='Month']").val();
         weekNumber = thisElement.siblings(".input-weekNumber").val();
-        $.post("/TuyenSinh/AddOrUpdateRevenueWeek", { year: year, month: month, targetBM: targetBM, userId: userId, weekNumber: weekNumber }, function (data) {
-            if (data.status) {
-                $.toast({
-                    heading: 'Cập nhật thành công',
-                    icon: 'success'
-                })
+        var target_Month_text = thisElement.closest("tr").find(".revenue-value-month_BM").text().trim().replace(/\,/g, "");
+        if (target_Month_text === "") {
+            alert("Bạn chưa nhập chỉ tiêu dự kiến hoàn thành của tháng");
+            thisElement.siblings(".btnedit-input").css("display", "block");
+            thisElement.siblings(".revenue-value").css("display", "block");
+            thisElement.css("display", "none");
+            thisElement.val(thisElement.siblings(".revenue-value").text());
+        }
+        else {
+            var totalWeekTarget = 0;
+            var emptyCount = 0;
+
+            var target_Month = parseFloat(target_Month_text);
+            thisElement.closest("tr").find(".revenue-value-week_BM").each(function () {
+                var weekTarget = $(this).text().trim().replace(/\,/g, "");
+                var input_Week = $(this).siblings(".input-RevenueUser_Week").val().trim();
+                if (input_Week === "")
+                    emptyCount++;
+                if ($(this).is(thisElement.siblings())) {
+                    weekTarget = targetBM;
+                }
+                if (weekTarget !== "") {
+                    totalWeekTarget += parseFloat(weekTarget) || 0;
+                }
+            });
+            if (totalWeekTarget > target_Month) {
+            }
+            if (totalWeekTarget > target_Month) {
+
+                alert("Tổng chỉ tiêu các tuần không được vượt quá chỉ tiêu của tháng");
                 thisElement.siblings(".btnedit-input").css("display", "block");
                 thisElement.siblings(".revenue-value").css("display", "block");
                 thisElement.css("display", "none");
-                thisElement.siblings(".revenue-value").text(thisElement.val());
-                var targetuser_month_BM_text = thisElement.closest("tr").find(".input-RevenueUser_Month_BMs").val().trim();
-                if (targetuser_month_BM_text !== "") {
-                    var targetuser_month_BM = targetuser_month_BM_text.replace(/\,/g, "");
-                    var targetuser_week = thisElement.val().replace(/\,/g, "");
-                    var percent_user_week = Math.round(targetuser_week / targetuser_month_BM * 100);
-                    thisElement.closest("td").next(".week-percent").text(percent_user_week);
-                }
-
-            } else {
-                $.toast({
-                    heading: 'Cập nhật thất bại',
-                    icon: 'error'
-                })
-                location.reload();
+                thisElement.val(thisElement.siblings(".revenue-value").text());
             }
-        });
+            else if (emptyCount < 1 && totalWeekTarget !== target_Month) {
+                alert("Tổng chỉ tiêu các tuần phải bằng chỉ tiêu của tháng");
+                thisElement.siblings(".btnedit-input").css("display", "block");
+                thisElement.siblings(".revenue-value").css("display", "block");
+                thisElement.css("display", "none");
+                thisElement.val(thisElement.siblings(".revenue-value").text());
+            }
+            else {
+
+                $.post("/TuyenSinh/AddOrUpdateRevenueWeek", { year: year, month: month, targetBM: targetBM, userId: userId, weekNumber: weekNumber }, function (data) {
+                    if (data.status) {
+                        $.toast({
+                            heading: 'Cập nhật thành công',
+                            icon: 'success'
+                        })
+                        thisElement.siblings(".btnedit-input").css("display", "block");
+                        thisElement.siblings(".revenue-value").css("display", "block");
+                        thisElement.css("display", "none");
+                        thisElement.siblings(".revenue-value").text(thisElement.val());
+                        var targetuser_month_BM_text = thisElement.closest("tr").find(".input-RevenueUser_Month_BMs").val().trim();
+                        if (targetuser_month_BM_text !== "") {
+                            var targetuser_month_BM = targetuser_month_BM_text.replace(/\,/g, "");
+                            var targetuser_week = thisElement.val().replace(/\,/g, "");
+                            var percent_user_week = Math.round(targetuser_week / targetuser_month_BM * 100);
+                            thisElement.closest("td").next(".week-percent").text(percent_user_week);
+                        }
+
+                    } else {
+                        $.toast({
+                            heading: 'Cập nhật thất bại',
+                            icon: 'error'
+                        })
+                        location.reload();
+                    }
+                });
+            }
+        }
     }
 });
 
@@ -167,35 +238,38 @@ $(".input-RevenueUser_Day").on("change", function () {
                 text: 'Số lượng khách hàng chuyển đổi số dự kiến phải là số nguyên dương',
                 icon: 'warning'
             })
+        else {
 
-        year = $("select[name='Year']").val();
-        month = $("select[name='Month']").val();
-        week = $("select[name='Week']").val();
-        dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
-        $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
-            if (data.status) {
-                $.toast({
-                    heading: 'Cập nhật thành công',
-                    icon: 'success'
-                })
-                thisElement.siblings(".btnedit-input").css("display", "block");
-                thisElement.siblings(".revenue-value").css("display", "block");
-                thisElement.css("display", "none");
-                thisElement.siblings(".revenue-value").text(thisElement.val());
+            year = $("select[name='Year']").val();
+            month = $("select[name='Month']").val();
+            week = $("select[name='Week']").val();
+            dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
+            $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+                if (data.status) {
+                    $.toast({
+                        heading: 'Cập nhật thành công',
+                        icon: 'success'
+                    })
+                    thisElement.siblings(".btnedit-input").css("display", "block");
+                    thisElement.siblings(".revenue-value").css("display", "block");
+                    thisElement.css("display", "none");
+                    thisElement.siblings(".revenue-value").text(thisElement.val());
 
-                thisElement.closest("td").next(".day-target-number").find(".btnedit-input").css("display", "block");
-                thisElement.closest("td").next(".day-target-number").find(".revenue-value").css("display", "block");
-                thisElement.closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").css("display", "none");
-                thisElement.closest("td").next(".day-target-number").find(".revenue-value").text(targetBM_DT);
+                    thisElement.closest("td").next(".day-target-number").find(".btnedit-input").css("display", "block");
+                    thisElement.closest("td").next(".day-target-number").find(".revenue-value").css("display", "block");
+                    thisElement.closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").css("display", "none");
+                    thisElement.closest("td").next(".day-target-number").find(".revenue-value").text(targetBM_DT);
 
-            } else {
-                $.toast({
-                    heading: 'Cập nhật thất bại',
-                    icon: 'error'
-                })
-                location.reload();
-            }
-        });
+                } else {
+                    $.toast({
+                        heading: 'Cập nhật thất bại',
+                        icon: 'error'
+                    })
+                    location.reload();
+                }
+            });
+        }
+
     }
 });
 $(".input-RevenueUser_Day_DT").on("change", function () {
@@ -224,33 +298,35 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
                 text: 'Số lượng khách hàng chuyển đổi số dự kiến phải là số nguyên dương',
                 icon: 'warning'
             })
+        else {
+            year = $("select[name='Year']").val();
+            month = $("select[name='Month']").val();
+            week = $("select[name='Week']").val();
+            dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
+            $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+                if (data.status) {
+                    $.toast({
+                        heading: 'Cập nhật thành công',
+                        icon: 'success'
+                    })
+                    thisElement.siblings(".btnedit-input").css("display", "block");
+                    thisElement.siblings(".revenue-value").css("display", "block");
+                    thisElement.css("display", "none");
+                    thisElement.siblings(".revenue-value").text(thisElement.val());
+                    thisElement.closest("td").prev(".day-target").find(".btnedit-input").css("display", "block");
+                    thisElement.closest("td").prev(".day-target").find(".revenue-value").css("display", "block");
+                    thisElement.closest("td").prev(".day-target").find(".input-RevenueUser_Day").css("display", "none");
+                    thisElement.closest("td").prev(".day-target").find(".revenue-value").text(targetBM_text);
 
-        year = $("select[name='Year']").val();
-        month = $("select[name='Month']").val();
-        week = $("select[name='Week']").val();
-        dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
-        $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
-            if (data.status) {
-                $.toast({
-                    heading: 'Cập nhật thành công',
-                    icon: 'success'
-                })
-                thisElement.siblings(".btnedit-input").css("display", "block");
-                thisElement.siblings(".revenue-value").css("display", "block");
-                thisElement.css("display", "none");
-                thisElement.siblings(".revenue-value").text(thisElement.val());
-                thisElement.closest("td").prev(".day-target").find(".btnedit-input").css("display", "block");
-                thisElement.closest("td").prev(".day-target").find(".revenue-value").css("display", "block");
-                thisElement.closest("td").prev(".day-target").find(".input-RevenueUser_Day").css("display", "none");
-                thisElement.closest("td").prev(".day-target").find(".revenue-value").text(targetBM_text);
+                } else {
+                    $.toast({
+                        heading: 'Cập nhật thất bại',
+                        icon: 'error'
+                    })
+                    location.reload();
+                }
+            });
+        }
 
-            } else {
-                $.toast({
-                    heading: 'Cập nhật thất bại',
-                    icon: 'error'
-                })
-                location.reload();
-            }
-        });
     }
 });

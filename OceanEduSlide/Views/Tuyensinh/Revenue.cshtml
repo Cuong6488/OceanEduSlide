@@ -1,13 +1,16 @@
 ﻿@using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
 @model RevenueViewModel
+@{
+    ViewBag.Title = "Phân bổ doanh số";
+}
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error {
         display: none !important;
     }
-
-
 </style>
+
+<input type="hidden" name="CurrentWeek" value="@ViewBag.CurrentWeek" />
 @Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })
 <div class="container py-3">
     @if (ViewBag.Result == "add")
@@ -61,59 +64,118 @@
             Thêm chỉ tiêu doanh số
         </a>
     }
-    <div class="fw-bold mb-1">
-        Chỉ tiêu doanh số
-    </div>
     @if (Model.RevenueOffice != null)
     {
-        <div class="revenue-office d-lg-flex mb-3">
-            <div class="mb-2 mb-lg-0 me-4">
-                Chỉ tiêu doanh số tuyển sinh: <span>@Model.RevenueOffice.Target_TS.ToString("N0")đ</span>
-            </div>
-            <div class="mb-2 mb-lg-0 me-4">
-                Chỉ tiêu doanh số học vụ: <span>@Model.RevenueOffice.Target_HV.ToString("N0")đ</span>
-            </div>
-            <div>
-                Chỉ tiêu doanh số kế toán: <span>@Model.RevenueOffice.Target_SAB.ToString("N0")đ</span>
-            </div>
-        </div>
-        <div class="fw-bold mb-1">
-            Kế hoạch phân bổ doanh số
-        </div>
-        var revenueOffice_BM = Model.RevenueOffice_BMs.FirstOrDefault();
 
-        if (revenueOffice_BM != null)
-        {
-            decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
-            decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / revenueOffice_BM.TargetBM_TS * 1000) / 10;
-            decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
-            decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
-            <div class="revenue-office d-lg-flex mb-3">
-                <div class="mb-2 mb-lg-0 me-4">
-                    Cam kết hoàn thành doanh số: <span>@revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)</span>
-                </div>
-                <div class="mb-2 mb-lg-0 me-4">
-                    Phân bổ DS theo ghi danh mới: <span>@revenueOffice_BM.TargetBM_New.ToString("N0")đ (@New_percent%)</span>
-                </div>
-                <div class="mb-2 mb-lg-0 me-4">
-                    Phân bổ DS theo tái phí: <span>@revenueOffice_BM.TargetBM_HV.ToString("N0")đ (@HV_percent%)</span>
-                </div>
-                <div class="mb-2 mb-lg-0 me-4">
-                    Phân bổ DS theo SAB: <span>@revenueOffice_BM.TargetBM_SAB.ToString("N0")đ (@SAB_percent%)</span>
-                </div>
+        <h2>Chỉ tiêu - kế hoạch phân bổ doanh số</h2>
+        <div class="box_content mt-0 mb-5">
+            <table class="list_table tablecenter table-striped listrevenue-user">
+                <tbody>
+                    <tr class="text-center">
+                        <th colspan="3">Chỉ tiêu doanh số công ty</th>
+                        <th colspan="4">Kế hoạch phân bổ doanh số</th>
+                    </tr>
+                    <tr class="text-center">
+                        <th class="col-w90">Chỉ tiêu doanh số tuyển sinh</th>
+                        <th class="col-w90">Chỉ tiêu doanh số học vụ</th>
+                        <th class="col-w90">Chỉ tiêu doanh số kế toán</th>
+                        <th class="col-w90">Cam kết hoàn thành doanh số</th>
+                        <th class="col-w90">Phân bổ DS theo ghi danh mới</th>
+                        <th class="col-w90">Phân bổ DS theo tái phí</th>
+                        <th class="col-w90">Phân bổ DS theo SAB</th>
+                    </tr>
+                    <tr class="text-center fw-bold">
+                        <td>
+                            @Model.RevenueOffice.Target_TS.ToString("N0")đ
+                        </td>
+                        <td>
+                            @Model.RevenueOffice.Target_HV.ToString("N0")đ
+                        </td>
+                        <td>
+                            @Model.RevenueOffice.Target_SAB.ToString("N0")đ
+                        </td>
+                        @{
+                            var revenueOffice_BM = Model.RevenueOffice_BMs.FirstOrDefault();
+                        }
+                        @if (revenueOffice_BM != null)
+                        {
+                            decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
+                            decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / revenueOffice_BM.TargetBM_TS * 1000) / 10;
+                            decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
+                            decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
+                            <td>
+                                @revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)
+                            </td>
+                            <td>
+                                @revenueOffice_BM.TargetBM_New.ToString("N0")đ (@New_percent%)
+                            </td>
+                            <td>
+                                @revenueOffice_BM.TargetBM_HV.ToString("N0")đ (@HV_percent%)
+                            </td>
+                            <td>
+                                @revenueOffice_BM.TargetBM_SAB.ToString("N0")đ (@SAB_percent%)
+                            </td>
+                        }
+                        else
+                        {
+                            for (int i = 1; i <= 4; i++)
+                            {
+                                <td>Chưa cập nhật</td>
+                            }
+                        }
+                    </tr>
 
-                <div class="btnhistory-input">
-                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueOffice",  new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId})"
-                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                </tbody>
+            </table>
+        </div>
+        @*<div class="revenue-office d-lg-flex mb-3">
+                <div class="mb-2 mb-lg-0 me-4">
+                    Chỉ tiêu doanh số tuyển sinh: <span>@Model.RevenueOffice.Target_TS.ToString("N0")đ</span>
+                </div>
+                <div class="mb-2 mb-lg-0 me-4">
+                    Chỉ tiêu doanh số học vụ: <span>@Model.RevenueOffice.Target_HV.ToString("N0")đ</span>
+                </div>
+                <div>
+                    Chỉ tiêu doanh số kế toán: <span>@Model.RevenueOffice.Target_SAB.ToString("N0")đ</span>
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="alert alert-success mb-3">
-                Chưa cập nhật kế hoạch phân bổ doanh số
+            <div class="fw-bold mb-1">
+                Kế hoạch phân bổ doanh số
             </div>
-        }
+            var revenueOffice_BM = Model.RevenueOffice_BMs.FirstOrDefault();
+
+            if (revenueOffice_BM != null)
+            {
+                decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
+                decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / revenueOffice_BM.TargetBM_TS * 1000) / 10;
+                decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
+                decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
+                <div class="revenue-office d-lg-flex mb-3">
+                    <div class="mb-2 mb-lg-0 me-4">
+                        Cam kết hoàn thành doanh số: <span>@revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)</span>
+                    </div>
+                    <div class="mb-2 mb-lg-0 me-4">
+                        Phân bổ DS theo ghi danh mới: <span>@revenueOffice_BM.TargetBM_New.ToString("N0")đ (@New_percent%)</span>
+                    </div>
+                    <div class="mb-2 mb-lg-0 me-4">
+                        Phân bổ DS theo tái phí: <span>@revenueOffice_BM.TargetBM_HV.ToString("N0")đ (@HV_percent%)</span>
+                    </div>
+                    <div class="mb-2 mb-lg-0 me-4">
+                        Phân bổ DS theo SAB: <span>@revenueOffice_BM.TargetBM_SAB.ToString("N0")đ (@SAB_percent%)</span>
+                    </div>
+
+                    <div class="btnhistory-input">
+                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueOffice",  new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId})"
+                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success mb-3">
+                    Chưa cập nhật kế hoạch phân bổ doanh số
+                </div>
+            }*@
     }
     else
     {
@@ -123,6 +185,7 @@
     }
 
 
+    <h2>Kế hoạch phân bổ doanh số theo tuần</h2>
     <div class="box_content mt-0">
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
@@ -164,7 +227,6 @@
                             {
                                 <td class="targetuser_month_HO">
                                     @revenueOffice.RevenueUser_Month.Target.ToString("N0")
-
                                 </td>
                                 var revenueUser_Month_BM = revenueOffice.RevenueUser_Month_BMs.FirstOrDefault();
                                 <td>
@@ -175,7 +237,7 @@
                                             <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id})"
                                                data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                         </div>
-                                        <div class="revenue-value">
+                                        <div class="revenue-value revenue-value-month_BM">
                                             @revenueUser_Month_BM.TargetBM.ToString("N0")
                                         </div>
                                         if (Model.User.TypeUser == TypeUser.BM && Model.Month >= DateTime.Now.Month)
@@ -190,7 +252,7 @@
                                     {
                                         if (Model.User.TypeUser == TypeUser.BM && Model.Month >= DateTime.Now.Month)
                                         {
-                                            <div class="revenue-value hidden">
+                                            <div class="revenue-value hidden revenue-value-month_BM">
 
                                             </div>
                                             <div class="btnedit-input btn-edit-month hidden">
@@ -213,7 +275,7 @@
                                                 <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
                                                    data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                             </div>
-                                            <div class="revenue-value">
+                                            <div class="revenue-value revenue-value-week_BM">
                                                 @(revenueUser_Week.TargetBM.ToString("N0"))
                                             </div>
                                             if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
@@ -232,7 +294,7 @@
                                         {
                                             if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
                                             {
-                                                <div class="revenue-value hidden">
+                                                <div class="revenue-value hidden revenue-value-week_BM">
 
                                                 </div>
                                                 <div class="btnedit-input hidden">

@@ -5,7 +5,7 @@
         <tbody>
             <tr>
                 <th style="text-align: center">Thời gian cập nhật</th>
-                <th style="text-align: center">Công việc</th>
+                <th style="text-align: center">Chỉ tiêu</th>
             </tr>
             @foreach (var item in Model.Revenues)
             {
@@ -14,7 +14,7 @@
                         @Html.DisplayFor(a => item.CreateDate)
                     </td>
                     <td>
-                        
+                        @Html.DisplayFor(a => item.TargetBM)
                     </td>
                 </tr>
             }

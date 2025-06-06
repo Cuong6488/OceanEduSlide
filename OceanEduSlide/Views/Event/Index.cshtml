@@ -1,13 +1,16 @@
 ﻿@using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
 @model EventViewModel
+    @{ 
+        ViewBag.Title = "Sự kiện";
+    }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error, #Week-error {
         display: none !important;
     }
 </style>
-
 @Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
 <div class="container py-3">
     @if (ViewBag.Result == "add")
@@ -62,6 +65,8 @@
     {
         <h2>KẾ HOẠCH TUẦN @Model.Week - Tháng @Model.Month - @Model.Year DỰ KIẾN</h2>
         <div class="box_content mt-0 mb-5">
+
+            <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
                     <tr>
@@ -203,8 +208,8 @@
                             foreach (var item in Model.UserItems)
                             {
                                 <tr>
-                                    <td>
-                                        @(item.User.Fullname ?? item.User.Username) @(item.User.MaNhanVien != null? " - "+  @item.User.MaNhanVien:"") 
+                                    <td class="text-start px-2">
+                                        @(item.User.Fullname ?? item.User.Username) @(item.User.MaNhanVien != null? " - "+  @item.User.MaNhanVien:"")
                                     </td>
                                     @if (ViewBag.WorkingWeeks != Model.Week)
                                     {
@@ -278,7 +283,7 @@
                 </tbody>
             </table>
         </div>
-        <h2>KẾ HOẠCH CÔNG VIỆC NHÂN SỰ TUẦN @Model.Week - Tháng @Model.Month - @Model.Year</h2>
+        @*<h2>KẾ HOẠCH CÔNG VIỆC NHÂN SỰ TUẦN @Model.Week - Tháng @Model.Month - @Model.Year</h2>
         <div class="box_content mt-0 mb-5">
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
@@ -387,7 +392,7 @@
                     }
                 </tbody>
             </table>
-        </div>
+        </div>*@
         <h2>BẢNG THEO DÕI DOANH THU DỰ KIẾN TUẦN @Model.Week - Tháng @Model.Month - @Model.Year</h2>
         <div class="box_content mt-0 mb-5">
             <table class="list_table tablecenter table-striped text-center">

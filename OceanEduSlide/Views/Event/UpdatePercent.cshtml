@@ -1,6 +1,9 @@
 ﻿@using OceanEduSlide.ViewModels
 @model UpdatePercentViewModel
-@Html.Action("Header","TuyenSinh", new {name = "Sự kiện"})
+@{
+    ViewBag.Title = "Cập nhật tỉ lệ chuyển đổi";
+}
+@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
 <div class="container py-3">
     <h2 class="">Cập nhật tỉ lệ chuyển đổi</h2>
     <a class="btn quick-link" href="#list-percent"><i class="far fa-list me-1"></i> Danh sách tỉ lệ chuyển đổi</a>

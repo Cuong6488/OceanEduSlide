@@ -29,9 +29,17 @@ namespace OceanEduSlide.ViewModels
             public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
 
         }
+        //public decimal? SumRevenue(int dayOfWeek)
+        //{
+        //    return Revenues?.Where(r => (int)r.DayofWeek == dayOfWeek).Sum(r => r.TargetBM) ?? null;
+        //}
         public decimal? SumRevenue(int dayOfWeek)
         {
-            return Revenues?.Where(r => (int)r.DayofWeek == dayOfWeek).Sum(r => r.TargetBM) ?? null;
+            return UserItems?
+                .Select(userItem => userItem.Revenues?
+                    .Where(r => (int)r.DayofWeek == dayOfWeek)
+                    .FirstOrDefault()?.TargetBM)
+                .Sum() ?? null;
         }
     }
     public class UpdatePercentViewModel
