@@ -1093,6 +1093,10 @@
     <Content Include="Views\Event\LoadHistoryRevenueUser_Day.cshtml" />
     <Content Include="Views\Event\AddEvent.cshtml" />
     <Content Include="Views\Event\UpdateEvent.cshtml" />
+    <Content Include="Views\Event\ListDebt.cshtml" />
+    <Content Include="Views\Event\UpdateDebt.cshtml" />
+    <Content Include="Views\Event\UpdateDownPathway.cshtml" />
+    <Content Include="Views\Event\LoadHistoryDownPathway.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

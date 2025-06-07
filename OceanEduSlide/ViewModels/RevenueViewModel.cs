@@ -27,6 +27,7 @@ namespace OceanEduSlide.ViewModels
             public IEnumerable<RevenueUser_Month_BM> RevenueUser_Month_BMs { get; set; }
             public IEnumerable<RevenueUser_Week> RevenueUser_Weeks { get; set; }
             public IEnumerable<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
+            public decimal Debt { get; set; }
 
         }
 

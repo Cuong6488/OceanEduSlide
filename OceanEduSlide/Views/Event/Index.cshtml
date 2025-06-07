@@ -459,12 +459,10 @@
                                                 @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month)
                                                 {
                                                     {
-
                                                         <div class="btnedit-input btn-edit-day">
                                                             <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
                                                         </div>
                                                     }
-
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM.ToString("N0"))" />
                                             </td>

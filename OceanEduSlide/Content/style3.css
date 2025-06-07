@@ -74,13 +74,13 @@
   height: 40px;
   position: relative;
 }
-.box_content td .btnedit-input {
+.box_content td .btnedit-input, .box_content td .btnedit-input-debt {
   position: absolute;
   top: 2px;
   right: 2px;
   cursor: pointer;
 }
-.box_content td .btnedit-input i {
+.box_content td .btnedit-input i, .box_content td .btnedit-input-debt i {
   font-size: 10px;
 }
 .box_content td .btnhistory-input {

@@ -88,6 +88,13 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose of any resources here if needed
+            }
+            base.Dispose(disposing);
+        }
     }
 }

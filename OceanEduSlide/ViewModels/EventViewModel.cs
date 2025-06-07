@@ -42,6 +42,23 @@ namespace OceanEduSlide.ViewModels
                 .Sum() ?? null;
         }
     }
+
+    public class DebtViewModel
+    {
+        public int? Year { get; set; }
+        public int? Month { get; set; }
+        public int? OfficeId { get; set; }
+        public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<Debt> Debts { get; set; }
+        public User User { get; set; }
+    }
+    public class DownPathwayViewModel
+    {
+        public DownPathway DownPathway { get; set; }
+
+        [Display(Name = "Số tiền giảm sau khi điều chỉnh lộ trình"),Required(ErrorMessage ="Hãy nhập số tiền giảm"), UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Money { get; set; }
+    }
     public class UpdatePercentViewModel
     {
         public int UserId { get; set; }

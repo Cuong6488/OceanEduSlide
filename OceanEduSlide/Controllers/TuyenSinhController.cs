@@ -56,6 +56,7 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId).ToList();
+
                     var userItems = users.Select(a => new RevenueViewModel.UserItem
                     {
                         User = a,
@@ -63,8 +64,11 @@ namespace OceanEduSlide.Controllers
                         RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-
+                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == a.Id && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2)).Sum(q => (decimal?)q.TotalMoney) ?? 0
+                        + _unitOfWork.DownPathwayRepository.GetQuery(q => q.Debt.UserId == a.Id && q.Debt.TypeDebt == TypeDebt.Type3).Sum(q => (decimal?)q.Money) ?? 0,
+                        
                     });
+
                     model.UserItems = userItems;
                 }
 
@@ -73,8 +77,6 @@ namespace OceanEduSlide.Controllers
 
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.CurrentWeek = currentWeek;
-
-
             return View(model);
         }
         public static (int, int) CalculateWeeks(int year, int month)
@@ -298,5 +300,13 @@ namespace OceanEduSlide.Controllers
         }
 
         #endregion
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose of any resources here if needed
+            }
+            base.Dispose(disposing);
+        }
     }
 }

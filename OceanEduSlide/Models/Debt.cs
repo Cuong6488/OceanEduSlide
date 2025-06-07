@@ -26,7 +26,7 @@ namespace OceanEduSlide.Models
         public string Cth { get; set; }
         [Display(Name = "Tên QĐ ưu đãi")]
         public string DiscountName { get; set; }
-        [Display(Name = "Lộ trình")]
+        [Display(Name = "Lộ trình"), DisplayFormat(DataFormatString = "{0:N1}")]
         public decimal Pathway { get; set; }
         [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal TotalMoney { get; set; }
@@ -46,11 +46,11 @@ namespace OceanEduSlide.Models
         public string FileStatus { get; set; }
         [Display(Name = "Ngày phát sinh gộp phí")]
         public string GrossDate { get; set; }
-        [Display(Name = "Nội dung khó khăn")]
+        [Display(Name = "Nội dung khó khăn"),UIHint("TextArea")]
         public string HardContent { get; set; }
-        [Display(Name = "Tình trạng liên hệ khách")]
+        [Display(Name = "Tình trạng liên hệ khách"), UIHint("TextArea")]
         public string ContactStatus { get; set; }
-        [Display(Name = "Hướng xử lý")]
+        [Display(Name = "Hướng xử lý"), UIHint("TextArea")]
         public string HandleWay { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"),Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }

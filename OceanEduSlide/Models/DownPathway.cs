@@ -12,9 +12,9 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Công nợ"), Required]
         public int DebtId { get; set; }
-        [Display(Name = "Lộ trình giảm còn")]
+        [Display(Name = "Lộ trình giảm còn"), Required(ErrorMessage = "Hãy nhập lộ trình")]
         public decimal Pathway { get; set; }
-        [Display(Name = "Số tiền giảm sau khi điều chỉnh lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy chọn nhân sự")]
+        [Display(Name = "Số tiền giảm sau khi điều chỉnh lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy nhập số tiền")]
         public decimal Money { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }

@@ -194,6 +194,8 @@
                     <th rowspan="2" style="max-width: 40px">Chức vụ</th>
                     <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu <br /> doanh số</th>
                     <th colspan="2">Tháng</th>
+                    <th rowspan="2">Dự thu <br /> tháng trước</th>
+                    <th rowspan="2">Số tiền <br /> thực chạy</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                     {
                         <th colspan="4">Tuần @i</th>
@@ -264,6 +266,8 @@
                                 </td>
                                 <td class="percent_user_month">
                                 </td>
+                                <td class="col-w90 debt-lastmonth">@revenueOffice.Debt.ToString("N0")</td >
+                                <td class="col-w90 real-target-month"></td>
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
                                     var revenueUser_Week = revenueOffice.RevenueUser_Weeks.FirstOrDefault(a => (int)a.WeekNumber == i);

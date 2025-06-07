@@ -1,0 +1,44 @@
+﻿@model IEnumerable<OceanEduSlide.Models.DownPathway>
+<div class="box_content">
+    <h2>Lịch sử cập nhật giảm lộ trình</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th rowspan="2">Thời gian cập nhật</th>
+                <th rowspan="2" class="col-w90">
+                    Ngày phát sinh cọc
+                </th>
+                <th rowspan="2" class="col-w90">
+                    Họ tên <br /> học viên
+                </th>
+                <th rowspan="2" class="col-w90">
+                    Chương trình học
+                </th>
+                <th rowspan="2" class="col-w90">
+                    Thành tiền
+                </th>
+                <th rowspan="2" class="col-w90">
+                    NS phụ trách
+                </th>
+                <th colspan="2" class="col-w90">Số tháng giảm lộ trình</th>
+            </tr>
+            <tr>
+                <th>Từ</th>
+                <th>Đến</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(a => item.CreateDate)</td>
+                    <td>@Html.DisplayFor(a => item.Debt.DepositDate)</td>
+                    <td>@item.Debt.StudentName</td>
+                    <td>@item.Debt.Cth</td>
+                    <td>@Html.DisplayFor(a => item.Debt.TotalMoney)</td>
+                    <td>@(item.Debt.User.Fullname?? item.Debt.User.Username)</td>
+                    <td>@Html.DisplayFor(a => item.Debt.Pathway)</td>
+                    <td>@Html.DisplayFor(a => item.Pathway)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

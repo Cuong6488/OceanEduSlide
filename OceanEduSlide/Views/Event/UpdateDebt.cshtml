@@ -1,0 +1,108 @@
+﻿@model OceanEduSlide.Models.Debt
+@{
+    ViewBag.Title = "Cập nhật công nợ";
+}
+@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+<div class="container py-3">
+    <h2 class="mb-3">Cập nhật công nợ</h2>
+    <a class="btn quick-link" href="@Url.Action("ListDebt", new {month = Model.Month,year = Model.Year,officeId = Model.User.OfficeId})"><i class="far fa-list me-1"></i> Danh sách công nợ</a>
+    <div class="box_content">
+        @using (Html.BeginForm("UpdateDebt", "Event", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+        <table class="form_table">
+            @Html.HiddenFor(a => a.Id)
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.DepositDate)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.DepositDate)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.StudentName)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.StudentName)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.StudentCode)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.StudentCode)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Cth)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Cth)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.DiscountName)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.DiscountName)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Pathway)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Pathway)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.TotalMoney)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.TotalMoney)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.DebtMoney)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.DebtMoney)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.DebtMoney2)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.DebtMoney2)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.User.Fullname)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.User.Fullname)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.User.MaNhanVien)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.User.MaNhanVien)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.TypeDebt)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.TypeDebt, "Chọn loại cọc", new { @class = "form_control" })
+                    @Html.ValidationMessageFor(model => model.TypeDebt)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.TypePay)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.TypePay, "Chọn hình thức thanh toán", new { @class = "form_control" })
+                    @Html.ValidationMessageFor(model => model.TypePay)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.ChannelPay)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.ChannelPay, "Chọn kênh trả góp", new { @class = "form_control" })
+                    @Html.ValidationMessageFor(model => model.ChannelPay)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.HardContent)</td>
+                <td class="form_text">
+                    @Html.EditorFor(model => model.HardContent)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.ContactStatus)</td>
+                <td class="form_text">
+                    @Html.EditorFor(model => model.ContactStatus)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.HandleWay)</td>
+                <td class="form_text">
+                    @Html.EditorFor(model => model.HandleWay)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+
+        </table>
+        }
+    </div>
+</div>

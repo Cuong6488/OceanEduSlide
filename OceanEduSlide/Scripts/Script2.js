@@ -55,6 +55,9 @@ $(".targetuser_month_HO").each(function () {
         if (targetuser_month_BM !== "" && targetuser_month_HO !== "") {
             var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
             $(this).siblings(".percent_user_month").text(percent_user_month);
+            var debt = $(this).siblings(".debt-lastmonth").text().replace(/\,/g, "");
+            var real_target_month = targetuser_month_BM - debt;
+            $(this).siblings(".real-target-month").text(real_target_month.toLocaleString("en-US"));
         }
     }
     var currentWeek = $("input[name='CurrentWeek']").val();

@@ -1,0 +1,96 @@
+﻿@model OceanEduSlide.ViewModels.DownPathwayViewModel
+@{
+    ViewBag.Title = "Cập nhật giảm lộ trình";
+}
+@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+<div class="container py-3">
+    <h2 class="mb-3">Cập nhật công nợ</h2>
+    <a class="btn quick-link" href="@Url.Action("ListDebt", new {month = Model.DownPathway.Debt.Month,year = Model.DownPathway.Debt.Year,officeId = Model.DownPathway.Debt.User.OfficeId})"><i class="far fa-list me-1"></i>Danh sách công nợ</a>
+    <div class="box_content">
+        @using (Html.BeginForm("UpdateDownPathway", "Event", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.DownPathway.DebtId)
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.DepositDate)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.DepositDate)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.StudentName)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.StudentName)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.StudentCode)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.StudentCode)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.Cth)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.Cth)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.DiscountName)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.DiscountName)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.Pathway)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.Pathway)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.TotalMoney)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.TotalMoney)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.DebtMoney)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.DebtMoney)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.DebtMoney2)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.DebtMoney2)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.User.Fullname)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.User.Fullname)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownPathway.Debt.User.MaNhanVien)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.User.MaNhanVien)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">Số tháng giảm lộ trình từ</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.DownPathway.Debt.Pathway)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">Số tháng giảm lộ trình đến</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.DownPathway.Pathway, new { @style = "width:100px" })
+                        @Html.ValidationMessageFor(model => model.DownPathway.Pathway)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Money)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Money)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

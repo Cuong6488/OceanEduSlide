@@ -22,7 +22,7 @@ namespace OceanEduSlide.Controllers
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
-
+        #region Sự_Kiện
         public ActionResult Index(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
             if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
@@ -354,6 +354,106 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("Index", new { result = "add" });
             }
             return View(model);
+        }
+        #endregion
+
+        #region Công_nợ
+        public ActionResult ListDebt(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
+        {
+            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
+                return RedirectToAction("Index", "Home");
+            ViewBag.Result = Result;
+            var model = new DebtViewModel
+            {
+                Month = Month ?? DateTime.Now.Month,
+                Year = Year ?? DateTime.Now.Year,
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name)),
+                User = User,
+            };
+            if (User.TypeUser == TypeUser.BM)
+                model.OfficeId = User.OfficeId;
+            if (model.OfficeId != null)
+            {
+                var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
+                if (office != null)
+                    model.Debts = _unitOfWork.DebtRepository.GetQuery(a => a.User.OfficeId == model.OfficeId);
+            }
+            return View(model);
+        }
+        public ActionResult UpdateDebt(int id)
+        {
+            var debt = _unitOfWork.DebtRepository.GetById(id);
+            if (debt == null)
+                return RedirectToAction("Index");
+            return View(debt);
+        }
+        [HttpPost]
+        public ActionResult UpdateDebt(Debt model)
+        {
+            var debt = _unitOfWork.DebtRepository.GetById(model.Id);
+            if (debt == null)
+                return RedirectToAction("ListDebt");
+            if (ModelState.IsValid)
+            {
+                debt.TypeDebt = model.TypeDebt;
+                debt.TypePay = model.TypePay;
+                debt.ChannelPay = model.ChannelPay;
+                debt.TypeDebt = model.TypeDebt;
+                debt.HardContent = model.HardContent;
+                debt.ContactStatus = model.ContactStatus;
+                debt.HandleWay = model.HandleWay;
+                _unitOfWork.Save();
+                return RedirectToAction("ListDebt", new { result = "add" });
+            }
+            return View(model);
+        }
+        public ActionResult UpdateDownPathway(int debtId)
+        {
+            var debt = _unitOfWork.DebtRepository.GetById(debtId);
+            if (debt == null)
+                return RedirectToAction("ListDebt");
+            var downPathway = new DownPathwayViewModel
+            {
+                DownPathway = new DownPathway
+                {
+                    DebtId = debtId,
+                    Debt = debt,
+                }
+
+            };
+            return View(downPathway);
+        }
+        [HttpPost]
+        public ActionResult UpdateDownPathway(DownPathwayViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.Money != null)
+                {
+                    model.DownPathway.Money = Convert.ToDecimal(model.Money.Replace(",", ""));
+                }
+
+                _unitOfWork.DownPathwayRepository.Insert(model.DownPathway);
+                _unitOfWork.Save();
+                return RedirectToAction("ListDebt", new { result = "add" });
+            }
+
+            return View(model);
+        }
+        public PartialViewResult LoadHistoryDownPathway(int debtId)
+        {
+            var model = _unitOfWork.DownPathwayRepository.Get(a => a.DebtId == debtId);
+            return PartialView(model);
+        }
+        #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose of any resources here if needed
+            }
+            base.Dispose(disposing);
         }
     }
 }
