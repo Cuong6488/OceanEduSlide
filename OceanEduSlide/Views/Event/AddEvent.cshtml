@@ -73,36 +73,41 @@
                         @foreach (var item in Model.Users)
                         {
                             <label>
-                                <input class="checkbox-days" type="checkbox" value="@item.Id," />
+                                <input class="checkbox-days" type="checkbox" value="@item.Id," @((Model.Event.UserIds??"").Contains("," + item.Id + ",") ? "checked" : "") />
                                 @(item.Fullname?? item.Username)
                             </label>
                         }
+                        <br />
+                        <p class="m-0 msg-userids hidden" style="color: #c71313;font-size:14px">Hãy chọn các nhân sự phân công</p>
+                        @Html.ValidationMessageFor(model => model.Event.UserIds)
                     </td>
                 </tr>
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Event.Days)</td>
                     <td class="form_text">
-                        @Html.HiddenFor(model => model.Event.Days)
+                        @Html.TextBoxFor(model => model.Event.Days, new { @type = "hidden" })
                         @if (ViewBag.WorkingWeeks != (int)Model.Event.WeekNumber)
                         {
-                            for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                            for (int i = 9 - ViewBag.DayOfWeeks; i <= (int)Model.Event.DayofWeek; i++)
                             {
                                 <label>
-                                    <input type="checkbox" value="@i," />
+                                    <input type="checkbox" value="@i," @((Model.Event.Days??"").Contains(i.ToString()) ? "checked" : "") />
                                     @(i == 8?"Chủ nhật": "Thứ "+ i )
                                 </label>
                             }
                         }
                         else
                         {
-                            for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                            for (int i = 2; i <= (int)Model.Event.DayofWeek; i++)
                             {
                                 <label>
-                                    <input type="checkbox" value="@i," />
+                                    <input type="checkbox" value="@i," @((Model.Event.Days??"").Contains(i.ToString()) ? "checked" : "") />
                                     @(i == 8?"Chủ nhật": "Thứ "+ i )
                                 </label>
                             }
                         }
+                        <br />
+                        <p class="m-0 msg-userids hidden" style="color: #c71313;font-size:14px">Hãy chọn các ngày triển khai</p>
                     </td>
                 </tr>
                 <tr>
@@ -136,7 +141,18 @@
             } else {
                 inputField.val(currentValue.replace(checkboxValue, "")); // Xóa giá trị khi bỏ chọn
             }
-        });
 
+            $(this).closest("label").siblings("p").css("display", "none");
+        });
+        $("form").on("submit", function (e) {
+            if ($("#Event_UserIds").val() === "") {
+                $(".msg-userids").css("display", "block");
+                e.preventDefault();
+            }
+            if ($("#Event_Days").val() === "") {
+                $(".msg-days").css("display", "block");
+                e.preventDefault();
+            }
+        });
     </script>
 }

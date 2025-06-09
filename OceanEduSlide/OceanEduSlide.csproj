@@ -363,6 +363,14 @@
     <Compile Include="Migrations\202506090335380_eventt.Designer.cs">
       <DependentUpon>202506090335380_eventt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506090642024_required.cs" />
+    <Compile Include="Migrations\202506090642024_required.Designer.cs">
+      <DependentUpon>202506090642024_required.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506090914496_nullable.cs" />
+    <Compile Include="Migrations\202506090914496_nullable.Designer.cs">
+      <DependentUpon>202506090914496_nullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1229,6 +1237,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506090335380_eventt.resx">
       <DependentUpon>202506090335380_eventt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506090642024_required.resx">
+      <DependentUpon>202506090642024_required.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506090914496_nullable.resx">
+      <DependentUpon>202506090914496_nullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -6,6 +6,7 @@ using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
@@ -71,7 +72,7 @@ namespace OceanEduSlide.Controllers
             var user = _unitOfWork.UserRepository.GetById(userId);
             if (user == null)
                 return RedirectToAction("Index");
-            var model = new UpdatePercentViewModel { UserId = userId, Fullname = user.Fullname ?? user.Username,  CF1 = user.Confirm1, CF2 = user.Confirm2, CF3 = user.Confirm3,CI = user.CI,DT = user.DT,RevenueAverage = user.RevenueAverage.ToString("N0") };
+            var model = new UpdatePercentViewModel { UserId = userId, Fullname = user.Fullname ?? user.Username, CF1 = user.Confirm1, CF2 = user.Confirm2, CF3 = user.Confirm3, CI = user.CI, DT = user.DT, RevenueAverage = user.RevenueAverage.ToString("N0") };
             return View(model);
         }
         [HttpPost]
@@ -96,87 +97,186 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int userId, decimal targetBM, decimal targetBM_DT, int dayOfWeek)
+        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int userId, decimal targetBM, int dayOfWeek)
         {
             var user = _unitOfWork.UserRepository.GetById(userId);
             if (user == null)
-                return Json(new { status = false });
-            var revenue = new RevenueUser_DayOfWeek
-            {
-                Year = year,
-                Month = month,
-                UserId = userId,
-                TargetBM = targetBM,
-                DT = targetBM_DT,
-                Active = true,
-            };
-            if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0)
-            {
-                revenue.CI = targetBM_DT / user.DT * 100;
-                revenue.Confirm3 = revenue.CI / user.CI * 100;
-                if (user.Confirm3 > 0)
-                    revenue.Confirm2 = revenue.Confirm3 / user.Confirm3 * 100;
-                else
-                    revenue.Confirm2 = revenue.Confirm3;
+                return Json(new { status = false, msg = "Cập nhật thất bại" });
 
-                revenue.Confirm1 = revenue.Confirm2 / user.Confirm2 * 100;
-                revenue.DataQuantity = revenue.Confirm1 / user.Confirm1 * 100;
+            if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
+            {
+                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek).FirstOrDefault();
+                if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
+                {
+                    List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
+
+                    var dt = Math.Ceiling(targetBM / user.RevenueAverage);
+                    var ci = dt / user.DT * 100;
+                    var ciDay = ci / 2;
+                    var cf3 = ci / user.CI * 100;
+                    var cf2 = cf3;
+                    if (user.Confirm3 > 0)
+                        cf2 = cf3 / user.Confirm3 * 100;
+                    var cf2Day = cf2 / 2;
+                    var cf1 = cf2 / user.Confirm2 * 100;
+                    var cf1Day = cf1 / (days.Count() - 1);
+                    var dataQuantity = cf1 / user.Confirm1 * 100;
+                    var dataDay = dataQuantity / (days.Count() - 1);
+                    int i = 1;
+                    foreach (var day in days)
+                    {
+                        var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
+                        if (revenue == null)
+                        {
+                            revenue = new RevenueUser_DayOfWeek
+                            {
+                                Year = year,
+                                Month = month,
+                                UserId = userId,
+                                EventId = ev.Id,
+                                Event = ev,
+                                //TargetBM = targetBM,
+                                Active = true,
+                            };
+                            switch (week)
+                            {
+                                case 1:
+                                    revenue.WeekNumber = WeekNumber.Week1;
+                                    break;
+                                case 2:
+                                    revenue.WeekNumber = WeekNumber.Week2;
+                                    break;
+                                case 3:
+                                    revenue.WeekNumber = WeekNumber.Week3;
+                                    break;
+                                case 4:
+                                    revenue.WeekNumber = WeekNumber.Week4;
+                                    break;
+                                case 5:
+                                    revenue.WeekNumber = WeekNumber.Week5;
+                                    break;
+                                case 6:
+                                    revenue.WeekNumber = WeekNumber.Week6;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            switch (day)
+                            {
+                                case 2:
+                                    revenue.DayofWeek = DayofWeek.Monday;
+                                    break;
+                                case 3:
+                                    revenue.DayofWeek = DayofWeek.Tuesday;
+                                    break;
+                                case 4:
+                                    revenue.DayofWeek = DayofWeek.Wednessday;
+                                    break;
+                                case 5:
+                                    revenue.DayofWeek = DayofWeek.Thursday;
+                                    break;
+                                case 6:
+                                    revenue.DayofWeek = DayofWeek.Friday;
+                                    break;
+                                case 7:
+                                    revenue.DayofWeek = DayofWeek.Saturday;
+                                    break;
+                                case 8:
+                                    revenue.DayofWeek = DayofWeek.Sunday;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
+                        }
+                        if (i < days.Count())
+                        {
+                            revenue.DataQuantity = dataDay;
+                            revenue.Confirm1 = cf1Day;
+                        }
+                        if (i >= days.Count() - 1)
+                        {
+                            revenue.CI = ciDay;
+                            revenue.Confirm2 = cf2Day;
+                            if (i == days.Count())
+                                revenue.TargetBM = targetBM;
+                            revenue.DT = dt;
+                        }
+                        _unitOfWork.Save();
+                        i++;
+                    }
+
+                }
+                else if (ev == null)
+                {
+
+                    var revenue = new RevenueUser_DayOfWeek
+                    {
+                        TargetBM = targetBM,
+                        Active = true,
+                        Year = year,
+                        Month = month,
+                        UserId = userId,
+                    };
+                    switch (week)
+                    {
+                        case 1:
+                            revenue.WeekNumber = WeekNumber.Week1;
+                            break;
+                        case 2:
+                            revenue.WeekNumber = WeekNumber.Week2;
+                            break;
+                        case 3:
+                            revenue.WeekNumber = WeekNumber.Week3;
+                            break;
+                        case 4:
+                            revenue.WeekNumber = WeekNumber.Week4;
+                            break;
+                        case 5:
+                            revenue.WeekNumber = WeekNumber.Week5;
+                            break;
+                        case 6:
+                            revenue.WeekNumber = WeekNumber.Week6;
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (dayOfWeek)
+                    {
+                        case 2:
+                            revenue.DayofWeek = DayofWeek.Monday;
+                            break;
+                        case 3:
+                            revenue.DayofWeek = DayofWeek.Tuesday;
+                            break;
+                        case 4:
+                            revenue.DayofWeek = DayofWeek.Wednessday;
+                            break;
+                        case 5:
+                            revenue.DayofWeek = DayofWeek.Thursday;
+                            break;
+                        case 6:
+                            revenue.DayofWeek = DayofWeek.Friday;
+                            break;
+                        case 7:
+                            revenue.DayofWeek = DayofWeek.Saturday;
+                            break;
+                        case 8:
+                            revenue.DayofWeek = DayofWeek.Sunday;
+                            break;
+                        default:
+                            break;
+                    }
+                    _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
+                    _unitOfWork.Save();
+                }
+                return Json(new { status = true/*, msg = "Cập nhật thành công" */});
             }
+            return Json(new { status = false, msg = "Chưa cập nhật các tỉ lệ chuyển đổi cho người dùng này" });
 
 
-            switch (week)
-            {
-                case 1:
-                    revenue.WeekNumber = WeekNumber.Week1;
-                    break;
-                case 2:
-                    revenue.WeekNumber = WeekNumber.Week2;
-                    break;
-                case 3:
-                    revenue.WeekNumber = WeekNumber.Week3;
-                    break;
-                case 4:
-                    revenue.WeekNumber = WeekNumber.Week4;
-                    break;
-                case 5:
-                    revenue.WeekNumber = WeekNumber.Week5;
-                    break;
-                case 6:
-                    revenue.WeekNumber = WeekNumber.Week6;
-                    break;
-                default:
-                    break;
-            }
-            switch (dayOfWeek)
-            {
-                case 2:
-                    revenue.DayofWeek = DayofWeek.Monday;
-                    break;
-                case 3:
-                    revenue.DayofWeek = DayofWeek.Tuesday;
-                    break;
-                case 4:
-                    revenue.DayofWeek = DayofWeek.Wednessday;
-                    break;
-                case 5:
-                    revenue.DayofWeek = DayofWeek.Thursday;
-                    break;
-                case 6:
-                    revenue.DayofWeek = DayofWeek.Friday;
-                    break;
-                case 7:
-                    revenue.DayofWeek = DayofWeek.Saturday;
-                    break;
-                case 8:
-                    revenue.DayofWeek = DayofWeek.Sunday;
-                    break;
-                default:
-                    break;
-            }
 
-            _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
-            _unitOfWork.Save();
-            return Json(new { status = true });
         }
 
         public PartialViewResult LoadHistoryRevenueUser_Day(int year, int month, int userId, int weekNumber, int dayOfWeek)
@@ -327,14 +427,27 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult AddEvent(Event model)
+        public ActionResult AddEvent(AddEventViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.EventRepository.Insert(model);
-                _unitOfWork.Save();
-                return RedirectToAction("Index", new { result = "add" });
+                model.Event.UserIds = "," + model.Event.UserIds;
+                if (model.Event.Days.Length == 2)
+                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                else
+                {
+                    model.Event.Days = model.Event.Days.TrimEnd(',');
+                    _unitOfWork.EventRepository.Insert(model.Event);
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index", new { result = "add" });
+                }
+
             }
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month);
+            ViewBag.CurrentWeek = currentWeek;
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);
+            model.Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == model.Event.OfficeId);
             return View(model);
         }
         public ActionResult UpdateEvent(int evId)
@@ -342,28 +455,51 @@ namespace OceanEduSlide.Controllers
             var ev = _unitOfWork.EventRepository.GetById(evId);
             if (ev == null)
                 return RedirectToAction("Index");
-            return View(ev);
+            ev.Days += ",";
+            var model = new AddEventViewModel
+            {
+                Event = ev,
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId)
+            };
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month);
+            ViewBag.CurrentWeek = currentWeek;
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)ev.WeekNumber, ev.Year, ev.Month);
+            return View(model);
         }
         [HttpPost]
-        public ActionResult UpdateEvent(Event model)
+        public ActionResult UpdateEvent(AddEventViewModel model)
         {
-            var ev = _unitOfWork.EventRepository.GetById(model.Id);
+            var ev = _unitOfWork.EventRepository.GetById(model.Event.Id);
             if (ev == null)
                 return RedirectToAction("Index");
             if (ModelState.IsValid)
             {
-                ev.TimeFrom = model.TimeFrom;
-                ev.TimeTo = model.TimeTo;
-                ev.Ages = model.Ages;
-                ev.TypeJoin = model.TypeJoin;
-                ev.TypeEvent = model.TypeEvent;
-                ev.LinkUrl = model.LinkUrl;
-                ev.LinkName = model.LinkName;
-                ev.Range = model.Range;
-                ev.Name = model.Name;
-                _unitOfWork.Save();
-                return RedirectToAction("Index", new { result = "add" });
+                if (model.Event.Days.Length == 2)
+                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                else
+                {
+                    ev.TimeFrom = model.Event.TimeFrom;
+                    ev.TimeTo = model.Event.TimeTo;
+                    ev.Ages = model.Event.Ages;
+                    ev.TypeJoin = model.Event.TypeJoin;
+                    ev.TypeEvent = model.Event.TypeEvent;
+                    ev.LinkUrl = model.Event.LinkUrl;
+                    ev.LinkName = model.Event.LinkName;
+                    ev.Range = model.Event.Range;
+                    ev.Name = model.Event.Name;
+                    ev.UserIds = model.Event.UserIds;
+                    ev.Days = model.Event.Days.TrimEnd(',');
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index", new { result = "add" });
+                }
+
             }
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month);
+            ViewBag.CurrentWeek = currentWeek;
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);
+            model.Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == model.Event.OfficeId);
             return View(model);
         }
         #endregion

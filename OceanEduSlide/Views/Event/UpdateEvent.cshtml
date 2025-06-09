@@ -1,4 +1,4 @@
-﻿@model OceanEduSlide.Models.Event
+﻿@model OceanEduSlide.ViewModels.AddEventViewModel
 @{
     ViewBag.Title = "Cập nhật hoạt động";
 }
@@ -11,92 +11,145 @@
 <link href="~/Content/tagify.css" rel="stylesheet" />
 @Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
 <div class="container py-3">
-    <h2 class="mb-3">Cập nhật hoạt động @Html.DisplayFor(a => Model.DayofWeek) - @Html.DisplayFor(a => Model.WeekNumber) - Tháng @Model.Month - @Model.Year </h2>
-    <a class="btn quick-link" href="@Url.Action("Index", new {month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.WeekNumber})"><i class="far fa-list me-1"></i> Kế hoạch hoạt động</a>
+    <h2 class="mb-3">Cập nhật hoạt động @Html.DisplayFor(a => Model.Event.DayofWeek) - @Html.DisplayFor(a => Model.Event.WeekNumber) - Tháng @Model.Event.Month - @Model.Event.Year </h2>
+    <a class="btn quick-link" href="@Url.Action("Index", new {month = Model.Event.Month,year = Model.Event.Year,officeId = Model.Event.OfficeId,week = Model.Event.WeekNumber})"><i class="far fa-list me-1"></i> Kế hoạch hoạt động</a>
     <div class="box_content">
         @using (Html.BeginForm("UpdateEvent", "Event", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
-        <table class="form_table">
-            @Html.HiddenFor(a => a.Id)
-            @*@Html.HiddenFor(a => a.OfficeId)
-        @Html.HiddenFor(a => a.Month)
-        @Html.HiddenFor(a => a.DayofWeek)
-        @Html.HiddenFor(a => a.WeekNumber)
-        @Html.HiddenFor(a => a.Year)*@
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.TypeEvent)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.TypeEvent, "Chọn loại hoạt động", new { @class = "form_control" })
-                    @Html.ValidationMessageFor(model => model.TypeEvent)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Name)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Name)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.TypeJoin)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.TypeJoin, "Chọn đối tượng tham gia", new { @class = "form_control" })
-                    @Html.ValidationMessageFor(model => model.TypeJoin)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Ages)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Ages)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Range)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Range)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.TimeFrom)</td>
-                <td class="form_text">
-                    @Html.TextBoxFor(model => model.TimeFrom, new { @class = "timepicker", @style = "width:100px" })
-                    @Html.ValidationMessageFor(model => model.TimeFrom)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.TimeTo)</td>
-                <td class="form_text">
-                    @Html.TextBoxFor(model => model.TimeTo, new { @class = "timepicker", @style = "width:100px" })
-                    @Html.ValidationMessageFor(model => model.TimeTo)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
-                <td class="form_text">@Html.EditorFor(model => model.LinkUrl)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
-                <td class="form_text">
-                    @Html.TextBoxFor(model => model.Days)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.Event.Id)
+                @*@Html.HiddenFor(a => a.OfficeId)
+                    @Html.HiddenFor(a => a.Month)
+                    @Html.HiddenFor(a => a.DayofWeek)
+                    @Html.HiddenFor(a => a.WeekNumber)
+                    @Html.HiddenFor(a => a.Year)*@
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Event.TypeEvent)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Event.TypeEvent, "Chọn loại hoạt động", new { @class = "form_control" })
+                        @Html.ValidationMessageFor(model => model.Event.TypeEvent)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.Name)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Event.Name)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.TypeJoin)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Event.TypeJoin, "Chọn đối tượng tham gia", new { @class = "form_control" })
+                        @Html.ValidationMessageFor(model => model.Event.TypeJoin)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.Ages)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Event.Ages)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.Range)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Event.Range)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.TimeFrom)</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.Event.TimeFrom, new { @class = "timepicker", @style = "width:100px" })
+                        @Html.ValidationMessageFor(model => model.Event.TimeFrom)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.TimeTo)</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.Event.TimeTo, new { @class = "timepicker", @style = "width:100px" })
+                        @Html.ValidationMessageFor(model => model.Event.TimeTo)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.LinkUrl)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Event.LinkUrl)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.Days)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Event.LinkName)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.UserIds)</td>
+                    <td class="form_text">
+                        @Html.HiddenFor(model => model.Event.UserIds)
+                        @foreach (var item in Model.Users)
+                        {
+                            <label>
+                                <input class="checkbox-days" type="checkbox" value="@item.Id," @((Model.Event.UserIds ?? "").Contains("," + item.Id + ",") ? "checked" : "") />
+                                @(item.Fullname?? item.Username)
+                            </label>
+                        }
+                        <br />
+                        <p class="m-0 msg-userids hidden" style="color: #c71313;font-size:14px">Hãy chọn các nhân sự phân công</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Event.Days)</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.Event.Days, new { @type = "hidden" })
+                        @if (ViewBag.WorkingWeeks != (int)Model.Event.WeekNumber)
+                        {
+                            for (int i = 9 - ViewBag.DayOfWeeks; i <= (int)Model.Event.DayofWeek; i++)
+                            {
+                                <label>
+                                    <input type="checkbox" value="@i," @((Model.Event.Days ?? "").Contains(i.ToString()) ? "checked" : "") />
+                                    @(i == 8?"Chủ nhật": "Thứ "+ i )
+                                </label>
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 2; i <= (int)Model.Event.DayofWeek; i++)
+                            {
+                                <label>
+                                    <input type="checkbox" value="@i," @((Model.Event.Days ?? "").Contains(i.ToString()) ? "checked" : "") />
+                                    @(i == 8?"Chủ nhật": "Thứ "+ i )
+                                </label>
+                            }
+                        }
+                        <br />
+                        <p class="m-0 msg-userids hidden" style="color: #c71313;font-size:14px">Hãy chọn các ngày triển khai</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    </td>
+                </tr>
 
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Days)</td>
-                <td class="form_text">@Html.EditorFor(model => model.LinkName)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
-                <td class="form_text">@Html.EditorFor(model => model.LinkUrl)</td>
-            </tr>
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Cập nhật" />
-                </td>
-            </tr>
-
-        </table>
+            </table>
         }
     </div>
 </div>
 
 @section scripts{
     <script>
+        $("input[type='checkbox']").change(function () {
+            let inputField = $(this).closest("td").find("input[type='hidden']");
+            let currentValue = inputField.val();
+            let checkboxValue = $(this).val();
 
+            if ($(this).is(":checked")) {
+                inputField.val(currentValue + checkboxValue); // Thêm giá trị khi tick
+            } else {
+                inputField.val(currentValue.replace(checkboxValue, "")); // Xóa giá trị khi bỏ chọn
+            }
+            $(this).closest("label").siblings("p").css("display", "none");
+        });
+        $("form").on("submit", function (e) {
+            if ($("#Event_UserIds").val() === "") {
+                $(".msg-userids").css("display", "block");
+                e.preventDefault();
+            }
+            if ($("#Event_Days").val() === "") {
+                $(".msg-days").css("display", "block");
+                e.preventDefault();
+            }
+        });
     </script>
 }
