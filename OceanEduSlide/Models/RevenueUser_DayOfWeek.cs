@@ -12,6 +12,7 @@ namespace OceanEduSlide.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public int? EventId { get; set; }
         public int Year { get; set; }
         public int Month { get; set; }
         [Display(Name = "Tuần")]
@@ -43,6 +44,7 @@ namespace OceanEduSlide.Models
         [Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
+        public virtual Event Event { get; set; }
         public RevenueUser_DayOfWeek()
         {
             CreateDate = DateTime.Now;

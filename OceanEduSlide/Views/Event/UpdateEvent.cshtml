@@ -2,7 +2,13 @@
 @{
     ViewBag.Title = "Cập nhật hoạt động";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<style>
+    .select2-container {
+        z-index: 0 !important;
+    }
+</style>
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+<link href="~/Content/tagify.css" rel="stylesheet" />
 @Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
 <div class="container py-3">
     <h2 class="mb-3">Cập nhật hoạt động @Html.DisplayFor(a => Model.DayofWeek) - @Html.DisplayFor(a => Model.WeekNumber) - Tháng @Model.Month - @Model.Year </h2>
@@ -14,10 +20,10 @@
         <table class="form_table">
             @Html.HiddenFor(a => a.Id)
             @*@Html.HiddenFor(a => a.OfficeId)
-            @Html.HiddenFor(a => a.Month)
-            @Html.HiddenFor(a => a.DayofWeek)
-            @Html.HiddenFor(a => a.WeekNumber)
-            @Html.HiddenFor(a => a.Year)*@
+        @Html.HiddenFor(a => a.Month)
+        @Html.HiddenFor(a => a.DayofWeek)
+        @Html.HiddenFor(a => a.WeekNumber)
+        @Html.HiddenFor(a => a.Year)*@
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.TypeEvent)</td>
                 <td class="form_text">
@@ -59,7 +65,18 @@
                 </td>
             </tr>
             <tr>
-                <td class="form_name">@Html.LabelFor(model => model.LinkName)</td>
+                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
+                <td class="form_text">@Html.EditorFor(model => model.LinkUrl)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.LinkUrl)</td>
+                <td class="form_text">
+                    @Html.TextBoxFor(model => model.Days)
+
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Days)</td>
                 <td class="form_text">@Html.EditorFor(model => model.LinkName)</td>
             </tr>
             <tr>
@@ -79,14 +96,7 @@
 </div>
 
 @section scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
     <script>
-        flatpickr(".timepicker", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
 
     </script>
 }

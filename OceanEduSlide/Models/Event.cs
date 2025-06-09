@@ -24,6 +24,10 @@ namespace OceanEduSlide.Models
         public TypeEvent TypeEvent { get; set; }
         [Display(Name = "Đối tượng tham gia"), Required(ErrorMessage = "Hãy chọn đối tượng tham gia")]
         public TypeJoin TypeJoin { get; set; }
+        [Display(Name = "Các nhân sự phân công")]
+        public string UserIds { get; set; }
+        [Display(Name = "Các ngày triển khai")]
+        public string Days { get; set; }
         [Display(Name = "Tên hoạt động"), Required(ErrorMessage = "Hãy tên hoạt động"), StringLength(35, ErrorMessage = "Tối đa 35 ký tự"), UIHint("TextBox")]
         public string Name { get; set; }
         [Display(Name = "Lứa tuổi"), Required(ErrorMessage = "Hãy nhập lừa tuổi"), StringLength(15, ErrorMessage = "Tối đa 15 ký tự"), UIHint("TextBox")]

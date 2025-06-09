@@ -56,8 +56,14 @@ namespace OceanEduSlide.ViewModels
     {
         public DownPathway DownPathway { get; set; }
 
-        [Display(Name = "Số tiền giảm sau khi điều chỉnh lộ trình"),Required(ErrorMessage ="Hãy nhập số tiền giảm"), UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        [Display(Name = "Số tiền giảm sau khi điều chỉnh lộ trình"), Required(ErrorMessage = "Hãy nhập số tiền giảm"), UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public string Money { get; set; }
+    }
+    public class AddEventViewModel
+    {
+        public Event Event { get; set; }
+
+        public IEnumerable<User> Users { get; set; }
     }
     public class UpdatePercentViewModel
     {
@@ -73,6 +79,8 @@ namespace OceanEduSlide.ViewModels
         public decimal CI { get; set; }
         [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu (%)"), Required(ErrorMessage = "Hãy nhập tỉ lệ"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal DT { get; set; }
+        [DisplayName("Doanh thu trung bình trên một khách hàng (vnđ)"), Required(ErrorMessage = "Hãy nhập mục này"), UIHint("MoneyBox")]
+        public string RevenueAverage { get; set; }
     }
     public class LoadHistoryRevenueUser_DayViewModel
     {

@@ -29,6 +29,8 @@ namespace OceanEduSlide.Models
         public decimal CI { get; set; }
         [DisplayName("Tỉ lệ số lượng khách hàng chuyển đổi ra cọc/ doanh thu (%)"), Range(0.0, 100.0, ErrorMessage = "Giá trị phải nằm trong khoảng từ 0 đến 100.")]
         public decimal DT { get; set; }
+        [DisplayName("Doanh thu trung bình trên một khách hàng"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public decimal RevenueAverage { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh")]

@@ -56,6 +56,12 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="form-name">@Html.LabelFor(model => model.RevenueAverage)</td>
+                        <td class="form_text">
+                            @Html.EditorFor(model => model.RevenueAverage)
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="form-name"></td>
                         <td class="form_text"><input class="btn quick-link w-auto" type="submit" value="Cập nhật"></td>
                     </tr>
@@ -64,3 +70,15 @@
         }
     </div>
 </div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+
+    </script>
+}

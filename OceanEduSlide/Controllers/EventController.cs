@@ -7,6 +7,7 @@ using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
 using System.Data.Entity;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -70,7 +71,7 @@ namespace OceanEduSlide.Controllers
             var user = _unitOfWork.UserRepository.GetById(userId);
             if (user == null)
                 return RedirectToAction("Index");
-            var model = new UpdatePercentViewModel { UserId = userId, Fullname = user.Fullname ?? user.Username };
+            var model = new UpdatePercentViewModel { UserId = userId, Fullname = user.Fullname ?? user.Username,  CF1 = user.Confirm1, CF2 = user.Confirm2, CF3 = user.Confirm3,CI = user.CI,DT = user.DT,RevenueAverage = user.RevenueAverage.ToString("N0") };
             return View(model);
         }
         [HttpPost]
@@ -83,6 +84,7 @@ namespace OceanEduSlide.Controllers
                 {
                     return RedirectToAction("Index");
                 }
+                user.RevenueAverage = Convert.ToDecimal(model.RevenueAverage.Replace(",", ""));
                 user.Confirm1 = model.CF1;
                 user.Confirm2 = model.CF2;
                 user.Confirm3 = model.CF3;
@@ -246,6 +248,11 @@ namespace OceanEduSlide.Controllers
                 Year = year,
                 OfficeId = officeId,
             };
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(year, month);
+            ViewBag.CurrentWeek = currentWeek;
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek(week, year, month);
+
             switch (typeEvent)
             {
                 case 1:
@@ -312,8 +319,12 @@ namespace OceanEduSlide.Controllers
                 default:
                     break;
             }
-
-            return View(ev);
+            var model = new AddEventViewModel
+            {
+                Event = ev,
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId)
+            };
+            return View(model);
         }
         [HttpPost]
         public ActionResult AddEvent(Event model)

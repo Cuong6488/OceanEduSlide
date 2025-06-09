@@ -359,6 +359,10 @@
     <Compile Include="Migrations\202506061026219_debt.Designer.cs">
       <DependentUpon>202506061026219_debt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506090335380_eventt.cs" />
+    <Compile Include="Migrations\202506090335380_eventt.Designer.cs">
+      <DependentUpon>202506090335380_eventt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -1222,6 +1226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506061026219_debt.resx">
       <DependentUpon>202506061026219_debt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506090335380_eventt.resx">
+      <DependentUpon>202506090335380_eventt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
