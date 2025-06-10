@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Cập nhật giảm lộ trình";
 }
-@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+@*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
 <div class="container py-3">
     <h2 class="mb-3">Cập nhật công nợ</h2>
     <a class="btn quick-link" href="@Url.Action("ListDebt", new {month = Model.DownPathway.Debt.Month,year = Model.DownPathway.Debt.Year,officeId = Model.DownPathway.Debt.User.OfficeId})"><i class="far fa-list me-1"></i>Danh sách công nợ</a>

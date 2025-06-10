@@ -22,6 +22,9 @@ namespace OceanEduSlide.DAL
         private GenericRepository<Event> _eventRepository;
         private GenericRepository<Debt> _debtRepository;
         private GenericRepository<DownPathway> _downPathwaytRepository;
+        private GenericRepository<Zone> _zonetRepository;
+        public GenericRepository<Zone> ZoneRepository =>
+           _zonetRepository ?? (_zonetRepository = new GenericRepository<Zone>(_context));
         public GenericRepository<Debt> DebtRepository =>
            _debtRepository ?? (_debtRepository = new GenericRepository<Debt>(_context));
         public GenericRepository<DownPathway> DownPathwayRepository =>

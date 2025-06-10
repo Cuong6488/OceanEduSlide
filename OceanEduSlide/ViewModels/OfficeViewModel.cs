@@ -25,6 +25,12 @@ namespace OceanEduSlide.ViewModels
         //    DistrictSelectList = new SelectList(new List<District>(), "Id", "Name");
         //}
     }
+    public class CreateZoneViewModel
+    {
+        public Zone Zone { get; set; }
+        public IEnumerable<Office> Offices { get; set; }
+        //}
+    }
 
     public class ListDiscountViewModel
     {

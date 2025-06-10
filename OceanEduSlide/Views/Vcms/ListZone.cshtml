@@ -1,0 +1,31 @@
+﻿
+@model IEnumerable<OceanEduSlide.Models.Zone>
+<head>
+    <link href=" https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" rel="stylesheet" />
+</head>
+<div class="box_content">
+    <table class="list_table" id="list-zone">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.OfficeIds)</th>
+                <th>@Html.DisplayNameFor(model => model.Active)</th>
+                <th></th>
+            </tr>
+            @foreach (var zone in Model)
+            {
+                <tr data-id="@zone.Id">
+                    <td class="left">@zone.Name</td>
+                    <td class="left">@zone.OfficeIds</td>
+                    <td>@Html.DisplayFor(a => zone.Active)</td>
+                    <td class="list-icon">
+                        @*@Html.ActionLink("Sửa", "UpdateZone", new { id = zone.Id }) -*@ <a href="javascript:;"onclick="deleteZone('@zone.Id')"  class="red-warring deleteZone" id="@zone.Name">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/Content/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery.toast.js"></script>
+<script src="~/Scripts/scriptAdmin.js"></script>

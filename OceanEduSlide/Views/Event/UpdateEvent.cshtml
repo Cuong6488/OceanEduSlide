@@ -9,7 +9,7 @@
 </style>
 <link href="~/Content/select2.min.css" rel="stylesheet" />
 <link href="~/Content/tagify.css" rel="stylesheet" />
-@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+@*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
 <div class="container py-3">
     <h2 class="mb-3">Cập nhật hoạt động @Html.DisplayFor(a => Model.Event.DayofWeek) - @Html.DisplayFor(a => Model.Event.WeekNumber) - Tháng @Model.Event.Month - @Model.Event.Year </h2>
     <a class="btn quick-link" href="@Url.Action("Index", new {month = Model.Event.Month,year = Model.Event.Year,officeId = Model.Event.OfficeId,week = Model.Event.WeekNumber})"><i class="far fa-list me-1"></i> Kế hoạch hoạt động</a>

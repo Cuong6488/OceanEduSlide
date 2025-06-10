@@ -27,6 +27,7 @@ namespace OceanEduSlide.ViewModels
         {
             public User User { get; set; }
             public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
+            public RevenueUser_Week RevenueUser_Week { get; set; }
 
         }
         //public decimal? SumRevenue(int dayOfWeek)

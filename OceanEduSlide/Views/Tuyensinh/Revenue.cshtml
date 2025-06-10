@@ -11,7 +11,7 @@
 </style>
 
 <input type="hidden" name="CurrentWeek" value="@ViewBag.CurrentWeek" />
-@Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })
+@*@Html.Action("Header", new { name = "Kinh doanh/ Phân bổ doanh số" })*@
 <div class="container py-3">
     @if (ViewBag.Result == "add")
     {
@@ -283,7 +283,7 @@
                                             <div class="revenue-value revenue-value-week_BM">
                                                 @(revenueUser_Week.TargetBM.ToString("N0"))
                                             </div>
-                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month)
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month)
                                             {
                                                 {
                                                     <div class="btnedit-input btn-edit-week">

@@ -10,7 +10,7 @@
         display: none !important;
     }
 </style>
-@Html.Action("Header", "TuyenSinh", new { name = "Danh sách công nợ" })
+@*@Html.Action("Header", "TuyenSinh", new { name = "Danh sách công nợ" })*@
 <div class="container py-3">
     @if (ViewBag.Result == "add")
     {
@@ -93,6 +93,9 @@
                             Loại cọc
                         </th>
                         <th rowspan="2" class="col-w90">
+                            Tiền giảm <br /> lộ trình
+                        </th>
+                        <th rowspan="2" class="col-w90">
                             Tiền còn lại phải thanh toán
                         </th>
                         <th rowspan="2" class="col-w90">
@@ -157,6 +160,7 @@
                                     }
 
                                 </td>
+                                <td>@Html.DisplayFor(a => item.DownMoney)</td>
                                 <td>@Html.DisplayFor(a => item.RemainMoney)</td>
                                 <td>@Html.DisplayFor(a => item.TypePay)</td>
                                 <td>@Html.DisplayFor(a => item.ChannelPay)</td>

@@ -9,8 +9,12 @@
     #OfficeId-error, #Month-error, #OfficeId-error, #Week-error {
         display: none !important;
     }
+
+    .box-overview td {
+        vertical-align: top;
+    }
 </style>
-@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+@*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
 <div class="container py-3">
     @if (ViewBag.Result == "add")
     {
@@ -63,7 +67,7 @@
     @if (Model.OfficeId != null)
     {
         <h2>KẾ HOẠCH TUẦN @Model.Week - Tháng @Model.Month - @Model.Year DỰ KIẾN</h2>
-        <div class="box_content mt-0 mb-5">
+        <div class="box_content box-overview mt-0 mb-5">
 
             <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
             <table class="list_table tablecenter table-striped text-center">
@@ -215,14 +219,26 @@
                                             var revenueUser_Day = item.Revenues.Where(a => (int)a.DayofWeek == i);
                                             if (revenueUser_Day.Any())
                                             {
-                                                <td class="text-start col-w200" style="padding:10px 15px !important">
+                                                <td class="text-start col-w200" style="padding:10px !important">
                                                     @*<div class="btnhistory-input">
                                                             <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
                                                                data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                                         </div>*@
+                                                    @{
+                                                        bool fr = true;
+                                                    }
+
                                                     @foreach (var revenue in revenueUser_Day)
                                                     {
-                                                        <div class="mb-2">
+                                                        if (fr == false && revenue.Event == null)
+                                                        {
+                                                            continue;
+                                                        }
+                                                        if (revenue.EventId == null)
+                                                        {
+                                                            fr = false;
+                                                        }
+                                                        <div class="mb-2 p-2" style="background:#ccc">
                                                             @if (revenue.Event?.Name != null)
                                                             {
                                                                 <p class="mb-2 text-danger">@(revenue.Event?.Name)</p>
@@ -244,15 +260,19 @@
                                                             {
                                                                 @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => revenue.CI)</strong><br />
                                                             }
+                                                            @if (revenue.DT != null)
+                                                            {
+                                                                @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => revenue.DT)</strong><br />
+                                                            }
                                                             @if (revenue.TargetBM != null)
                                                             {
                                                                 @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => revenue.TargetBM)</strong> <br />
                                                             }
 
                                                             @*@if (revenueUser_Day.User.Confirm3 > 0)
-        {
-            @:Sl KH confiem lần thứ 3: <strong>@Html.DisplayFor(a => revenue.Confirm3)</strong> <br />
-        }*@
+                                                                {
+                                                                    @:Sl KH confiem lần thứ 3: <strong>@Html.DisplayFor(a => revenue.Confirm3)</strong> <br />
+                                                                }*@
                                                         </div>
                                                     }
 
@@ -264,7 +284,6 @@
                                                 <td class="col-w65">
                                                 </td>
                                             }
-
                                         }
                                     }
                                     else
@@ -307,116 +326,6 @@
                 </tbody>
             </table>
         </div>
-        @*<h2>KẾ HOẠCH CÔNG VIỆC NHÂN SỰ TUẦN @Model.Week - Tháng @Model.Month - @Model.Year</h2>
-            <div class="box_content mt-0 mb-5">
-                <table class="list_table tablecenter table-striped text-center">
-                    <tbody>
-                        <tr>
-                            <th class="col-w90">Họ tên nhân sự</th>
-                            <th style="width: 70px">Chức vụ</th>
-                            <th class="col-w90">Mã nhân viên</th>
-                            @if (ViewBag.WorkingWeeks != Model.Week)
-                            {
-                                for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
-                                {
-                                    <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
-                                }
-                            }
-                            else
-                            {
-                                for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
-                                {
-                                    <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
-                                }
-
-                            }
-                        </tr>
-                        @if (Model.UserItems != null)
-                        {
-
-                            foreach (var item in Model.UserItems)
-                            {
-                                <tr>
-                                    <td>
-                                        @(item.User.Fullname ?? item.User.Username)
-                                    </td>
-                                    <td>
-                                        @item.User.TypeUser
-                                    </td>
-                                    <td>
-                                        @item.User.MaNhanVien
-                                    </td>
-                                    @if (ViewBag.WorkingWeeks != Model.Week)
-                                    {
-                                        for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
-                                        {
-                                            var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i);
-                                            if (revenueUser_Day != null)
-                                            {
-                                                <td class="text-start col-w200" style="padding:10px 15px !important">
-                                                    <div class="btnhistory-input">
-                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                    </div>
-                                                    Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => revenueUser_Day.TargetBM)</strong> <br />
-                                                    SL KH check in dự kiến: <strong>@Html.DisplayFor(a => revenueUser_Day.CI)</strong><br />
-                                                    @if (revenueUser_Day.User.Confirm3 > 0)
-                                                    {
-                                                        @:Sl KH confiem lần thứ 3: <strong>@Html.DisplayFor(a => revenueUser_Day.Confirm3)</strong> <br />
-                                                    }
-
-                                                    SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => revenueUser_Day.Confirm2)</strong> <br />
-                                                    SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => revenueUser_Day.Confirm1)</strong> <br />
-                                                    SL data cần khai thác: : <strong>@Html.DisplayFor(a => revenueUser_Day.DataQuantity)</strong>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td class="col-w65">
-                                                </td>
-                                            }
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
-                                        {
-                                            var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i);
-                                            if (revenueUser_Day != null)
-                                            {
-                                                <td class="text-start" style="padding:10px 15px !important">
-                                                    <div class="btnhistory-input">
-                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                    </div>
-                                                    Chỉ tiêu doanh số dự kiến hoàn thành: @revenueUser_Day.TargetBM <br />
-                                                    SL KH check in dự kiến: @revenueUser_Day.CI <br />
-                                                    @if (revenueUser_Day.User.Confirm3 > 0)
-                                                    {
-                                                        @:Sl KH confiem lần thứ 3: @revenueUser_Day.Confirm3 <br />
-                                                    }
-
-                                                    SL KH confirm lần thứ 2: @revenueUser_Day.Confirm2 <br />
-                                                    SL KH confirm lần thứ nhất: @revenueUser_Day.Confirm1 <br />
-                                                    SL data cần khai thác: : @revenueUser_Day.DataQuantity
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td class="col-w65">
-                                                </td>
-                                            }
-                                        }
-
-                                    }
-
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>*@
         <h2>BẢNG THEO DÕI DOANH THU DỰ KIẾN TUẦN @Model.Week - Tháng @Model.Month - @Model.Year</h2>
         <div class="box_content mt-0 mb-5">
             <table class="list_table tablecenter table-striped text-center">
@@ -426,13 +335,13 @@
                         <th rowspan="2" style="width: 70px">Chức vụ</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
 
-
-                        <th colspan="@ViewBag.DayOfWeeks" class="col-w90 text-center">Chỉ tiêu doanh số dự kiến</th>
+                        <th colspan="@(ViewBag.DayOfWeeks+ 1)" class="col-w90 text-center">Chỉ tiêu doanh số dự kiến</th>
                         @*<th class="col-w90">Số lượng KH <br /> chuyển đổi số <br /> dự kiến</th>*@
 
 
                     </tr>
                     <tr>
+                        <th>Tuần</th>
                         @if (ViewBag.WorkingWeeks != Model.Week)
                         {
                             for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
@@ -464,11 +373,17 @@
                                 <td>
                                     @item.User.MaNhanVien
                                 </td>
+                                <td class="col-w90 target-week">
+                                    @if (item.RevenueUser_Week != null)
+                                    {
+                                        @item.RevenueUser_Week.TargetBM.ToString("N0")
+                                    }
+                                </td>
                                 @if (ViewBag.WorkingWeeks != Model.Week)
                                 {
                                     for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
                                     {
-                                        var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i);
+                                        var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i && a.TargetBM != null);
                                         if (revenueUser_Day != null)
                                         {
                                             <td class="day-target col-w90">
@@ -704,7 +619,6 @@
 @section scripts{
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>
     <script>
-
-
+        eventFunction();
     </script>
 }

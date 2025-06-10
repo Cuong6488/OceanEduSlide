@@ -696,7 +696,61 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListOffice");
         }
         #endregion
+        #region Zone
+        public PartialViewResult ListZone()
+        {
+            var model = _unitOfWork.ZoneRepository.Get();
+            return PartialView(model);
+        }
+        public ActionResult CreateZone(string result = "")
+        {
+            ViewBag.Result = result;
+            var model = new CreateZoneViewModel
+            {
+                Zone = new Zone(),
+                Offices = _unitOfWork.OfficeRepository.Get()
+                //SelectOffice = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name")
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CreateZone(CreateZoneViewModel model, FormCollection fc)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.ZoneRepository.Insert(model.Zone);
+                var catIds = fc.GetValues("CatIDs");
+                if (catIds != null)
+                {
+                    foreach (var item in catIds)
+                    {
+                        model.Zone.OfficeIds += (item + ",");
 
+                    }
+                    model.Zone.OfficeIds = "," + model.Zone.OfficeIds;
+                }
+                _unitOfWork.Save();
+                return RedirectToAction("CreateZone", new { result = "add" });
+
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        [HttpPost]
+        public bool DeleteZone(int zoneId = 0)
+        {
+            var zone = _unitOfWork.ZoneRepository.GetById(zoneId);
+            if (zone == null)
+            {
+                return false;
+            }
+            _unitOfWork.ZoneRepository.Delete(zone);
+            _unitOfWork.Save();
+            return true;
+        }
+        #endregion
         #region Discount
 
         public ActionResult ListDiscount(int? page, string name, string result = "")

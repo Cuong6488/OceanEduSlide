@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Cập nhật công nợ";
 }
-@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })
+@*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
 <div class="container py-3">
     <h2 class="mb-3">Cập nhật công nợ</h2>
     <a class="btn quick-link" href="@Url.Action("ListDebt", new {month = Model.Month,year = Model.Year,officeId = Model.User.OfficeId})"><i class="far fa-list me-1"></i> Danh sách công nợ</a>
@@ -49,7 +49,7 @@
                 <td class="form_text"> @Html.DisplayFor(model => model.DebtMoney2)</td>
             </tr>
             <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.User.Fullname)</td>
+                <td class="form_name w-25">Nhân sự phụ trách</td>
                 <td class="form_text"> @Html.DisplayFor(model => model.User.Fullname)</td>
             </tr>
             <tr>

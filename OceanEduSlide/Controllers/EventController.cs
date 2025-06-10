@@ -58,6 +58,7 @@ namespace OceanEduSlide.Controllers
                     {
                         User = a,
                         Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                     });
                     model.Users = users;
                     model.UserItems = userItems;
@@ -549,6 +550,8 @@ namespace OceanEduSlide.Controllers
                 debt.HardContent = model.HardContent;
                 debt.ContactStatus = model.ContactStatus;
                 debt.HandleWay = model.HandleWay;
+                if (model.TypeDebt == TypeDebt.Type1 || model.TypeDebt == TypeDebt.Type2)
+                    debt.DownMoney = 0;
                 _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "add" });
             }
@@ -575,11 +578,12 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.Money != null)
-                {
-                    model.DownPathway.Money = Convert.ToDecimal(model.Money.Replace(",", ""));
-                }
+                var debt = _unitOfWork.DebtRepository.GetById(model.DownPathway.DebtId);
+                if(debt == null)
+                    return RedirectToAction("ListDebt");
 
+                model.DownPathway.Money = Convert.ToDecimal(model.Money.Replace(",", ""));
+                debt.DownMoney = model.DownPathway.Money;
                 _unitOfWork.DownPathwayRepository.Insert(model.DownPathway);
                 _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "add" });

@@ -64,10 +64,7 @@ namespace OceanEduSlide.Controllers
                         RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == a.Id && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2)).Sum(q => (decimal?)q.TotalMoney) ?? 0)
-                        + (_unitOfWork.DownPathwayRepository.GetQuery(q => q.Debt.UserId == a.Id && q.Debt.TypeDebt == TypeDebt.Type3).GroupBy(q => q.DebtId).Select(g => g.OrderByDescending(x => x.CreateDate).FirstOrDefault()).Sum(q => (decimal?)q.Money) ?? 0),
-
-                        
+                        Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
                     });
 
                     model.UserItems = userItems;

@@ -32,6 +32,8 @@ namespace OceanEduSlide.Models
         public decimal TotalMoney { get; set; }
         [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DebtMoney { get; set; }
+        [Display(Name = "Tiền giảm lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public decimal DownMoney { get; set; }
         [Display(Name = "Tiền cọc bổ sung làm hồ sơ"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DebtMoney2 { get; set; }
         [Display(Name = "Tiền còn lại phải thanh toán"), DisplayFormat(DataFormatString = "{0:N0}đ")]

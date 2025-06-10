@@ -371,6 +371,14 @@
     <Compile Include="Migrations\202506090914496_nullable.Designer.cs">
       <DependentUpon>202506090914496_nullable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506100208329_downmoney.cs" />
+    <Compile Include="Migrations\202506100208329_downmoney.Designer.cs">
+      <DependentUpon>202506100208329_downmoney.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506100347041_zone.cs" />
+    <Compile Include="Migrations\202506100347041_zone.Designer.cs">
+      <DependentUpon>202506100347041_zone.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -378,6 +386,7 @@
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
     <Compile Include="Models\Debt.cs" />
     <Compile Include="Models\RevenueUser_Month_BM.cs" />
@@ -771,6 +780,7 @@
     <Content Include="Content\LICENSE.txt" />
     <Content Include="Content\login.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\select2.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\slick.css" />
     <Content Include="Content\style.css">
@@ -935,6 +945,7 @@
     <Content Include="Scripts\Script2.js" />
     <Content Include="Scripts\scriptAdmin.js" />
     <Content Include="Scripts\scrollreveal.js" />
+    <Content Include="Scripts\select2.min.js" />
     <Content Include="Scripts\slick.js" />
     <Content Include="Scripts\src\index.js" />
     <Content Include="Scripts\src\methods\defaults.js" />
@@ -1109,6 +1120,8 @@
     <Content Include="Views\Event\UpdateDebt.cshtml" />
     <Content Include="Views\Event\UpdateDownPathway.cshtml" />
     <Content Include="Views\Event\LoadHistoryDownPathway.cshtml" />
+    <Content Include="Views\Vcms\CreateZone.cshtml" />
+    <Content Include="Views\Vcms\ListZone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1243,6 +1256,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506090914496_nullable.resx">
       <DependentUpon>202506090914496_nullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506100208329_downmoney.resx">
+      <DependentUpon>202506100208329_downmoney.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506100347041_zone.resx">
+      <DependentUpon>202506100347041_zone.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

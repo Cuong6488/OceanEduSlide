@@ -35,11 +35,14 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; }
         [Display(Name = "Chi nhánh")]
         public int OfficeId { get; set; }
+        [Display(Name = "Vùng")]
+        public int? ZoneId { get; set; }
         [Display(Name = "Phân quyền")]
         public TypeUser? TypeUser { get; set; }
         [Display(Name = "Các chi nhánh quản lý")]
         public string OfficeIds { get; set; }
         public virtual Office Office { get; set; }
+        public virtual Zone Zone { get; set; }
         public virtual ICollection<RevenueUser_Month> RevenueUser_Months { get; set; }
         public virtual ICollection<RevenueUser_Month_BM> GetRevenueUser_Month_BMs { get; set; }
         public virtual ICollection<RevenueUser_Week> RevenueUser_Weeks { get; set; }
