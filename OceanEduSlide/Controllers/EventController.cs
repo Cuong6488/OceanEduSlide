@@ -27,7 +27,7 @@ namespace OceanEduSlide.Controllers
         #region Sự_Kiện
         public ActionResult Index(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
-            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
+            if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index", "Home");
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month);
             ViewBag.WorkingWeeks = workingWeeks;
@@ -43,10 +43,12 @@ namespace OceanEduSlide.Controllers
                 Week = Week ?? currentWeek,
                 OfficeId = OfficeId,
                 User = User,
-                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name))
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
             };
             if (User.TypeUser == TypeUser.BM)
                 model.OfficeId = User.OfficeId;
+            else if (User.TypeUser == TypeUser.ASM)
+                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
@@ -287,7 +289,7 @@ namespace OceanEduSlide.Controllers
                 Year = year,
                 Month = month,
                 User = _unitOfWork.UserRepository.GetById(userId),
-                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek, q => q.OrderBy(a => a.CreateDate)),
+                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && a.TargetBM != null, q => q.OrderBy(a => a.CreateDate)),
             };
             switch (weekNumber)
             {
@@ -508,17 +510,19 @@ namespace OceanEduSlide.Controllers
         #region Công_nợ
         public ActionResult ListDebt(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
-            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
+            if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index", "Home");
             ViewBag.Result = Result;
             var model = new DebtViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
-                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name)),
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
                 User = User,
             };
-            if (User.TypeUser == TypeUser.BM)
+            if (User.TypeUser == TypeUser.ASM)
+                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+            else if (User.TypeUser == TypeUser.BM)
                 model.OfficeId = User.OfficeId;
             if (model.OfficeId != null)
             {

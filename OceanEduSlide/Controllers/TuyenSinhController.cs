@@ -33,8 +33,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult Revenue(int? Month, int? OfficeId, int? Year, string Result = "")
         {
-            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM)
-                return RedirectToAction("Index");
+            if (User.TypeUser == TypeUser.User)
+                return RedirectToAction("Index","Home");
             var model = new RevenueViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
@@ -42,10 +42,12 @@ namespace OceanEduSlide.Controllers
                 Year = Year ?? DateTime.Now.Year,
                 OfficeId = OfficeId,
                 User = User,
-                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active, q => q.OrderBy(a => a.Name))
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
             };
             if (User.TypeUser == TypeUser.BM)
                 model.OfficeId = User.OfficeId;
+            else if (User.TypeUser == TypeUser.ASM)
+                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
             if (model.OfficeId != null)
@@ -117,7 +119,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult RevenueOffice()
         {
             if (User.TypeUser != TypeUser.HO)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Home");
             var model = new RevenueOfficeViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
@@ -130,7 +132,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult RevenueOffice(RevenueOfficeViewModel model)
         {
             if (User.TypeUser != TypeUser.HO)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Home");
             if (ModelState.IsValid)
             {
                 _unitOfWork.RevenueOfficeRepository.Insert(model.RevenueOffice);
@@ -145,7 +147,7 @@ namespace OceanEduSlide.Controllers
         {
             var office = _unitOfWork.OfficeRepository.GetById(officeId);
             if (office == null || (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO))
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Home");
             var model = new RevenueOffice_BMViewModel
             {
                 RevenueOffice = new RevenueOffice_BM { Active = true, OfficeId = officeId, Month = month, Year = year },

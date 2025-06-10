@@ -1122,6 +1122,7 @@
     <Content Include="Views\Event\LoadHistoryDownPathway.cshtml" />
     <Content Include="Views\Vcms\CreateZone.cshtml" />
     <Content Include="Views\Vcms\ListZone.cshtml" />
+    <Content Include="Views\Vcms\UpdateZone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

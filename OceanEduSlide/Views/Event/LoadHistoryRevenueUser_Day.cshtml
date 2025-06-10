@@ -5,7 +5,7 @@
         <tbody>
             <tr>
                 <th style="text-align:center">Thời gian cập nhật</th>
-                <th style="text-align: center">Công việc</th>
+                <th style="text-align: center">Chỉ tiêu doanh số dự kiến hoàn thành</th>
             </tr>
             @foreach (var item in Model.Revenues)
             {
@@ -13,9 +13,9 @@
                     <td>
                         @Html.DisplayFor(a => item.CreateDate)
                     </td>
-                    <td class="text-start col-w200" style="padding:10px 15px !important">
-                        Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
-                        SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
+                    <td class=" col-w200" style="padding:10px 15px !important">
+                        @*Chỉ tiêu doanh số dự kiến hoàn thành:*@ <strong>@Html.DisplayFor(a => item.TargetBM)</strong> @*<br />*@
+                        @*SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
                         @if (item.User.Confirm3 > 0)
                         {
                             @:Sl KH confiem lần thứ 3: <strong>@Html.DisplayFor(a => item.Confirm3)</strong> <br />
@@ -23,7 +23,7 @@
 
                         SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
                         SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
-                        SL data cần khai thác: : <strong>@Html.DisplayFor(a => item.DataQuantity)</strong>
+                        SL data cần khai thác: : <strong>@Html.DisplayFor(a => item.DataQuantity)</strong>*@
                     </td>
                 </tr>
             }

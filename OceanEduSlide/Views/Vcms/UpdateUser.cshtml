@@ -39,6 +39,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.ZoneId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Chọn vùng")
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.TypeUser)</td>
                     <td class="form_text">
                         @Html.EnumDropDownListFor(model => model.TypeUser, "Chọn phân quyền")

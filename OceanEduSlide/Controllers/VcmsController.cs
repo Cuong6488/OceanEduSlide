@@ -207,6 +207,7 @@ namespace OceanEduSlide.Controllers
             var model = new CreateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 //Users = Users,
             };
             return View(model);
@@ -230,6 +231,7 @@ namespace OceanEduSlide.Controllers
                         Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
                         Username = model.Username,
                         OfficeId = model.OfficeId,
+                        ZoneId = model.ZoneId,
                         Active = model.Active,
                         TypeUser = model.TypeUser,
                     };
@@ -285,11 +287,12 @@ namespace OceanEduSlide.Controllers
             var model = new CreateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
-
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = _unitOfWork.UserRepository.Get(z => z.Id == id),
 
             };
             model.OfficeId = model.Users.FirstOrDefault()?.OfficeId ?? 0;
+            model.ZoneId = model.Users.FirstOrDefault()?.ZoneId ?? 0;
             model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
             return View(model);
         }
@@ -303,20 +306,15 @@ namespace OceanEduSlide.Controllers
                 {
                     user.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
                     user.OfficeId = model.OfficeId;
+                    user.ZoneId = model.ZoneId;
                     user.Active = model.Active;
                     user.TypeUser = model.TypeUser;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateUser", new { result = "update" });
                 }
-                else
-                {
-                    return HttpNotFound();
-                }
             }
-            else
-            {
-                return HttpNotFound();
-            }
+            return HttpNotFound();
+
         }
         [HttpPost]
         public JsonResult DeleteUser(int userId)
@@ -737,6 +735,60 @@ namespace OceanEduSlide.Controllers
             {
                 return HttpNotFound();
             }
+        }
+        public ActionResult UpdateZone(int zoneId)
+        {
+            var zone = _unitOfWork.ZoneRepository.GetById(zoneId);
+            if (zone == null)
+            {
+                return RedirectToAction("CreateZone");
+            }
+            var model = new CreateZoneViewModel
+            {
+                Zone = zone,
+                Offices = _unitOfWork.OfficeRepository.Get()
+            };
+            if (!string.IsNullOrEmpty(zone.OfficeIds))
+            {
+                model.CatIds = zone.OfficeIds
+                                        .Split(',')
+                                        .Select(x =>
+                                        {
+                                            int.TryParse(x, out int value);
+                                            return value;
+                                        })
+                                        .ToList();
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateZone(CreateZoneViewModel model, FormCollection fc)
+        {
+            if (ModelState.IsValid)
+            {
+                var zone = _unitOfWork.ZoneRepository.GetById(model.Zone.Id);
+                if (zone != null)
+                {
+
+                    var catIds = fc.GetValues("CatIDs");
+                    if (catIds != null)
+                    {
+                        zone.OfficeIds = "";
+                        foreach (var item in catIds)
+                        {
+                            zone.OfficeIds += (item + ",");
+                        }
+                        zone.OfficeIds = "," + zone.OfficeIds;
+                    }
+                    zone.Name = model.Zone.Name;
+                    zone.Active = model.Zone.Active;
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateZone", new { result = "add" });
+                }
+            }
+            return HttpNotFound();
+
         }
         [HttpPost]
         public bool DeleteZone(int zoneId = 0)

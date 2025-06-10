@@ -27,6 +27,7 @@ namespace OceanEduSlide.ViewModels
     }
     public class CreateZoneViewModel
     {
+        public List<int> CatIds { get; set; }
         public Zone Zone { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         //}

@@ -42,7 +42,7 @@
                 <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO)
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
         {
             <select name="OfficeId" class="form-select" required>
                 <option value="">Chọn chi nhánh</option>
@@ -397,11 +397,11 @@
                                                 </div>
                                                 @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month)
                                                 {
-                                                    {
-                                                        <div class="btnedit-input btn-edit-day">
-                                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                        </div>
-                                                    }
+
+                                                    <div class="btnedit-input btn-edit-day">
+                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                    </div>
+
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />
                                             </td>
@@ -475,12 +475,12 @@
                                                 </div>
                                                 @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month)
                                                 {
-                                                    {
 
-                                                        <div class="btnedit-input btn-edit-day">
-                                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                        </div>
-                                                    }
+
+                                                    <div class="btnedit-input btn-edit-day">
+                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                    </div>
+
 
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />

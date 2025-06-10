@@ -31,7 +31,7 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO)
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
         {
             <select name="OfficeId" class="form-select" required>
                 <option value="">Chọn chi nhánh</option>
