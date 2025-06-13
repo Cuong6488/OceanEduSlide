@@ -41,7 +41,7 @@
                 }
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.BM)
+        else if (Model.User.TypeUser == TypeUser.BM)
         {
             <select name="" class="form-select" disabled>
                 <option value="">Chọn chi nhánh</option>
@@ -51,6 +51,23 @@
                 }
             </select>
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
+        else if (Model.User.TypeUser == TypeUser.CV)
+        {
+            <select name="ZoneId" class="form-select">
+                <option value="">Chọn vùng</option>
+                @foreach (var item in Model.Zones)
+                {
+                    <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+            <select name="OfficeId" class="form-select" required>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
         }
     </form>
     @if (Model.OfficeId != null)
@@ -77,11 +94,11 @@
                         <th class="col-w90">
                             Ngày đề xuất
                         </th>
-                        <th class="col-w90">
-                            Phân loại <br /> đề xuất
-                        </th>
+                        @*<th class="col-w90">
+                                Phân loại <br /> đề xuất
+                            </th>*@
                         <th class="col-w200">
-                            Nội dùng và lý do đề xuất
+                            Nội dung và lý do đề xuất
                         </th>
                         <th class="col-w90">
                             Hồ sơ, <br /> tài liệu <br />minh chứng <br />kèm theo
@@ -95,7 +112,13 @@
                         <th class="col-w90">
                             Tổng hợp lỗi
                         </th>
-                        <th></th>
+                        <th class="col-w90">
+                            Duyệt
+                        </th>
+                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM)
+                        {
+                            <th></th>
+                        }
                     </tr>
                     @if (Model.Proposals != null)
                     {
@@ -109,13 +132,21 @@
                                 <td>@item.Office.Name</td>
                                 <td>@item.User.Fullname</td>
                                 <td>@Html.DisplayFor(a => item.CreateDate)</td>
-                                <td>@Html.DisplayFor(a => item.TypeProposal)</td>
+                                @*<td>@Html.DisplayFor(a => item.TypeProposal)</td>*@
                                 <td>@Html.Raw(item.Body)</td>
                                 <td>@item.Url</td>
                                 <td>@item.CVFeedBack</td>
-                                <td>@item.GDFeedBack</td>
-                                <td>@Html.DisplayFor(a => item.TypeFault) <br /> @(item.FaultNumber?.ToString("N0"))</td>
-                                <td><a href="@Url.Action("UpdatePropose", new {id = item.Id})">Sửa</a></td>
+                                <td>@(item.TypeFault?.Content)</td>
+                                <td>@Html.DisplayFor(a => item.TypeApprove)</td>
+                                <td>@Html.DisplayFor(a => item.Active)</td>
+                                @if (Model.User.TypeUser == TypeUser.CV)
+                                {
+                                    <td><a href="@Url.Action("UpdatePropose", new {pId = item.Id})">Phản hồi</a></td>
+                                }
+                                else if (Model.User.TypeUser == TypeUser.BM)
+                                {
+                                    <td><a href="@Url.Action("EditPropose", new {pId = item.Id})">Sửa</a></td>
+                                }
                             </tr>
                             stt++;
                         }

@@ -1,6 +1,7 @@
 ﻿using OceanEduSlide.DAL;
 using OceanEduSlide.EnumHelpers;
 using OceanEduSlide.Filters;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using System;
@@ -27,6 +28,7 @@ namespace OceanEduSlide.Controllers
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
+                //SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content")
             };
             if (User.TypeUser == TypeUser.ASM)
             {
@@ -45,9 +47,15 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (User.TypeUser == TypeUser.BM)
+                    model.Proposal.Active = true;
+                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + User.OfficeId + ",")).FirstOrDefault();
+                if (z != null)
+                {
+                    model.Proposal.ZoneId = z.Id;
+                }
                 _unitOfWork.ProposalRepository.Insert(model.Proposal);
                 _unitOfWork.Save();
-
             }
             if (User.TypeUser == TypeUser.ASM)
             {
@@ -56,10 +64,10 @@ namespace OceanEduSlide.Controllers
                     model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains(a.Id.ToString())), "Id", "Name");
             }
             ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
-            return RedirectToAction("ListProposal", new {Result = "add"});
+            return RedirectToAction("ListProposal", new { Result = "add" });
         }
 
-        public ActionResult ListProposal(int? officeId, int? Month, int? Year, string Result = "")
+        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, string Result = "")
         {
             if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index", "Home");
@@ -70,17 +78,33 @@ namespace OceanEduSlide.Controllers
                 Year = Year ?? DateTime.Now.Year,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
                 User = User,
+                OfficeId = officeId,
+                ZoneId = zoneId,
             };
+            var proposals = _unitOfWork.ProposalRepository.GetQuery( a=> a.CreateDate.Month == model.Month && a.CreateDate.Year == model.Year);
             if (User.TypeUser == TypeUser.ASM)
+            {
                 model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                //model.Proposals = _unitOfWork.ProposalRepository.GetQuery(a => a.ZoneId == User.ZoneId && a.CreateDate.Month == model.Month && a.CreateDate.Year == model.Year);
+                model.ZoneId = User.ZoneId;
+            }
+
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Id + ","));
+                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ","));
+            }
             else if (User.TypeUser == TypeUser.BM)
                 model.OfficeId = User.OfficeId;
+            if (model.ZoneId != null)
+                proposals = proposals.Where(a => a.ZoneId == model.ZoneId);
+
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-                    model.Proposals = _unitOfWork.ProposalRepository.GetQuery(a => a.User.OfficeId == model.OfficeId && a.CreateDate.Month == model.Month && a.CreateDate.Year == model.Year);
+                    proposals = proposals.Where(a => a.User.OfficeId == model.OfficeId);
                     var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + model.OfficeId.ToString() + ",")).FirstOrDefault();
                     if (zone != null)
                     {
@@ -93,8 +117,34 @@ namespace OceanEduSlide.Controllers
                     }
                 }
             }
-
+            model.Proposals = proposals;
             return View(model);
+        }
+        public ActionResult UpdateProposal(int pId)
+        {
+            var proposal = _unitOfWork.ProposalRepository.GetById(pId);
+            if (proposal == null)
+                return RedirectToAction("ListProposal");
+            var model = new ApproveViewModel
+            {
+                Proposal = proposal,
+                SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content")
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult UpdateProposal(ApproveViewModel model)
+        {
+            var proposal = _unitOfWork.ProposalRepository.GetById(model.Proposal.Id);
+            if (proposal == null)
+                return RedirectToAction("ListProposal");
+            if (proposal.CVFeedBack != model.Proposal.CVFeedBack || proposal.TypeApprove != model.Proposal.TypeApprove || proposal.TypeFaultId != model.Proposal.TypeFaultId)
+                proposal.NSSeen = false;
+            proposal.CVFeedBack = model.Proposal.CVFeedBack;
+            proposal.TypeApprove = model.Proposal.TypeApprove;
+            proposal.TypeFaultId = model.Proposal.TypeFaultId;
+            _unitOfWork.Save();
+            return RedirectToAction("ListProposal");
         }
         protected override void Dispose(bool disposing)
         {

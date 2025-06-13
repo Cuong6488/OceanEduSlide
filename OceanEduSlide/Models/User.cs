@@ -41,6 +41,8 @@ namespace OceanEduSlide.Models
         public TypeUser? TypeUser { get; set; }
         [Display(Name = "Các chi nhánh quản lý")]
         public string OfficeIds { get; set; }
+        [Display(Name = "Các vùng quản lý")]
+        public string ZoneIds { get; set; }
         public virtual Office Office { get; set; }
         public virtual Zone Zone { get; set; }
         public virtual ICollection<RevenueUser_Month> RevenueUser_Months { get; set; }

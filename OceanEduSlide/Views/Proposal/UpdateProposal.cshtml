@@ -1,0 +1,81 @@
+﻿@model OceanEduSlide.ViewModels.ApproveViewModel
+@{
+    ViewBag.Title = "Phản hồi đề xuất";
+}
+<div class="container py-3">
+    <h2 class="mb-3">Cập nhật đề xuất</h2>
+    <a class="btn quick-link" href="@Url.Action("ListProposal")"><i class="far fa-list me-1"></i>Danh sách đề xuất</a>
+    <div class="box_content">
+        @using (Html.BeginForm("UpdateProposal", "Event", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.Proposal.Id)
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.User.Fullname)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Office.Name)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Office.Name)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.CreateDate)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
+                    <td class="form_text"> @Html.Raw(Model.Proposal.Body)</td>
+                </tr>
+                @if (Model.Proposal.Url != null)
+                {
+                    <tr>
+                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Url)</td>
+                        <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Url)</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CVFeedBack)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Proposal.CVFeedBack)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeFaultId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Proposal.TypeFaultId, Model.SelectFault, "Chọn tổng hợp lỗi", new { @class = "form-select" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25faultnumbertext ">@Html.LabelFor(model => model.Proposal.FaultNumber)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Proposal.FaultNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

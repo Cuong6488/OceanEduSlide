@@ -393,6 +393,18 @@
     <Compile Include="Migrations\202506130336351_proposalOffice.Designer.cs">
       <DependentUpon>202506130336351_proposalOffice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506130844032_fixproposal.cs" />
+    <Compile Include="Migrations\202506130844032_fixproposal.Designer.cs">
+      <DependentUpon>202506130844032_fixproposal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506130909195_zoneids.cs" />
+    <Compile Include="Migrations\202506130909195_zoneids.Designer.cs">
+      <DependentUpon>202506130909195_zoneids.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506130940560_zoneid.cs" />
+    <Compile Include="Migrations\202506130940560_zoneid.Designer.cs">
+      <DependentUpon>202506130940560_zoneid.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -401,6 +413,7 @@
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\TypeFault.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
     <Compile Include="Models\Debt.cs" />
@@ -1141,6 +1154,7 @@
     <Content Include="Views\Vcms\UpdateZone.cshtml" />
     <Content Include="Views\Proposal\Propose.cshtml" />
     <Content Include="Views\Proposal\ListProposal.cshtml" />
+    <Content Include="Views\Proposal\UpdateProposal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1290,6 +1304,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506130336351_proposalOffice.resx">
       <DependentUpon>202506130336351_proposalOffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130844032_fixproposal.resx">
+      <DependentUpon>202506130844032_fixproposal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130909195_zoneids.resx">
+      <DependentUpon>202506130909195_zoneids.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130940560_zoneid.resx">
+      <DependentUpon>202506130940560_zoneid.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

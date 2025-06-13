@@ -12,32 +12,34 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Nhân sự đề xuất"), Required]
         public int UserId { get; set; }
-        [Display(Name = "Chi nhánh"),Required(ErrorMessage = "Hãy chọn chi nhánh")]
+        [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
         public int OfficeId { get; set; }
-        [Display(Name = "Phân loại đề xuất"),Required(ErrorMessage ="Hãy chọn phân loại")]
-        public TypeProposal TypeProposal { get; set; }
+        [Display(Name = "Vùng"), Required(ErrorMessage = "Hãy chọn vùng")]
+        public int ZoneId { get; set; }
         [Display(Name = "Nội dung và lý do đề xuất"), UIHint("EditorBox")]
         public string Body { get; set; }
         [StringLength(500), Display(Name = "Hồ sơ, tài liệu mình chứng kèm theo")]
         public string Url { get; set; }
         [StringLength(500), Display(Name = "Phản hồi của phòng tuyển sinh")]
         public string CVFeedBack { get; set; }
-        [StringLength(500), Display(Name = "Kết luận")]
-        public string GDFeedBack { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
-        public int? TypeFault { get; set; }
+        public int? TypeFaultId { get; set; }
         public int? FaultNumber { get; set; }
+        [Display(Name = "Kết luận")]
+        public TypeApprove? TypeApprove { get; set; }
         public bool CVSeen { get; set; }
         public bool NSSeen { get; set; }
-        [Display(Name = "Hoạt động")]
+        [Display(Name = "Duyệt")]
         public bool Active { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
+        public virtual TypeFault TypeFault { get; set; }
         public virtual Office Office { get; set; }
+        public virtual Zone Zone { get; set; }
         public Proposal()
         {
-            Active = true;
+            //Active = true;
             CreateDate= DateTime.Now;
             NSSeen = true;
         }
@@ -70,5 +72,14 @@ namespace OceanEduSlide.Models
         Type12,
         [Display(Name = "Khác")]
         Type13,
+    }
+    public enum TypeApprove
+    {
+        [Display(Name = "Phê duyệt")]
+        Type1 = 1,
+        [Display(Name = "Không phê duyệt")]
+        Type2,
+        [Display(Name = "Đang xử lý")]
+        Type3,
     }
 }

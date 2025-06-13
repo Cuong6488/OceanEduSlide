@@ -24,6 +24,9 @@ namespace OceanEduSlide.DAL
         private GenericRepository<DownPathway> _downPathwaytRepository;
         private GenericRepository<Zone> _zonetRepository;
         private GenericRepository<Proposal> _proposaltRepository;
+        private GenericRepository<TypeFault> _typeFaultRepository;
+        public GenericRepository<TypeFault> TypeFaultRepository =>
+           _typeFaultRepository ?? (_typeFaultRepository = new GenericRepository<TypeFault>(_context));
         public GenericRepository<Proposal> ProposalRepository =>
            _proposaltRepository ?? (_proposaltRepository = new GenericRepository<Proposal>(_context));
         public GenericRepository<Zone> ZoneRepository =>

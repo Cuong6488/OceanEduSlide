@@ -16,6 +16,7 @@ namespace OceanEduSlide.DAL
         public DbSet<DownPathway> DownPathways { get; set; }
         public DbSet<Zone> Zones { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<TypeFault> TypeFaults { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Proposal>()

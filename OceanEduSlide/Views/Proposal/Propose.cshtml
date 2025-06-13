@@ -11,18 +11,16 @@
             @Html.ValidationSummary(true)
             <table class="form_table">
                 @Html.HiddenFor(a => a.Proposal.UserId)
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeProposal)</td>
-                    <td class="form_text">
-                        @Html.DropDownListFor(model => model.Proposal.TypeProposal, (IEnumerable<SelectListItem>)ViewBag.TypeProposalList, "Phân loại đề xuất", new { @class = "form-select" })
-                        @Html.ValidationMessageFor(model => model.Proposal.TypeProposal)
-                    </td>
-                </tr>
                 @if (Model.Proposal.User.TypeUser == OceanEduSlide.Models.TypeUser.ASM)
                 {
                     if (Model.SelectOffices != null)
                     {
                         <tr>
+                            <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                            <td class="form_text">
+                                @Html.DropDownListFor(model => model.Proposal.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select" })
+                                @Html.ValidationMessageFor(model => model.Proposal.OfficeId)
+                            </td>
                         </tr>
                     }
                     else
