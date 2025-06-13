@@ -48,6 +48,7 @@ namespace OceanEduSlide.Models
         public virtual ICollection<RevenueUser_Week> RevenueUser_Weeks { get; set; }
         public virtual ICollection<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
         public virtual ICollection<RevenueUser_DayOfWeek> RevenueUser_DayOfWeeks { get; set; }
+        public virtual ICollection<Proposal> Proposals { get; set; }
         public User()
         {
             Active = true;
@@ -71,6 +72,8 @@ namespace OceanEduSlide.Models
         SAB,
         [Display(Name = "CM")]
         CM,
+        [Display(Name = "Chuyên viên")]
+        CV,
 
     }
 }

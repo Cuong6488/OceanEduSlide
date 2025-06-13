@@ -26,10 +26,10 @@ namespace OceanEduSlide.Controllers
 
         #region Kinh_Doanh
 
-        public PartialViewResult Header(string name)
+        public PartialViewResult Header()
         {
-            ViewBag.Name = name;
-            return PartialView();
+
+            return PartialView(User);
         }
         public ActionResult Revenue(int? Month, int? OfficeId, int? Year, string Result = "")
         {

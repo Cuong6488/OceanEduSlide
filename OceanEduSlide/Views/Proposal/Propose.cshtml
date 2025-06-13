@@ -1,0 +1,66 @@
+﻿@model OceanEduSlide.ViewModels.ProposeViewModel
+@{
+    ViewBag.Title = "Thêm đề xuất";
+}
+<div class="container py-3">
+    <h2 class="mb-3">Thêm đề xuất</h2>
+    <a class="btn quick-link" href="@Url.Action("ListProposal", new { userId = Model.Proposal.UserId })"><i class="far fa-list me-1"></i>Danh sách đề xuất</a>
+    <div class="box_content">
+        @using (Html.BeginForm("Propose", "Proposal", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.Proposal.UserId)
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeProposal)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Proposal.TypeProposal, (IEnumerable<SelectListItem>)ViewBag.TypeProposalList, "Phân loại đề xuất", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(model => model.Proposal.TypeProposal)
+                    </td>
+                </tr>
+                @if (Model.Proposal.User.TypeUser == OceanEduSlide.Models.TypeUser.ASM)
+                {
+                    if (Model.SelectOffices != null)
+                    {
+                        <tr>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                            <td class="form_text alert alert-success">
+                                Chưa cài đặt vùng
+                            </td>
+                        </tr>
+                    }
+                }
+
+                else
+                {
+                    @Html.HiddenFor(a => a.Proposal.OfficeId)
+                }
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Đề xuất" />
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+
+@*@section scripts{
+        <script>
+
+        </script>
+    }*@

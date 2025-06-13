@@ -1,0 +1,131 @@
+﻿@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model ProposalViewModel
+@{
+    ViewBag.Title = "Danh sách đề xuất";
+}
+
+<style>
+    #OfficeId-error, #Month-error, #OfficeId-error {
+        display: none !important;
+    }
+</style>
+@*@Html.Action("Header", "TuyenSinh", new { name = "Danh sách công nợ" })*@
+<div class="container py-3">
+    @if (ViewBag.Result == "add")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+    }
+    <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5">
+        <select name="Year" class="form-select me-3" required">
+            <option value="">Chọn năm</option>
+            @for (int i = 2024; i <= DateTime.Now.Year; i++)
+            {
+                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+            }
+        </select>
+        <select name="Month" class="form-select me-3" required>
+            <option value="">Chọn tháng</option>
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+            }
+        </select>
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
+        {
+            <select name="OfficeId" class="form-select" required>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        @if (Model.User.TypeUser == TypeUser.BM)
+        {
+            <select name="" class="form-select" disabled>
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
+    </form>
+    @if (Model.OfficeId != null)
+    {
+        <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
+        <div class="box_content mt-0">
+            @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+            <table class="list_table tablecenter table-striped text-center">
+                <tbody>
+                    <tr>
+                        <th>STT</th>
+                        <th class="col-w65">
+                            Vùng
+                        </th>
+                        <th class="col-w90">
+                            CV PTS <br /> phụ trách
+                        </th>
+                        <th class="col-w90">
+                            Chi nhánh
+                        </th>
+                        <th class="col-w90">
+                            Nhân sự <br /> đề xuất
+                        </th>
+                        <th class="col-w90">
+                            Ngày đề xuất
+                        </th>
+                        <th class="col-w90">
+                            Phân loại <br /> đề xuất
+                        </th>
+                        <th class="col-w200">
+                            Nội dùng và lý do đề xuất
+                        </th>
+                        <th class="col-w90">
+                            Hồ sơ, <br /> tài liệu <br />minh chứng <br />kèm theo
+                        </th>
+                        <th class="col-w200">
+                            Phản hồi của phòng tuyển sinh
+                        </th>
+                        <th class="col-w90">
+                            Kết luận
+                        </th>
+                        <th class="col-w90">
+                            Tổng hợp lỗi
+                        </th>
+                        <th></th>
+                    </tr>
+                    @if (Model.Proposals != null)
+                    {
+                        int stt = 1;
+                        foreach (var item in Model.Proposals)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@(ViewBag.Zone?? "")</td>
+                                <td>@(ViewBag.CVName?? "")</td>
+                                <td>@item.Office.Name</td>
+                                <td>@item.User.Fullname</td>
+                                <td>@Html.DisplayFor(a => item.CreateDate)</td>
+                                <td>@Html.DisplayFor(a => item.TypeProposal)</td>
+                                <td>@Html.Raw(item.Body)</td>
+                                <td>@item.Url</td>
+                                <td>@item.CVFeedBack</td>
+                                <td>@item.GDFeedBack</td>
+                                <td>@Html.DisplayFor(a => item.TypeFault) <br /> @(item.FaultNumber?.ToString("N0"))</td>
+                                <td><a href="@Url.Action("UpdatePropose", new {id = item.Id})">Sửa</a></td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+
+}

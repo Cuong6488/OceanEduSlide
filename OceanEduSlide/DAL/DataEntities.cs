@@ -15,5 +15,16 @@ namespace OceanEduSlide.DAL
         public DbSet<Debt> Debts { get; set; }
         public DbSet<DownPathway> DownPathways { get; set; }
         public DbSet<Zone> Zones { get; set; }
+        public DbSet<Proposal> Proposals { get; set; }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Proposal>()
+                .HasRequired(p => p.Office)
+                .WithMany()
+                .HasForeignKey(p => p.OfficeId)
+                .WillCascadeOnDelete(false);
+        }
+
     }
+
 }

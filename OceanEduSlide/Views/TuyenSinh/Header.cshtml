@@ -1,13 +1,15 @@
 ﻿@*<div class="logo-title">
-    <div class="container">
-        <div class="d-flex justify-content-between align-content-center align-items-center py-3">
-            <a href="@Url.Action("Index","Home")">
-                <img src="~/Content/images/logo-index.png" />
-            </a>
-            <p class="m-0">@ViewBag.Name</p>
+        <div class="container">
+            <div class="d-flex justify-content-between align-content-center align-items-center py-3">
+                <a href="@Url.Action("Index","Home")">
+                    <img src="~/Content/images/logo-index.png" />
+                </a>
+                <p class="m-0">@ViewBag.Name</p>
+            </div>
         </div>
-    </div>
-</div>*@
+    </div>*@
+@using OceanEduSlide.Models
+@model User
 <div class="header d-flex">
     <div class="logo">
         <a href="/">
@@ -24,6 +26,16 @@
             </li>
             <li>
                 <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
+            </li>
+            <li>
+                @if (Model.TypeUser == TypeUser.BM || Model.TypeUser == TypeUser.ASM)
+                {
+                    <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
+                }
+                else if (Model.TypeUser == TypeUser.HO)
+                {
+                    <a href="@Url.Action("Approve","Proposal")">ĐỀ XUẤT</a>
+                }
             </li>
             <li>
                 <a class="change-password" href="javascript:;"><i class="fa-solid fa-key"></i></a>

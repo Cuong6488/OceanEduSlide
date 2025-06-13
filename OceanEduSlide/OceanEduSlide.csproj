@@ -260,6 +260,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\FaceIdController.cs" />
     <Compile Include="Controllers\EventController.cs" />
+    <Compile Include="Controllers\ProposalController.cs" />
     <Compile Include="Controllers\TuyenSinhController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
@@ -267,6 +268,7 @@
     <Compile Include="DAL\EmailValidationAttribute.cs" />
     <Compile Include="DAL\GenericRepository.cs" />
     <Compile Include="DAL\UnitOfWork.cs" />
+    <Compile Include="EnumHelpers\EnumExtensions.cs" />
     <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -379,7 +381,20 @@
     <Compile Include="Migrations\202506100347041_zone.Designer.cs">
       <DependentUpon>202506100347041_zone.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506130212523_proposal.cs" />
+    <Compile Include="Migrations\202506130212523_proposal.Designer.cs">
+      <DependentUpon>202506130212523_proposal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506130248251_seen.cs" />
+    <Compile Include="Migrations\202506130248251_seen.Designer.cs">
+      <DependentUpon>202506130248251_seen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506130336351_proposalOffice.cs" />
+    <Compile Include="Migrations\202506130336351_proposalOffice.Designer.cs">
+      <DependentUpon>202506130336351_proposalOffice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
     <Compile Include="Models\DownPathway.cs" />
@@ -401,6 +416,7 @@
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\EventViewModel.cs" />
+    <Compile Include="ViewModels\ProposalViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\OfficeViewModel.cs" />
     <Compile Include="ViewModels\PriceViewModel.cs" />
@@ -1123,6 +1139,8 @@
     <Content Include="Views\Vcms\CreateZone.cshtml" />
     <Content Include="Views\Vcms\ListZone.cshtml" />
     <Content Include="Views\Vcms\UpdateZone.cshtml" />
+    <Content Include="Views\Proposal\Propose.cshtml" />
+    <Content Include="Views\Proposal\ListProposal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1263,6 +1281,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506100347041_zone.resx">
       <DependentUpon>202506100347041_zone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130212523_proposal.resx">
+      <DependentUpon>202506130212523_proposal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130248251_seen.resx">
+      <DependentUpon>202506130248251_seen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506130336351_proposalOffice.resx">
+      <DependentUpon>202506130336351_proposalOffice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
