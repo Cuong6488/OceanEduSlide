@@ -3,16 +3,16 @@
     ViewBag.Title = "Phản hồi đề xuất";
 }
 <div class="container py-3">
-    <h2 class="mb-3">Cập nhật đề xuất</h2>
+    <h2 class="mb-3">@ViewBag.Title</h2>
     <a class="btn quick-link" href="@Url.Action("ListProposal")"><i class="far fa-list me-1"></i>Danh sách đề xuất</a>
     <div class="box_content">
-        @using (Html.BeginForm("UpdateProposal", "Event", FormMethod.Post))
+        @using (Html.BeginForm("UpdateProposal", "Proposal", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
             <table class="form_table">
                 @Html.HiddenFor(a => a.Proposal.Id)
                 <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.User.Fullname)</td>
+                    <td class="form_name w-25">Nhân sự đề xuất</td>
                     <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>
                 </tr>
                 <tr>
@@ -49,15 +49,15 @@
                 <tr>
                     <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
                     <td class="form_text">
-                        @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove)
+                        @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
                     </td>
                 </tr>
-                <tr>
+                @*<tr>
                     <td class="form_name w-25faultnumbertext ">@Html.LabelFor(model => model.Proposal.FaultNumber)</td>
                     <td class="form_text">
                         @Html.EditorFor(model => model.Proposal.FaultNumber)
                     </td>
-                </tr>
+                </tr>*@
                 <tr>
                     <td class="form_name"></td>
                     <td class="form_text">

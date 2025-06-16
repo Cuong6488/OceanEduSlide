@@ -88,6 +88,16 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        //public JsonResult GetOffice(int? zoneId)
+        //{
+        //    var zone = _unitOfWork.ZoneRepository.GetById(zoneId);
+
+        //    //var offices = _unitOfWork.OfficeRepository
+        //    //    .GetQuery(a => a.Active && a.ZoneId != null && a.ZoneId == zoneId, q => q.OrderBy(a => a.Sort)).Select(a => new { a.Id, a.Name });
+        //    var offices = _unitOfWork.OfficeRepository
+        //       .GetQuery(a => a.Active && zone.OfficeIds.Contains("," + a.Id + ","), q => q.OrderBy(a => a.Name)).Select(a => new { a.Id, a.Name });
+        //    return Json(offices, JsonRequestBehavior.AllowGet);
+        //}
         protected override void Dispose(bool disposing)
         {
             if (disposing)

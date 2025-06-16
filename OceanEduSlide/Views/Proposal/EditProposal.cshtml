@@ -1,0 +1,44 @@
+﻿@model OceanEduSlide.ViewModels.ProposeViewModel
+@{
+    ViewBag.Title = "Chỉnh sửa đề xuất";
+}
+<div class="container py-3">
+    <h2 class="mb-3">Thêm đề xuất</h2>
+    <a class="btn quick-link" href="@Url.Action("ListProposal", new { userId = Model.Proposal.UserId })"><i class="far fa-list me-1"></i>Danh sách đề xuất</a>
+    <div class="box_content">
+        @using (Html.BeginForm("EditProposal", "Proposal", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.Proposal.Id)
+                @Html.HiddenFor(a => a.Proposal.UserId)
+                @Html.HiddenFor(a => a.Proposal.OfficeId)
+
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Active)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Active)</td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+
+@*@section scripts{
+        <script>
+
+        </script>
+    }*@

@@ -19,6 +19,23 @@ $(".form-filter select").on("change", function (data) {
     }
 });
 
+//$("[data-item=zone]").on("change", function (data) {
+//    const id = $(this).val();
+//    var items = [];
+//    items.push("<option value>Chọn chi nhánh</option>");
+
+//    if (id !== "") {
+//        $.getJSON("/Home/GetOffice", { cityId: id }, function (data) {
+//            $.each(data, function (key, val) {
+//                items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
+//            });
+//            $("[data-item=office]").html(items.join(""));
+//        });
+//    }
+//    else {
+//        $("[data-item=office]").html(items.join(""));
+//    }
+//});
 $(function () {
     $(".input-number").maskMoney({
         precision: 0,

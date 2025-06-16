@@ -23,8 +23,8 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            if (User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.BM)
-                return RedirectToAction("Index", "Home");
+            //if (User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.BM)
+            //    return RedirectToAction("Index", "Home");
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
@@ -32,13 +32,13 @@ namespace OceanEduSlide.Controllers
             };
             if (User.TypeUser == TypeUser.ASM)
             {
-                var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + User.OfficeId.ToString() + ",")).FirstOrDefault();
+                var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
                 if (zone != null)
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains("," + a.Id.ToString() + ",")), "Id", "Name");
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "Name");
             }
             else
                 model.Proposal.OfficeId = User.OfficeId;
-            ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
+            //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
             return View(model);
         }
 
@@ -47,81 +47,141 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (User.TypeUser == TypeUser.BM)
+                if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
                     model.Proposal.Active = true;
-                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + User.OfficeId + ",")).FirstOrDefault();
+                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
                 if (z != null)
                 {
                     model.Proposal.ZoneId = z.Id;
+                    _unitOfWork.ProposalRepository.Insert(model.Proposal);
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListProposal", new { Result = "add" });
                 }
-                _unitOfWork.ProposalRepository.Insert(model.Proposal);
-                _unitOfWork.Save();
             }
-            if (User.TypeUser == TypeUser.ASM)
-            {
-                var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains(User.OfficeId.ToString())).FirstOrDefault();
-                if (zone != null)
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains(a.Id.ToString())), "Id", "Name");
-            }
-            ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
-            return RedirectToAction("ListProposal", new { Result = "add" });
+            //if (User.TypeUser == TypeUser.ASM)
+            //{
+            //    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains(User.OfficeId.ToString())).FirstOrDefault();
+            //    if (zone != null)
+            //        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains(a.Id.ToString())), "Id", "Name");
+            //}
+            //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
+            return RedirectToAction("ListProposal");
         }
 
-        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, string Result = "")
+        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, bool? bel, string Result = "")
         {
             if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index", "Home");
             ViewBag.Result = Result;
+            //if (bel != true)
+            //{
             var model = new ProposalViewModel
             {
-                Month = Month ?? DateTime.Now.Month,
-                Year = Year ?? DateTime.Now.Year,
+                Month = Month,
+                Year = Year,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
                 User = User,
                 OfficeId = officeId,
                 ZoneId = zoneId,
             };
-            var proposals = _unitOfWork.ProposalRepository.GetQuery( a=> a.CreateDate.Month == model.Month && a.CreateDate.Year == model.Year);
-            if (User.TypeUser == TypeUser.ASM)
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
+            if (Year.HasValue)
             {
-                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-                //model.Proposals = _unitOfWork.ProposalRepository.GetQuery(a => a.ZoneId == User.ZoneId && a.CreateDate.Month == model.Month && a.CreateDate.Year == model.Year);
-                model.ZoneId = User.ZoneId;
-            }
+                proposals = proposals.Where(a => a.CreateDate.Year == Year);
+                if (Month.HasValue)
+                    proposals = proposals.Where(a => a.CreateDate.Month == Month);
 
-            else if (User.TypeUser == TypeUser.CV)
+            }
+            if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Id + ","));
-                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ","));
+                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active);
             }
-            else if (User.TypeUser == TypeUser.BM)
-                model.OfficeId = User.OfficeId;
-            if (model.ZoneId != null)
-                proposals = proposals.Where(a => a.ZoneId == model.ZoneId);
-
-            if (model.OfficeId != null)
+            else
             {
-                var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
-                if (office != null)
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser != TypeUser.ASM)
                 {
-                    proposals = proposals.Where(a => a.User.OfficeId == model.OfficeId);
-                    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + model.OfficeId.ToString() + ",")).FirstOrDefault();
-                    if (zone != null)
-                    {
-                        ViewBag.Zone = zone.Name;
-                        var user = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.CV && a.Office.Zone.Id == zone.Id).FirstOrDefault();
-                        if (user != null)
-                        {
-                            ViewBag.CVName = user.Fullname ?? user.Username;
-                        }
-                    }
+                    model.OfficeId = User.OfficeId;
+                }
+
+            }
+
+            if (model.ZoneId != null)
+            {
+                proposals = proposals.Where(a => a.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                var user = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.CV && a.ZoneIds.Contains("," + model.ZoneId + ",")).FirstOrDefault();
+                if (user != null)
+                {
+                    ViewBag.CVName = user.Fullname ?? user.Username;
                 }
             }
-            model.Proposals = proposals;
+            if (model.OfficeId != null)
+            {
+                proposals = proposals.Where(a => a.OfficeId == model.OfficeId);
+            }
+            if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.CV)
+
+                proposals = proposals.Where(a => a.UserId == User.Id);
+            model.ProposalItems = proposals.ToList().Select(a => new ProposalViewModel.ProposalItem
+            {
+                Proposal = a,
+                CVName = _unitOfWork.UserRepository.GetQuery(c => c.ZoneId == a.ZoneId && c.TypeUser == TypeUser.CV).FirstOrDefault()?.Fullname
+            });
             return View(model);
+            //}
+            //else
+            //{
+            //    var model = new ProposalViewModel
+            //    {
+            //        Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active && User.ZoneIds.Contains("," + a.ZoneId + ","), q => q.OrderBy(a => a.Name)),
+            //        User = User,
+            //        ZoneId = zoneId,
+            //        Zones = _unitOfWork.ZoneRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Id + ",")),
+            //    };
+            //    //proposals = _unitOfWork.ProposalRepository.GetQuery(a => a.CVSeen == false);
+            //    var proposals = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active && a.CVSeen == false);
+            //    model.ProposalItems = proposals.ToList().Select(a => new ProposalViewModel.ProposalItem
+            //    {
+            //        Proposal = a,
+            //        CVName = _unitOfWork.UserRepository.GetQuery(c => c.ZoneId == a.ZoneId && c.TypeUser == TypeUser.CV).FirstOrDefault()?.Fullname
+            //    });
+            //    return View(model);
+            //}
+        }
+        public ActionResult EditProposal(int pId)
+        {
+            if (User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.BM)
+                return RedirectToAction("ListProposal");
+            var proposal = _unitOfWork.ProposalRepository.GetById(pId);
+            if (proposal == null || proposal.CVSeen == true)
+                return RedirectToAction("ListProposal");
+
+            var model = new ProposeViewModel
+            {
+                Proposal = proposal,
+                //SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content")
+            };
+            //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult EditProposal(ProposeViewModel model)
+        {
+            var proposal = _unitOfWork.ProposalRepository.GetById(model.Proposal.Id);
+            if (proposal == null)
+                return RedirectToAction("ListProposal");
+            proposal.Body = model.Proposal.Body;
+            proposal.Url = model.Proposal.Url;
+            proposal.Active = model.Proposal.Active;
+            _unitOfWork.Save();
+            return RedirectToAction("ListProposal", new { Result = "add" });
         }
         public ActionResult UpdateProposal(int pId)
         {
+            if (User.TypeUser != TypeUser.CV)
+                return RedirectToAction("ListProposal");
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
             if (proposal == null)
                 return RedirectToAction("ListProposal");
@@ -139,12 +199,15 @@ namespace OceanEduSlide.Controllers
             if (proposal == null)
                 return RedirectToAction("ListProposal");
             if (proposal.CVFeedBack != model.Proposal.CVFeedBack || proposal.TypeApprove != model.Proposal.TypeApprove || proposal.TypeFaultId != model.Proposal.TypeFaultId)
+            {
                 proposal.NSSeen = false;
-            proposal.CVFeedBack = model.Proposal.CVFeedBack;
-            proposal.TypeApprove = model.Proposal.TypeApprove;
-            proposal.TypeFaultId = model.Proposal.TypeFaultId;
-            _unitOfWork.Save();
-            return RedirectToAction("ListProposal");
+                proposal.CVSeen = true;
+                proposal.CVFeedBack = model.Proposal.CVFeedBack;
+                proposal.TypeApprove = model.Proposal.TypeApprove;
+                proposal.TypeFaultId = model.Proposal.TypeFaultId;
+                _unitOfWork.Save();
+            }
+            return RedirectToAction("ListProposal", new { Result = "add" });
         }
         protected override void Dispose(bool disposing)
         {

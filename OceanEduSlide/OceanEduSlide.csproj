@@ -405,6 +405,10 @@
     <Compile Include="Migrations\202506130940560_zoneid.Designer.cs">
       <DependentUpon>202506130940560_zoneid.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506160147108_zoneIdOffice.cs" />
+    <Compile Include="Migrations\202506160147108_zoneIdOffice.Designer.cs">
+      <DependentUpon>202506160147108_zoneIdOffice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -1155,6 +1159,7 @@
     <Content Include="Views\Proposal\Propose.cshtml" />
     <Content Include="Views\Proposal\ListProposal.cshtml" />
     <Content Include="Views\Proposal\UpdateProposal.cshtml" />
+    <Content Include="Views\Proposal\EditProposal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1313,6 +1318,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506130940560_zoneid.resx">
       <DependentUpon>202506130940560_zoneid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506160147108_zoneIdOffice.resx">
+      <DependentUpon>202506160147108_zoneIdOffice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
