@@ -12,6 +12,7 @@ namespace OceanEduSlide.DAL
         public DbSet<Office> Offices { get; set; }
         public DbSet<MemberCredential> MemberCredentials { get; set; }
         public DbSet<RevenueUser_DayOfWeek> RevenueUser_DayOfWeeks { get; set; }
+        public DbSet<RevenueUser_DayOfWeek_Real> RevenueUser_DayOfWeek_Reals { get; set; }
         public DbSet<Debt> Debts { get; set; }
         public DbSet<DownPathway> DownPathways { get; set; }
         public DbSet<Zone> Zones { get; set; }

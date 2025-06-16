@@ -19,7 +19,7 @@
                     <td class="left">@zone.OfficeIds</td>
                     <td>@Html.DisplayFor(a => zone.Active)</td>
                     <td class="list-icon">
-                        @Html.ActionLink("Sửa", "UpdateZone", new { zoneId = zone.Id }) - <a href="javascript:;"onclick="deleteZone('@zone.Id')"  class="red-warring deleteZone" id="@zone.Name">Xóa</a>
+                        @Html.ActionLink("Sửa", "UpdateZone", new { zoneId = zone.Id }) - <a href="javascript:;"onclick="deleteZone('@zone.Id')"  class="red-warring deleteZone" id="@zone.Id">Xóa</a>
                     </td>
                 </tr>
             }

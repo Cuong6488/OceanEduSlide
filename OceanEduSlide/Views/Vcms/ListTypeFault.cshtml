@@ -1,0 +1,29 @@
+﻿
+@model IEnumerable<OceanEduSlide.Models.TypeFault>
+<head>
+    <link href=" https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" rel="stylesheet" />
+</head>
+<div class="box_content">
+    <table class="list_table" id="list-typeFault">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Content)</th>
+                <th>@Html.DisplayNameFor(model => model.Active)</th>
+                <th></th>
+            </tr>
+            @foreach (var typeFault in Model)
+            {
+                <tr data-id="@typeFault.Id">
+                    <td class="left">@typeFault.Content</td>
+                    <td>@Html.DisplayFor(a => typeFault.Active)</td>
+                    <td class="list-icon">
+                        @Html.ActionLink("Sửa", "UpdateTypeFault", new { typeFaultId = typeFault.Id }) - <a href="javascript:;" onclick="deleteTypeFault('@typeFault.Id')" class="red-warring deleteTypeFault" id="@typeFault.Id">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/Content/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery.toast.js"></script>
+<script src="~/Scripts/scriptAdmin.js"></script>

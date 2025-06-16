@@ -798,7 +798,7 @@ namespace OceanEduSlide.Controllers
             {
                 return false;
             }
-            _unitOfWork.ZoneRepository.Delete(zone);
+            zone.Active = false;
             _unitOfWork.Save();
             return true;
         }
@@ -962,6 +962,83 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region Tong_hop_loi
+        public PartialViewResult ListTypeFault()
+        {
+            var model = _unitOfWork.TypeFaultRepository.Get();
+            return PartialView(model);
+        }
+        public ActionResult CreateTypeFault(string result = "")
+        {
+            ViewBag.Result = result;
+            //var model = new CreateTypeFaultViewModel
+            //{
+            //    TypeFault = new TypeFault(),
+            //    Offices = _unitOfWork.OfficeRepository.Get()
+            //    //SelectOffice = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name")
+            //};
+            return View(new TypeFault());
+        }
+        [HttpPost]
+        public ActionResult CreateTypeFault(TypeFault model)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.TypeFaultRepository.Insert(model);
+                _unitOfWork.Save();
+                return RedirectToAction("CreateTypeFault", new { result = "add" });
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        public ActionResult UpdateTypeFault(int typeFaultId)
+        {
+            var typeFault = _unitOfWork.TypeFaultRepository.GetById(typeFaultId);
+            if (typeFault == null)
+            {
+                return RedirectToAction("CreateTypeFault");
+            }
+            //var model = new CreateTypeFaultViewModel
+            //{
+            //    TypeFault = typeFault,
+            //    Offices = _unitOfWork.OfficeRepository.Get()
+            //};
+            return View(typeFault);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateTypeFault(TypeFault model)
+        {
+            if (ModelState.IsValid)
+            {
+                var typeFault = _unitOfWork.TypeFaultRepository.GetById(model.Id);
+                if (typeFault != null)
+                {
+
+                    typeFault.Content = model.Content;
+                    typeFault.Active = model.Active;
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateTypeFault", new { result = "add" });
+                }
+            }
+            return HttpNotFound();
+
+        }
+        [HttpPost]
+        public bool DeleteTypeFault(int typeFaultId = 0)
+        {
+            var typeFault = _unitOfWork.TypeFaultRepository.GetById(typeFaultId);
+            if (typeFault == null)
+            {
+                return false;
+            }
+            typeFault.Active = false;
+            _unitOfWork.Save();
+            return true;
+        }
+        #endregion
         //[HttpPost]
         //public ActionResult InsertUserExcel()
         //{

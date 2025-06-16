@@ -99,18 +99,31 @@ namespace OceanEduSlide.Controllers
                 proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active);
                 if (Notice == 1)
                     proposals = proposals.Where(a => a.CVSeen == false);
-                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active).Count();
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active && !a.CVSeen).Count();
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ","));
 
             }
             else
             {
                 model.ZoneId = User.ZoneId;
-                if (User.TypeUser != TypeUser.ASM)
+                if (Notice == 2)
+                    proposals = proposals.Where(a => a.Active == false);
+                else if (Notice == 3)
                 {
-                    model.OfficeId = User.OfficeId;
+                    proposals = proposals.Where(a => a.NSSeen == false);
+                    //foreach (var item in proposals)
+                    //{
+                    //    item.NSSeen = true;
+                    //}
+                    //_unitOfWork.Save();
                 }
 
+                if (User.TypeUser != TypeUser.ASM)
+                    model.OfficeId = User.OfficeId;
+                if (User.TypeUser == TypeUser.ASM)
+                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
+                else if (User.TypeUser == TypeUser.BM)
+                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
             }
 
             if (model.ZoneId != null)
@@ -128,13 +141,9 @@ namespace OceanEduSlide.Controllers
                 proposals = proposals.Where(a => a.OfficeId == model.OfficeId);
             }
             if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.CV)
-
                 proposals = proposals.Where(a => a.UserId == User.Id);
-            model.ProposalItems = proposals.ToList().Select(a => new ProposalViewModel.ProposalItem
-            {
-                Proposal = a,
-                CVName = _unitOfWork.UserRepository.GetQuery(c => c.ZoneId == a.ZoneId && c.TypeUser == TypeUser.CV).FirstOrDefault()?.Fullname
-            });
+
+            model.Proposals = proposals;
             return View(model);
             //}
             //else
@@ -214,6 +223,16 @@ namespace OceanEduSlide.Controllers
                 _unitOfWork.Save();
             }
             return RedirectToAction("ListProposal", new { Result = "add" });
+        }
+        [HttpPost]
+        public JsonResult UpdateSeen(int id)
+        {
+            var proposal = _unitOfWork.ProposalRepository.GetById(id);
+            if (proposal == null)
+                return Json(new {status = false});
+            proposal.NSSeen = true;
+            _unitOfWork.Save();
+            return Json(new { status = true });
         }
         protected override void Dispose(bool disposing)
         {

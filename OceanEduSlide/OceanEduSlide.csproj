@@ -409,6 +409,14 @@
     <Compile Include="Migrations\202506160147108_zoneIdOffice.Designer.cs">
       <DependentUpon>202506160147108_zoneIdOffice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506160739250_cvname.cs" />
+    <Compile Include="Migrations\202506160739250_cvname.Designer.cs">
+      <DependentUpon>202506160739250_cvname.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506161004429_baocaongay.cs" />
+    <Compile Include="Migrations\202506161004429_baocaongay.Designer.cs">
+      <DependentUpon>202506161004429_baocaongay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -417,6 +425,7 @@
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\RevenueUser_DayOfWeek_Real.cs" />
     <Compile Include="Models\TypeFault.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
@@ -433,6 +442,7 @@
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\EventViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\ProposalViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\OfficeViewModel.cs" />
@@ -1160,6 +1170,9 @@
     <Content Include="Views\Proposal\ListProposal.cshtml" />
     <Content Include="Views\Proposal\UpdateProposal.cshtml" />
     <Content Include="Views\Proposal\EditProposal.cshtml" />
+    <Content Include="Views\Vcms\ListTypeFault.cshtml" />
+    <Content Include="Views\Vcms\CreateTypeFault.cshtml" />
+    <Content Include="Views\Vcms\UpdateTypeFault.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1321,6 +1334,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506160147108_zoneIdOffice.resx">
       <DependentUpon>202506160147108_zoneIdOffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506160739250_cvname.resx">
+      <DependentUpon>202506160739250_cvname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506161004429_baocaongay.resx">
+      <DependentUpon>202506161004429_baocaongay.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

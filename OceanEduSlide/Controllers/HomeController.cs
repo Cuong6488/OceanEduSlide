@@ -1,11 +1,13 @@
 ﻿using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
 using System.Data.Entity;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -86,7 +88,44 @@ namespace OceanEduSlide.Controllers
         #endregion
         public ActionResult Index()
         {
-            return View();
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month);
+            var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+            && q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
+            var model = new UserHomeViewModel
+            {
+                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek),
+                TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).FirstOrDefault()?.TargetBM - debt) ?? 0,
+                RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).Sum(a => a.TargetBM) ?? 0,
+                TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
+                RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
+            };
+            switch (DateTime.Now.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Monday);
+                    break;
+                case DayOfWeek.Tuesday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Tuesday);
+                    break;
+                case DayOfWeek.Thursday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Thursday);
+                    break;
+                case DayOfWeek.Friday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Friday);
+                    break;
+                case DayOfWeek.Wednesday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Wednessday);
+                    break;
+                case DayOfWeek.Sunday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Sunday);
+                    break;
+                case DayOfWeek.Saturday:
+                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Saturday);
+                    break;
+                default:
+                    break;
+            }
+            return View(model);
         }
         //public JsonResult GetOffice(int? zoneId)
         //{

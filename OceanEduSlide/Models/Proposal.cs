@@ -16,6 +16,8 @@ namespace OceanEduSlide.Models
         public int OfficeId { get; set; }
         [Display(Name = "Vùng"), Required(ErrorMessage = "Hãy chọn vùng")]
         public int ZoneId { get; set; }
+        [Display(Name = "Chuyên viên phụ trách")]
+        public string CVName { get; set; }
         [Display(Name = "Nội dung và lý do đề xuất"), UIHint("EditorBox")]
         public string Body { get; set; }
         [StringLength(500), Display(Name = "Hồ sơ, tài liệu mình chứng kèm theo")]
