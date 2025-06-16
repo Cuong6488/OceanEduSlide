@@ -16,150 +16,161 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-<div class="d-flex">
+    <div class="d-flex">
 
-    <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
-        <select name="Year" class="form-select me-3" required">
-            <option value="">Chọn năm</option>
-            @for (int i = 2024; i <= DateTime.Now.Year; i++)
+        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
+            <select name="Year" class="form-select me-3">
+                <option value="">Chọn năm</option>
+                @for (int i = 2024; i <= DateTime.Now.Year; i++)
+                {
+                    <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                }
+            </select>
+            <select name="Month" class="form-select me-3">
+                <option value="">Chọn tháng</option>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+                }
+            </select>
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
             {
-                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
-            }
-        </select>
-        <select name="Month" class="form-select me-3" required>
-            <option value="">Chọn tháng</option>
-            @for (int i = 1; i <= 12; i++)
-            {
-                <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
-            }
-        </select>
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
-        {
-            <select name="OfficeId" class="form-select me-3">
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
-        }
-        else if (Model.User.TypeUser == TypeUser.BM)
-        {
-            <select name="" class="form-select me-3" disabled>
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
-            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-        }
-        else if (Model.User.TypeUser == TypeUser.CV)
-        {
-            <select name="ZoneId" class="form-select me-3" @*data-item="zone"*@>
-                <option value="">Chọn vùng</option>
-                @foreach (var item in Model.Zones)
-                {
-                    <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
-            <select name="OfficeId" class="form-select" @*data-item="office"*@>
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
-        }
-    </form>
-    <a style="width:50px" href="@Url.Action("ListProposal", new {bel = true})"><i class="fa-solid fa-bell"></i></a>
-</div>
-    @*@if (Model.ZoneId != null)
-    {*@
-        <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
-        <div class="box_content mt-0">
-            @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
-            <table class="list_table tablecenter table-striped text-center">
-                <tbody>
-                    <tr>
-                        <th>STT</th>
-                        <th class="col-w65">
-                            Vùng
-                        </th>
-                        <th class="col-w90">
-                            CV PTS <br /> phụ trách
-                        </th>
-                        <th class="col-w90">
-                            Chi nhánh
-                        </th>
-                        <th class="col-w90">
-                            Nhân sự <br /> đề xuất
-                        </th>
-                        <th class="col-w90">
-                            Ngày đề xuất
-                        </th>
-                        @*<th class="col-w90">
-                                Phân loại <br /> đề xuất
-                            </th>*@
-                        <th class="col-w200">
-                            Nội dung và lý do đề xuất
-                        </th>
-                        <th class="col-w90">
-                            Hồ sơ, <br /> tài liệu <br />minh chứng <br />kèm theo
-                        </th>
-                        <th class="col-w200">
-                            Phản hồi của phòng tuyển sinh
-                        </th>
-                        <th class="col-w90">
-                            Kết luận
-                        </th>
-                        <th class="col-w90">
-                            Tổng hợp lỗi
-                        </th>
-                        <th class="col-w90">
-                            Duyệt
-                        </th>
-                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM)
-                        {
-                            <th></th>
-                        }
-                    </tr>
-                    @if (Model.ProposalItems != null)
+                <select name="OfficeId" class="form-select me-3">
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
                     {
-                        int stt = 1;
-                        foreach (var item in Model.ProposalItems)
-                        {
-
-                            <tr>
-                                <td>@stt</td>
-                                <td>@item.Proposal.Zone.Name</td>
-                                <td>@item.CVName</td>
-                                <td>@item.Proposal.Office.Name</td>
-                                <td>@item.Proposal.User.Fullname</td>
-                                <td>@Html.DisplayFor(a => item.Proposal.CreateDate)</td>
-                                @*<td>@Html.DisplayFor(a => item.Proposal.TypeProposal)</td>*@
-                                <td>@Html.Raw(item.Proposal.Body)</td>
-                                <td>@item.Proposal.Url</td>
-                                <td>@item.Proposal.CVFeedBack</td>
-                                <td>@Html.DisplayFor(a => item.Proposal.TypeApprove)</td>
-                                <td>@(item.Proposal.TypeFault?.Content)</td>
-                                <td>@Html.DisplayFor(a => item.Proposal.Active)</td>
-                                @if (Model.User.TypeUser == TypeUser.CV)
-                                {
-                                    <td><a href="@Url.Action("UpdateProposal", new {pId = item.Proposal.Id})">Phản hồi</a></td>
-                                }
-                                else if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM) && item.Proposal.CVSeen == false)
-                                {
-                                    <td><a href="@Url.Action("EditProposal", new {pId = item.Proposal.Id})">Sửa</a></td>
-                                }
-                            </tr>
-                            stt++;
-                        }
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
                     }
-                </tbody>
-            </table>
-        </div>
-        @*}*@
+                </select>
+            }
+            else if (Model.User.TypeUser == TypeUser.BM)
+            {
+                <select name="" class="form-select me-3" disabled>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+            }
+            else if (Model.User.TypeUser == TypeUser.CV)
+            {
+                <select name="ZoneId" class="form-select me-3" @*data-item="zone"*@>
+                    <option value="">Chọn vùng</option>
+                    @foreach (var item in Model.Zones)
+                    {
+                        <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+                <select name="OfficeId" class="form-select me-3" @*data-item="office"*@>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+                <select name="Notice" class="form-select me-3">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phê duyệt</option>
+                </select>
+            }
+        </form>
+        <a class="notice" href="@Url.Action("ListProposal", new {notice = 1})">
+            <i class="fa-solid fa-bell"></i>
+            @if (ViewBag.NoticeCount > 0)
+            {
+                <span>@ViewBag.NoticeCount</span>
+            }
+
+        </a>
+    </div>
+    @*@if (Model.ZoneId != null)
+        {*@
+    <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
+    <div class="box_content mt-0">
+        @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+        <table class="list_table tablecenter table-striped text-center">
+            <tbody>
+                <tr>
+                    <th>STT</th>
+                    <th class="col-w65">
+                        Vùng
+                    </th>
+                    <th class="col-w90">
+                        CV PTS <br /> phụ trách
+                    </th>
+                    <th class="col-w90">
+                        Chi nhánh
+                    </th>
+                    <th class="col-w90">
+                        Nhân sự <br /> đề xuất
+                    </th>
+                    <th class="col-w90">
+                        Ngày đề xuất
+                    </th>
+                    @*<th class="col-w90">
+                            Phân loại <br /> đề xuất
+                        </th>*@
+                    <th class="col-w200">
+                        Nội dung và lý do đề xuất
+                    </th>
+                    <th class="col-w90">
+                        Hồ sơ, <br /> tài liệu <br />minh chứng <br />kèm theo
+                    </th>
+                    <th class="col-w200">
+                        Phản hồi của phòng tuyển sinh
+                    </th>
+                    <th class="col-w90">
+                        Kết luận
+                    </th>
+                    <th class="col-w90">
+                        Tổng hợp lỗi
+                    </th>
+                    <th class="col-w90">
+                        Duyệt
+                    </th>
+                    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM)
+                    {
+                        <th></th>
+                    }
+                </tr>
+                @if (Model.ProposalItems != null)
+                {
+                    int stt = 1;
+                    foreach (var item in Model.ProposalItems)
+                    {
+
+                        <tr>
+                            <td>@stt</td>
+                            <td>@item.Proposal.Zone.Name</td>
+                            <td>@item.CVName</td>
+                            <td>@item.Proposal.Office.Name</td>
+                            <td>@item.Proposal.User.Fullname</td>
+                            <td>@Html.DisplayFor(a => item.Proposal.CreateDate)</td>
+                            @*<td>@Html.DisplayFor(a => item.Proposal.TypeProposal)</td>*@
+                            <td>@Html.Raw(item.Proposal.Body)</td>
+                            <td>@item.Proposal.Url</td>
+                            <td>@item.Proposal.CVFeedBack</td>
+                            <td>@Html.DisplayFor(a => item.Proposal.TypeApprove)</td>
+                            <td>@(item.Proposal.TypeFault?.Content)</td>
+                            <td>@Html.DisplayFor(a => item.Proposal.Active)</td>
+                            @if (Model.User.TypeUser == TypeUser.CV)
+                            {
+                                <td><a href="@Url.Action("UpdateProposal", new {pId = item.Proposal.Id})">Phản hồi</a></td>
+                            }
+                            else if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM) && item.Proposal.CVSeen == false)
+                            {
+                                <td><a href="@Url.Action("EditProposal", new {pId = item.Proposal.Id})">Sửa</a></td>
+                            }
+                        </tr>
+                        stt++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @*}*@
 </div>
 @section scripts{
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>

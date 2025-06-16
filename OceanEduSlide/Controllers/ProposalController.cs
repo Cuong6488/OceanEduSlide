@@ -68,7 +68,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListProposal");
         }
 
-        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, bool? bel, string Result = "")
+        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string Result = "")
         {
             if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index", "Home");
@@ -83,6 +83,7 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 OfficeId = officeId,
                 ZoneId = zoneId,
+                Notice = Notice,
             };
             var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
             if (Year.HasValue)
@@ -96,6 +97,11 @@ namespace OceanEduSlide.Controllers
             {
                 model.Zones = _unitOfWork.ZoneRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Id + ","));
                 proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active);
+                if (Notice == 1)
+                    proposals = proposals.Where(a => a.CVSeen == false);
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active).Count();
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ","));
+
             }
             else
             {

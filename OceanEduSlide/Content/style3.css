@@ -116,3 +116,26 @@
 h2 {
   margin-bottom: 5px !important;
 }
+
+.notice {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  font-size: 20px;
+}
+.notice span {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  width: 20px;
+  height: 15px;
+  border-radius: 10px;
+  background: #DE0000;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
