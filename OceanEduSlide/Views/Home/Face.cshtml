@@ -1,7 +1,11 @@
-﻿@using Helpers
+﻿@{
+    ViewBag.Title = "Gương mặt nổi bật";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
+}
+@using Helpers
 <div class="face">
     <div class="face-index slide page-100vh">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor" href="@Url.Action("IndexSaleKit")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btns-text">
@@ -30,7 +34,7 @@
         </div>
     </div>
     <div class="fade-slide face-ielts-slide slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor" href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -241,7 +245,7 @@
         </div>
     </div>
     <div class="fade-slide face-cambridge-slide slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -382,7 +386,7 @@
         </div>
     </div>
     <div class="fade-slide face-oe-slide slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -522,7 +526,7 @@
         </div>
     </div>
     <div class="face-slide face-student-slide slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -534,11 +538,11 @@
                     @for (int i = 1; i < 6; i++)
                     {
                         @*<a class="ratio ratio-16x9" data-fancybox href="https://www.youtube.com/watch?v=3N5Ve4F6Su0&list=PL7CcXOkd1wWo9jbvWg0Ev3-_ntayG8rFl">
-                            <img src="https://img.youtube.com/vi/3N5Ve4F6Su0/maxresdefault.jpg" alt="Video Thumbnail">
-                        </a>*@
+                                <img src="https://img.youtube.com/vi/3N5Ve4F6Su0/maxresdefault.jpg" alt="Video Thumbnail">
+                            </a>*@
                         <a data-fancybox href="https://www.youtube.com/watch?v=3N5Ve4F6Su0&list=PL7CcXOkd1wWo9jbvWg0Ev3-_ntayG8rFl" class="video-thumbnail ratio ratio-16x9">
                             <img src="https://img.youtube.com/vi/3N5Ve4F6Su0/maxresdefault.jpg" alt="Video Thumbnail">
-                            <div class="play-button"><i class="fa-solid fa-play"></i></div> 
+                            <div class="play-button"><i class="fa-solid fa-play"></i></div>
                         </a>
 
                     }

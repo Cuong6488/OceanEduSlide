@@ -23,8 +23,8 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            //if (User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.BM)
-            //    return RedirectToAction("Index", "Home");
+            if (User.TypeUser == null || User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.CV)
+                return HttpNotFound();
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
@@ -70,11 +70,9 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string Result = "")
         {
-            if (User.TypeUser == TypeUser.User)
-                return RedirectToAction("Index", "Home");
+            if (User.TypeUser == null)
+                return HttpNotFound();
             ViewBag.Result = Result;
-            //if (bel != true)
-            //{
             var model = new ProposalViewModel
             {
                 Month = Month,

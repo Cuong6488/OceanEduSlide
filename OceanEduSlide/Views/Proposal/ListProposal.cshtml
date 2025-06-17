@@ -53,7 +53,7 @@
                 </select>
                 <select name="Notice" class="form-select me-3">
                     <option value="">Tất cả</option>
-                    <option value="2" @(Model.Notice == 2 ? "selected" : "")>Chưa duyệt</option>
+                    <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
                 </select>
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
@@ -146,9 +146,9 @@
                         Tổng hợp lỗi
                     </th>
                     <th class="col-w90">
-                        Duyệt
+                        BM Duyệt
                     </th>
-                    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO)
+                    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                     {
                         <th></th>
                     }
@@ -170,24 +170,28 @@
                         <td>@Html.DisplayFor(a => item.TypeApprove)</td>
                         <td>@(item.TypeFault?.Content)</td>
                         <td>@Html.DisplayFor(a => item.Active)</td>
-                        <td>
-                            @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
-                            {
-                                <a href="@Url.Action("UpdateProposal", new {pId = item.Id})">Phản hồi</a>
-                            }
-                            else if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM))
-                            {
-                                if (item.CVSeen == false)
+                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
+                        {
+                            <td>
+                                @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
                                 {
-                                    <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a>
+                                    <a href="@Url.Action("UpdateProposal", new {pId = item.Id})">Phản hồi</a>
                                 }
-                                
-                                if (Model.Notice == 3)
+                                else
                                 {
-                                   <a class="btn-read" href="javascript:;"> Đánh dấu đã xem</a>
+                                    if (item.CVSeen == false)
+                                    {
+                                        <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a>
+                                    }
+
+                                    else if (Model.Notice == 3)
+                                    {
+                                        <a class="btn-read" href="javascript:;"> Đánh dấu đã xem</a>
+                                    }
                                 }
-                            }
-                        </td>
+                            </td>
+                        }
+
                     </tr>
                     stt++;
                 }
@@ -204,21 +208,21 @@
         $(".btn-read").on("click", function () {
             var id = $(this).closest("tr").data("id");
             var thisElement = $(this);
-                $.post("/Proposal/UpdateSeen", { id:id }, function (data) {
-                    if (data.status) {
-                        $.toast({
-                            heading: 'Cập nhật thành công',
-                            icon: 'success'
-                        })
-                        thisElement.css("display", "none");
-                    } else {
-                        $.toast({
-                            heading: 'Cập nhật thất bại',
-                            icon: 'error'
-                        })
-                    }
-                });
-            
+            $.post("/Proposal/UpdateSeen", { id: id }, function (data) {
+                if (data.status) {
+                    $.toast({
+                        heading: 'Cập nhật thành công',
+                        icon: 'success'
+                    })
+                    thisElement.css("display", "none");
+                } else {
+                    $.toast({
+                        heading: 'Cập nhật thất bại',
+                        icon: 'error'
+                    })
+                }
+            });
+
         });
     </script>
 }

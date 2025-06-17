@@ -69,7 +69,7 @@ namespace OceanEduSlide.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("IndexShare");
 
             }
             return View();
@@ -85,12 +85,126 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("Login");
         }
-        #endregion
-        public ActionResult Index(int? officeId)
+        [HttpPost]
+        public JsonResult ChangePassword(string oldpassword, string newpassword, string confirmpassword)
         {
+            if (!HtmlHelpers.VerifyHash(oldpassword, "SHA256", User.Password))
+            {
+                return Json(new { status = false, msg = "Mật khẩu cũ không chính xác. Hãy kiểm tra lại." });
+            }
+            else if (confirmpassword != newpassword)
+            {
+                return Json(new { status = false, msg = "Xác nhận mật khẩu không chính xác. Hãy kiểm tra lại." });
+            }
+            else if (newpassword.Length > 60)
+            {
+                return Json(new { status = false, msg = "Mật khẩu không được quá 60 ký tự." });
+
+            }
+
+            User.Password = HtmlHelpers.ComputeHash(newpassword, "SHA256", null);
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Đổi mật khẩu thành công." });
+
+        }
+
+
+        #endregion
+
+        #region SaleKit
+        [Route("trang-chu")]
+        public ActionResult IndexSaleKit()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
+        public JsonResult GetDiscount(string cth, double pathway)
+        {
+
+            var discounts = _unitOfWork.DiscountRepository
+                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
+                (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
+                (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) &&
+                a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+            return Json(discounts, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult CalcMoney(int id, string totalMoney)
+        {
+            int intTotalMoney = Convert.ToInt32(totalMoney.Replace(".", "").Replace(",", "").Replace("đ", ""));
+            var discount = _unitOfWork.DiscountRepository.GetById(id);
+            int moneyDiscount = 0;
+            if (discount != null)
+            {
+                moneyDiscount = discount.MoneyDiscount ?? 0;
+                if (discount.PercentDiscount != null)
+                {
+                    double? decimalMoney = intTotalMoney * discount.PercentDiscount / 100;
+                    moneyDiscount += (int)Math.Round((double)decimalMoney);
+                    return Json(new { status = true, moneyDiscount, gift = discount.Gift ?? "Chưa có", finalMoney = intTotalMoney - moneyDiscount });
+
+                }
+            }
+            return Json(new { status = false });
+        }
+
+        [Route("chuong-trinh-hoc")]
+        public ActionResult Pathway()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
+        public ActionResult Face()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
+        [Route("cuoc-thi")]
+        public ActionResult Race()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
+        //public ActionResult CourseOutline()
+        //{
+        //    if (!User.SaleKit && User.TypeUser != null)
+        //        return HttpNotFound();
+        //    return View();
+        //}
+        [Route("gioi-thieu")]
+        public ActionResult About()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
+        [Route("hoc-phi")]
+        public ActionResult Price()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            //var model = new PriceViewModel
+            //{
+            //    SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(a => a.Active), "Id", "Username"),
+            //};
+            var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
+            return View(office);
+        }
+
+        #endregion
+
+        #region Tuyen_Sinh
+ public ActionResult Index(int? officeId)
+        {
+            if (User.TypeUser == null)
+                return HttpNotFound();
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month);
             ViewBag.CurrentWeek = currentWeek;
-            if (User.TypeUser == TypeUser.EC)
+            if (User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.SAB)
             {
                 var debt = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
                 && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
@@ -196,8 +310,29 @@ namespace OceanEduSlide.Controllers
                     model.Offices = _unitOfWork.OfficeRepository.Get(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
                 return View("IndexBM", model);
             }
+            return View("IndexHO");
+        }
+        public PartialViewResult LoadDebt(int debtId)
+        {
+            var model = _unitOfWork.DebtRepository.GetById(debtId);
+            return PartialView(model);
+        }
+        public PartialViewResult LoadEvent(int evId)
+        {
+            var model = _unitOfWork.EventRepository.GetById(evId);
+            return PartialView(model);
+        }
+        #endregion
+
+        public ActionResult IndexShare(int? officeId)
+        {
+            if (User.TypeUser == null)
+                return RedirectToAction("IndexSaleKit");
+            else if (!User.SaleKit)
+                return RedirectToAction("Index");
             return View();
         }
+       
         //public JsonResult GetOffice(int? zoneId)
         //{
         //    var zone = _unitOfWork.ZoneRepository.GetById(zoneId);
@@ -208,6 +343,7 @@ namespace OceanEduSlide.Controllers
         //       .GetQuery(a => a.Active && zone.OfficeIds.Contains("," + a.Id + ","), q => q.OrderBy(a => a.Name)).Select(a => new { a.Id, a.Name });
         //    return Json(offices, JsonRequestBehavior.AllowGet);
         //}
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

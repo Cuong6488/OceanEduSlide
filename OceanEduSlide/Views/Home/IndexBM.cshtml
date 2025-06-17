@@ -5,9 +5,7 @@
 @using OceanEduSlide.Models
 @model BMHomeViewModel
 <style>
-    .fancybox-content:hover {
-        transform: scale(1.5);
-    }
+
     #OfficeId-error {
         display: none !important;
     }
@@ -70,8 +68,11 @@
                                     {
                                         <div class="mb-2 p-2" style="background: #dbd9d9 ">
                                             @if (item.Event?.Name != null)
-                                            {
-                                                <p class="mb-2 text-danger">@(item.Event?.Name)</p>
+                                            {<div class="d-flex">
+                                                    <p class="mb-2 me-3 text-danger">@(item.Event?.Name)</p>
+                                                    <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
+                                                </div>
                                             }
                                             @if (item.DataQuantity != null)
                                             {
@@ -107,7 +108,11 @@
                                         foreach (var item in userItem.Debts)
                                         {
                                             <div class="mb-2 p-2" style="background: #dbd9d9 ">
-                                                <p class="mb-2 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
+                                                <div class="d-flex">
+                                                    <p class="mb-2 me-3 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
+                                                    <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadDebt",  new{debtId = item.Id})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
+                                                </div>
                                                 Thành tiền:  @Html.DisplayFor(a => item.TotalMoney)<br />
                                                 Tiền cọc giữ chỗ: @Html.DisplayFor(a => item.DebtMoney) <br />
                                                 Tiền cọc bổ sung làm hồ sơ: @Html.DisplayFor(a => item.DebtMoney2) <br />

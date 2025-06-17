@@ -4123,7 +4123,7 @@ body {
     visibility: hidden;
     transition: .3s;
     font-family: montserrat;
-
+    z-index:3;
     &.active {
         opacity: 1;
         visibility: visible;

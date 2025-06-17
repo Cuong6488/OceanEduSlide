@@ -33,6 +33,8 @@ namespace OceanEduSlide.Models
         public decimal RevenueAverage { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [Display(Name = "Tài khoản SaleKit")]
+        public bool SaleKit { get; set; }
         [Display(Name = "Chi nhánh")]
         public int OfficeId { get; set; }
         [Display(Name = "Vùng")]
@@ -56,11 +58,12 @@ namespace OceanEduSlide.Models
             Active = true;
         }
     }
+    //Không có phân quyền => Chỉ vào được SaleKit
     public enum TypeUser
     {
         [Display(Name = "User")]
         User,
-        [Display(Name = "HO")]
+        [Display(Name = "Giám đốc")]
         HO,
         [Display(Name = "ASM")]
         ASM,
@@ -68,14 +71,13 @@ namespace OceanEduSlide.Models
         BM,
         [Display(Name = "EC")]
         EC,
-        [Display(Name = "SL")]
-        SL,
+        [Display(Name = "ALT")]
+        ALT,
         [Display(Name = "SAB")]
         SAB,
         [Display(Name = "CM")]
         CM,
         [Display(Name = "Chuyên viên")]
         CV,
-
     }
 }

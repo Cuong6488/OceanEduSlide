@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @*<link rel="shortcut icon" type="x-icon" href="@Path.Combine("/images/configs/",config.Favicon)">*@
+
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="@Html.Raw(ViewBag.Description)" />
+    <meta name="robots" content="@(ViewBag.Robots == null ? "index,follow" : ViewBag.Robots)" />
+    <link rel="canonical" href="@ViewBag.Canonical" />
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@Html.Raw(ViewBag.Title)">
+    <meta property="og:description" content="@Html.Raw(ViewBag.Description)">
+    <meta property="og:url" content="@ViewBag.Canonical">
+    <meta property="og:site_name" content="@Html.Raw(ViewBag.Title)">
+    <meta property="og:image" content="@ViewBag.ImageShare" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    @Styles.Render("~/Content/salekitcss", "~/Content/themes/base/css")
+</head>
+<body>
+    @*@Html.Action("Header", "Home")*@
+    @RenderBody()
+    @*@Html.Action("Footer", "Home")*@
+    @Scripts.Render("~/bundles/jquery", "~/bundles/bootstrap", "~/bundles/jqueryui", "~/bundles/jqueryval")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    @Scripts.Render("~/bundles/myscript")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

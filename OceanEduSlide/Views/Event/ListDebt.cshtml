@@ -19,7 +19,7 @@
     <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5">
         <select name="Year" class="form-select me-3" required">
             <option value="">Chọn năm</option>
-            @for (int i = 2025; i <= ViewBag.Year + 1; i++)
+            @for (int i = 2024; i <= DateTime.Now.Year; i++)
             {
                 <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
             }

@@ -14,8 +14,10 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? Year { get; set; }
         public int? OfficeId { get; set; }
+        public int? ZoneId { get; set; }
         public SelectList SelectOffices { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public RevenueOffice RevenueOffice { get; set; }
         public IEnumerable<RevenueOffice_BM> RevenueOffice_BMs { get; set; }

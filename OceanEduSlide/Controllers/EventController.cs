@@ -556,7 +556,16 @@ namespace OceanEduSlide.Controllers
                 debt.HandleWay = model.HandleWay;
                 if (model.TypeDebt == TypeDebt.Type1 || model.TypeDebt == TypeDebt.Type2)
                     debt.DownMoney = 0;
-                _unitOfWork.Save();
+                if (model.TypePay == TypePay.NoCard || model.TypePay == TypePay.Card)
+                {
+                    debt.DebtMoney2 = debt.TotalMoney * 20 / 100;
+                }
+                else
+                {
+                    debt.DebtMoney2 = 0;
+                }
+                debt.RemainMoney = debt.TotalMoney - debt.DebtMoney - debt.DebtMoney2;
+                    _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "add" });
             }
             return View(model);

@@ -1,6 +1,10 @@
-﻿<div class="d-flex align-items-center justify-content-center page-100vh race">
+﻿@{
+    ViewBag.Title = "Cuộc thi";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
+}
+<div class="d-flex align-items-center justify-content-center page-100vh race">
     <div class="logo-about">
-        <a href="/">
+        <a href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/Logo-white.png" alt="Ocean Edu" />
         </a>
     </div>

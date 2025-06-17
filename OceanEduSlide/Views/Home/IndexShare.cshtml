@@ -1,0 +1,52 @@
+﻿﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
+}
+<div class="header d-flex">
+    <div class="logo" data-aos="fade-right" data-aos-delay="0">
+        <a href="javascript:;">
+            <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
+        </a>
+    </div>
+    <div class="navbar-container">
+        <ul class="navbar ul-reset d-flex">
+            <li>
+                <a href="@Url.Action("IndexSaleKit")">SALE KIT</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Index")">TUYỂN SINH</a>
+
+            </li>
+            <li>
+                <a class="change-password" href="javascript:;"><i class="fa-solid fa-key"></i></a>
+            </li>
+            <li>
+                <a href="@Url.Action("Logout","Home")"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="banner">
+    <img src="~/Content/images/banner-index.png" alt="banner">
+</div>
+<div class="change-password-form">
+    <form action="/" method="post">
+        <h2><strong>Đổi mật khẩu</strong></h2>
+        <label><strong>Mật khẩu cũ</strong></label>
+        <input class="form-control mb-2" type="password" name="oldpassword" value="" required />
+        <label><strong>Mật khẩu mới</strong></label>
+        <input class="form-control mb-2" type="password" name="newpassword" value="" required />
+        <label><strong>Xác nhận mật khẩu</strong></label>
+        @*<div class="mb-4">*@
+        <input class="form-control mb-4" type="password" name="confirmpassword" value="" required />
+        @*<span>
+                    Mật khẩu không chính xác
+                </span>
+            </div>*@
+        <button type="submit"><strong>Xác nhận</strong></button>
+    </form>
+    <div class="close-form">
+        <i class="fa-solid fa-rectangle-xmark"></i>
+    </div>
+</div>

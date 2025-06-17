@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using NSec.Cryptography;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
@@ -31,7 +32,7 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(User);
         }
-        public ActionResult Revenue(int? Month, int? OfficeId, int? Year, string Result = "")
+        public ActionResult Revenue(int? ZoneId,int? Month, int? OfficeId, int? Year, string Result = "")
         {
             if (User.TypeUser == TypeUser.User)
                 return RedirectToAction("Index","Home");
@@ -41,15 +42,33 @@ namespace OceanEduSlide.Controllers
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
                 OfficeId = OfficeId,
+                ZoneId = ZoneId,
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
             };
-            if (User.TypeUser == TypeUser.BM)
-                model.OfficeId = User.OfficeId;
-            else if (User.TypeUser == TypeUser.ASM)
-                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+            if(User.TypeUser == TypeUser.HO)
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                else
+                    model.OfficeId = User.OfficeId;
+
+            }
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
+            if(model.ZoneId != null)
+            {
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+            }
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);

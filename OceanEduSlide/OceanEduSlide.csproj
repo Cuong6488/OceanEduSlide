@@ -417,6 +417,10 @@
     <Compile Include="Migrations\202506161004429_baocaongay.Designer.cs">
       <DependentUpon>202506161004429_baocaongay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506170749264_usersalekit.cs" />
+    <Compile Include="Migrations\202506170749264_usersalekit.Designer.cs">
+      <DependentUpon>202506170749264_usersalekit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -1075,7 +1079,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutAccount.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
@@ -1174,6 +1177,12 @@
     <Content Include="Views\Vcms\CreateTypeFault.cshtml" />
     <Content Include="Views\Vcms\UpdateTypeFault.cshtml" />
     <Content Include="Views\Home\IndexBM.cshtml" />
+    <Content Include="Views\Shared\_LayoutSaleKit.cshtml" />
+    <Content Include="Views\Home\IndexHO.cshtml" />
+    <Content Include="Views\Home\IndexSaleKit.cshtml" />
+    <Content Include="Views\Home\IndexShare.cshtml" />
+    <Content Include="Views\Home\LoadDebt.cshtml" />
+    <Content Include="Views\Home\LoadEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1341,6 +1350,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506161004429_baocaongay.resx">
       <DependentUpon>202506161004429_baocaongay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506170749264_usersalekit.resx">
+      <DependentUpon>202506170749264_usersalekit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

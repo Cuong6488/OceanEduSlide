@@ -2,6 +2,7 @@
 @model Office
 @{
     ViewBag.Title = "Học phí";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
 }
 <div class="price-advice slide">
     <div class="price-advice-box">
@@ -584,7 +585,7 @@
         </div>
     </div>
     <div class="btn-back-square">
-        <a href="/"><img src="~/Content/images/btn-back-square.png" /></a>
+        <a href="@Url.Action("IndexSaleKit","Home")"><img src="~/Content/images/btn-back-square.png" /></a>
     </div>
 </div>
 <div class="price-overview slide hidden" style="font-family: josefinsans; color: #2e3191">

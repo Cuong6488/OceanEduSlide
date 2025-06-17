@@ -1,0 +1,109 @@
+﻿﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
+}
+<style>
+    .fancybox-content:hover {
+        transform: scale(1.5);
+    }
+</style>
+<div class="header d-flex">
+    <div class="logo" data-aos="fade-right" data-aos-delay="0">
+        <a href="@Url.Action("IndexSaleKit","Home")">
+            <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
+        </a>
+    </div>
+    <div class="navbar-container" data-aos="fade-left" data-aos-delay="300">
+        <ul class="navbar ul-reset d-flex">
+            <li>
+                <a href="@Url.Action("About")">GIỚI THIỆU</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Pathway")">CHƯƠNG TRÌNH HỌC</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Race")">CUỘC THI</a>
+
+            </li>
+            <li>
+                <a href="javascript:;">THƯ VIỆN</a>
+                <ul class="ul-reset">
+                    <li>
+                        <a href="~/Content/images/library-tieuchixettuyenielts.png" data-fancybox data-wheel="true" data-type="image" data-caption="Tiêu chí xét tuyển IELTS">Tiêu chí xét tuyển IELTS</a>
+                    </li>
+                    <li>
+                        <a href="~/Content/images/librarycefr.png" data-fancybox data-type="image" data-touch="false" data-caption="Bảng lộ trình CEFR">
+                            Bảng lộ trình CEFR
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/spreadsheets/d/1hpkl87-L0CThvAdml917ypeXdFdFCCbv2G1zojb2DP4/edit?gid=1669476886#gid=1669476886">Bảng lộ trình học Ocean Edu</a>
+
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/document/d/1PjYnESL0k0mqEPtA_sZ3oS03M_lMjoFOh4EBLDHDtSM/edit?tab=t.0">Du học</a>
+
+                    </li>
+                    <li>
+                        <a href="https://docs.google.com/spreadsheets/d/1thWn-NSGkBBxKO4jztIMxUUJ4mkaET4uIjn5qViyVUI/edit?gid=1936300083#gid=1936300083">Xét tuyển trường CLC</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="@Url.Action("Face")">GƯƠNG MẶT OCEAN EDU</a>
+
+            </li>
+            <li>
+                <a href="@Url.Action("Price")">HỌC PHÍ</a>
+            </li>
+            <li>
+                <a class="change-password" href="javascript:;"><i class="fa-solid fa-key"></i></a>
+            </li>
+            <li>
+                <a href="@Url.Action("Logout","Home")"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="banner">
+    <img src="~/Content/images/banner-index.png" alt="banner">
+</div>
+<div class="change-password-form">
+    <form action="/" method="post">
+        <h2><strong>Đổi mật khẩu</strong></h2>
+        <label><strong>Mật khẩu cũ</strong></label>
+        <input class="form-control mb-2" type="password" name="oldpassword" value="" required />
+        <label><strong>Mật khẩu mới</strong></label>
+        <input class="form-control mb-2" type="password" name="newpassword" value="" required />
+        <label><strong>Xác nhận mật khẩu</strong></label>
+        @*<div class="mb-4">*@
+        <input class="form-control mb-4" type="password" name="confirmpassword" value="" required />
+        @*<span>
+                    Mật khẩu không chính xác
+                </span>
+            </div>*@
+        <button type="submit"><strong>Xác nhận</strong></button>
+    </form>
+    <div class="close-form">
+        <i class="fa-solid fa-rectangle-xmark"></i>
+    </div>
+</div>
+@*<div class="banner">
+        @for (int i = 1; i <= 5; i++)
+        {
+            <a href="javascript:;">
+                <picture>
+                    <source srcset="~/Content/images/banner-index.png?w=600" media="(max-width: 600px)" />
+                    <img src="~/Content/images/banner-index.png?w=1900" alt="banner">
+                </picture>
+            </a>
+        }
+    </div>*@
+@*@section scripts
+    {
+        <script>
+            homeJs();
+        </script>
+    }*@

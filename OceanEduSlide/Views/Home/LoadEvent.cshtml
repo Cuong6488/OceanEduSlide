@@ -1,0 +1,40 @@
+﻿@model OceanEduSlide.Models.Event
+<style>
+    td {
+        text-align: left !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+</style>
+<table class="list_table tablecenter table-striped text-center">
+    <tr>
+        <th colspan="2">Chi tiết công nợ</th>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(a => a.TypeEvent)</td>
+        <td>@Html.DisplayFor(a => a.TypeEvent)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(a => a.Name)</td>
+        <td>@Html.DisplayFor(a => a.Name)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(a => a.TypeJoin)</td>
+        <td>@Html.DisplayFor(a => a.TypeJoin)</td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(a => a.Ages)</td>
+        <td>@Html.DisplayFor(a => a.Ages)</td>
+    </tr>
+    <tr>
+        <td>Thời gian tổ chức</td>
+        <td>@Model.TimeFrom - @Model.TimeTo @Html.DisplayFor(a => a.DayofWeek)</td>
+    </tr>
+    @if (Model.LinkUrl != null)
+    {
+        <tr>
+            <td>@Html.LabelFor(a => a.LinkUrl)</td>
+            <td><a target="blank" href="@Model.LinkUrl">@(Model.LinkName?? "Link")</a></td>
+        </tr>
+    }
+</table>

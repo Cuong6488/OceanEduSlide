@@ -1,10 +1,11 @@
 ﻿@{
     ViewBag.Title = "Giới thiệu";
+    Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
 }
 <div class="about-page page-100vh">
     @*<img src="~/Content/images/test-demoimg.jpg" style="height:80%;object-fit:contain;display:block;margin:auto;transform:translateY(10vh)"/>*@
     <div class="logo-about">
-        <a href="/">
+        <a href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/Logo-white.png" alt="Ocean Edu" />
         </a>
     </div>
@@ -62,7 +63,7 @@
             </a>
         </div>
         <div class="logo-about">
-            <a href="/">
+            <a href="@Url.Action("IndexSaleKit","Home")">
                 <img src="~/Content/images/Logo-white.png" alt="Ocean Edu" />
             </a>
         </div>
@@ -334,13 +335,13 @@
         <div class="btn-achie">
             <img src="~/Content/images/slide-next.png" />
         </div>
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
 
     </div>
     <div class="achie slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -565,7 +566,7 @@
         </div>
     </div>
     <div class="team slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="team-container h-100 d-flex justify-content-center align-items-center">
@@ -725,7 +726,7 @@
     </div>
 
     <div class="fade-slide team-slide slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-back-square">
@@ -1125,7 +1126,7 @@
         </div>
     </div>
     <div class="about-pathway slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="d-flex justify-content-center align-items-center h-100">
@@ -1157,7 +1158,7 @@
         </div>
     </div>
     <div class="hand-slide hand-slide-1 slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-slide">
@@ -1187,7 +1188,7 @@
         </div>
     </div>
     <div class="hand-slide hand-slide-2 slide hidden">
-        <a class="logo-anchor" href="@Url.Action("Index")">
+        <a class="logo-anchor"href="@Url.Action("IndexSaleKit","Home")">
             <img src="~/Content/images/logo.png" />
         </a>
         <div class="btn-slide">
