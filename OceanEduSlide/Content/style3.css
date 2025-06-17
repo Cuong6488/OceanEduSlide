@@ -139,3 +139,38 @@ h2 {
   justify-content: center;
   font-size: 10px;
 }
+
+.remind-page {
+  background-image: url("images/banner-index.png");
+  background-image: url("images/about-bg.png");
+  background-position: center;
+  background-size: cover;
+  min-height: calc(100vh - 110px);
+  padding: 40px 0;
+}
+
+.box-remind {
+  background: #fceda9;
+  height: 100%;
+}
+.box-remind .remind-works {
+  padding: 10px;
+}
+.box-remind-user {
+  width: 500px;
+}
+
+.remind-date {
+  background: #fae37a;
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+}
+.remind-date-bm {
+  background: #f7cc02;
+  padding: 10px;
+  /*max-width: 500px;*/
+  display: block;
+  margin: auto;
+  font-size: 20px;
+}

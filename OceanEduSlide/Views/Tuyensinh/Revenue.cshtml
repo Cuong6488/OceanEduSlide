@@ -285,11 +285,9 @@
                                             </div>
                                             if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month)
                                             {
-                                                {
-                                                    <div class="btnedit-input btn-edit-week">
-                                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                    </div>
-                                                }
+                                                <div class="btnedit-input btn-edit-week">
+                                                    <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                </div>
 
                                             }
                                             <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
@@ -297,7 +295,7 @@
                                         }
                                         else
                                         {
-                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek < i && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
                                             {
                                                 <div class="revenue-value hidden revenue-value-week_BM">
 
@@ -333,8 +331,16 @@
                                 </td>
                                 <td>
                                 </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
                                     <td>
                                     </td>
                                     <td>

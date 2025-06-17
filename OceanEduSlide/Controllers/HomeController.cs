@@ -86,46 +86,117 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("Login");
         }
         #endregion
-        public ActionResult Index()
+        public ActionResult Index(int? officeId)
         {
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month);
-            var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
-            && q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
-            var model = new UserHomeViewModel
+            ViewBag.CurrentWeek = currentWeek;
+            if (User.TypeUser == TypeUser.EC)
             {
-                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek),
-                TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).FirstOrDefault()?.TargetBM - debt) ?? 0,
-                RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).Sum(a => a.TargetBM) ?? 0,
-                TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
-                RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
-            };
-            switch (DateTime.Now.DayOfWeek)
-            {
-                case DayOfWeek.Monday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Monday);
-                    break;
-                case DayOfWeek.Tuesday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Tuesday);
-                    break;
-                case DayOfWeek.Thursday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Thursday);
-                    break;
-                case DayOfWeek.Friday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Friday);
-                    break;
-                case DayOfWeek.Wednesday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Wednessday);
-                    break;
-                case DayOfWeek.Sunday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Sunday);
-                    break;
-                case DayOfWeek.Saturday:
-                    model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Saturday);
-                    break;
-                default:
-                    break;
+                var debt = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
+                var model = new UserHomeViewModel
+                {
+                    User = User,
+                    Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek),
+                    TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).FirstOrDefault()?.TargetBM - debt) ?? 0,
+                    RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).Sum(a => a.TargetBM) ?? 0,
+                    TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
+                    RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
+                    Debts = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                    && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+                };
+                model.TargetMonthPercent = model.TMonth > 0 ? model.RevenueMonthNow / model.TMonth * 100 : 0;
+                model.RemainPercent = 100 - model.TargetMonthPercent;
+                model.TargetWeekPercent = model.TWeek > 0 ? model.RevenueWeekNow / model.TWeek * 100 : 0;
+                switch (DateTime.Now.DayOfWeek)
+                {
+                    case DayOfWeek.Monday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Monday);
+                        break;
+                    case DayOfWeek.Tuesday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Tuesday);
+                        break;
+                    case DayOfWeek.Thursday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Thursday);
+                        break;
+                    case DayOfWeek.Friday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Friday);
+                        break;
+                    case DayOfWeek.Wednesday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Wednessday);
+                        break;
+                    case DayOfWeek.Sunday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Sunday);
+                        break;
+                    case DayOfWeek.Saturday:
+                        model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Saturday);
+                        break;
+                    default:
+                        break;
+                }
+                return View(model);
             }
-            return View(model);
+            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
+            {
+                var model = new BMHomeViewModel
+                {
+                    OfficeId = officeId,
+                    User = User,
+                };
+                if (User.TypeUser == TypeUser.BM)
+                    model.OfficeId = User.OfficeId;
+                if (model.OfficeId != null)
+                {
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId);
+                    int today = 0;
+                    switch (DateTime.Now.DayOfWeek)
+                    {
+                        case DayOfWeek.Monday:
+                            today = 2;
+                            break;
+                        case DayOfWeek.Tuesday:
+                            today = 3;
+                            break;
+                        case DayOfWeek.Thursday:
+                            today = 4;
+                            break;
+                        case DayOfWeek.Friday:
+                            today = 5;
+                            break;
+                        case DayOfWeek.Wednesday:
+                            today = 6;
+                            break;
+                        case DayOfWeek.Sunday:
+                            today = 7;
+                            break;
+                        case DayOfWeek.Saturday:
+                            today = 8;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    var userItems = users.ToList().Select(x => new BMHomeViewModel.UserItem
+                    {
+                        User = x,
+                        Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today),
+                        TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.UserId == x.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).FirstOrDefault()?.TargetBM -
+                        (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                        && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)) ?? 0,
+                        RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).Sum(a => a.TargetBM) ?? 0,
+                        TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
+                        RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
+                        Debts = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                        && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)),
+                    });
+
+                    model.UserItems = userItems;
+                }
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = _unitOfWork.OfficeRepository.Get(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                return View("IndexBM", model);
+            }
+            return View();
         }
         //public JsonResult GetOffice(int? zoneId)
         //{

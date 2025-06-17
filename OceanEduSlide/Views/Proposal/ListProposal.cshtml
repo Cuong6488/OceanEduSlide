@@ -17,7 +17,6 @@
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
     <div class="d-flex">
-
         <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
             <select name="Year" class="form-select me-3">
                 <option value="">Chọn năm</option>
@@ -33,7 +32,7 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
+            @if (Model.User.TypeUser == TypeUser.ASM)
             {
                 <select name="OfficeId" class="form-select me-3">
                     <option value="">Chọn chi nhánh</option>
@@ -58,7 +57,7 @@
                 </select>
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
-            else if (Model.User.TypeUser == TypeUser.CV)
+            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
             {
                 <select name="ZoneId" class="form-select me-3" @*data-item="zone"*@>
                     <option value="">Chọn vùng</option>
@@ -80,9 +79,9 @@
                 </select>
             }
         </form>
-        @if (Model.User.TypeUser == TypeUser.CV)
+        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
         {
-            <a class="notice" title="@(ViewBag.NoticeCount > 0 ? "Bạn có " + ViewBag.NoticeCount + " đề xuất mới từ chi nhánh" : "" )" href="@Url.Action("ListProposal", new { notice = 1 })">
+            <a class="notice" title="@(ViewBag.NoticeCount > 0 ? "Bạn có " + ViewBag.NoticeCount + " đề xuất mới cần phê duyệt" : "" )" href="@Url.Action("ListProposal", new { notice = 1 })">
                 <i class="fa-solid fa-bell"></i>
                 @if (ViewBag.NoticeCount > 0)
                 {
@@ -149,7 +148,7 @@
                     <th class="col-w90">
                         Duyệt
                     </th>
-                    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM)
+                    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO)
                     {
                         <th></th>
                     }
@@ -172,7 +171,7 @@
                         <td>@(item.TypeFault?.Content)</td>
                         <td>@Html.DisplayFor(a => item.Active)</td>
                         <td>
-                            @if (Model.User.TypeUser == TypeUser.CV)
+                            @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
                             {
                                 <a href="@Url.Action("UpdateProposal", new {pId = item.Id})">Phản hồi</a>
                             }

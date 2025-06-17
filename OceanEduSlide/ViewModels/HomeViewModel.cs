@@ -19,12 +19,27 @@ namespace OceanEduSlide.ViewModels
         public decimal TWeek { get; set; }
         public decimal RevenueWeekNow { get; set; }
         public decimal TargetWeekPercent { get; set; }
-        public UserHomeViewModel()
+    }
+    public class BMHomeViewModel
+    {
+        public int? OfficeId { get; set; }
+        public IEnumerable<UserItem> UserItems { get; set; }
+        public IEnumerable<Office> Offices { get; set; }
+        public User User { get; set; }
+
+        public class UserItem
         {
-            TargetMonthPercent = RevenueMonthNow / TMonth * 100;
-            RemainPercent = 100 - TargetMonthPercent;
-            TargetWeekPercent = RevenueWeekNow / TWeek * 100;
+            public User User { get; set; }
+            public IEnumerable<Debt> Debts { get; set; }
+            public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
+            public decimal TMonth { get; set; }
+            public decimal RevenueMonthNow { get; set; }
+            public decimal TargetMonthPercent { get; set; }
+            public decimal RemainPercent { get; set; }
+            public decimal TWeek { get; set; }
+            public decimal RevenueWeekNow { get; set; }
+            public decimal TargetWeekPercent { get; set; }
         }
     }
-    
+
 }

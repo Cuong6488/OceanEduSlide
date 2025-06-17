@@ -95,7 +95,7 @@ $blue: #2D3AE2;
     span {
         color: $red;
         font-weight: bold;
-        white-space:nowrap;
+        white-space: nowrap;
     }
 }
 
@@ -108,7 +108,7 @@ $blue: #2D3AE2;
         height: 40px;
         position: relative;
 
-        .btnedit-input, .btnedit-input-debt{
+        .btnedit-input, .btnedit-input-debt {
             position: absolute;
             top: 2px;
             right: 2px;
@@ -135,40 +135,86 @@ $blue: #2D3AE2;
 .box_content {
     overflow: auto !important;
 }
+
 .list_table tr th, .list_table tr td {
     padding: 2px;
 }
+
 .col-w90 {
     min-width: 90px !important;
 }
+
 .col-w65 {
     min-width: 65px !important;
 }
+
 .col-w200 {
     min-width: 250px !important;
 }
-h2{
-    margin-bottom:5px !important;
+
+h2 {
+    margin-bottom: 5px !important;
 }
-.notice{
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:32px;
-    font-size:20px;
-    span{
-        position:absolute;
-        top:-5px;
-        right:-10px;
-        width:20px;
-        height:15px;
-        border-radius:10px;
-        background:$red;
-        color:white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:10px;
+
+.notice {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    font-size: 20px;
+
+    span {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        width: 20px;
+        height: 15px;
+        border-radius: 10px;
+        background: $red;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+    }
+}
+
+.remind-page {
+    background-image: url('images/banner-index.png');
+    background-image: url('images/about-bg.png');
+    background-position: center;
+    background-size: cover;
+    min-height: calc(100vh - 110px);
+    padding: 40px 0;
+}
+
+.box-remind {
+    background: #fceda9;
+    height: 100%;
+
+    .remind-works {
+        padding: 10px;
+    }
+
+    &-user {
+        width: 500px;
+    }
+}
+
+.remind-date {
+    background: #fae37a;
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+
+
+    &-bm {
+        background: #f7cc02;
+        padding: 10px;
+        /*max-width: 500px;*/
+        display: block;
+        margin: auto;
+        font-size: 20px;
     }
 }

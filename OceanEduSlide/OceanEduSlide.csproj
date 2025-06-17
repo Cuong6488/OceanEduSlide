@@ -1173,6 +1173,7 @@
     <Content Include="Views\Vcms\ListTypeFault.cshtml" />
     <Content Include="Views\Vcms\CreateTypeFault.cshtml" />
     <Content Include="Views\Vcms\UpdateTypeFault.cshtml" />
+    <Content Include="Views\Home\IndexBM.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -95,13 +95,21 @@ namespace OceanEduSlide.Controllers
             }
             if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = _unitOfWork.ZoneRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Id + ","));
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
                 proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active);
                 if (Notice == 1)
-                    proposals = proposals.Where(a => a.CVSeen == false);
+                    proposals = proposals.Where(a => !a.CVSeen);
                 ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active && !a.CVSeen).Count();
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId + ","));
 
+            }
+            else if(User.TypeUser == TypeUser.HO)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+                proposals = proposals.Where(a => a.Active);
+                if (Notice == 1)
+                    proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type3);
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.TypeApprove == TypeApprove.Type3).Count();
             }
             else
             {
@@ -195,7 +203,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateProposal(int pId)
         {
-            if (User.TypeUser != TypeUser.CV)
+            if (User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.HO)
                 return RedirectToAction("ListProposal");
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
             if (proposal == null)

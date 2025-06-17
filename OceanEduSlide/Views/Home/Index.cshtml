@@ -1,14 +1,17 @@
 ﻿@{
     ViewBag.Title = "Trang chủ";
 }
+@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model UserHomeViewModel
 <style>
     .fancybox-content:hover {
         transform: scale(1.5);
     }
 </style>
-<div class="banner">
-    <img src="~/Content/images/banner-index.png" alt="banner">
-</div>
+@*<div class="banner">
+        <img src="~/Content/images/banner-index.png" alt="banner">
+    </div>*@
 <div class="change-password-form">
     <form action="/" method="post">
         <h2><strong>Đổi mật khẩu</strong></h2>
@@ -29,6 +32,124 @@
         <i class="fa-solid fa-rectangle-xmark"></i>
     </div>
 </div>
+@if (Model != null)
+{
+    <div class="remind-page">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="box-remind box-remind-user">
+                    <div class="remind-date">
+                        Ngày @DateTime.Now.ToString("dd/MM/yyyy") - Nhân sự @(Model.User.Fullname??Model.User.Username)
+                    </div>
+                    <div class="remind-works">
+                        <div class="mb-3">
+                            <p class="mb-2"><strong>1. Chi tiết công việc ngày</strong></p>
+                            @foreach (var item in Model.Revenues)
+                            {
+                                <div class="mb-2 p-2" style="background: #dbd9d9 ">
+                                    @if (item.Event?.Name != null)
+                                    {
+                                        <p class="mb-2 text-danger">@(item.Event?.Name)</p>
+                                    }
+                                    @if (item.DataQuantity != null)
+                                    {
+                                        @: SL data cần khai thác: <strong>@Html.DisplayFor(a => item.DataQuantity)</strong> <br />
+                                    }
+                                    @if (item.Confirm1 != null)
+                                    {
+                                        @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
+                                    }
+                                    @if (item.Confirm2 != null)
+                                    {
+                                        @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
+                                    }
+                                    @if (item.CI != null)
+                                    {
+                                        @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
+                                    }
+                                    @if (item.DT != null)
+                                    {
+                                        @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => item.DT)</strong><br />
+                                    }
+                                    @if (item.TargetBM != null)
+                                    {
+                                        @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-2"><strong>2. Công nợ phải thu</strong></p>
+                            @if (Model.Debts.Any())
+                            {
+                                foreach (var item in Model.Debts)
+                                {
+                                    <div class="mb-2 p-2" style="background: #dbd9d9 ">
+                                        <p class="mb-2 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
+                                        Thành tiền:  @Html.DisplayFor(a => item.TotalMoney)<br />
+                                        Tiền cọc giữ chỗ: @Html.DisplayFor(a => item.DebtMoney) <br />
+                                        Tiền cọc bổ sung làm hồ sơ: @Html.DisplayFor(a => item.DebtMoney2) <br />
+                                        Tiền còn lại phải thanh toán: <strong>@Html.DisplayFor(a => item.RemainMoney)</strong>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    Không có
+                                </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-2"><strong>3. Doanh số trong tháng</strong></p>
+                            <div class="p-2" style="background: #dbd9d9 ">
+                                <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@Model.TMonth.ToString("N0")đ</strong></p>
+                                Hoàn thành:  <strong>@Model.RevenueMonthNow.ToString("N0")đ</strong><br />
+                                % Hoàn thành:  <strong>@Model.TargetMonthPercent.ToString("N0")%</strong><br />
+                                % Dự thu:  <strong>@Model.RemainPercent.ToString("N0")%</strong><br />
+                                @if (Model.RevenueMonthNow > Model.TMonth)
+                                {
+                                    @: Tình trạng : Vượt chỉ tiêu
+                                }
+                                else if (Model.RevenueMonthNow == Model.TMonth)
+                                {
+                                    @: Tình trạng : Đạt chỉ tiêu
+                                }
+                                else
+                                {
+                                    @: Tình trạng: Thiếu <strong>@((Model.TMonth - Model.RevenueMonthNow).ToString("N0"))đ</strong>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-2"><strong>3. Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
+                            <div class="p-2" style="background: #dbd9d9 ">
+                                <p class="mb-2 text-danger">Chỉ tiêu tuần: <strong>@Model.TWeek.ToString("N0")đ</strong></p>
+                                Hoàn thành:  <strong>@Model.RevenueWeekNow.ToString("N0")đ</strong><br />
+                                % Hoàn thành:  <strong>@Model.TargetWeekPercent.ToString("N0")%</strong><br />
+                                @if (Model.RevenueWeekNow > Model.TWeek)
+                                {
+                                    @: Tình trạng : Vượt chỉ tiêu
+                                }
+                                else if (Model.RevenueWeekNow == Model.TWeek)
+                                {
+                                    @: Tình trạng : Đạt chỉ tiêu
+                                }
+                                else
+                                {
+                                    @: Tình trạng: Thiếu <strong>@((Model.TWeek - Model.RevenueWeekNow).ToString("N0"))đ</strong>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @*<div class="banner">
         @for (int i = 1; i <= 5; i++)

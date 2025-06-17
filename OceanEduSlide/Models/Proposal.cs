@@ -31,7 +31,7 @@ namespace OceanEduSlide.Models
         public TypeApprove? TypeApprove { get; set; }
         public bool CVSeen { get; set; }
         public bool NSSeen { get; set; }
-        [Display(Name = "Duyệt")]
+        [Display(Name = "BM Duyệt")]
         public bool Active { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
