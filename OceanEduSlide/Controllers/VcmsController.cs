@@ -233,6 +233,7 @@ namespace OceanEduSlide.Controllers
                         OfficeId = model.OfficeId,
                         ZoneId = model.ZoneId,
                         Active = model.Active,
+                        SaleKit = model.SaleKit,
                         TypeUser = model.TypeUser,
                     };
                     _unitOfWork.UserRepository.Insert(m);
@@ -308,6 +309,7 @@ namespace OceanEduSlide.Controllers
                     user.OfficeId = model.OfficeId;
                     user.ZoneId = model.ZoneId;
                     user.Active = model.Active;
+                    user.SaleKit = model.SaleKit;
                     user.TypeUser = model.TypeUser;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateUser", new { result = "update" });
@@ -723,11 +725,25 @@ namespace OceanEduSlide.Controllers
                     foreach (var item in catIds)
                     {
                         model.Zone.OfficeIds += (item + ",");
-
                     }
                     model.Zone.OfficeIds = "," + model.Zone.OfficeIds;
                 }
                 _unitOfWork.Save();
+                var zone = _unitOfWork.ZoneRepository.Get(a => a.OfficeIds == model.Zone.OfficeIds, q => q.OrderByDescending(a => a.Id)).FirstOrDefault();
+                if (zone?.OfficeIds != null)
+                {
+                    string[] a = zone.OfficeIds.Trim(',').Split(',');
+                    foreach (var item in a)
+                    {
+                        int officeId = int.Parse(item.ToString());
+                        var office = _unitOfWork.OfficeRepository.GetById(officeId);
+                        if (office != null)
+                        {
+                            office.ZoneId = zone.Id;
+                        }
+                    }
+                    _unitOfWork.Save();
+                }
                 return RedirectToAction("CreateZone", new { result = "add" });
 
             }
@@ -784,6 +800,18 @@ namespace OceanEduSlide.Controllers
                     zone.Name = model.Zone.Name;
                     zone.Active = model.Zone.Active;
                     _unitOfWork.Save();
+                    string[] a = zone.OfficeIds.Trim(',').Split(',');
+                    foreach (var item in a)
+                    {
+                        int officeId = int.Parse(item);
+                        var office = _unitOfWork.OfficeRepository.GetById(officeId);
+                        if (office != null)
+                        {
+                            office.ZoneId = zone.Id;
+                        }
+                    }
+                    _unitOfWork.Save();
+
                     return RedirectToAction("CreateZone", new { result = "add" });
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using NSec.Cryptography;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
@@ -25,10 +26,10 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
+        public ActionResult Index(int? ZoneId,int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
-            if (User.TypeUser == TypeUser.User)
-                return RedirectToAction("Index", "Home");
+            if (User.TypeUser == null)
+                return HttpNotFound();
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month);
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.CurrentWeek = currentWeek;
@@ -42,19 +43,32 @@ namespace OceanEduSlide.Controllers
                 Year = Year ?? DateTime.Now.Year,
                 Week = Week ?? currentWeek,
                 OfficeId = OfficeId,
+                ZoneId = ZoneId,
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
             };
-            if (User.TypeUser == TypeUser.BM)
-                model.OfficeId = User.OfficeId;
-            else if (User.TypeUser == TypeUser.ASM)
-                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+            if (User.TypeUser == TypeUser.HO)
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                else
+                    model.OfficeId = User.OfficeId;
+            }
+            if (model.ZoneId != null)
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId).ToList();
                     var userItems = users.Select(a => new EventViewModel.UserItem
                     {
@@ -72,6 +86,9 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdatePercent(int userId)
         {
+
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return HttpNotFound();
             var user = _unitOfWork.UserRepository.GetById(userId);
             if (user == null)
                 return RedirectToAction("Index");
@@ -345,6 +362,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult AddEvent(int month, int year, int week, int dayOfWeek, int typeEvent, int officeId)
         {
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return HttpNotFound();
             var ev = new Event
             {
                 Month = month,
@@ -455,6 +474,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateEvent(int evId)
         {
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return HttpNotFound();
             var ev = _unitOfWork.EventRepository.GetById(evId);
             if (ev == null)
                 return RedirectToAction("Index");
@@ -508,10 +529,10 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Công_nợ
-        public ActionResult ListDebt(int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
+        public ActionResult ListDebt(int?ZoneId,int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
-            if (User.TypeUser == TypeUser.User)
-                return RedirectToAction("Index", "Home");
+            if (User.TypeUser == null)
+                return HttpNotFound();
             ViewBag.Result = Result;
             var model = new DebtViewModel
             {
@@ -519,11 +540,26 @@ namespace OceanEduSlide.Controllers
                 Year = Year ?? DateTime.Now.Year,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
                 User = User,
+                ZoneId = ZoneId,
+                OfficeId = OfficeId,
             };
-            if (User.TypeUser == TypeUser.ASM)
-                model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-            else if (User.TypeUser == TypeUser.BM)
-                model.OfficeId = User.OfficeId;
+            if (User.TypeUser == TypeUser.HO)
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                else
+                    model.OfficeId = User.OfficeId;
+            }
+            if (model.ZoneId != null)
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
@@ -534,6 +570,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateDebt(int id)
         {
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return HttpNotFound();
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
                 return RedirectToAction("Index");
@@ -572,6 +610,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateDownPathway(int debtId)
         {
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return HttpNotFound();
             var debt = _unitOfWork.DebtRepository.GetById(debtId);
             if (debt == null)
                 return RedirectToAction("ListDebt");
@@ -604,6 +644,7 @@ namespace OceanEduSlide.Controllers
 
             return View(model);
         }
+        [ChildActionOnly]
         public PartialViewResult LoadHistoryDownPathway(int debtId)
         {
             var model = _unitOfWork.DownPathwayRepository.Get(a => a.DebtId == debtId);

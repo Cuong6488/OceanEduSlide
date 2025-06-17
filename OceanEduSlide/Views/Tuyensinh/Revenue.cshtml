@@ -19,14 +19,14 @@
     }
     <div class="form-filter mb-3">
         <form action="@Url.Action("Revenue")" method="get" class="d-flex">
-            <select name="Year" class="form-select w-25 me-3" required">
+            <select name="Year" class="form-select me-3" required">
                 <option value="">Chọn năm</option>
                 @for (int i = 2025; i <= ViewBag.Year + 1; i++)
                 {
                     <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
                 }
             </select>
-            <select name="Month" class="form-select w-25 me-3" required>
+            <select name="Month" class="form-select me-3" required>
                 <option value="">Chọn tháng</option>
                 @for (int i = 1; i <= 12; i++)
                 {
@@ -35,7 +35,7 @@
             </select>
             @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
             {
-                <select name="ZoneId" class="form-select w-25 me-3" required>
+                <select name="ZoneId" class="form-select me-3" required>
                     <option value="">Chọn vùng</option>
                     @foreach (var item in Model.Zones)
                     {
@@ -45,7 +45,7 @@
             }
             @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
             {
-                <select name="OfficeId" class="form-select w-25">
+                <select name="OfficeId" class="form-select">
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
@@ -55,7 +55,7 @@
             }
             @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
             {
-                <select name="" class="form-select w-25" disabled>
+                <select name="" class="form-select" disabled>
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {

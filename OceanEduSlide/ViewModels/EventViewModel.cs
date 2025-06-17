@@ -17,8 +17,10 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? Week { get; set; }
         public int? OfficeId { get; set; }
+        public int? ZoneId { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Event> Events { get; set; }
         public IEnumerable<User> Users { get; set; }
         public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
@@ -49,6 +51,8 @@ namespace OceanEduSlide.ViewModels
         public int? Year { get; set; }
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
+        public int? ZoneId { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Debt> Debts { get; set; }
         public User User { get; set; }

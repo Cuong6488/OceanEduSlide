@@ -16,7 +16,7 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-    <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5">
+    <form action="@Url.Action("ListDebt")" method="get" class="d-flex form-filter mb-5">
         <select name="Year" class="form-select me-3" required">
             <option value="">Chọn năm</option>
             @for (int i = 2024; i <= DateTime.Now.Year; i++)
@@ -31,9 +31,19 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
         {
-            <select name="OfficeId" class="form-select" required>
+            <select name="ZoneId" class="form-select me-3" required>
+                <option value="">Chọn vùng</option>
+                @foreach (var item in Model.Zones)
+                {
+                    <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+        {
+            <select name="OfficeId" class="form-select">
                 <option value="">Chọn chi nhánh</option>
                 @foreach (var item in Model.Offices)
                 {
@@ -41,7 +51,7 @@
                 }
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.BM)
+        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
         {
             <select name="" class="form-select" disabled>
                 <option value="">Chọn chi nhánh</option>
@@ -51,6 +61,7 @@
                 }
             </select>
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+
         }
     </form>
     @if (Model.OfficeId != null)
@@ -114,7 +125,11 @@
                             NS phụ trách
                         </th>
                         <th colspan="3">Khó khăn của cọc</th>
-                        <th rowspan="2"></th>
+                        @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
+                        {
+                            <th rowspan="2"></th>
+                        }
+
                     </tr>
                     <tr>
                         <th class="col-w90">Nội dung <br /> khó khăn</th>
@@ -170,7 +185,11 @@
                                 <td>@item.HardContent</td>
                                 <td>@item.ContactStatus</td>
                                 <td>@item.HandleWay</td>
-                                <td><a href="@Url.Action("UpdateDebt", new {id = item.Id})">Sửa</a></td>
+                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
+                                {
+                                    <td><a href="@Url.Action("UpdateDebt", new {id = item.Id})">Sửa</a></td>
+                                }
+
                             </tr>
                             stt++;
                         }

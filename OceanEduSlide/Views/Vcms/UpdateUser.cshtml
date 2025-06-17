@@ -51,9 +51,15 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Users.FirstOrDefault().SaleKit)</td>
+                    <td class="form_text">
+                        @Html.CheckBoxFor(model => model.Users.FirstOrDefault().SaleKit)
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Users.FirstOrDefault().Active)</td>
                     <td class="form_text">
-                        @Html.CheckBoxFor(model => model.Users.FirstOrDefault().Active, new { @checked = "checked" })
+                        @Html.CheckBoxFor(model => model.Users.FirstOrDefault().Active)
                     </td>
                 </tr>
                 <tr>

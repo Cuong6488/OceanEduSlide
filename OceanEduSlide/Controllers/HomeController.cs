@@ -121,7 +121,6 @@ namespace OceanEduSlide.Controllers
         }
         public JsonResult GetDiscount(string cth, double pathway)
         {
-
             var discounts = _unitOfWork.DiscountRepository
                 .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
                 (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
@@ -198,7 +197,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Tuyen_Sinh
- public ActionResult Index(int? officeId)
+        public ActionResult Index(int? officeId)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -332,7 +331,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("Index");
             return View();
         }
-       
+
         //public JsonResult GetOffice(int? zoneId)
         //{
         //    var zone = _unitOfWork.ZoneRepository.GetById(zoneId);

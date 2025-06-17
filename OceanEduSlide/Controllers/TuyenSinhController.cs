@@ -66,9 +66,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
             if(model.ZoneId != null)
-            {
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-            }
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
@@ -90,7 +88,6 @@ namespace OceanEduSlide.Controllers
 
                     model.UserItems = userItems;
                 }
-
             }
             var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
 
