@@ -260,7 +260,7 @@ namespace OceanEduSlide.Controllers
                     model.OfficeId = User.OfficeId;
                 if (model.OfficeId != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId);
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB));
                     int today = 0;
                     switch (DateTime.Now.DayOfWeek)
                     {
