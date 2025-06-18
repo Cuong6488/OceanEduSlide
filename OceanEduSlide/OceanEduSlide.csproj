@@ -1183,6 +1183,8 @@
     <Content Include="Views\Home\IndexShare.cshtml" />
     <Content Include="Views\Home\LoadDebt.cshtml" />
     <Content Include="Views\Home\LoadEvent.cshtml" />
+    <Content Include="Views\Home\Report.cshtml" />
+    <Content Include="Views\Home\ListReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

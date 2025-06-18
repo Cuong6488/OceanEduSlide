@@ -8,6 +8,7 @@ using PagedList;
 using System;
 using System.Data.Entity;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -197,7 +198,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Tuyen_Sinh
-        public ActionResult Index(int? officeId)
+        public ActionResult Index(int? officeId, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -247,6 +248,7 @@ namespace OceanEduSlide.Controllers
                     default:
                         break;
                 }
+                ViewBag.Result = Result;
                 return View(model);
             }
             if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
@@ -320,6 +322,121 @@ namespace OceanEduSlide.Controllers
         {
             var model = _unitOfWork.EventRepository.GetById(evId);
             return PartialView(model);
+        }
+        public ActionResult Report()
+        {
+            if (User.TypeUser != TypeUser.EC && User.TypeUser != TypeUser.SAB && User.TypeUser != TypeUser.ALT)
+                return HttpNotFound();
+            var report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && DbFunctions.TruncateTime(DateTime.Now) == DbFunctions.TruncateTime(a.CreateDate)).FirstOrDefault();
+            if (report != null)
+            {
+                var reportViewModel = new ReportViewModel
+                {
+                    Report = report,
+                    TargetBM = report.TargetBM?.ToString("N0")
+                };
+                return View(reportViewModel);
+            }
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month);
+
+            var model = new ReportViewModel
+            {
+                Report = new RevenueUser_DayOfWeek_Real { Active = true, UserId = User.Id, Month = DateTime.Now.Month, Year = DateTime.Now.Year },
+            };
+            switch (currentWeek)
+            {
+                case 1:
+                    model.Report.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    model.Report.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    model.Report.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    model.Report.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    model.Report.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    model.Report.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            switch (DateTime.Now.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    model.Report.DayofWeek = DayofWeek.Monday;
+                    break;
+                case DayOfWeek.Tuesday:
+                    model.Report.DayofWeek = DayofWeek.Tuesday;
+                    break;
+                case DayOfWeek.Thursday:
+                    model.Report.DayofWeek = DayofWeek.Thursday;
+                    break;
+                case DayOfWeek.Friday:
+                    model.Report.DayofWeek = DayofWeek.Friday;
+                    break;
+                case DayOfWeek.Wednesday:
+                    model.Report.DayofWeek = DayofWeek.Wednessday;
+                    break;
+                case DayOfWeek.Sunday:
+                    model.Report.DayofWeek = DayofWeek.Sunday;
+                    break;
+                case DayOfWeek.Saturday:
+                    model.Report.DayofWeek = DayofWeek.Saturday;
+                    break;
+                default:
+                    break;
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult Report(ReportViewModel model)
+        {
+            var report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetById(model.Report.Id);
+            if (report != null)
+            {
+                report.TargetBM = Convert.ToDecimal(model.TargetBM.Replace(",", ""));
+                report.DataQuantity = model.Report.DataQuantity;
+                report.Confirm1 = model.Report.Confirm1;
+                report.Confirm2 = model.Report.Confirm2;
+                report.Confirm3 = model.Report.Confirm3;
+                report.CI = model.Report.CI;
+                report.DT = model.Report.DT;
+                _unitOfWork.Save();
+                return RedirectToAction("Index", new { Result = "update" });
+            }
+            model.Report.TargetBM = Convert.ToDecimal(model.TargetBM.Replace(",", ""));
+
+            _unitOfWork.RevenueUser_DayOfWeek_RealRepository.Insert(model.Report);
+            _unitOfWork.Save();
+            return RedirectToAction("Index", new { Result = "add" });
+        }
+        public ActionResult ListReport(string Date, int OfficeId)
+        {
+
+            if (string.IsNullOrEmpty(Date))
+                if (DateTime.TryParse(Date, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                {
+                    var date = new DateTime(cd.Year, cd.Month, cd.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+                    var model = new ListReportViewModel
+                    {
+                        OfficeId = OfficeId,
+                        Date = Date,
+                    };
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId);
+                    var reportItems = users.ToList().Select(x => new ListReportViewModel.ReportItem
+                    {
+                        User = x,
+                        Report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => DbFunctions.TruncateTime(date) == DbFunctions.TruncateTime(a.CreateDate) && a.UserId == x.Id).FirstOrDefault(),
+                    });
+                }
+            return View();
         }
         #endregion
 

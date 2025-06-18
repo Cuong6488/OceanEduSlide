@@ -126,7 +126,6 @@
                                             Không có
                                         </div>
                                     }
-
                                 </div>
                                 <div class="mb-3">
                                     <p class="mb-2"><strong>3. Doanh số trong tháng</strong></p>
@@ -147,7 +146,6 @@
                                         {
                                             @: Tình trạng: Thiếu <strong>@((userItem.TMonth - userItem.RevenueMonthNow).ToString("N0"))đ</strong>
                                         }
-
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -168,7 +166,6 @@
                                         {
                                             @: Tình trạng: Thiếu <strong>@((userItem.TWeek - userItem.RevenueWeekNow).ToString("N0"))đ</strong>
                                         }
-
                                     </div>
                                 </div>
                             </div>
@@ -176,9 +173,10 @@
                         </div>
                     </div>
                 }
+                <div class="d-flex justify-content-center">
+                    <a class="btn quick-link" href="@Url.Action("ListReport", new {officeId = Model.OfficeId})">Xem báo cáo ngày</a>
+                </div>
             }
-
-
         </div>
     </div>
 </div>

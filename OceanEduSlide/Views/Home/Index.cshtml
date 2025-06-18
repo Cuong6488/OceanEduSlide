@@ -6,6 +6,14 @@
 @model UserHomeViewModel
 <div class="remind-page">
     <div class="container">
+        @if (ViewBag.Result == "add")
+        {
+            <div id="AlertBox" class="alert alert-success"><strong>Báo cáo thành công</strong></div>
+        }
+        else if (ViewBag.Result == "update")
+        {
+            <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+        }
         <div class="d-flex justify-content-center">
             <div class="box-remind box-remind-user">
                 <div class="remind-date">
@@ -24,7 +32,6 @@
                                         <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
                                            data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
                                     </div>
-                                    
                                 }
                                 @if (item.DataQuantity != null)
                                 {
@@ -98,7 +105,6 @@
                             {
                                 @: Tình trạng: Thiếu <strong>@((Model.TMonth - Model.RevenueMonthNow).ToString("N0"))đ</strong>
                             }
-
                         </div>
                     </div>
                     <div class="mb-3">
@@ -119,12 +125,13 @@
                             {
                                 @: Tình trạng: Thiếu <strong>@((Model.TWeek - Model.RevenueWeekNow).ToString("N0"))đ</strong>
                             }
-
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <a class="btn quick-link" href="@Url.Action("Report")">Báo cáo công việc ngày</a>
         </div>
     </div>
 </div>
