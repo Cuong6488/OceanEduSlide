@@ -2,3 +2,84 @@
 @{
     ViewBag.Title = "Danh sách báo cáo công việc ngày của nhân sự";
 }
+
+<div class="remind-page">
+    <div class="container">
+        <form action="@Url.Action("ListReport")" method="get" class="d-flex form-filter mb-3 justify-content-center align-items-center">
+            <input type="text" name="Date" value="@Model.Date" class="date-picker form_control" required readonly />
+            <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
+            <button class="btn quick-link mb-0" type="submit">Xem</button>
+        </form>
+        <div class="remind-date mb-3 remind-date-bm">
+            Ngày @Model.Date @ViewBag.OfficeName
+        </div>
+        @if (Model.ReportItems != null)
+        {
+            <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-3">
+                @foreach (var reportItem in Model.ReportItems)
+                {
+                <div class="col">
+                    <div class="box-remind">
+                        <div class="remind-date">
+                            Nhân sự @(reportItem.User.Fullname??reportItem.User.Username)
+                        </div>
+                        <div class="remind-works">
+                            @if (reportItem.Report == null)
+                            {
+                                <div class="alert alert-success">Chưa có báo cáo</div>
+                            }
+                            else
+                            {
+                                <div>
+                                    @if (reportItem.Report.DataQuantity != null)
+                                    {
+                                        @: @Html.LabelFor(a => reportItem.Report.DataQuantity): <strong>@Html.DisplayFor(a => reportItem.Report.DataQuantity)</strong> <br />
+                                    }
+                                    @if (reportItem.Report.Confirm1 != null)
+                                    {
+                                        @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => reportItem.Report.Confirm1)</strong> <br />
+                                    }
+                                    @if (reportItem.Report.Confirm2 != null)
+                                    {
+                                        @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => reportItem.Report.Confirm2)</strong> <br />
+                                    }
+                                    @if (reportItem.Report.CI != null)
+                                    {
+                                        @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => reportItem.Report.CI)</strong><br />
+                                    }
+                                    @if (reportItem.Report.DT != null)
+                                    {
+                                        @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => reportItem.Report.DT)</strong><br />
+                                    }
+                                    @if (reportItem.Report.TargetBM != null)
+                                    {
+                                        @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => reportItem.Report.TargetBM)</strong> <br />
+                                    }
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+                }
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <a class="btn quick-link" href="@Url.Action("Index", new {officeId = Model.OfficeId})">Quay lại trang chủ</a>
+            </div>
+        }
+    </div>
+</div>
+@section scripts
+{
+    @*<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
+    <script>
+        var today = new Date();
+        $(".date-picker").datepicker({
+            dateFormat: "dd/mm/yy",
+            yearRange: "1900:2100",
+            maxDate: today,
+        });
+    </script>
+
+}

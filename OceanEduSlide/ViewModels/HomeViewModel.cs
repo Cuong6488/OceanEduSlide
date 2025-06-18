@@ -69,6 +69,7 @@ namespace OceanEduSlide.ViewModels
 
     public class ListReportViewModel
     {
+        public User User { get; set; }
         public IEnumerable<ReportItem> ReportItems { get; set; }
         public int OfficeId { get; set; }
         public string Date { get; set; }

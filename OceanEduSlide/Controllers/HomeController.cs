@@ -418,25 +418,33 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ListReport(string Date, int OfficeId)
         {
-
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+                return RedirectToAction("Index");
             if (string.IsNullOrEmpty(Date))
-                if (DateTime.TryParse(Date, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                {
-                    var date = new DateTime(cd.Year, cd.Month, cd.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                Date = DateTime.Now.ToString("dd/MM/yyyy");
 
-                    var model = new ListReportViewModel
-                    {
-                        OfficeId = OfficeId,
-                        Date = Date,
-                    };
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId);
-                    var reportItems = users.ToList().Select(x => new ListReportViewModel.ReportItem
-                    {
-                        User = x,
-                        Report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => DbFunctions.TruncateTime(date) == DbFunctions.TruncateTime(a.CreateDate) && a.UserId == x.Id).FirstOrDefault(),
-                    });
-                }
-            return View();
+            if (DateTime.TryParse(Date, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+            {
+                var date = new DateTime(cd.Year, cd.Month, cd.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+                var model = new ListReportViewModel
+                {
+                    User = User,
+                    OfficeId = OfficeId,
+                    Date = Date,
+                };
+                var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId &&(a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB ));
+                var officeName = _unitOfWork.OfficeRepository.GetById(OfficeId)?.Name;
+                ViewBag.OfficeName = officeName == null?"": "- Chi nhánh " + officeName;
+                var reportItems = users.ToList().Select(x => new ListReportViewModel.ReportItem
+                {
+                    User = x,
+                    Report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => DbFunctions.TruncateTime(date) == DbFunctions.TruncateTime(a.CreateDate) && a.UserId == x.Id).FirstOrDefault(),
+                });
+                model.ReportItems = reportItems;
+                return View(model);
+            }
+            return RedirectToAction("Index");
         }
         #endregion
 
