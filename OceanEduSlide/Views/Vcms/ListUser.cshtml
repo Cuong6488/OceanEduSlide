@@ -81,7 +81,7 @@
                 $.post("/Vcms/DeleteUser",
                     { userId: id },
                     function (data) {
-                        if (data.status === "True") {
+                        if (data.status) {
                             $.toast({
                                 text: 'Xóa tài khoản thành công',
                                 position: 'bottom-right',
