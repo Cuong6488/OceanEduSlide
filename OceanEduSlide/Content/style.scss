@@ -2281,6 +2281,10 @@ body {
         width: 10.5%;
         position: relative;
 
+        &.w-12 {
+            width: 12%;
+        }
+
         &:not(:last-child) {
             margin-right: 10px;
         }
@@ -2356,6 +2360,17 @@ body {
             font-size: 22px;
             opacity: 0;
             visibility: hidden;
+
+            &.r-25{
+                left:unset;
+                right:-25%;
+            } &.l-100 {
+                left: -100%;
+            }
+
+            &.w-1000 {
+                width: 1000px;
+            }
 
             & > :first-child {
                 border-top: 1px dashed $main-color;
@@ -2502,6 +2517,10 @@ body {
 
             &-content {
                 font-size: 19px;
+
+                &.w-1000 {
+                    width: 900px;
+                }
             }
         }
     }
@@ -2550,6 +2569,10 @@ body {
             &-content {
                 width: 550px;
                 font-size: 16px;
+
+                &.w-1000 {
+                    width: 800px;
+                }
             }
         }
     }
@@ -2576,6 +2599,10 @@ body {
             &-content {
                 width: 500px;
                 font-size: 15px;
+
+                &.w-1000 {
+                    width: 700px;
+                }
             }
         }
     }
@@ -2599,6 +2626,10 @@ body {
             &-content {
                 width: 420px;
                 font-size: 14px;
+
+                &.w-1000 {
+                    width: 600px;
+                }
             }
         }
     }

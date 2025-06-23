@@ -201,6 +201,45 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region User
+
+        public ActionResult CreateTarget(string result = "")
+        {
+            ViewBag.Result = result;
+            var model = new CreateTargetViewModel
+            {
+                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB), "Id", "Username"),
+                Revenue = new RevenueUser_Month()
+                {
+                    Month = DateTime.Now.Month,
+                    Year = DateTime.Now.Year,
+                }
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult CreateTarget(CreateTargetViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //var m = new RevenueUser_Month
+                //{
+                //    Target = model.Revenue.Target,
+                //    UserId = model.Revenue.UserId,
+                //    Year = model.Revenue.Year,
+                //    Month = model.Revenue.Month,
+                //};
+                _unitOfWork.RevenueUser_MonthRepository.Insert(model.Revenue);
+                _unitOfWork.Save();
+                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+
+                return RedirectToAction("CreateTarget", new { result = "add" });
+
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
         public ActionResult CreateUser(string result = "")
         {
             ViewBag.Result = result;
@@ -230,6 +269,7 @@ namespace OceanEduSlide.Controllers
                     {
                         Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
                         Username = model.Username,
+                        Fullname = model.Fullname,
                         OfficeId = model.OfficeId,
                         ZoneId = model.ZoneId,
                         Active = model.Active,
@@ -311,6 +351,7 @@ namespace OceanEduSlide.Controllers
                     user.Active = model.Active;
                     user.SaleKit = model.SaleKit;
                     user.TypeUser = model.TypeUser;
+                    user.Fullname = model.Fullname;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateUser", new { result = "update" });
                 }

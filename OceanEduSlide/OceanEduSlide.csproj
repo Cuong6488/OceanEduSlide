@@ -1212,6 +1212,7 @@
     <Content Include="Views\Home\LoadEvent.cshtml" />
     <Content Include="Views\Home\Report.cshtml" />
     <Content Include="Views\Home\ListReport.cshtml" />
+    <Content Include="Views\Vcms\CreateTarget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -22,7 +22,6 @@
                     <td class="form_text">
                         @*<input autocomplete="off" type="type" name="name" value="" />*@
                         @Html.EditorFor(model => model.Username, new { @class = "form_control w300" })
-                        @Html.ValidationMessageFor(model => model.Username)
                     </td>
                 </tr>
                 <tr>
@@ -37,6 +36,13 @@
                     <td class="form_text">
                         @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form_control w300" })
                         @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Fullname)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.EditorFor(model => model.Fullname, new { @class = "form_control w300" })
                     </td>
                 </tr>
                 <tr>

@@ -31,7 +31,7 @@ namespace OceanEduSlide.Models
         public RevenueUser_Month()
         {
             CreateDate = DateTime.Now;
-            //Active = true;
+            Active = true;
         }
     }
 }
