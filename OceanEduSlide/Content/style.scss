@@ -1640,7 +1640,7 @@ body {
                     font-size: 30px;
                 }
 
-                &-challenge, &-focus {
+                &-challenge, &-focus, &-toeic {
                     & > div {
                         font-size: 22px;
                         padding: 7vh;
@@ -1684,7 +1684,7 @@ body {
                         padding: 5vh 8vh;
                     }
 
-                    &-challenge {
+                    &-challenge, &-toeic {
                         & > div {
                             font-size: 20px;
                             padding: 6.5vh 6vh;
@@ -1704,7 +1704,7 @@ body {
                         padding: 5vh 6vh;
                     }
 
-                    &-challenge {
+                    &-challenge, &-toeic {
                         & > div {
                             font-size: 17.5px;
                             padding: 6.5vh 6vh;
@@ -1730,7 +1730,7 @@ body {
                         font-size: 20px;
                     }
 
-                    &-challenge {
+                    &-challenge, &-toeic {
                         & > div {
                             font-size: 16px;
                             padding: 5.5vh;
@@ -1755,7 +1755,7 @@ body {
                         font-size: 18px;
                     }
 
-                    &-challenge {
+                    &-challenge, &-toeic {
                         & > div {
                             font-size: 14px;
                         }
@@ -1779,7 +1779,7 @@ body {
                         font-size: 16px;
                     }
 
-                    &-challenge {
+                    &-challenge, &-toeic {
                         & > div {
                             font-size: 13px;
                             padding: 4.5vh;
@@ -1811,6 +1811,11 @@ body {
             &.overview-challenge-title {
                 width: 90vh;
                 max-width: 45vw;
+                margin-bottom: 2vh;
+            }
+
+            &.overview-toeic-title {
+                max-width: 30vw;
                 margin-bottom: 2vh;
             }
         }
@@ -2060,10 +2065,10 @@ body {
         }
     }
 
-    .pathway-challenge, .pathway-focus {
+    .pathway-challenge, .pathway-focus, .pathway-toeic {
         background-image: url('images/pathway-discovery-bg.png');
 
-        .pathways-challenge, .pathways-focus {
+        .pathways-challenge, .pathways-focus, .pathways-toeic {
             .pathway-level {
                 display: flex;
                 width: 21vw;
@@ -2104,6 +2109,16 @@ body {
                     aspect-ratio: 1.8;
                 }
 
+                &.w-16 {
+                    width: 16vw;
+                    /*aspect-ratio: 1.8;*/
+                }
+
+                &.w-12 {
+                    width: 12vw;
+                    /*aspect-ratio: 1.8;*/
+                }
+
                 &.starters {
                     justify-content: end;
                 }
@@ -2111,10 +2126,27 @@ body {
                 &.movers {
                     justify-content: center;
                 }
+
+                &.key {
+                    justify-content: end;
+                }
+
+                &.preliminary {
+                    justify-content: end;
+                    transform: translateY(-2vw);
+                }
+
+                &.advance {
+                    transform: translateY(2vw);
+                }
+
+                &.first {
+                    justify-content: center;
+                }
             }
         }
 
-        .pathway-challenge-content, .pathway-focus-content {
+        .pathway-challenge-content, .pathway-focus-content, .pathway-toeic-content {
             width: fit-content;
             margin: auto;
             /*transform: translateY(2vh);*/
@@ -2129,14 +2161,14 @@ body {
             height: auto;
         }
 
-        .pathway-challenge-title1, .pathway-focus-title1 {
+        .pathway-challenge-title1, .pathway-focus-title1, .pathway-toeic-title1 {
             width: 30vw;
             /*max-width: 50vw;*/
             /*transform: translateY(12vh);*/
             margin: auto;
         }
 
-        .pathway-challenge-title, .pathway-focus-title {
+        .pathway-challenge-title, .pathway-focus-title, .pathway-toeic-title {
             width: 100%;
 
             & > :first-child {
@@ -2148,7 +2180,7 @@ body {
         }*/
 
         @media (max-aspect-ratio: 2.5) and (min-aspect-ratio: 2) {
-            .pathways-challenge, .pathways-focus {
+            .pathways-challenge, .pathways-focus, .pathways-toeic {
                 .pathway-level {
                     width: 24vw;
 
@@ -2164,7 +2196,7 @@ body {
         }
 
         @media (max-aspect-ratio: 2) {
-            .pathways-challenge, .pathways-focus {
+            .pathways-challenge, .pathways-focus, .pathways-toeic {
                 .pathway-level {
                     width: 25vw;
 
@@ -2445,7 +2477,7 @@ body {
             }
 
             &-content {
-                width: 550px;
+                /*width: 550px;*/
                 font-size: 20px;
             }
         }
@@ -2492,8 +2524,8 @@ body {
             }
 
             &-content {
-                width: 500px;
-                font-size: 18px;
+                /*width: 500px;*/
+                font-size: 16px;
             }
         }
     }
@@ -2516,7 +2548,7 @@ body {
             }
 
             &-content {
-                width: 450px;
+                width: 550px;
                 font-size: 16px;
             }
         }
@@ -2542,7 +2574,7 @@ body {
             }
 
             &-content {
-                width: 420px;
+                width: 500px;
                 font-size: 15px;
             }
         }
@@ -2566,7 +2598,7 @@ body {
 
             &-content {
                 width: 420px;
-                font-size: 15px;
+                font-size: 14px;
             }
         }
     }

@@ -983,6 +983,16 @@ function pathway() {
                 $(".pathway-focus").fadeIn(300);
             });
         }
+        if (pathway === "toeic") {
+            $(".pathway-index > .slide:not(.pathway-toeic)").fadeOut(300, function () {
+                $(".pathway-toeic").fadeIn(300);
+            });
+        }
+        if (pathway === "ielts") {
+            $(".pathway-index > .slide:not(.pathway-ielts)").fadeOut(300, function () {
+                $(".pathway-ielts").fadeIn(300);
+            });
+        }
     });
     $(".btn-people").on("click", function () {
         if (pathway === "discovery") {
@@ -998,6 +1008,11 @@ function pathway() {
         if (pathway === "focus") {
             $(".pathway-index > .slide:not(.overview-focus)").fadeOut(300, function () {
                 $(".overview-focus").fadeIn(300);
+            });
+        }
+        if (pathway === "toeic") {
+            $(".pathway-index > .slide:not(.overview-toeic)").fadeOut(300, function () {
+                $(".overview-toeic").fadeIn(300);
             });
         }
     });
