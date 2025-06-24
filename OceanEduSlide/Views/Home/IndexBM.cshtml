@@ -37,9 +37,9 @@
     <div class="container">
         @if (Model.User.TypeUser == TypeUser.ASM)
         {
-            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3">
+            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3" style="max-width:500px;margin:auto">
 
-                <select name="OfficeId" class="form-select" required>
+                <select name="OfficeId" class="form-select me-3" required>
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
@@ -47,25 +47,20 @@
                     }
                 </select>
                 <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
-                    <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
-                    <button class="btn quick-link mb-0" type="submit">Xem</button>
             </form>
         }
         else
         {
-            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3 justify-content-center align-items-center">
-                <label for="Date"><strong>Chọn ngày: </strong> </label>
-                <input type="text" name="Date" value="@Model.Date" class="date-picker form_control" required readonly />
-                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
-                @*<button class="btn quick-link mb-0" type="submit">Xem</button>*@
+            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3 justify-content-center align-items-center" style="max-width:500px;margin:auto" >
+                <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
             </form>
         }
         <div class="remind-date mb-3 remind-date-bm">
-            Ngày @DateTime.Now.ToString("dd/MM/yyyy")
+            Ngày @Model.Date
         </div>
         @if (Model.UserItems != null)
         {
-            <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-3">
+            <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
                 @foreach (var userItem in Model.UserItems)
                 {
                     <div class="col">

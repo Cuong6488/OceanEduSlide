@@ -162,6 +162,10 @@ h2 {
   /*color:white;*/
 }
 
+.form-filter input, .form-filter select {
+  height: 35px;
+}
+
 .box-remind {
   background: #eee;
   height: 100%;
@@ -178,6 +182,7 @@ h2 {
   text-align: center;
   font-weight: bold;
   padding: 8px;
+  max-width: 500px;
 }
 .remind-date-bm {
   background: #ccc;
