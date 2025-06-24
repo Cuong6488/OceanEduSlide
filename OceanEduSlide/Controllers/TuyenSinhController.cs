@@ -34,8 +34,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult Revenue(int? ZoneId,int? Month, int? OfficeId, int? Year, string Result = "")
         {
-            if (User.TypeUser == TypeUser.User)
-                return RedirectToAction("Index","Home");
+            if (User.TypeUser == null)
+                return HttpNotFound();
             var model = new RevenueViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
@@ -74,7 +74,7 @@ namespace OceanEduSlide.Controllers
                 {
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)).ToList();
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM)).ToList();
 
                     var userItems = users.Select(a => new RevenueViewModel.UserItem
                     {
@@ -162,8 +162,8 @@ namespace OceanEduSlide.Controllers
         public ActionResult RevenueOffice_BM(int officeId, int month, int year)
         {
             var office = _unitOfWork.OfficeRepository.GetById(officeId);
-            if (office == null || (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO))
-                return RedirectToAction("Index","Home");
+            if (office == null || (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM))
+                return HttpNotFound();
             var model = new RevenueOffice_BMViewModel
             {
                 RevenueOffice = new RevenueOffice_BM { Active = true, OfficeId = officeId, Month = month, Year = year },

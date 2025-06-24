@@ -201,13 +201,46 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region User
+        public ActionResult CreateCV()
+        {
+            if (!_unitOfWork.UserRepository.GetQuery(a => a.Username == "testCV").Any())
+            {
+                var zones = _unitOfWork.ZoneRepository.Get();
+                var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Name.Contains("Nguyễn Trãi")).FirstOrDefault();
 
+                if (zones.Any() && office != null)
+                {
+                    var zoneIds = ",";
+                    foreach (var item in zones)
+                    {
+                        zoneIds += item.Id + ",";
+                    }
+
+                    var m = new User
+                    {
+                        Password = HtmlHelpers.ComputeHash("vico@123", "SHA256", null),
+                        Username = "testCV",
+                        TypeUser = TypeUser.CV,
+                        ZoneIds = zoneIds,
+                        OfficeId = office.Id,
+                        Active = true,
+                        SaleKit = false,
+                        Fullname = "Test Chuyên Viên"
+                    };
+                    _unitOfWork.UserRepository.Insert(m);
+                    _unitOfWork.Save();
+                }
+
+            }
+
+            return RedirectToAction("ListUser");
+        }
         public ActionResult CreateTarget(string result = "")
         {
             ViewBag.Result = result;
             var model = new CreateTargetViewModel
             {
-                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB), "Id", "Username"),
+                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM), "Id", "Username"),
                 Revenue = new RevenueUser_Month()
                 {
                     Month = DateTime.Now.Month,
@@ -261,6 +294,7 @@ namespace OceanEduSlide.Controllers
                 {
                     ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
                     model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
                     return View(model);
                 }
                 else

@@ -24,7 +24,7 @@ namespace OceanEduSlide.Models
         public TypeEvent TypeEvent { get; set; }
         [Display(Name = "Đối tượng tham gia"), Required(ErrorMessage = "Hãy chọn đối tượng tham gia")]
         public TypeJoin TypeJoin { get; set; }
-        [Display(Name = "Các nhân sự phân công"), Required(ErrorMessage = "Hãy chọn các  nhân sự phân công")]
+        [Display(Name = "Các nhân sự phân công"), Required(ErrorMessage = "Hãy chọn các nhân sự phân công")]
         public string UserIds { get; set; }
         [Display(Name = "Các ngày triển khai"), Required(ErrorMessage = "Hãy chọn các ngày triển khai")]
         public string Days { get; set; }
@@ -32,8 +32,12 @@ namespace OceanEduSlide.Models
         public string Name { get; set; }
         [Display(Name = "Lứa tuổi"), Required(ErrorMessage = "Hãy nhập lừa tuổi"), StringLength(15, ErrorMessage = "Tối đa 15 ký tự"), UIHint("TextBox")]
         public string Ages { get; set; }
-        [Display(Name = "Quy mô số lượng dự kiến"), Required(ErrorMessage = "Hãy nhập quy mô số lượng dự kiến"), UIHint("NumberBox")]
+        [Display(Name = "Quy mô số lượng dự kiến"), UIHint("NumberBox")]
         public int Range { get; set; }
+        [Display(Name = "Số lượng học viên"), UIHint("NumberBox")]
+        public int RangeStudent { get; set; }
+        [Display(Name = "Số lượng khách hàng mới"), UIHint("NumberBox")]
+        public int RangeNewCustomer { get; set; }
         [Display(Name = "Thời gian từ"), Required(ErrorMessage = "Hãy chọn mục này")]
         public string TimeFrom { get; set; }
         [Display(Name = "Thời gian đến"), Required(ErrorMessage = "Hãy chọn mục này")]

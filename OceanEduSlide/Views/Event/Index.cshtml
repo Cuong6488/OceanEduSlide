@@ -136,7 +136,16 @@
                                                 @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
                                                 @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
                                                 @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
-                                                @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                if (ev.Range > 0)
+                                                {
+                                                    @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                    @: @Html.LabelFor(a => ev.RangeStudent): @ev.RangeStudent <br />
+                                                    @: @Html.LabelFor(a => ev.RangeNewCustomer): @ev.RangeNewCustomer <br />
+                                                }
+                                                else
+                                                {
+                                                    @: @Html.LabelFor(a => ev.Range): Chưa cập nhật <br />
+                                                }
                                                 @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
                                                 if (ev.LinkUrl != null)
                                                 {

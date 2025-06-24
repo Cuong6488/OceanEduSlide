@@ -21,6 +21,25 @@ namespace OceanEduSlide.ViewModels
         public decimal TWeek { get; set; }
         public decimal RevenueWeekNow { get; set; }
         public decimal TargetWeekPercent { get; set; }
+        [Display(Name = "Chỉ tiêu doanh số hoàn thành"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public decimal? TargetBM { get; set; }
+        [DisplayName("Số lượng data khai thác"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? DataQuantity { get; set; }
+
+        [DisplayName("Số lượng data confirm lần 1"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? Confirm1 { get; set; }
+
+        [DisplayName("Số lượng data confirm lần 2"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? Confirm2 { get; set; }
+
+        [DisplayName("Số lượng data confirm lần 3"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? Confirm3 { get; set; }
+
+        [DisplayName("Số lượng khách hàng check in"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? CI { get; set; }
+
+        [DisplayName("Số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? DT { get; set; }
     }
     public class BMHomeViewModel
     {
@@ -28,12 +47,14 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public User User { get; set; }
+        public string Date { get; set; }
 
         public class UserItem
         {
             public User User { get; set; }
             public IEnumerable<Debt> Debts { get; set; }
             public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
+            public RevenueUser_DayOfWeek_Real Report { get; set; }
             public decimal TMonth { get; set; }
             public decimal RevenueMonthNow { get; set; }
             public decimal TargetMonthPercent { get; set; }
@@ -41,6 +62,25 @@ namespace OceanEduSlide.ViewModels
             public decimal TWeek { get; set; }
             public decimal RevenueWeekNow { get; set; }
             public decimal TargetWeekPercent { get; set; }
+            [Display(Name = "Chỉ tiêu doanh số hoàn thành"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+            public decimal? TargetBM { get; set; }
+            [DisplayName("Số lượng data khai thác"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? DataQuantity { get; set; }
+
+            [DisplayName("Số lượng data confirm lần 1"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? Confirm1 { get; set; }
+
+            [DisplayName("Số lượng data confirm lần 2"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? Confirm2 { get; set; }
+
+            [DisplayName("Số lượng data confirm lần 3"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? Confirm3 { get; set; }
+
+            [DisplayName("Số lượng khách hàng check in"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? CI { get; set; }
+
+            [DisplayName("Số lượng khách hàng chuyển đổi ra cọc/ doanh thu"), DisplayFormat(DataFormatString = "{0:N0}")]
+            public decimal? DT { get; set; }
         }
     }
     public class ReportViewModel

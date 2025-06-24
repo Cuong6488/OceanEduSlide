@@ -42,6 +42,16 @@
   font-family: "swiss-condensedbold";
   src: url("../webfonts/utm-swiss-condensedbold.ttf") format("truetype");
 }
+@media (min-width: 1390px) {
+  .container {
+    max-width: unset;
+  }
+}
+.header .navbar li {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .logo-title {
   border-bottom: 1px solid #ccc;
 }
@@ -148,9 +158,12 @@ h2 {
   min-height: calc(100vh - 110px);
   padding: 40px 0;
 }
+.remind-page * {
+  /*color:white;*/
+}
 
 .box-remind {
-  background: #fceda9;
+  background: #eee;
   height: 100%;
 }
 .box-remind .remind-works {
@@ -161,13 +174,13 @@ h2 {
 }
 
 .remind-date {
-  background: #fae37a;
+  background: #ccc;
   text-align: center;
   font-weight: bold;
   padding: 8px;
 }
 .remind-date-bm {
-  background: #f7cc02;
+  background: #ccc;
   padding: 10px;
   /*max-width: 500px;*/
   display: block;

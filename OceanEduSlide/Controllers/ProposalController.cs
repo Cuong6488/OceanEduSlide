@@ -23,7 +23,7 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            if (User.TypeUser == null || User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.CV)
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
                 return HttpNotFound();
             var model = new ProposeViewModel
             {
@@ -70,7 +70,7 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string Result = "")
         {
-            if (User.TypeUser == null)
+            if (User.TypeUser == null || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.ALT)
                 return HttpNotFound();
             ViewBag.Result = Result;
             var model = new ProposalViewModel
@@ -195,7 +195,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("ListProposal");
             proposal.Body = model.Proposal.Body;
             proposal.Url = model.Proposal.Url;
-            proposal.Active = model.Proposal.Active;
+            proposal.Active = true;
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }

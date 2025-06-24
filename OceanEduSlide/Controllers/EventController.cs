@@ -26,7 +26,7 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? ZoneId,int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
+        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -69,7 +69,7 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT)).ToList();
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM)).ToList();
                     var userItems = users.Select(a => new EventViewModel.UserItem
                     {
                         User = a,
@@ -131,18 +131,27 @@ namespace OceanEduSlide.Controllers
                     List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
 
                     var dt = Math.Ceiling(targetBM / user.RevenueAverage);
-                    var ci = dt / user.DT * 100;
-                    var ciDay = ci / 2;
-                    var cf3 = ci / user.CI * 100;
+                    var ci = Math.Round(dt / user.DT * 100);
+                    var ciDay = Math.Round(ci / 2);
+                    ci = ciDay * 2;
+                    var cf3 = Math.Round(ci / user.CI * 100);
                     var cf2 = cf3;
                     if (user.Confirm3 > 0)
-                        cf2 = cf3 / user.Confirm3 * 100;
-                    var cf2Day = cf2 / 2;
-                    var cf1 = cf2 / user.Confirm2 * 100;
-                    var cf1Day = cf1 / (days.Count() - 1);
-                    var dataQuantity = cf1 / user.Confirm1 * 100;
-                    var dataDay = dataQuantity / (days.Count() - 1);
+                        cf2 = Math.Round(cf3 / user.Confirm3 * 100);
+                    var cf2Day = Math.Round(cf2 / 2);
+                    var cf1 = Math.Round(cf2 / user.Confirm2 * 100);
+                    var cf1Day = Math.Round(cf1 / (days.Count() - 1));
+                    var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
+                    var dataDay = Math.Round(dataQuantity / (days.Count() - 1));
                     int i = 1;
+                    if (user.TypeUser == TypeUser.EC || user.TypeUser == TypeUser.CM)
+                    {
+                        ev.Range += (int)ci;
+                        if (user.TypeUser == TypeUser.EC)
+                            ev.RangeNewCustomer += (int)ci;
+                        else
+                            ev.RangeStudent += (int)ci;
+                    }
                     foreach (var day in days)
                     {
                         var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
@@ -228,9 +237,8 @@ namespace OceanEduSlide.Controllers
                     }
 
                 }
-                else if (ev == null)
+                else /*if (ev == null)*/
                 {
-
                     var revenue = new RevenueUser_DayOfWeek
                     {
                         TargetBM = targetBM,
@@ -444,7 +452,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId &&(a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM))
             };
             return View(model);
         }
@@ -483,7 +491,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month);
             ViewBag.CurrentWeek = currentWeek;
@@ -510,7 +518,9 @@ namespace OceanEduSlide.Controllers
                     ev.TypeEvent = model.Event.TypeEvent;
                     ev.LinkUrl = model.Event.LinkUrl;
                     ev.LinkName = model.Event.LinkName;
-                    ev.Range = model.Event.Range;
+                    //ev.Range = model.Event.Range;
+                    //ev.RangeStudent = model.Event.RangeStudent;
+                    //ev.RangeNewCustomer = model.Event.RangeNewCustomer;
                     ev.Name = model.Event.Name;
                     ev.UserIds = model.Event.UserIds;
                     ev.Days = model.Event.Days.TrimEnd(',');
@@ -529,7 +539,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Công_nợ
-        public ActionResult ListDebt(int?ZoneId,int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
+        public ActionResult ListDebt(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -603,7 +613,7 @@ namespace OceanEduSlide.Controllers
                     debt.DebtMoney2 = 0;
                 }
                 debt.RemainMoney = debt.TotalMoney - debt.DebtMoney - debt.DebtMoney2;
-                    _unitOfWork.Save();
+                _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "add" });
             }
             return View(model);
@@ -632,7 +642,7 @@ namespace OceanEduSlide.Controllers
             if (ModelState.IsValid)
             {
                 var debt = _unitOfWork.DebtRepository.GetById(model.DownPathway.DebtId);
-                if(debt == null)
+                if (debt == null)
                     return RedirectToAction("ListDebt");
 
                 model.DownPathway.Money = Convert.ToDecimal(model.Money.Replace(",", ""));

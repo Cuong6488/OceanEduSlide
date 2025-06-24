@@ -18,6 +18,12 @@ $(".form-filter select").on("change", function (data) {
         form.trigger('submit'); // Gọi sự kiện submit
     }
 });
+$(".form-filter input").on("change", function (data) {
+    let form = $(this).closest("form");
+    if (form.valid()) { // Kiểm tra nếu form hợp lệ
+        form.trigger('submit'); // Gọi sự kiện submit
+    }
+});
 
 //$("[data-item=zone]").on("change", function (data) {
 //    const id = $(this).val();

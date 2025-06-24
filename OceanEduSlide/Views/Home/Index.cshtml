@@ -22,41 +22,80 @@
                 <div class="remind-works">
                     <div class="mb-3">
                         <p class="mb-2"><strong>1. Chi tiết công việc ngày</strong></p>
-                        @foreach (var item in Model.Revenues)
+                        @if (Model.Revenues.Any())
                         {
-                            <div class="mb-2 p-2" style="background: #dbd9d9 ">
-                                @if (item.Event?.Name != null)
-                                {
-                                    <div class="d-flex">
-                                        <p class="mb-2 me-3 text-danger">@(item.Event?.Name)</p>
-                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
-                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
-                                    </div>
-                                }
-                                @if (item.DataQuantity != null)
-                                {
-                                    @: SL data cần khai thác: <strong>@Html.DisplayFor(a => item.DataQuantity)</strong> <br />
-                                }
-                                @if (item.Confirm1 != null)
-                                {
-                                    @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
-                                }
-                                @if (item.Confirm2 != null)
-                                {
-                                    @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
-                                }
-                                @if (item.CI != null)
-                                {
-                                    @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
-                                }
-                                @if (item.DT != null)
-                                {
-                                    @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => item.DT)</strong><br />
-                                }
-                                @if (item.TargetBM != null)
-                                {
-                                    @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
-                                }
+                            foreach (var item in Model.Revenues)
+                            {
+                                <div class="mb-2 p-2" style="background: #ccc">
+                                    @if (item.Event?.Name != null)
+                                    {
+                                        <div class="d-flex">
+                                            <p class="mb-2 me-3 text-danger">@(item.Event?.Name)</p>
+                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
+                                               data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
+                                        </div>
+                                    }
+                                    @if (item.DataQuantity != null)
+                                    {
+                                        @: SL data cần khai thác: <strong>@Html.DisplayFor(a => item.DataQuantity)</strong> <br />
+                                    }
+                                    @if (item.Confirm1 != null)
+                                    {
+                                        @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
+                                    }
+                                    @if (item.Confirm2 != null)
+                                    {
+                                        @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
+                                    }
+                                    @if (item.CI != null)
+                                    {
+                                        @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
+                                    }
+                                    @if (item.DT != null)
+                                    {
+                                        @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => item.DT)</strong><br />
+                                    }
+                                    @if (item.TargetBM != null)
+                                    {
+                                        @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
+                                    }
+                                </div>
+                            }
+                            if (Model.Revenues.Count() > 1)
+                            {
+                                <div class="p-2" style="background: #ccc">
+                                    <strong>Tổng:</strong> <br />
+                                    @if (Model.DataQuantity > 0)
+                                    {
+                                        @: SL data cần khai thác: <strong>@Html.DisplayFor(a => Model.DataQuantity)</strong> <br />
+                                    }
+                                    @if (Model.Confirm1 > 0)
+                                    {
+                                        @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => Model.Confirm1)</strong> <br />
+                                    }
+                                    @if (Model.Confirm2 > 0)
+                                    {
+                                        @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => Model.Confirm2)</strong> <br />
+                                    }
+                                    @if (Model.CI > 0)
+                                    {
+                                        @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => Model.CI)</strong><br />
+                                    }
+                                    @if (Model.DT > 0)
+                                    {
+                                        @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => Model.DT)</strong><br />
+                                    }
+                                    @if (Model.TargetBM > 0)
+                                    {
+                                        @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => Model.TargetBM)</strong> <br />
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div>
+                                Chưa có
                             </div>
                         }
                     </div>
@@ -66,7 +105,7 @@
                         {
                             foreach (var item in Model.Debts)
                             {
-                                <div class="mb-2 p-2" style="background: #dbd9d9">
+                                <div class="mb-2 p-2" style="background: #ccc">
                                     <div class="d-flex">
                                         <p class="mb-2 me-3 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
                                         <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadDebt",  new{debtId = item.Id})"
@@ -81,14 +120,14 @@
                         }
                         else
                         {
-                            <div class="alert alert-success">
+                            <div>
                                 Không có
                             </div>
                         }
                     </div>
                     <div class="mb-3">
                         <p class="mb-2"><strong>3. Doanh số trong tháng</strong></p>
-                        <div class="p-2" style="background: #dbd9d9 ">
+                        <div class="p-2" style="background: #ccc ">
                             <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@Model.TMonth.ToString("N0")đ</strong></p>
                             Hoàn thành:  <strong>@Model.RevenueMonthNow.ToString("N0")đ</strong><br />
                             % Hoàn thành:  <strong>@Model.TargetMonthPercent.ToString("N0")%</strong><br />
@@ -109,7 +148,7 @@
                     </div>
                     <div class="mb-3">
                         <p class="mb-2"><strong>3. Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
-                        <div class="p-2" style="background: #dbd9d9 ">
+                        <div class="p-2" style="background: #ccc ">
                             <p class="mb-2 text-danger">Chỉ tiêu tuần: <strong>@Model.TWeek.ToString("N0")đ</strong></p>
                             Hoàn thành:  <strong>@Model.RevenueWeekNow.ToString("N0")đ</strong><br />
                             % Hoàn thành:  <strong>@Model.TargetWeekPercent.ToString("N0")%</strong><br />

@@ -33,7 +33,7 @@
                 {
                     <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
                 }
-                else
+                else if (Model.TypeUser == TypeUser.BM)
                 {
                     <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
                 }
