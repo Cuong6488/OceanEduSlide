@@ -1015,6 +1015,11 @@ function pathway() {
                 $(".overview-toeic").fadeIn(300);
             });
         }
+        if (pathway === "ielts") {
+            $(".pathway-index > .slide:not(.overview-ielts)").fadeOut(300, function () {
+                $(".overview-ielts").fadeIn(300);
+            });
+        }
     });
     var slidenumber = 1;
     $(".overview-discovery .btn-back").on("click", function () {
@@ -1110,6 +1115,11 @@ function pathway() {
                 $(".book-focus").fadeIn(300);
             });
         }
+        if (pathway === "toeic") {
+            $(".pathway-index > .slide:not(.toeic-book1-content)").fadeOut(300, function () {
+                $(".toeic-book1-content").css("display", "flex");
+            });
+        }
     });
     $(".focus-book1").on("click", function () {
         $(".pathway-index > .slide:not(.book-focus-content1)").fadeOut(300, function () {
@@ -1153,6 +1163,13 @@ function pathway() {
             //$(".discovery-book3-content").fadeIn(300);
             $(".discovery-book3-content").css("display", "flex");
             $(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".book1-toeic-text").on("click", function () {
+        $(".pathway-index > .slide:not(.toeic-book2-content)").fadeOut(300, function () {
+            $(".toeic-book2-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
         });
     });
     $(".book1-challenge-text").on("click", function () {

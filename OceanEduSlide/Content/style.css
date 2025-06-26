@@ -611,6 +611,7 @@ body {
   bottom: 45px;
   right: 60px;
   height: 50px;
+  z-index: 2;
 }
 .page-100vh .menu-btn li:not(:last-child) {
   margin-right: 7px;
@@ -1858,11 +1859,17 @@ body {
 .pathway-detail-box.w-12 {
   width: 12%;
 }
+.pathway-detail-box.w-16 {
+  width: 16%;
+}
 .pathway-detail-box:not(:last-child) {
   margin-right: 10px;
 }
 .pathway-detail-box img {
   width: 100%;
+}
+.pathway-detail-box img.as-2 {
+  aspect-ratio: 1.8;
 }
 .pathway-detail-box::before {
   content: "";
@@ -1905,6 +1912,7 @@ body {
   background-repeat: no-repeat;
   position: absolute;
   width: 70%;
+  max-width: 120px;
   aspect-ratio: 3;
   left: 50%;
   bottom: 0;
@@ -1933,6 +1941,10 @@ body {
 .pathway-detail-box-content.r-25 {
   left: unset;
   right: -25%;
+}
+.pathway-detail-box-content.r-100 {
+  left: unset;
+  right: -100%;
 }
 .pathway-detail-box-content.l-100 {
   left: -100%;
@@ -2118,9 +2130,9 @@ body {
   .pathway-detail-box-content {
     width: 420px;
     font-size: 14px;
-  }
-  .pathway-detail-box-content.w-1000 {
-    width: 600px;
+    /*&.w-1000 {
+        width: 600px;
+    }*/
   }
 }
 
@@ -2166,7 +2178,7 @@ body {
   max-width: 85%;
   object-fit: contain;
 }
-.pathway-book-content .book-content-challenge {
+.pathway-book-content .book-content-challenge, .pathway-book-content .book-content-toeic {
   width: 80%;
   height: unset;
   display: block;

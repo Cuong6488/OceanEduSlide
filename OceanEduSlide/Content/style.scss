@@ -712,7 +712,7 @@ body {
         bottom: 45px;
         right: 60px;
         height: 50px;
-
+        z-index:2;
         li {
             &:not(:last-child) {
                 margin-right: 7px;
@@ -2285,12 +2285,19 @@ body {
             width: 12%;
         }
 
+        &.w-16 {
+            width: 16%;
+        }
+
         &:not(:last-child) {
             margin-right: 10px;
         }
 
         img {
             width: 100%;
+            &.as-2{
+                aspect-ratio:1.8;
+            }
         }
 
         &::before {
@@ -2334,6 +2341,7 @@ body {
                 @include custom-background();
                 position: absolute;
                 width: 70%;
+                max-width: 120px;
                 aspect-ratio: 3;
                 left: 50%;
                 bottom: 0;
@@ -2361,10 +2369,17 @@ body {
             opacity: 0;
             visibility: hidden;
 
-            &.r-25{
-                left:unset;
-                right:-25%;
-            } &.l-100 {
+            &.r-25 {
+                left: unset;
+                right: -25%;
+            }
+
+            &.r-100 {
+                left: unset;
+                right: -100%;
+            }
+
+            &.l-100 {
                 left: -100%;
             }
 
@@ -2627,9 +2642,9 @@ body {
                 width: 420px;
                 font-size: 14px;
 
-                &.w-1000 {
+                /*&.w-1000 {
                     width: 600px;
-                }
+                }*/
             }
         }
     }
@@ -2687,7 +2702,7 @@ body {
         max-width: 85%;
         object-fit: contain;
 
-        &-challenge {
+        &-challenge,&-toeic {
             width: 80%;
             height: unset;
             display: block;

@@ -60,7 +60,7 @@ namespace OceanEduSlide.ViewModels
     {
         [Display(Name = "Tên đăng nhập"), Required(ErrorMessage = "Hãy điền tên đăng nhập"), UIHint("TextBox")]
         public string Username { get; set; }
-        [Display(Name = "Họ và tên"), Required(ErrorMessage = "Hãy điền họ và tên"), UIHint("TextBox")]
+        [Display(Name = "Họ và tên"), UIHint("TextBox")]
         public string Fullname { get; set; }
         [Display(Name = "Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu mới"),
          StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]

@@ -29,11 +29,11 @@
                 <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
             </li>
             <li>
-                @if (Model.TypeUser != TypeUser.CV && Model.TypeUser != TypeUser.HO)
+                @if (Model.TypeUser == TypeUser.BM || Model.TypeUser == TypeUser.ASM)
                 {
                     <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
                 }
-                else if (Model.TypeUser == TypeUser.BM)
+                else if (Model.TypeUser == TypeUser.CV || Model.TypeUser == TypeUser.HO)
                 {
                     <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
                 }
