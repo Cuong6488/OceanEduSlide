@@ -1120,7 +1120,139 @@ function pathway() {
                 $(".toeic-book1-content").css("display", "flex");
             });
         }
+        if (pathway === "ielts") {
+            $(".pathway-index > .slide:not(.ielts-book1-content)").fadeOut(300, function () {
+                $(".ielts-book1-content").css("display", "flex");
+            });
+        }
     });
+    $(".toeic-book1").on("click", function () {
+        $(".pathway-index > .slide:not(.toeic-book-content1)").fadeOut(300, function () {
+            $(".toeic-book-content1").css("display", "flex");
+        });
+    });
+    $(".toeic-book2").on("click", function () {
+        $(".pathway-index > .slide:not(.toeic-book-content2)").fadeOut(300, function () {
+            $(".toeic-book-content2").css("display", "flex");
+        });
+    });
+    $(".toeic-book3").on("click", function () {
+        $(".pathway-index > .slide:not(.toeic-book-content3)").fadeOut(300, function () {
+            $(".toeic-book-content3").css("display", "flex");
+        });
+    });
+    $(".toeic-book5").on("click", function () {
+        $(".pathway-index > .slide:not(.toeic-book-content5)").fadeOut(300, function () {
+            $(".toeic-book-content5").css("display", "flex");
+        });
+    });
+    $(".toeic-book4").on("click", function () {
+        $(".pathway-index > .slide:not(.book-toeic-content4-1)").fadeOut(300, function () {
+            $(".book-toeic-content4-1").fadeIn(300);
+        });
+    });
+    $(".book-toeic-content4-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-toeic-content4-2)").fadeOut(300, function () {
+            $(".book-toeic-content4-2").fadeIn(300);
+        });
+    });
+    $(".book-toeic-content4-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-toeic-content4-3)").fadeOut(300, function () {
+            $(".book-toeic-content4-3").fadeIn(300);
+        });
+    });
+    $(".book-toeic-content4-3 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-toeic-content4-1)").fadeOut(300, function () {
+            $(".book-toeic-content4-1").fadeIn(300);
+        });
+    });
+    $(".ielts-book1").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content1-1)").fadeOut(300, function () {
+            $(".book-ielts-content1-1").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content1-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content1-2)").fadeOut(300, function () {
+            $(".book-ielts-content1-2").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content1-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content1-3)").fadeOut(300, function () {
+            $(".book-ielts-content1-3").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content1-3 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content1-4)").fadeOut(300, function () {
+            $(".book-ielts-content1-4").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content1-4 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content1-1)").fadeOut(300, function () {
+            $(".book-ielts-content1-1").fadeIn(300);
+        });
+    });
+
+
+    $(".ielts-book2").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content2-1)").fadeOut(300, function () {
+            $(".book-ielts-content2-1").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content2-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content2-2)").fadeOut(300, function () {
+            $(".book-ielts-content2-2").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content2-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content2-3)").fadeOut(300, function () {
+            $(".book-ielts-content2-3").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content2-3 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content2-1)").fadeOut(300, function () {
+            $(".book-ielts-content2-1").fadeIn(300);
+        });
+    });
+    $(".ielts-book3").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content3-1)").fadeOut(300, function () {
+            $(".book-ielts-content3-1").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content3-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content3-2)").fadeOut(300, function () {
+            $(".book-ielts-content3-2").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content3-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content3-1)").fadeOut(300, function () {
+            $(".book-ielts-content3-1").fadeIn(300);
+        });
+    });
+    $(".ielts-book4").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content4-1)").fadeOut(300, function () {
+            $(".book-ielts-content2-1").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content4-1 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content4-2)").fadeOut(300, function () {
+            $(".book-ielts-content4-2").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content4-2 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content4-3)").fadeOut(300, function () {
+            $(".book-ielts-content4-3").fadeIn(300);
+        });
+    });
+    $(".book-ielts-content4-3 .btn-slide").on("click", function () {
+        $(".pathway-index > .slide:not(.book-ielts-content4-1)").fadeOut(300, function () {
+            $(".book-ielts-content4-1").fadeIn(300);
+        });
+    });
+    //$(".toeic-book-content5 .btn-back-square").on("click", function () {
+    //    $(".pathway-index > .slide:not(.toeic-book2-content)").fadeOut(300, function () {
+    //        $(".toeic-book2-content").fadeIn(300);
+    //    });
+    //});
     $(".focus-book1").on("click", function () {
         $(".pathway-index > .slide:not(.book-focus-content1)").fadeOut(300, function () {
             $(".book-focus-content1").css("display", "flex");
@@ -1141,6 +1273,7 @@ function pathway() {
             $(".book-focus-content2-1").fadeIn(300);
         });
     });
+
     $(".book-focus-content .btn-back-square").on("click", function () {
         $(".btn-book").trigger("click");
     });
@@ -1168,6 +1301,27 @@ function pathway() {
     $(".book1-toeic-text").on("click", function () {
         $(".pathway-index > .slide:not(.toeic-book2-content)").fadeOut(300, function () {
             $(".toeic-book2-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".book1-ielts-text").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book2-content)").fadeOut(300, function () {
+            $(".ielts-book2-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".book2-ielts-text").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book3-content)").fadeOut(300, function () {
+            $(".ielts-book3-content").css("display", "flex");
+            //$(".discovery-book1-content").fadeIn(300);
+            //$(".menu-btn").fadeOut(300);
+        });
+    });
+    $(".book3-ielts-text").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book4-content)").fadeOut(300, function () {
+            $(".ielts-book4-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);
             //$(".menu-btn").fadeOut(300);
         });
@@ -1220,7 +1374,7 @@ function pathway() {
         $(".book-focus-content1 .book-content-1").addClass("active");
     });
 
-    $(".pathway-book-content .btn-back-square").on("click", function () {
+    $(".pathway-book-content .btn-back-square, .book-toeic-content .btn-back-square, .book-ielts-content .btn-back-square").on("click", function () {
         $(".btn-book").trigger("click");
         $(".menu-btn").fadeIn(300);
     });
@@ -1240,6 +1394,18 @@ function pathway() {
             $(".pathway-index > .slide:not(.teaching-method-focus)").fadeOut(300, function () {
                 $(".teaching-method-focus").fadeIn(300);
                 $(".teaching-method-focus").css("display", "flex");
+            });
+        }
+        if (pathway === "toeic") {
+            $(".pathway-index > .slide:not(.teaching-method-toeic)").fadeOut(300, function () {
+                $(".teaching-method-toeic").fadeIn(300);
+                $(".teaching-method-toeic").css("display", "flex");
+            });
+        }
+        if (pathway === "ielts") {
+            $(".pathway-index > .slide:not(.teaching-method-ielts)").fadeOut(300, function () {
+                $(".teaching-method-ielts").fadeIn(300);
+                $(".teaching-method-ielts").css("display", "flex");
             });
         }
     });
@@ -1263,6 +1429,59 @@ function pathway() {
         pathway = "discovery";
         $(".btn-setting").trigger("click");
     });
+    $(".teaching-method-toeic1").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-toeic-content1)").fadeOut(300, function () {
+            $(".teaching-method-toeic-content1").fadeIn(300);
+        });
+    });
+    $(".teaching-method-toeic2").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-toeic-content2-1)").fadeOut(300, function () {
+            $(".teaching-method-toeic-content2-1").fadeIn(0);
+        });
+    });
+    $(".teaching-method-toeic-content2-1 .teachingmethod-content-img").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-toeic-content2-2)").fadeOut(300, function () {
+            $(".teaching-method-toeic-content2-2").fadeIn(300);
+        });
+    });
+    $(".teaching-method-toeic-content2-2 .teachingmethod-content-img").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-toeic-content2-1)").fadeOut(300, function () {
+            $(".teaching-method-toeic-content2-1").fadeIn(300);
+        });
+    });
+    $(".teaching-method-toeic2").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-toeic-content2)").fadeOut(300, function () {
+            $(".teaching-method-toeic-content2").fadeIn(300);
+            $(".teaching-method-toeic-content2").css("display", "flex");
+        });
+    });
+
+    $(".teaching-method-ielts1").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-ielts-content1)").fadeOut(300, function () {
+            $(".teaching-method-ielts-content1").fadeIn(300);
+        });
+    });
+    $(".teaching-method-ielts2").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-ielts-content2-1)").fadeOut(300, function () {
+            $(".teaching-method-ielts-content2-1").fadeIn(0);
+        });
+    });
+    $(".teaching-method-ielts-content2-1 .teachingmethod-content-img").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-ielts-content2-2)").fadeOut(300, function () {
+            $(".teaching-method-ielts-content2-2").fadeIn(300);
+        });
+    });
+    $(".teaching-method-ielts-content2-2 .teachingmethod-content-img").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-ielts-content2-1)").fadeOut(300, function () {
+            $(".teaching-method-ielts-content2-1").fadeIn(300);
+        });
+    });
+    $(".teaching-method-ielts2").on("click", function () {
+        $(".pathway-index > .slide:not(.teaching-method-ielts-content2)").fadeOut(300, function () {
+            $(".teaching-method-ielts-content2").fadeIn(300);
+            $(".teaching-method-ielts-content2").css("display", "flex");
+        });
+    });
     $(".teaching-method-focus1").on("click", function () {
         $(".pathway-index > .slide:not(.teaching-method-focus-content1)").fadeOut(300, function () {
             $(".teaching-method-focus-content1").fadeIn(300);
@@ -1275,7 +1494,7 @@ function pathway() {
             $(".teaching-method-focus-content2").css("display", "flex");
         });
     });
-    $(".teaching-method-focus-content .btn-back-square").on("click", function () {
+    $(".teaching-method-focus-content .btn-back-square,.teaching-method-toeic-content .btn-back-square,.teaching-method-ielts-content .btn-back-square").on("click", function () {
         $(".btn-setting").trigger("click");
     });
     $(".teaching-method2 .teaching-name").on("click", function () {

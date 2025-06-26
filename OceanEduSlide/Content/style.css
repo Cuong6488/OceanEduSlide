@@ -2582,7 +2582,7 @@ body {
   height: 10%;
   width: 80%;
 }
-.teaching-method-focus .teaching-method-name {
+.teaching-method-focus .teaching-method-name, .teaching-method-toeic .teaching-method-name, .teaching-method-ielts .teaching-method-name {
   height: unset;
   width: 40%;
 }
@@ -2978,23 +2978,23 @@ body {
   height: 50px;
 }
 
-.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content {
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content {
   background-image: url("images/pathway-discovery-bg.png");
 }
-.map-slide1 .btn-back-square, .map-slide2 .btn-back-square, .book-focus-content .btn-back-square, .teaching-method-focus-content .btn-back-square {
+.map-slide1 .btn-back-square, .map-slide2 .btn-back-square, .book-focus-content .btn-back-square, .teaching-method-focus-content .btn-back-square, .book-toeic-content .btn-back-square, .book-ielts-content .btn-back-square {
   height: 60px;
   left: 17px;
   bottom: 35px;
 }
-.map-slide1 .btn-back-square img, .map-slide2 .btn-back-square img, .book-focus-content .btn-back-square img, .teaching-method-focus-content .btn-back-square img {
+.map-slide1 .btn-back-square img, .map-slide2 .btn-back-square img, .book-focus-content .btn-back-square img, .teaching-method-focus-content .btn-back-square img, .book-toeic-content .btn-back-square img, .book-ielts-content .btn-back-square img {
   height: 60px !important;
 }
-.map-slide1 .btn-slide, .map-slide2 .btn-slide, .book-focus-content .btn-slide, .teaching-method-focus-content .btn-slide {
+.map-slide1 .btn-slide, .map-slide2 .btn-slide, .book-focus-content .btn-slide, .teaching-method-focus-content .btn-slide, .book-toeic-content .btn-slide, .book-ielts-content .btn-slide {
   height: 50px;
   width: 20px;
   bottom: 40px;
 }
-.map-slide1 .btn-slide img, .map-slide2 .btn-slide img, .book-focus-content .btn-slide img, .teaching-method-focus-content .btn-slide img {
+.map-slide1 .btn-slide img, .map-slide2 .btn-slide img, .book-focus-content .btn-slide img, .teaching-method-focus-content .btn-slide img, .book-toeic-content .btn-slide img, .book-ielts-content .btn-slide img {
   height: 100%;
 }
 
@@ -3100,11 +3100,11 @@ body {
   margin-right: 20px;
 }
 
-.book-focus-content .book-content-img {
+.book-focus-content .book-content-img, .book-toeic-content .book-content-img, .book-ielts-content .book-content-img {
   width: 85%;
 }
 
-.teaching-method-focus-content .teachingmethod-content-img {
+.teaching-method-focus-content .teachingmethod-content-img, .teaching-method-toeic-content .teachingmethod-content-img, .teaching-method-ielts-content .teachingmethod-content-img {
   width: 90%;
 }
 
@@ -3424,4 +3424,11 @@ body {
 }
 .change-password-form .close-form i {
   font-size: 20px;
+}
+
+.toeic-book {
+  height: 25vw;
+}
+.toeic-book img {
+  height: 100%;
 }

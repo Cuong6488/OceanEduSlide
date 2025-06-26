@@ -3187,7 +3187,7 @@ body {
         }
     }
 
-    &-focus {
+    &-focus, &-toeic,&-ielts {
         .teaching-method-name {
             height: unset;
             width: 40%;
@@ -3676,7 +3676,7 @@ body {
     }
 }
 
-.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content {
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content {
     background-image: url('images/pathway-discovery-bg.png');
 
     .btn-back-square {
@@ -3823,13 +3823,13 @@ body {
     }
 }
 
-.book-focus-content {
+.book-focus-content, .book-toeic-content, .book-ielts-content {
     .book-content-img {
         width: 85%;
     }
 }
 
-.teaching-method-focus-content {
+.teaching-method-focus-content, .teaching-method-toeic-content, .teaching-method-ielts-content {
     .teachingmethod-content-img {
         width: 90%;
     }
@@ -4241,5 +4241,11 @@ body {
         i {
             font-size: 20px;
         }
+    }
+}
+.toeic-book{
+    height:25vw;
+    img{
+        height:100%;
     }
 }
