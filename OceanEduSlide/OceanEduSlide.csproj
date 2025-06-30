@@ -750,6 +750,8 @@
     <Content Include="Content\images\race2.png" />
     <Content Include="Content\images\race3.png" />
     <Content Include="Content\images\race4.png" />
+    <Content Include="Content\images\remind-content-bg.png" />
+    <Content Include="Content\images\remind-name-bg.png" />
     <Content Include="Content\images\S-bg.png" />
     <Content Include="Content\images\S-Location-yellow.png" />
     <Content Include="Content\images\S-mid-location.png" />
@@ -1270,6 +1272,7 @@
     <Content Include="Views\Event\LoadHistoryRevenueUser_Day2.cshtml" />
     <Content Include="Views\Revenue\RankOffice.cshtml" />
     <Content Include="Views\Vcms\Category.cshtml" />
+    <Content Include="webfonts\Inter-VariableFont_opsz,wght.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

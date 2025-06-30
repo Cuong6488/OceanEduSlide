@@ -331,7 +331,9 @@ namespace OceanEduSlide.Controllers
                         model.UserItems = userItems;
                         model.TMonth = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId).FirstOrDefault()?.TargetBM_TS ?? 0;
                         model.TWeek = userItems.Sum(a => a.TWeek);
-                        model.TWeekReal = userItems.Sum(a => a.Report?.TargetBM ?? 0);
+                        model.TWeekReal = _unitOfWork.RevenueUser_DayOfWeek_RealRepository
+                            .GetQuery(a => a.User.OfficeId == model.OfficeId && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek)
+                            .Sum(a => a.TargetBM) ?? 0; 
                         model.Confirm1 = userItems.Sum(a => a.Confirm1 ?? 0);
                         model.Confirm2 = userItems.Sum(a => a.Confirm2 ?? 0);
                         model.DT = userItems.Sum(a => a.DT ?? 0);
@@ -344,6 +346,11 @@ namespace OceanEduSlide.Controllers
                         model.TargetBMReal = userItems.Sum(a => a.Report?.TargetBM ?? 0);
                         model.Confirm1Real = userItems.Sum(a => a.Report?.Confirm1 ?? 0);
                         model.Confirm2Real = userItems.Sum(a => a.Report?.Confirm2 ?? 0);
+                        model.RankOffice = _unitOfWork.RankOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId).FirstOrDefault();
+                        model.Debt = _unitOfWork.DebtRepository.GetQuery(q => q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
+                            && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
+                        model.DebtBad = _unitOfWork.DebtRepository.GetQuery(q => q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
+                            && (q.TypeDebt == TypeDebt.Type4 || q.TypeDebt == TypeDebt.Type5)).Sum(q => (decimal?)q.TotalMoney) ?? 0;
                     }
                 }
                 if (User.TypeUser == TypeUser.ASM)

@@ -3,6 +3,10 @@
   src: url("../webfonts/utm avo.ttf") format("truetype");
 }
 @font-face {
+  font-family: "inter";
+  src: url("../webfonts/inter-variablefont_opsz,wght.ttf") format("truetype");
+}
+@font-face {
   font-family: "josefinsans";
   src: url("../webfonts/josefinsans-variablefont_wght.ttf") format("truetype");
 }
@@ -151,12 +155,24 @@ h2 {
 }
 
 .remind-page {
-  background-image: url("images/banner-index.png");
   background-image: url("images/about-bg.png");
+  /*background-image: url('images/pathway-discovery-bg.png');*/
   background-position: center;
   background-size: cover;
   min-height: calc(100vh - 110px);
-  padding: 40px 0;
+  padding: 10px 0;
+}
+.remind-page .container {
+  border-top: 1px solid white;
+}
+.remind-page input, .remind-page select {
+  border-color: white;
+  background: white;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+.remind-page input {
+  font-weight: 600;
 }
 .remind-page * {
   /*color:white;*/
@@ -167,22 +183,47 @@ h2 {
 }
 
 .box-remind {
-  background: #eee;
+  background: rgba(255, 255, 255, 0.4);
   height: 100%;
+  padding: 10px;
 }
 .box-remind .remind-works {
+  height: calc(100% - 34px);
+  background: white;
   padding: 10px;
+  border-radius: 0 0px 10px 10px;
+}
+.box-remind .remind-works-bm {
+  height: 100%;
 }
 .box-remind-user {
   width: 500px;
 }
+.box-remind-title {
+  background-image: url("images/remind-name-bg.png");
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 12px 20px;
+  color: white;
+  font-size: 15px;
+}
+.box-remind-content {
+  background-image: url("images/remind-content-bg.png");
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 20px 10px;
+}
 
 .remind-date {
-  background: #ccc;
+  background: #0560e8;
   text-align: center;
   font-weight: bold;
   padding: 8px;
   max-width: 500px;
+  color: white;
+  font-size: 16px;
 }
 .remind-date-bm {
   background: #ccc;

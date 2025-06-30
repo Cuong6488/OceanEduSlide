@@ -10,7 +10,10 @@ $blue: #2D3AE2;
     font-family: 'utm avo';
     src: url('../webfonts/utm avo.ttf') format('truetype');
 }
-
+@font-face {
+    font-family: 'inter';
+    src: url('../webfonts/inter-variablefont_opsz,wght.ttf') format('truetype');
+}
 @font-face {
     font-family: 'josefinsans';
     src: url('../webfonts/josefinsans-variablefont_wght.ttf') format('truetype');
@@ -60,7 +63,11 @@ $blue: #2D3AE2;
     font-family: 'swiss-condensedbold';
     src: url('../webfonts/utm-swiss-condensedbold.ttf') format('truetype');
 }
-
+@mixin custom-background( $position: center, $size: 100% 100%, $repeat: no-repeat) {
+    background-position: $position;
+    background-size: $size;
+    background-repeat: $repeat;
+}
 @mixin text-truncate($q) {
     display: -webkit-box;
     -webkit-line-clamp: $q;
@@ -69,15 +76,18 @@ $blue: #2D3AE2;
     text-overflow: ellipsis;
     word-break: break-word;
 }
+
 @media (min-width: 1390px) {
     .container {
         max-width: unset;
     }
 }
-.header .navbar li{
-    font-size:1rem;
-    font-weight:600;
+
+.header .navbar li {
+    font-size: 1rem;
+    font-weight: 600;
 }
+
 .logo-title {
     border-bottom: 1px solid #ccc;
 
@@ -189,40 +199,83 @@ h2 {
 }
 
 .remind-page {
-    background-image: url('images/banner-index.png');
     background-image: url('images/about-bg.png');
+    /*background-image: url('images/pathway-discovery-bg.png');*/
     background-position: center;
     background-size: cover;
     min-height: calc(100vh - 110px);
-    padding: 40px 0;
-    & *{
+    padding: 10px 0;
+
+    .container {
+        border-top: 1px solid white;
+    }
+
+
+    input, select {
+        border-color: white;
+        background: white;
+        border-radius: 0;
+        clip-path: polygon( 0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100% );
+    }
+
+    input {
+        font-weight: 600;
+    }
+
+    & * {
         /*color:white;*/
     }
 }
-.form-filter{
-    input,select{
-        height:35px;
+
+.form-filter {
+    input, select {
+        height: 35px;
     }
 }
+
 .box-remind {
-    background: #eee;
+    background: rgba(255,255,255,.4);
     height: 100%;
+    padding: 10px;
 
     .remind-works {
+        height: calc(100% - 34px);
+        background: white;
         padding: 10px;
+        border-radius: 0 0px 10px 10px;
+
+        &-bm {
+            height:100%;
+        }
     }
 
     &-user {
         width: 500px;
     }
+
+    &-title {
+        background-image: url('images/remind-name-bg.png');
+        @include custom-background();
+        padding: 12px 20px;
+        color: white;
+        font-size: 15px;
+    }
+
+    &-content {
+        background-image: url('images/remind-content-bg.png');
+        @include custom-background();
+        padding: 20px 10px;
+    }
 }
 
 .remind-date {
-    background: #ccc;
+    background: #0560e8;
     text-align: center;
     font-weight: bold;
     padding: 8px;
-    max-width:500px;
+    max-width: 500px;
+    color: white;
+    font-size:16px;
 
     &-bm {
         background: #ccc;
@@ -233,6 +286,7 @@ h2 {
         font-size: 20px;
     }
 }
-.w100px{
-    width:100px !important;
+
+.w100px {
+    width: 100px !important;
 }

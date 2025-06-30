@@ -46,8 +46,11 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public RankOffice RankOffice { get; set; }
         public User User { get; set; }
         public string Date { get; set; }
+        public decimal Debt { get; set; }
+        public decimal DebtBad { get; set; }
         public decimal TMonth { get; set; }
         public decimal RevenueMonthNow { get; set; }
         public decimal TWeek { get; set; }

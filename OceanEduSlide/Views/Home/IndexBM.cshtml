@@ -37,21 +37,21 @@
     <div class="container">
         @if (Model.User.TypeUser == TypeUser.ASM)
         {
-            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3" style="max-width:500px;margin:auto">
+            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5" style="max-width:400px">
 
-                <select name="OfficeId" class="form-select me-3" required>
+                <select name="OfficeId" class="form-select me-3" required style="width:250px;">
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
                         <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
+                <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly  style="flex:1"/>
             </form>
         }
         else
         {
-            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-3 justify-content-center align-items-center" style="max-width:500px;margin:auto" >
+            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5 justify-content-center align-items-center" style="max-width:150px" >
                 <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
             </form>
         }
@@ -60,16 +60,14 @@
             <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
                 <div class="col">
                     <div class="box-remind">
-                        <div class="remind-works">
-
-                            <p class="mb-2"><strong>1. Doanh số tuần @ViewBag.CurrentWeek</strong></p>
-                            <div class="mb-2 p-2" style="background: #ccc">
+                        <div class="remind-works remind-works-bm">
+                            <p class="box-remind-title mb-0"><strong>Doanh số tuần @ViewBag.CurrentWeek</strong></p>
+                            <div class="box-remind-content">
                                 Doanh số tuần: <strong>@(Model.TWeek.ToString("N0"))đ</strong> <br />
                                 Hoàn thành: <strong>@(Model.TWeekReal.ToString("N0"))đ</strong> <br />
                             </div>
-                            <p class="mb-2"><strong>2. Chỉ tiêu ngày</strong></p>
-
-                            <div class="mb-2 p-2" style="background: #ccc">
+                            <p class="box-remind-title mb-0"><strong>Chỉ tiêu ngày</strong></p>
+                            <div class="box-remind-content">
                                 SL data cần khai thác: <strong>@Html.DisplayFor(a => a.DataQuantity)</strong> - HT: <strong>@Model.DataQuantityReal</strong> <br />
                                 SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => a.Confirm1)</strong> - HT: <strong>@Model.Confirm1Real</strong> <br />
                                 SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => a.Confirm2)</strong> - HT: <strong>@Model.Confirm2</strong> <br />
@@ -79,6 +77,33 @@
                         </div>
                     </div>
                 </div>
+                @if (Model.RankOffice != null)
+                {
+                    <div class="col">
+                        <div class="box-remind">
+                            <div class="remind-works remind-works-bm">
+                                <p class="box-remind-title mb-0"><strong>Chỉ tiêu tháng</strong></p>
+                                <div class="box-remind-content">
+                                    Chỉ tiêu: <strong>@(Model.TMonth.ToString("N0"))đ</strong> <br />
+                                    % Hoàn thành: <strong>@((decimal.Parse(Model.RankOffice.PTHT) * 100).ToString("N0"))%</strong> <br />
+                                    Doanh số hoàn thành: <strong>@( decimal.Parse(Model.RankOffice.DSHT).ToString("N0"))đ</strong> <br />
+                                    % Hoàn thành dự thu: <strong>@((decimal.Parse(Model.RankOffice.PTHTDT) * 100).ToString("N0"))%</strong> <br />
+                                    Doanh số hoàn thành: <strong>@( decimal.Parse(Model.RankOffice.DSDT).ToString("N0"))đ</strong> <br />
+                                </div>
+                                <p class="box-remind-title mb-0"><strong>Công nợ</strong></p>
+                                <div class="box-remind-content">
+                                    Công nợ cần thu hồi: <strong>@(Model.Debt.ToString("N0"))đ</strong> <br />
+                                    Công nợ xấu cần theo dõi: <strong>@(Model.DebtBad.ToString("N0"))đ</strong> <br />
+                                </div>
+                                <p class="box-remind-title mb-0"><strong>Xếp hạng</strong></p>
+                                <div class="box-remind-content">
+                                    Bảng xếp hạng hoàn thành của CN: <strong>@Model.RankOffice.TopHT</strong> <br />
+                                    Bảng xếp hạng dự thu của CN: <strong>@Model.RankOffice.TopDT</strong> <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
                 @foreach (var userItem in Model.UserItems)
                 {
                     <div class="col">
@@ -87,177 +112,169 @@
                                 Nhân sự @(userItem.User.Fullname??userItem.User.Username)
                             </div>
                             <div class="remind-works">
-                                <div class="mb-3">
-                                    <p class="mb-2"><strong>1. Chi tiết công việc ngày</strong></p>
-                                    @if (userItem.Revenues.Any())
+                                <p class="box-remind-title mb-0"><strong>Chi tiết công việc ngày</strong></p>
+                                @if (userItem.Revenues.Any())
+                                {
+                                    foreach (var item in userItem.Revenues)
                                     {
-                                        foreach (var item in userItem.Revenues)
-                                        {
-                                            <div class="mb-2 p-2" style="background: #ccc">
-                                                @if (item.Event?.Name != null)
-                                                {<div class="d-flex">
-                                                        <p class="mb-2 me-3 text-danger">@(item.Event?.Name)</p>
-                                                        <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
-                                                    </div>
-                                                }
-                                                @if (item.DataQuantity != null)
-                                                {
-                                                    @: SL data cần khai thác: <strong>@Html.DisplayFor(a => item.DataQuantity)</strong> <br />
-                                                }
-                                                @if (item.Confirm1 != null)
-                                                {
-                                                    @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
-                                                }
-                                                @if (item.Confirm2 != null)
-                                                {
-                                                    @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
-                                                }
-                                                @if (item.CI != null)
-                                                {
-                                                    @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
-                                                }
-                                                @if (item.DT != null)
-                                                {
-                                                    @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => item.DT)</strong><br />
-                                                }
-                                                @if (item.TargetBM != null)
-                                                {
-                                                    @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
-                                                }
-                                            </div>
-                                        }
-                                        <div class="p-2" style="background: #ccc">
-                                            <strong>Tổng quan:</strong> <br />
-                                            @if (userItem.Report != null)
-                                            {
-                                                if (userItem.DataQuantity > 0)
-                                                {
-                                                    @: SL data cần khai thác: <strong>@Html.DisplayFor(a => userItem.DataQuantity)</strong> - Báo cáo: HT: <strong>@(userItem.Report.DataQuantity?.ToString("N0") ?? "0")</strong> <br />
-                                                }
-                                                if (userItem.Confirm1 > 0)
-                                                {
-                                                    @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => userItem.Confirm1)</strong> - Báo cáo: HT: <strong>@(userItem.Report.Confirm1?.ToString("N0") ?? "0")</strong><br />
-                                                }
-                                                if (userItem.Confirm2 > 0)
-                                                {
-                                                    @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => userItem.Confirm2)</strong> - Báo cáo: HT: <strong>@(userItem.Report.Confirm2?.ToString("N0") ?? "0")</strong><br />
-                                                }
-                                                if (userItem.CI > 0)
-                                                {
-                                                    @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => userItem.CI)</strong> - Báo cáo: HT: <strong>@(userItem.Report.CI?.ToString("N0") ?? "0")</strong><br />
-                                                }
-                                                if (userItem.DT > 0)
-                                                {
-                                                    @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => userItem.DT)</strong> - Báo cáo: HT: <strong>@(userItem.Report.DT?.ToString("N0") ?? "0")</strong><br />
-                                                }
-                                                if (userItem.TargetBM > 0)
-                                                {
-                                                    @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => userItem.TargetBM)</strong> - Báo cáo: HT: <strong>@(userItem.Report.TargetBM?.ToString("N0") ?? "0")</strong> <br />
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (userItem.DataQuantity > 0)
-                                                {
-                                                    @: SL data cần khai thác: <strong>@Html.DisplayFor(a => userItem.DataQuantity)</strong> - Chưa báo cáo<br />
-                                                }
-                                                if (userItem.Confirm1 > 0)
-                                                {
-                                                    @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => userItem.Confirm1)</strong> - Chưa báo cáo <br />
-                                                }
-                                                if (userItem.Confirm2 > 0)
-                                                {
-                                                    @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => userItem.Confirm2)</strong> - Chưa báo cáo <br />
-                                                }
-                                                if (userItem.CI > 0)
-                                                {
-                                                    @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => userItem.CI)</strong> - Chưa báo cáo<br />
-                                                }
-                                                if (userItem.DT > 0)
-                                                {
-                                                    @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => userItem.DT)</strong> - Chưa báo cáo<br />
-                                                }
-                                                if (userItem.TargetBM > 0)
-                                                {
-                                                    @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => userItem.TargetBM)</strong> - Chưa báo cáo <br />
-                                                }
-                                            }
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div>
-                                            Chưa có
-                                        </div>
-                                    }
-                                </div>
-                                <div class="mb-3">
-                                    <p class="mb-2"><strong>2. Công nợ phải thu</strong></p>
-                                    @if (userItem.Debts.Any())
-                                    {
-                                        foreach (var item in userItem.Debts)
-                                        {
-                                            <div class="mb-2 p-2" style="background: #ccc">
-                                                <div class="d-flex">
-                                                    <p class="mb-2 me-3 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
-                                                    <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadDebt",  new{debtId = item.Id})"
+                                        <div class="box-remind-content">
+                                            @if (item.Event?.Name != null)
+                                            {<div class="d-flex">
+                                                    <p class="mb-2 me-3 text-danger">@(item.Event?.Name)</p>
+                                                    <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadEvent",  new{evId = item.Event.Id})"
                                                        data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
                                                 </div>
-                                                Thành tiền:  @Html.DisplayFor(a => item.TotalMoney)<br />
-                                                Tiền cọc giữ chỗ: @Html.DisplayFor(a => item.DebtMoney) <br />
-                                                Tiền cọc bổ sung làm hồ sơ: @Html.DisplayFor(a => item.DebtMoney2) <br />
-                                                Tiền còn lại phải thanh toán: <strong>@Html.DisplayFor(a => item.RemainMoney)</strong>
-                                            </div>
+                                            }
+                                            @if (item.DataQuantity != null)
+                                            {
+                                                @: SL data cần khai thác: <strong>@Html.DisplayFor(a => item.DataQuantity)</strong> <br />
+                                            }
+                                            @if (item.Confirm1 != null)
+                                            {
+                                                @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => item.Confirm1)</strong> <br />
+                                            }
+                                            @if (item.Confirm2 != null)
+                                            {
+                                                @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => item.Confirm2)</strong> <br />
+                                            }
+                                            @if (item.CI != null)
+                                            {
+                                                @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => item.CI)</strong><br />
+                                            }
+                                            @if (item.DT != null)
+                                            {
+                                                @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => item.DT)</strong><br />
+                                            }
+                                            @if (item.TargetBM != null)
+                                            {
+                                                @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => item.TargetBM)</strong> <br />
+                                            }
+                                        </div>
+                                    }
+                                    <div class="box-remind-content">
+                                        <strong>Tổng quan:</strong> <br />
+                                        @if (userItem.Report != null)
+                                        {
+                                            if (userItem.DataQuantity > 0)
+                                            {
+                                                @: SL data cần khai thác: <strong>@Html.DisplayFor(a => userItem.DataQuantity)</strong> - Báo cáo: HT: <strong>@(userItem.Report.DataQuantity?.ToString("N0") ?? "0")</strong> <br />
+                                            }
+                                            if (userItem.Confirm1 > 0)
+                                            {
+                                                @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => userItem.Confirm1)</strong> - Báo cáo: HT: <strong>@(userItem.Report.Confirm1?.ToString("N0") ?? "0")</strong><br />
+                                            }
+                                            if (userItem.Confirm2 > 0)
+                                            {
+                                                @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => userItem.Confirm2)</strong> - Báo cáo: HT: <strong>@(userItem.Report.Confirm2?.ToString("N0") ?? "0")</strong><br />
+                                            }
+                                            if (userItem.CI > 0)
+                                            {
+                                                @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => userItem.CI)</strong> - Báo cáo: HT: <strong>@(userItem.Report.CI?.ToString("N0") ?? "0")</strong><br />
+                                            }
+                                            if (userItem.DT > 0)
+                                            {
+                                                @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => userItem.DT)</strong> - Báo cáo: HT: <strong>@(userItem.Report.DT?.ToString("N0") ?? "0")</strong><br />
+                                            }
+                                            if (userItem.TargetBM > 0)
+                                            {
+                                                @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => userItem.TargetBM)</strong> - Báo cáo: HT: <strong>@(userItem.Report.TargetBM?.ToString("N0") ?? "0")</strong> <br />
+                                            }
                                         }
+                                        else
+                                        {
+                                            if (userItem.DataQuantity > 0)
+                                            {
+                                                @: SL data cần khai thác: <strong>@Html.DisplayFor(a => userItem.DataQuantity)</strong> - Chưa báo cáo<br />
+                                            }
+                                            if (userItem.Confirm1 > 0)
+                                            {
+                                                @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => userItem.Confirm1)</strong> - Chưa báo cáo <br />
+                                            }
+                                            if (userItem.Confirm2 > 0)
+                                            {
+                                                @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => userItem.Confirm2)</strong> - Chưa báo cáo <br />
+                                            }
+                                            if (userItem.CI > 0)
+                                            {
+                                                @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => userItem.CI)</strong> - Chưa báo cáo<br />
+                                            }
+                                            if (userItem.DT > 0)
+                                            {
+                                                @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => userItem.DT)</strong> - Chưa báo cáo<br />
+                                            }
+                                            if (userItem.TargetBM > 0)
+                                            {
+                                                @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => userItem.TargetBM)</strong> - Chưa báo cáo <br />
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="box-remind-content">
+                                        Chưa có
+                                    </div>
+                                }
+                                <p class="box-remind-title mb-0"><strong>Công nợ phải thu</strong></p>
+                                @if (userItem.Debts.Any())
+                                {
+                                    foreach (var item in userItem.Debts)
+                                    {
+                                        <div class="box-remind-content">
+                                            <div class="d-flex">
+                                                <p class="mb-2 me-3 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
+                                                <a title="Xem chi tiết" href="" data-src="@Url.Action("LoadDebt",  new{debtId = item.Id})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-solid fa-eye"></i></a>
+                                            </div>
+                                            Thành tiền:  @Html.DisplayFor(a => item.TotalMoney)<br />
+                                            Tiền cọc giữ chỗ: @Html.DisplayFor(a => item.DebtMoney) <br />
+                                            Tiền cọc bổ sung làm hồ sơ: @Html.DisplayFor(a => item.DebtMoney2) <br />
+                                            Tiền còn lại phải thanh toán: <strong>@Html.DisplayFor(a => item.RemainMoney)</strong>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="box-remind-content">
+                                        Không có
+                                    </div>
+                                }
+                                <p class="box-remind-title mb-0"><strong>Doanh số trong tháng</strong></p>
+                                <div class="box-remind-content">
+                                    <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@userItem.TMonth.ToString("N0")đ</strong></p>
+                                    Hoàn thành:  <strong>@userItem.RevenueMonthNow.ToString("N0")đ</strong><br />
+                                    % Hoàn thành:  <strong>@userItem.TargetMonthPercent.ToString("N0")%</strong><br />
+                                    % Dự thu:  <strong>@userItem.RemainPercent.ToString("N0")%</strong><br />
+                                    @if (userItem.RevenueMonthNow > userItem.TMonth)
+                                    {
+                                        @: Tình trạng : Vượt chỉ tiêu
+                                    }
+                                    else if (userItem.RevenueMonthNow == userItem.TMonth)
+                                    {
+                                        @: Tình trạng : Đạt chỉ tiêu
                                     }
                                     else
                                     {
-                                        <div>
-                                            Không có
-                                        </div>
+                                        @: Tình trạng: Thiếu <strong>@((userItem.TMonth - userItem.RevenueMonthNow).ToString("N0"))đ</strong>
                                     }
                                 </div>
-                                <div class="mb-3">
-                                    <p class="mb-2"><strong>3. Doanh số trong tháng</strong></p>
-                                    <div class="p-2" style="background: #ccc">
-                                        <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@userItem.TMonth.ToString("N0")đ</strong></p>
-                                        Hoàn thành:  <strong>@userItem.RevenueMonthNow.ToString("N0")đ</strong><br />
-                                        % Hoàn thành:  <strong>@userItem.TargetMonthPercent.ToString("N0")%</strong><br />
-                                        % Dự thu:  <strong>@userItem.RemainPercent.ToString("N0")%</strong><br />
-                                        @if (userItem.RevenueMonthNow > userItem.TMonth)
-                                        {
-                                            @: Tình trạng : Vượt chỉ tiêu
-                                        }
-                                        else if (userItem.RevenueMonthNow == userItem.TMonth)
-                                        {
-                                            @: Tình trạng : Đạt chỉ tiêu
-                                        }
-                                        else
-                                        {
-                                            @: Tình trạng: Thiếu <strong>@((userItem.TMonth - userItem.RevenueMonthNow).ToString("N0"))đ</strong>
-                                        }
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="mb-2"><strong>4. Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
-                                    <div class="p-2" style="background: #ccc">
-                                        <p class="mb-2 text-danger">Chỉ tiêu tuần: <strong>@userItem.TWeek.ToString("N0")đ</strong></p>
-                                        Hoàn thành:  <strong>@userItem.RevenueWeekNow.ToString("N0")đ</strong><br />
-                                        % Hoàn thành:  <strong>@userItem.TargetWeekPercent.ToString("N0")%</strong><br />
-                                        @if (userItem.RevenueWeekNow > userItem.TWeek)
-                                        {
-                                            @: Tình trạng : Vượt chỉ tiêu
-                                        }
-                                        else if (userItem.RevenueWeekNow == userItem.TWeek)
-                                        {
-                                            @: Tình trạng : Đạt chỉ tiêu
-                                        }
-                                        else
-                                        {
-                                            @: Tình trạng: Thiếu <strong>@((userItem.TWeek - userItem.RevenueWeekNow).ToString("N0"))đ</strong>
-                                        }
-                                    </div>
+                                <p class="box-remind-title mb-0"><strong>Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
+                                <div class="box-remind-content">
+                                    <p class="mb-2 text-danger">Chỉ tiêu tuần: <strong>@userItem.TWeek.ToString("N0")đ</strong></p>
+                                    Hoàn thành:  <strong>@userItem.RevenueWeekNow.ToString("N0")đ</strong><br />
+                                    % Hoàn thành:  <strong>@userItem.TargetWeekPercent.ToString("N0")%</strong><br />
+                                    @if (userItem.RevenueWeekNow > userItem.TWeek)
+                                    {
+                                        @: Tình trạng : Vượt chỉ tiêu
+                                    }
+                                    else if (userItem.RevenueWeekNow == userItem.TWeek)
+                                    {
+                                        @: Tình trạng : Đạt chỉ tiêu
+                                    }
+                                    else
+                                    {
+                                        @: Tình trạng: Thiếu <strong>@((userItem.TWeek - userItem.RevenueWeekNow).ToString("N0"))đ</strong>
+                                    }
                                 </div>
                             </div>
 

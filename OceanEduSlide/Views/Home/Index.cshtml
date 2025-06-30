@@ -14,19 +14,20 @@
         {
             <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
         }
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center mt-5">
             <div class="box-remind box-remind-user">
                 <div class="remind-date">
                     Ngày @DateTime.Now.ToString("dd/MM/yyyy") - Nhân sự @(Model.User.Fullname??Model.User.Username)
                 </div>
                 <div class="remind-works">
                     <div class="mb-3">
-                        <p class="mb-2"><strong>1. Chi tiết công việc ngày</strong></p>
+                        <p class="box-remind-title mb-0"><strong>1. Chi tiết công việc ngày</strong></p>
                         @if (Model.Revenues.Any())
                         {
                             foreach (var item in Model.Revenues)
                             {
-                                <div class="mb-2 p-2" style="background: #ccc">
+                                <div class="box-remind-content">
+                                    >
                                     @if (item.Event?.Name != null)
                                     {
                                         <div class="d-flex">
@@ -63,7 +64,7 @@
                             }
                             if (Model.Revenues.Count() > 1)
                             {
-                                <div class="p-2" style="background: #ccc">
+                                <div class="box-remind-content">
                                     <strong>Tổng:</strong> <br />
                                     @if (Model.DataQuantity > 0)
                                     {
@@ -94,18 +95,18 @@
                         }
                         else
                         {
-                            <div>
+                            <div class="box-remind-content">
                                 Chưa có
                             </div>
                         }
                     </div>
                     <div class="mb-3">
-                        <p class="mb-2"><strong>2. Công nợ phải thu</strong></p>
+                        <p class="box-remind-title mb-0"><strong>2. Công nợ phải thu</strong></p>
                         @if (Model.Debts.Any())
                         {
                             foreach (var item in Model.Debts)
                             {
-                                <div class="mb-2 p-2" style="background: #ccc">
+                                <div class="box-remind-content">
                                     <div class="d-flex">
                                         <p class="mb-2 me-3 text-danger">Loại cọc: @Html.DisplayFor(a => item.TypeDebt)</p>
                                         <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadDebt",  new{debtId = item.Id})"
@@ -120,14 +121,14 @@
                         }
                         else
                         {
-                            <div>
+                            <div class="box-remind-content">
                                 Không có
                             </div>
                         }
                     </div>
                     <div class="mb-3">
-                        <p class="mb-2"><strong>3. Doanh số trong tháng</strong></p>
-                        <div class="p-2" style="background: #ccc ">
+                        <p class="box-remind-title mb-0"><strong>3. Doanh số trong tháng</strong></p>
+                        <div class="box-remind-content">
                             <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@Model.TMonth.ToString("N0")đ</strong></p>
                             Hoàn thành:  <strong>@Model.RevenueMonthNow.ToString("N0")đ</strong><br />
                             % Hoàn thành:  <strong>@Model.TargetMonthPercent.ToString("N0")%</strong><br />
@@ -147,8 +148,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <p class="mb-2"><strong>3. Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
-                        <div class="p-2" style="background: #ccc ">
+                        <p class="box-remind-title mb-0"><strong>3. Doanh số trong tuần @ViewBag.CurrentWeek</strong></p>
+                        <div class="box-remind-content">
                             <p class="mb-2 text-danger">Chỉ tiêu tuần: <strong>@Model.TWeek.ToString("N0")đ</strong></p>
                             Hoàn thành:  <strong>@Model.RevenueWeekNow.ToString("N0")đ</strong><br />
                             % Hoàn thành:  <strong>@Model.TargetWeekPercent.ToString("N0")%</strong><br />
