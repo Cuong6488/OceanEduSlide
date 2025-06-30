@@ -55,12 +55,30 @@
                 <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
             </form>
         }
-        <div class="remind-date mb-3 remind-date-bm">
-            Ngày @Model.Date
-        </div>
         @if (Model.UserItems != null)
         {
             <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-3">
+                <div class="col">
+                    <div class="box-remind">
+                        <div class="remind-works">
+
+                            <p class="mb-2"><strong>1. Doanh số tuần @ViewBag.CurrentWeek</strong></p>
+                            <div class="mb-2 p-2" style="background: #ccc">
+                                Doanh số tuần: <strong>@(Model.TWeek.ToString("N0"))đ</strong> <br />
+                                Hoàn thành: <strong>@(Model.TWeekReal.ToString("N0"))đ</strong> <br />
+                            </div>
+                            <p class="mb-2"><strong>2. Chỉ tiêu ngày</strong></p>
+
+                            <div class="mb-2 p-2" style="background: #ccc">
+                                SL data cần khai thác: <strong>@Html.DisplayFor(a => a.DataQuantity)</strong> - HT: <strong>@Model.DataQuantityReal</strong> <br />
+                                SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => a.Confirm1)</strong> - HT: <strong>@Model.Confirm1Real</strong> <br />
+                                SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => a.Confirm2)</strong> - HT: <strong>@Model.Confirm2</strong> <br />
+                                SL KH check in dự kiến: <strong>@Html.DisplayFor(a => a.CI)</strong> - HT: <strong>@Model.CI</strong> <br />
+                                SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => a.DT)</strong> - HT: <strong>@Model.DT</strong> <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @foreach (var userItem in Model.UserItems)
                 {
                     <div class="col">
@@ -272,7 +290,7 @@
         $(".date-picker").datepicker({
             dateFormat: "dd/mm/yy",
             yearRange: "1900:2100",
-            maxDate: today,
+            //maxDate: today,
         });
     </script>
 

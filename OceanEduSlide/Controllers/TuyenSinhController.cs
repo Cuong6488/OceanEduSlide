@@ -29,7 +29,6 @@ namespace OceanEduSlide.Controllers
 
         public PartialViewResult Header()
         {
-
             return PartialView(User);
         }
         public ActionResult Revenue(int? ZoneId,int? Month, int? OfficeId, int? Year, string Result = "")

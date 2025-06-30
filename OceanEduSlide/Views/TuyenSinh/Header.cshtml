@@ -1,14 +1,4 @@
-﻿@*<div class="logo-title">
-        <div class="container">
-            <div class="d-flex justify-content-between align-content-center align-items-center py-3">
-                <a href="@Url.Action("Index","Home")">
-                    <img src="~/Content/images/logo-index.png" />
-                </a>
-                <p class="m-0">@ViewBag.Name</p>
-            </div>
-        </div>
-    </div>*@
-@using OceanEduSlide.Models
+﻿@using OceanEduSlide.Models
 @model User
 <div class="header d-flex">
     <div class="logo">
@@ -18,7 +8,20 @@
     </div>
     <div class="navbar-container">
         <ul class="navbar ul-reset d-flex">
-
+            <li>
+                <a href="javascript:;">DANH MỤC QĐ</a>
+                <ul class="ul-reset" style="top:150%">
+                    <li style="padding:7px 15px">
+                        <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung - Đề xuất - Báo cáo line Tuyển sinh">Quy định chung - Đề xuất - Báo cáo line Tuyển sinh</a>
+                    </li>
+                    <li style="padding:7px 15px">
+                        <a href="javascript:;" data-fancybox data-src="#category2" data-caption="Danh mục Quyết định PTS - Cả năm">Danh mục Quyết định PTS - Cả năm</a>
+                    </li>
+                    <li style="padding:7px 15px">
+                        <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Danh mục Quyết định PTS - Hàng tháng">Danh mục Quyết định PTS - Hàng tháng</a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="@Url.Action("Revenue","TuyenSinh")">PHÂN BỔ DOANH SỐ</a>
             </li>
@@ -47,3 +50,7 @@
         </ul>
     </div>
 </div>
+<div style="display: none;" id="category1">
+    
+</div>
+

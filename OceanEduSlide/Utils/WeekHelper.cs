@@ -2,11 +2,11 @@
 
 public static class DateHelper
 {
-    public static (int, int) CalculateWeeks(int year, int month)
+    public static (int, int) CalculateWeeks(int year, int month, DateTime datetime)
     {
         DateTime firstDay = new DateTime(year, month, 1);
         DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
-        DateTime today = DateTime.Now;
+        DateTime today = datetime;
 
         int workingWeeks = 1;
         int currentWeek = 0;

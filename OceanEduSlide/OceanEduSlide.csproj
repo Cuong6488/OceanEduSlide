@@ -263,6 +263,7 @@
     <Compile Include="Controllers\ProposalController.cs" />
     <Compile Include="Controllers\TuyenSinhController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
     <Compile Include="DAL\DataEntities.cs" />
     <Compile Include="DAL\EmailValidationAttribute.cs" />
@@ -429,7 +430,12 @@
     <Compile Include="Migrations\202506300425378_mdx.Designer.cs">
       <DependentUpon>202506300425378_mdx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506300734537_category.cs" />
+    <Compile Include="Migrations\202506300734537_category.Designer.cs">
+      <DependentUpon>202506300734537_category.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\ConfigSite.cs" />
@@ -437,6 +443,7 @@
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\MemberCredential.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\RankOffice.cs" />
     <Compile Include="Models\RevenueUser_DayOfWeek_Real.cs" />
     <Compile Include="Models\TypeFault.cs" />
     <Compile Include="Models\Zone.cs" />
@@ -1261,6 +1268,8 @@
     <Content Include="Views\Home\ListReport.cshtml" />
     <Content Include="Views\Vcms\CreateTarget.cshtml" />
     <Content Include="Views\Event\LoadHistoryRevenueUser_Day2.cshtml" />
+    <Content Include="Views\Revenue\RankOffice.cshtml" />
+    <Content Include="Views\Vcms\Category.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1437,6 +1446,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506300425378_mdx.resx">
       <DependentUpon>202506300425378_mdx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506300734537_category.resx">
+      <DependentUpon>202506300734537_category.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

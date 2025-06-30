@@ -31,7 +31,7 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month);
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month,DateTime.Now);
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
@@ -448,7 +448,7 @@ namespace OceanEduSlide.Controllers
                 Year = year,
                 OfficeId = officeId,
             };
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(year, month);
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(year, month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek(week, year, month);
@@ -543,7 +543,7 @@ namespace OceanEduSlide.Controllers
                 }
 
             }
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month);
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);
@@ -563,7 +563,7 @@ namespace OceanEduSlide.Controllers
                 Event = ev,
                 Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM))
             };
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month);
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)ev.WeekNumber, ev.Year, ev.Month);
@@ -599,7 +599,7 @@ namespace OceanEduSlide.Controllers
                 }
 
             }
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month);
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);

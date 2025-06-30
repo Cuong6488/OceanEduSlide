@@ -482,6 +482,117 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region Category
+        public ActionResult Category(int type)
+        {
+            ViewBag.Type = type;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Category(FormCollection fc, int type)
+        {
+            var file = Request.Files["CategoryFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                var tbl = result.Tables[0];
+                if (type == 1)
+                {
+                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type1);
+                    categories.Delete();
+                    for (var i = 1; i < tbl.Rows.Count; i++)
+                    {
+                        var index = tbl.Rows[i][0].ToString().Trim();
+                        var content = tbl.Rows[i][1].ToString().Trim();
+                        var regulation = tbl.Rows[i][2].ToString().Trim();
+                        var proposalLink = tbl.Rows[i][3].ToString().Trim();
+                        var followLink = tbl.Rows[i][4].ToString().Trim();
+                        var category = new Category
+                        {
+                            TypeCategory = TypeCategory.Type1,
+                            Index = index,
+                            Content = content,
+                            Regulation = regulation,
+                            ProposalLink = proposalLink,
+                            FollowLink = followLink
+                        };
+                        _unitOfWork.CategoryRepository.Insert(category);
+                        _unitOfWork.Save();
+                    }
+                }
+                else if (type == 2)
+                {
+                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2);
+                    categories.Delete();
+                    for (var i = 1; i < tbl.Rows.Count; i++)
+                    {
+                        var index = tbl.Rows[i][0].ToString().Trim();
+                        var content = tbl.Rows[i][1].ToString().Trim();
+                        var qdNumber = tbl.Rows[i][2].ToString().Trim();
+                        var qdLink = tbl.Rows[i][3].ToString().Trim();
+                        var note = tbl.Rows[i][4].ToString().Trim();
+                        var category = new Category
+                        {
+                            TypeCategory = TypeCategory.Type2,
+                            Index = index,
+                            Content = content,
+                            QDNumber = qdNumber,
+                            QDLink = qdLink,
+                            Note = note
+                        };
+                        _unitOfWork.CategoryRepository.Insert(category);
+                        _unitOfWork.Save();
+                    }
+                }
+                else if (type == 3)
+                {
+                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3);
+                    categories.Delete();
+                    for (var i = 1; i < tbl.Rows.Count; i++)
+                    {
+                        var index = tbl.Rows[i][0].ToString().Trim();
+                        var month = tbl.Rows[i][1].ToString().Trim();
+                        var zone = tbl.Rows[i][2].ToString().Trim();
+                        var content = tbl.Rows[i][3].ToString().Trim();
+                        var qdNumber = tbl.Rows[i][4].ToString().Trim();
+                        var qdLink = tbl.Rows[i][5].ToString().Trim();
+                        var note = tbl.Rows[i][6].ToString().Trim();
+                        var category = new Category
+                        {
+                            TypeCategory = TypeCategory.Type3,
+                            Index = index,
+                            Content = content,
+                            QDNumber = qdNumber,
+                            QDLink = qdLink,
+                            Note = note,
+                            Month = int.Parse(month),
+                            Zone = zone
+                        };
+                        _unitOfWork.CategoryRepository.Insert(category);
+                        _unitOfWork.Save();
+                    }
+                }
+            }
+            return RedirectToAction("ListUser");
+        }
+        #endregion
         public ActionResult Index()
         {
             var model = new InfoAdminViewModel
