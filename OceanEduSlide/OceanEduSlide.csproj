@@ -425,6 +425,10 @@
     <Compile Include="Migrations\202506240258427_rangeauto.Designer.cs">
       <DependentUpon>202506240258427_rangeauto.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202506300425378_mdx.cs" />
+    <Compile Include="Migrations\202506300425378_mdx.Designer.cs">
+      <DependentUpon>202506300425378_mdx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -1256,6 +1260,7 @@
     <Content Include="Views\Home\Report.cshtml" />
     <Content Include="Views\Home\ListReport.cshtml" />
     <Content Include="Views\Vcms\CreateTarget.cshtml" />
+    <Content Include="Views\Event\LoadHistoryRevenueUser_Day2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1429,6 +1434,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506240258427_rangeauto.resx">
       <DependentUpon>202506240258427_rangeauto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506300425378_mdx.resx">
+      <DependentUpon>202506300425378_mdx.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

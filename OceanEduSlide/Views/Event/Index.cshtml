@@ -355,27 +355,29 @@
                         <th rowspan="2" style="width: 70px">Chức vụ</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
 
-                        <th colspan="@(ViewBag.DayOfWeeks+ 1)" class="col-w90 text-center">Chỉ tiêu doanh số dự kiến</th>
-                        @*<th class="col-w90">Số lượng KH <br /> chuyển đổi số <br /> dự kiến</th>*@
 
-
-                    </tr>
-                    <tr>
-                        <th>Tuần</th>
+                        <th rowspan="2">Tuần</th>
                         @if (ViewBag.WorkingWeeks != Model.Week)
                         {
                             for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
                             {
-                                <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                                <th colspan="2">@(i == 8? "Chủ nhật": "Thứ " + i)</th>
                             }
                         }
                         else
                         {
                             for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                             {
-                                <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                                <th colspan="2">@(i == 8? "Chủ nhật": "Thứ " + i)</th>
                             }
 
+                        }
+                    </tr>
+                    <tr>
+                        @for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                        {
+                            <th class="col-w90 text-center">Chỉ tiêu doanh số dự kiến</th>
+                            <th class="col-w90">Số lượng KH <br /> chuyển đổi số <br /> dự kiến</th>
                         }
                     </tr>
                     @if (Model.UserItems != null)
@@ -404,6 +406,7 @@
                                     for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
                                     {
                                         var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i && a.TargetBM != null);
+                                        var revenueUser_Day2 = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i && a.DT != null);
                                         if (revenueUser_Day != null)
                                         {
                                             <td class="day-target col-w90">
@@ -425,26 +428,6 @@
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />
                                             </td>
-                                            @*<td class="day-target-number">
-                                                    <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
-                                                    <div class="btnhistory-input">
-                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                    </div>
-                                                    <div class="revenue-value">
-                                                        @(revenueUser_Day.DT.ToString("N0"))
-                                                    </div>
-                                                    @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
-                                                    {
-                                                        {
-                                                            <div class="btnedit-input btn-edit-day">
-                                                                <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                            </div>
-                                                        }
-
-                                                    }
-                                                    <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT hidden" value="@(revenueUser_Day.DT.ToString("N0"))" />
-                                                </td>*@
                                         }
                                         else
                                         {
@@ -461,19 +444,45 @@
                                                     <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day" />
                                                 }
                                             </td>
-                                            @*<td class="day-target-number">
-                                                    <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
-                                                    @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                        }
+                                        if (revenueUser_Day2 != null)
+                                        {
+                                            <td class="day-target-number">
+                                                <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
+                                                @*<div class="btnhistory-input">
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                </div>*@
+                                                <div class="revenue-value">
+                                                    @(revenueUser_Day2.DT?.ToString("N0"))
+                                                </div>
+                                                @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                                {
                                                     {
-                                                        <div class="revenue-value hidden">
-
+                                                        <div class="btnedit-input btn-edit-day">
+                                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
                                                         </div>
-                                                        <div class="btnedit-input hidden">
-                                                            <i class="fa-regular fa-pen-to-square"></i>
-                                                        </div>
-                                                        <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT" />
                                                     }
-                                                </td>*@
+
+                                                }
+                                                <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT hidden" value="@(revenueUser_Day2.DT?.ToString("N0"))" />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="day-target-number">
+                                                <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
+                                                @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                                {
+                                                    <div class="revenue-value hidden">
+
+                                                    </div>
+                                                    <div class="btnedit-input hidden">
+                                                        <i class="fa-regular fa-pen-to-square"></i>
+                                                    </div>
+                                                    <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT" />
+                                                }
+                                            </td>
                                         }
                                     }
                                 }
@@ -482,6 +491,7 @@
                                     for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                                     {
                                         var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i);
+                                        var revenueUser_Day2 = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i && a.DT != null);
                                         if (revenueUser_Day != null)
                                         {
                                             <td class="day-target col-w90">
@@ -505,26 +515,6 @@
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />
                                             </td>
-                                            @*<td class="day-target-number">
-                                                    <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
-                                                    <div class="btnhistory-input">
-                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                    </div>
-                                                    <div class="revenue-value">
-                                                        @(revenueUser_Day.DT.ToString("N0"))
-                                                    </div>
-                                                    @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
-                                                    {
-                                                        {
-                                                            <div class="btnedit-input btn-edit-day">
-                                                                <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                                            </div>
-                                                        }
-
-                                                    }
-                                                    <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT hidden" value="@(revenueUser_Day.DT.ToString("N0"))" />
-                                                </td>*@
                                         }
                                         else
                                         {
@@ -541,20 +531,47 @@
                                                     <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day" />
                                                 }
                                             </td>
-                                            @*<td class="day-target-number">
-                                                    <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
-                                                    @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
-                                                    {
-                                                        <div class="revenue-value hidden">
-
-                                                        </div>
-                                                        <div class="btnedit-input hidden">
-                                                            <i class="fa-regular fa-pen-to-square"></i>
-                                                        </div>
-                                                        <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT" />
-                                                    }
-                                                </td>*@
                                         }
+                                        if (revenueUser_Day2 != null)
+                                        {
+                                            <td class="day-target-number">
+                                                <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
+                                                @*<div class="btnhistory-input">
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                </div>*@
+                                                <div class="revenue-value">
+                                                    @(revenueUser_Day2.DT?.ToString("N0"))
+                                                </div>
+                                                @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                                {
+                                                    {
+                                                        <div class="btnedit-input btn-edit-day">
+                                                            <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                        </div>
+                                                    }
+
+                                                }
+                                                <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT hidden" value="@(revenueUser_Day2.DT?.ToString("N0"))" />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="day-target-number">
+                                                <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
+                                                @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                                {
+                                                    <div class="revenue-value hidden">
+
+                                                    </div>
+                                                    <div class="btnedit-input hidden">
+                                                        <i class="fa-regular fa-pen-to-square"></i>
+                                                    </div>
+                                                    <input type="number" min="0" class="m-0 input-noborder input-RevenueUser_Day_DT" />
+                                                }
+                                            </td>
+                                        }
+
                                     }
                                 }
                             </tr>

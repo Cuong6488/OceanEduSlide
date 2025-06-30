@@ -1,4 +1,5 @@
-﻿using Helpers;
+﻿using Antlr.Runtime.Misc;
+using Helpers;
 using NSec.Cryptography;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
@@ -69,7 +70,7 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM)).ToList();
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM)).ToList();
                     var userItems = users.Select(a => new EventViewModel.UserItem
                     {
                         User = a,
@@ -117,7 +118,8 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int userId, decimal targetBM, int dayOfWeek)
+        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int userId, decimal? targetBM, int dayOfWeek, decimal? targetBM_DT)
+
         {
             var user = _unitOfWork.UserRepository.GetById(userId);
             if (user == null)
@@ -125,121 +127,9 @@ namespace OceanEduSlide.Controllers
 
             if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
             {
-                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek).FirstOrDefault();
-                if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
+                if (targetBM != null)
                 {
-                    List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
-
-                    var dt = Math.Ceiling(targetBM / user.RevenueAverage);
-                    var ci = Math.Round(dt / user.DT * 100);
-                    var ciDay = Math.Round(ci / 2);
-                    ci = ciDay * 2;
-                    var cf3 = Math.Round(ci / user.CI * 100);
-                    var cf2 = cf3;
-                    if (user.Confirm3 > 0)
-                        cf2 = Math.Round(cf3 / user.Confirm3 * 100);
-                    var cf2Day = Math.Round(cf2 / 2);
-                    var cf1 = Math.Round(cf2 / user.Confirm2 * 100);
-                    var cf1Day = Math.Round(cf1 / (days.Count() - 1));
-                    var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
-                    var dataDay = Math.Round(dataQuantity / (days.Count() - 1));
-                    int i = 1;
-                    if (user.TypeUser == TypeUser.EC || user.TypeUser == TypeUser.CM)
-                    {
-                        ev.Range += (int)ci;
-                        if (user.TypeUser == TypeUser.EC)
-                            ev.RangeNewCustomer += (int)ci;
-                        else
-                            ev.RangeStudent += (int)ci;
-                    }
-                    foreach (var day in days)
-                    {
-                        var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
-                        if (revenue == null)
-                        {
-                            revenue = new RevenueUser_DayOfWeek
-                            {
-                                Year = year,
-                                Month = month,
-                                UserId = userId,
-                                EventId = ev.Id,
-                                Event = ev,
-                                //TargetBM = targetBM,
-                                Active = true,
-                            };
-                            switch (week)
-                            {
-                                case 1:
-                                    revenue.WeekNumber = WeekNumber.Week1;
-                                    break;
-                                case 2:
-                                    revenue.WeekNumber = WeekNumber.Week2;
-                                    break;
-                                case 3:
-                                    revenue.WeekNumber = WeekNumber.Week3;
-                                    break;
-                                case 4:
-                                    revenue.WeekNumber = WeekNumber.Week4;
-                                    break;
-                                case 5:
-                                    revenue.WeekNumber = WeekNumber.Week5;
-                                    break;
-                                case 6:
-                                    revenue.WeekNumber = WeekNumber.Week6;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            switch (day)
-                            {
-                                case 2:
-                                    revenue.DayofWeek = DayofWeek.Monday;
-                                    break;
-                                case 3:
-                                    revenue.DayofWeek = DayofWeek.Tuesday;
-                                    break;
-                                case 4:
-                                    revenue.DayofWeek = DayofWeek.Wednessday;
-                                    break;
-                                case 5:
-                                    revenue.DayofWeek = DayofWeek.Thursday;
-                                    break;
-                                case 6:
-                                    revenue.DayofWeek = DayofWeek.Friday;
-                                    break;
-                                case 7:
-                                    revenue.DayofWeek = DayofWeek.Saturday;
-                                    break;
-                                case 8:
-                                    revenue.DayofWeek = DayofWeek.Sunday;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
-                        }
-                        if (i < days.Count())
-                        {
-                            revenue.DataQuantity = dataDay;
-                            revenue.Confirm1 = cf1Day;
-                        }
-                        if (i >= days.Count() - 1)
-                        {
-                            revenue.CI = ciDay;
-                            revenue.Confirm2 = cf2Day;
-                            if (i == days.Count())
-                                revenue.TargetBM = targetBM;
-                            revenue.DT = dt;
-                        }
-                        _unitOfWork.Save();
-                        i++;
-                    }
-
-                }
-                else /*if (ev == null)*/
-                {
-                    var revenue = new RevenueUser_DayOfWeek
+                    var newRevenue = new RevenueUser_DayOfWeek
                     {
                         TargetBM = targetBM,
                         Active = true,
@@ -250,22 +140,22 @@ namespace OceanEduSlide.Controllers
                     switch (week)
                     {
                         case 1:
-                            revenue.WeekNumber = WeekNumber.Week1;
+                            newRevenue.WeekNumber = WeekNumber.Week1;
                             break;
                         case 2:
-                            revenue.WeekNumber = WeekNumber.Week2;
+                            newRevenue.WeekNumber = WeekNumber.Week2;
                             break;
                         case 3:
-                            revenue.WeekNumber = WeekNumber.Week3;
+                            newRevenue.WeekNumber = WeekNumber.Week3;
                             break;
                         case 4:
-                            revenue.WeekNumber = WeekNumber.Week4;
+                            newRevenue.WeekNumber = WeekNumber.Week4;
                             break;
                         case 5:
-                            revenue.WeekNumber = WeekNumber.Week5;
+                            newRevenue.WeekNumber = WeekNumber.Week5;
                             break;
                         case 6:
-                            revenue.WeekNumber = WeekNumber.Week6;
+                            newRevenue.WeekNumber = WeekNumber.Week6;
                             break;
                         default:
                             break;
@@ -273,31 +163,150 @@ namespace OceanEduSlide.Controllers
                     switch (dayOfWeek)
                     {
                         case 2:
-                            revenue.DayofWeek = DayofWeek.Monday;
+                            newRevenue.DayofWeek = DayofWeek.Monday;
                             break;
                         case 3:
-                            revenue.DayofWeek = DayofWeek.Tuesday;
+                            newRevenue.DayofWeek = DayofWeek.Tuesday;
                             break;
                         case 4:
-                            revenue.DayofWeek = DayofWeek.Wednessday;
+                            newRevenue.DayofWeek = DayofWeek.Wednessday;
                             break;
                         case 5:
-                            revenue.DayofWeek = DayofWeek.Thursday;
+                            newRevenue.DayofWeek = DayofWeek.Thursday;
                             break;
                         case 6:
-                            revenue.DayofWeek = DayofWeek.Friday;
+                            newRevenue.DayofWeek = DayofWeek.Friday;
                             break;
                         case 7:
-                            revenue.DayofWeek = DayofWeek.Saturday;
+                            newRevenue.DayofWeek = DayofWeek.Saturday;
                             break;
                         case 8:
-                            revenue.DayofWeek = DayofWeek.Sunday;
+                            newRevenue.DayofWeek = DayofWeek.Sunday;
                             break;
                         default:
                             break;
                     }
-                    _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
+                    _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(newRevenue);
                     _unitOfWork.Save();
+
+                }
+                else if (targetBM_DT != null)
+                {
+                    var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek).FirstOrDefault();
+                    if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
+                    {
+                        List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
+
+                        var dt = targetBM_DT ?? 0;
+                        var ci = Math.Round(dt / user.DT * 100);
+                        var ciDay = Math.Round(ci / 2);
+                        ci = ciDay * 2;
+                        var cf3 = Math.Round(ci / user.CI * 100);
+                        var cf2 = cf3;
+                        if (user.Confirm3 > 0)
+                            cf2 = Math.Round(cf3 / user.Confirm3 * 100);
+                        var cf2Day = Math.Round(cf2 / 2);
+                        var cf1 = Math.Round(cf2 / user.Confirm2 * 100);
+                        var cf1Day = Math.Round(cf1 / (days.Count() - 1));
+                        var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
+                        var dataDay = Math.Round(dataQuantity / (days.Count() - 1));
+                        int i = 1;
+                        if (user.TypeUser == TypeUser.EC || user.TypeUser == TypeUser.CM)
+                        {
+                            ev.Range += (int)ci;
+                            if (user.TypeUser == TypeUser.EC)
+                                ev.RangeNewCustomer += (int)ci;
+                            else
+                                ev.RangeStudent += (int)ci;
+                        }
+                        foreach (var day in days)
+                        {
+                            var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
+                            if (revenue == null)
+                            {
+                                revenue = new RevenueUser_DayOfWeek
+                                {
+                                    Year = year,
+                                    Month = month,
+                                    UserId = userId,
+                                    EventId = ev.Id,
+                                    Event = ev,
+                                    //TargetBM = targetBM,
+                                    Active = true,
+                                };
+                                switch (week)
+                                {
+                                    case 1:
+                                        revenue.WeekNumber = WeekNumber.Week1;
+                                        break;
+                                    case 2:
+                                        revenue.WeekNumber = WeekNumber.Week2;
+                                        break;
+                                    case 3:
+                                        revenue.WeekNumber = WeekNumber.Week3;
+                                        break;
+                                    case 4:
+                                        revenue.WeekNumber = WeekNumber.Week4;
+                                        break;
+                                    case 5:
+                                        revenue.WeekNumber = WeekNumber.Week5;
+                                        break;
+                                    case 6:
+                                        revenue.WeekNumber = WeekNumber.Week6;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                switch (day)
+                                {
+                                    case 2:
+                                        revenue.DayofWeek = DayofWeek.Monday;
+                                        break;
+                                    case 3:
+                                        revenue.DayofWeek = DayofWeek.Tuesday;
+                                        break;
+                                    case 4:
+                                        revenue.DayofWeek = DayofWeek.Wednessday;
+                                        break;
+                                    case 5:
+                                        revenue.DayofWeek = DayofWeek.Thursday;
+                                        break;
+                                    case 6:
+                                        revenue.DayofWeek = DayofWeek.Friday;
+                                        break;
+                                    case 7:
+                                        revenue.DayofWeek = DayofWeek.Saturday;
+                                        break;
+                                    case 8:
+                                        revenue.DayofWeek = DayofWeek.Sunday;
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
+                            }
+                            if (i < days.Count())
+                            {
+                                revenue.DataQuantity = dataDay;
+                                revenue.Confirm1 = cf1Day;
+                            }
+                            if (i >= days.Count() - 1)
+                            {
+                                revenue.CI = ciDay;
+                                revenue.Confirm2 = cf2Day;
+                                if (i == days.Count())
+                                    revenue.DT = dt;
+                            }
+                            _unitOfWork.Save();
+                            i++;
+                        }
+
+                    }
+                    else
+                    {
+                        return Json(new { status = false, msg = "Ngày này không có sự kiện hoặc nhân sự không được phân công " });
+                    }
                 }
                 return Json(new { status = true/*, msg = "Cập nhật thành công" */});
             }
@@ -315,6 +324,67 @@ namespace OceanEduSlide.Controllers
                 Month = month,
                 User = _unitOfWork.UserRepository.GetById(userId),
                 Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && a.TargetBM != null, q => q.OrderBy(a => a.CreateDate)),
+            };
+            switch (weekNumber)
+            {
+                case 1:
+                    model.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    model.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    model.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    model.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    model.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    model.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            switch (dayOfWeek)
+            {
+                case 2:
+                    model.DayofWeek = DayofWeek.Monday;
+                    break;
+                case 3:
+                    model.DayofWeek = DayofWeek.Tuesday;
+                    break;
+                case 4:
+                    model.DayofWeek = DayofWeek.Wednessday;
+                    break;
+                case 5:
+                    model.DayofWeek = DayofWeek.Thursday;
+                    break;
+                case 6:
+                    model.DayofWeek = DayofWeek.Friday;
+                    break;
+                case 7:
+                    model.DayofWeek = DayofWeek.Saturday;
+                    break;
+                case 8:
+                    model.DayofWeek = DayofWeek.Sunday;
+                    break;
+                default:
+                    break;
+            }
+
+            return PartialView(model);
+        }
+        public PartialViewResult LoadHistoryRevenueUser_Day2(int year, int month, int userId, int weekNumber, int dayOfWeek)
+        {
+            var model = new LoadHistoryRevenueUser_DayViewModel
+            {
+                Year = year,
+                Month = month,
+                User = _unitOfWork.UserRepository.GetById(userId),
+                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && a.DT != null, q => q.OrderBy(a => a.CreateDate)),
             };
             switch (weekNumber)
             {
@@ -452,7 +522,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM))
             };
             return View(model);
         }
@@ -491,7 +561,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month);
             ViewBag.CurrentWeek = currentWeek;

@@ -78,6 +78,7 @@
                     <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phê duyệt</option>
                 </select>
             }
+        <input class="form-control me-3" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
         </form>
         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
         {
@@ -113,6 +114,9 @@
                 <tr>
                     <th>STT</th>
                     <th class="col-w65">
+                        Mã đề xuất
+                    </th>
+                    <th class="col-w65">
                         Vùng
                     </th>
                     <th class="col-w90">
@@ -128,8 +132,8 @@
                         Ngày đề xuất
                     </th>
                     @*<th class="col-w90">
-                            Phân loại <br /> đề xuất
-                        </th>*@
+            Phân loại <br /> đề xuất
+        </th>*@
                     <th class="col-w200">
                         Nội dung và lý do đề xuất
                     </th>
@@ -146,8 +150,8 @@
                         Tổng hợp lỗi
                     </th>
                     @*<th class="col-w90">
-                        BM Duyệt
-                    </th>*@
+            BM Duyệt
+        </th>*@
                     @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                     {
                         <th></th>
@@ -158,6 +162,7 @@
                 {
                     <tr data-id="@item.Id">
                         <td>@stt</td>
+                        <td>@item.MaDeXuat</td>
                         <td>@item.Zone.Name</td>
                         <td>@item.CVName</td>
                         <td>@item.Office.Name</td>

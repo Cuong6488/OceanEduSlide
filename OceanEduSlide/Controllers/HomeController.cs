@@ -272,7 +272,7 @@ namespace OceanEduSlide.Controllers
                     model.OfficeId = User.OfficeId;
                 if (model.OfficeId != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM));
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM));
                     int today = 0;
                     if (string.IsNullOrEmpty(Date))
                         Date = DateTime.Now.ToString("dd/MM/yyyy");
@@ -325,9 +325,7 @@ namespace OceanEduSlide.Controllers
                             CI = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today)?.ToList().Sum(i => i.CI ?? 0),
                             DT = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today)?.ToList().Sum(i => i.DT ?? 0),
                             Report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today).FirstOrDefault(),
-
                         });
-
                         model.UserItems = userItems;
                     }
                 }

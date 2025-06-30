@@ -24,6 +24,8 @@ namespace OceanEduSlide.Models
         public string Url { get; set; }
         [StringLength(500), Display(Name = "Phản hồi của phòng tuyển sinh")]
         public string CVFeedBack { get; set; }
+        [Display(Name = "Mã đề xuất")]
+        public string MaDeXuat { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
         public int? TypeFaultId { get; set; }
         public int? FaultNumber { get; set; }

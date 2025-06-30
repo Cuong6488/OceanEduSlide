@@ -21,6 +21,7 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public int? Notice { get; set; }
+        public string MaDeXuat { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Proposal> Proposals { get; set; }

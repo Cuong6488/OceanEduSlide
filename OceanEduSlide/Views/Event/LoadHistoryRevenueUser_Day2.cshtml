@@ -1,0 +1,23 @@
+﻿@model OceanEduSlide.ViewModels.LoadHistoryRevenueUser_DayViewModel
+<div class="box_content">
+    <h2>Lịch sử cập nhật công việc @Html.DisplayFor(a => a.DayofWeek) - @Html.DisplayFor(a => a.WeekNumber) - tháng @Model.Month - @Model.Year của nhân sự @(Model.User.Fullname ?? Model.User.Username)</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="text-align:center">Thời gian cập nhật</th>
+                <th style="text-align: center">Số lượng KH chuyển đổi thành DT</th>
+            </tr>
+            @foreach (var item in Model.Revenues)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CreateDate)
+                    </td>
+                    <td class=" col-w200" style="padding:10px 15px !important">
+                        <strong>@Html.DisplayFor(a => item.DT)</strong>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
