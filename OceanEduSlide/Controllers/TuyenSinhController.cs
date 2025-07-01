@@ -29,7 +29,14 @@ namespace OceanEduSlide.Controllers
 
         public PartialViewResult Header()
         {
-            return PartialView(User);
+            var model = new HeaderViewModel
+            {
+                User = User,
+                Categories1 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type1),
+                Categories2 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2),
+                Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3),
+            };
+            return PartialView(model);
         }
         public ActionResult Revenue(int? ZoneId,int? Month, int? OfficeId, int? Year, string Result = "")
         {

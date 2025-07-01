@@ -8,7 +8,13 @@ using System.Web;
 
 namespace OceanEduSlide.ViewModels
 {
-
+    public class HeaderViewModel
+    {
+        public User User { get; set; }
+        public IEnumerable<Category> Categories1 { get; set; }
+        public IEnumerable<Category> Categories2 { get; set; }
+        public IEnumerable<Category> Categories3 { get; set; }
+    }
     public class UserHomeViewModel
     {
         public IEnumerable<Debt> Debts { get; set; }

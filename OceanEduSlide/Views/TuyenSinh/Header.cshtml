@@ -1,5 +1,6 @@
 ﻿@using OceanEduSlide.Models
-@model User
+@using OceanEduSlide.ViewModels
+@model HeaderViewModel
 <div class="header d-flex">
     <div class="logo">
         <a href="/">
@@ -8,20 +9,111 @@
     </div>
     <div class="navbar-container">
         <ul class="navbar ul-reset d-flex">
-            @*<li>
+            <li>
                 <a href="javascript:;">DANH MỤC QĐ</a>
                 <ul class="ul-reset" style="top:150%">
-                    <li style="padding:7px 15px">
-                        <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung - Đề xuất - Báo cáo line Tuyển sinh">Quy định chung - Đề xuất - Báo cáo line Tuyển sinh</a>
-                    </li>
-                    <li style="padding:7px 15px">
-                        <a href="javascript:;" data-fancybox data-src="#category2" data-caption="Danh mục Quyết định PTS - Cả năm">Danh mục Quyết định PTS - Cả năm</a>
-                    </li>
-                    <li style="padding:7px 15px">
-                        <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Danh mục Quyết định PTS - Hàng tháng">Danh mục Quyết định PTS - Hàng tháng</a>
-                    </li>
+                    @if (Model.Categories1.Any())
+                    {
+
+                        <li style="padding:7px 15px">
+                            <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung - Đề xuất - Báo cáo line Tuyển sinh">Quy định chung - Đề xuất - Báo cáo line Tuyển sinh</a>
+
+                            <div class=" hidden" id="category1">
+                                <h2>Quy định chung - Đề xuất - Báo cáo line Tuyển sinh</h2>
+                                <table class="list_table tablecenter table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th style="text-align: center">Mục lục</th>
+                                            <th style="text-align: center">Nội dung</th>
+                                            <th style="text-align: center">Quy định</th>
+                                            <th style="text-align: center">Link đề xuất</th>
+                                            <th style="text-align: center">Link theo dõi</th>
+                                        </tr>
+                                        @foreach (var item in Model.Categories1)
+                                        {
+                                            <tr>
+                                                <td>@item.Index</td>
+                                                <td>@item.Content</td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.Regulation">@item.Regulation</a> </td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.ProposalLink">@item.ProposalLink</a> </td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.FollowLink">@item.FollowLink</a> </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                    }
+                    @if (Model.Categories2.Any())
+                    {
+
+                        <li style="padding:7px 15px">
+                            <a href="javascript:;" data-fancybox data-src="#category2" data-caption="Danh mục Quyết định PTS - Cả năm">Danh mục Quyết định PTS - Cả năm</a>
+
+                            <div class="box_content d-none" id="category2">
+                                <h2>Danh mục Quyết định PTS - Cả năm</h2>
+                                <table class="list_table tablecenter table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th style="text-align: center">Mục lục</th>
+                                            <th style="text-align: center">Nội dung</th>
+                                            <th style="text-align: center">Số QĐ</th>
+                                            <th style="text-align: center">Link QĐ</th>
+                                            <th style="text-align: center">Bảng tính/ Ghi chú</th>
+                                        </tr>
+                                        @foreach (var item in Model.Categories2)
+                                        {
+                                            <tr>
+                                                <td>@item.Index</td>
+                                                <td>@item.Content</td>
+                                                <td>@item.QDNumber</td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.QDLink">@item.QDLink</a> </td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.Note">@item.Note</a> </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                    }
+                    @if (Model.Categories3.Any())
+                    {
+
+                        <li style="padding:7px 15px">
+                            <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Danh mục Quyết định PTS - Hàng tháng">Danh mục Quyết định PTS - Hàng tháng</a>
+
+                            <div class="box_content d-none" id="category3">
+                                <h2>Danh mục Quyết định PTS - Hàng tháng</h2>
+                                <table class="list_table tablecenter table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th style="text-align: center">Mục lục</th>
+                                            <th style="text-align: center">Tháng</th>
+                                            <th style="text-align: center">Nhóm/ Vùng</th>
+                                            <th style="text-align: center">Nội dung</th>
+                                            <th style="text-align: center">Số QĐ</th>
+                                            <th style="text-align: center">Link QĐ</th>
+                                            <th style="text-align: center">Bảng tính/ Ghi chú</th>
+                                        </tr>
+                                        @foreach (var item in Model.Categories3)
+                                        {
+                                            <tr>
+                                                <td>@item.Index</td>
+                                                <td>@item.Month</td>
+                                                <td>@item.Zone</td>
+                                                <td>@item.Content</td>
+                                                <td>@item.QDNumber</td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.QDLink">@item.QDLink</a> </td>
+                                                <td><a style="word-break:break-word" target="_blank" href="@item.Note">@item.Note</a> </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                    }
                 </ul>
-            </li>*@
+            </li>
             <li>
                 <a href="@Url.Action("Revenue","TuyenSinh")">PHÂN BỔ DOANH SỐ</a>
             </li>
@@ -32,11 +124,11 @@
                 <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
             </li>
             <li>
-                @if (Model.TypeUser == TypeUser.BM || Model.TypeUser == TypeUser.ASM)
+                @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
                 {
                     <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
                 }
-                else if (Model.TypeUser == TypeUser.CV || Model.TypeUser == TypeUser.HO)
+                else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
                 {
                     <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
                 }
@@ -50,7 +142,5 @@
         </ul>
     </div>
 </div>
-<div style="display: none;" id="category1">
-    
-</div>
+
 
