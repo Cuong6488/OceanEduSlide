@@ -169,6 +169,13 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             return View();
         }
+        [Route("tin-tuc")]
+        public ActionResult Articles()
+        {
+            if (!User.SaleKit && User.TypeUser != null)
+                return HttpNotFound();
+            return View();
+        }
         //public ActionResult CourseOutline()
         //{
         //    if (!User.SaleKit && User.TypeUser != null)

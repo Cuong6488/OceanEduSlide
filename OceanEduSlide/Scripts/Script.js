@@ -694,6 +694,29 @@ function ExportPdf() {
     // Đảm bảo CSS được áp dụng trước khi xuất
     html2pdf().from(element).set(options).save();
 }
+function articleJs() {
+    $('.face-article-slick').slick({
+        autoplay: true,
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplaySpeed: 2000,
+        arrows: true,
+        nextArrow: '<button type="button" class="slick-next"></button>',
+        prevArrow: '<button type="button" class="slick-prev"></button>',
+        responsive: [
+            {
+                breakpoint: 1200,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                }
+            }
+        ]
+    });
+}
 function face() {
     tick();
     $(".face-ielts").on("click", function () {
@@ -707,6 +730,41 @@ function face() {
                     speed: 1000,
                     slidesToShow: 5,
                     slidesToScroll: 5,
+                    autoplaySpeed: 2000,
+                    arrows: true,
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    responsive: [
+                        {
+                            breakpoint: 1400,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 4,
+                            }
+                        },
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 3,
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+    });
+    $(".face-student").on("click", function () {
+        if (isTick === false) {
+            $(".face-index").fadeOut(300, function () {
+                $(".face-student-slide").fadeIn(300);
+                $('.face-student-slick').slick({
+                    autoplay: true,
+                    dots: false,
+                    infinite: true,
+                    speed: 1000,
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
                     autoplaySpeed: 2000,
                     arrows: true,
                     nextArrow: '<button type="button" class="slick-next"></button>',
