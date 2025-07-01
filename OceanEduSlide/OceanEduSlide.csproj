@@ -1028,6 +1028,7 @@
     <Content Include="Content\style.scss" />
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
+    <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
