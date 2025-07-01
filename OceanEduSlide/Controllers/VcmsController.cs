@@ -1167,9 +1167,9 @@ namespace OceanEduSlide.Controllers
                             Active = true
                         };
                         _unitOfWork.DiscountRepository.Insert(discount);
-                        _unitOfWork.Save();
                     }
                 }
+                _unitOfWork.Save();
 
             }
             return RedirectToAction("ListDiscount");

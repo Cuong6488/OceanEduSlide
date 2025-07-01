@@ -694,6 +694,29 @@ function ExportPdf() {
     // Đảm bảo CSS được áp dụng trước khi xuất
     html2pdf().from(element).set(options).save();
 }
+function articleJs() {
+    $('.face-article-slick').slick({
+        autoplay: true,
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplaySpeed: 2000,
+        arrows: true,
+        nextArrow: '<button type="button" class="slick-next"></button>',
+        prevArrow: '<button type="button" class="slick-prev"></button>',
+        responsive: [
+            {
+                breakpoint: 1200,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                }
+            }
+        ]
+    });
+}
 function face() {
     tick();
     $(".face-ielts").on("click", function () {
@@ -707,6 +730,41 @@ function face() {
                     speed: 1000,
                     slidesToShow: 5,
                     slidesToScroll: 5,
+                    autoplaySpeed: 2000,
+                    arrows: true,
+                    nextArrow: '<button type="button" class="slick-next"></button>',
+                    prevArrow: '<button type="button" class="slick-prev"></button>',
+                    responsive: [
+                        {
+                            breakpoint: 1400,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 4,
+                            }
+                        },
+                        {
+                            breakpoint: 1100,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 3,
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+    });
+    $(".face-student").on("click", function () {
+        if (isTick === false) {
+            $(".face-index").fadeOut(300, function () {
+                $(".face-student-slide").fadeIn(300);
+                $('.face-student-slick').slick({
+                    autoplay: true,
+                    dots: false,
+                    infinite: true,
+                    speed: 1000,
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
                     autoplaySpeed: 2000,
                     arrows: true,
                     nextArrow: '<button type="button" class="slick-next"></button>',
@@ -1230,7 +1288,7 @@ function pathway() {
     });
     $(".ielts-book4").on("click", function () {
         $(".pathway-index > .slide:not(.book-ielts-content4-1)").fadeOut(300, function () {
-            $(".book-ielts-content2-1").fadeIn(300);
+            $(".book-ielts-content4-1").fadeIn(300);
         });
     });
     $(".book-ielts-content4-1 .btn-slide").on("click", function () {
@@ -1377,6 +1435,32 @@ function pathway() {
     $(".pathway-book-content .btn-back-square, .book-toeic-content .btn-back-square, .book-ielts-content .btn-back-square").on("click", function () {
         $(".btn-book").trigger("click");
         $(".menu-btn").fadeIn(300);
+    });
+    $(".ielts-book3-content .btn-back-square").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book2-content)").fadeOut(300, function () {
+            $(".ielts-book2-content").fadeIn(0);
+        });
+    });
+    $(".ielts-book4-content .btn-back-square").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book3-content)").fadeOut(300, function () {
+            $(".ielts-book3-content").fadeIn(0);
+        });
+    });
+
+    $(".book-ielts-content2-1 .btn-back-square, .book-ielts-content2-2 .btn-back-square, .book-ielts-content2-3 .btn-back-square").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book2-content)").fadeOut(300, function () {
+            $(".ielts-book2-content").fadeIn(0);
+        });
+    });
+    $(".book-ielts-content3-1 .btn-back-square, .book-ielts-content3-2 .btn-back-square").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book3-content)").fadeOut(300, function () {
+            $(".ielts-book3-content").fadeIn(0);
+        });
+    });
+    $(".book-ielts-content4-1 .btn-back-square, .book-ielts-content4-2 .btn-back-square, .book-ielts-content4-3 .btn-back-square").on("click", function () {
+        $(".pathway-index > .slide:not(.ielts-book4-content)").fadeOut(300, function () {
+            $(".ielts-book4-content").fadeIn(0);
+        });
     });
     $(".btn-setting").on("click", function () {
         if (pathway === "discovery") {
@@ -1559,6 +1643,16 @@ function pathway() {
         if (pathway === "focus") {
             $(".pathway-page").fadeOut(300, function () {
                 $(".course-outline-focus").fadeIn(300);
+            });
+        }
+        if (pathway === "ielts") {
+            $(".pathway-page").fadeOut(300, function () {
+                $(".course-outline-ielts").fadeIn(300);
+            });
+        }
+        if (pathway === "toeic") {
+            $(".pathway-page").fadeOut(300, function () {
+                $(".course-outline-toeic").fadeIn(300);
             });
         }
     });

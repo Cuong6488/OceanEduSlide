@@ -174,6 +174,9 @@
     <Reference Include="System.Security.Cryptography.Cng, Version=4.3.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Cng.4.7.0\lib\net47\System.Security.Cryptography.Cng.dll</HintPath>
     </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=9.0.0.6, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.6\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
     <Reference Include="System.Text.Encodings.Web, Version=4.0.5.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encodings.Web.4.7.2\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
@@ -510,6 +513,39 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\images\1021.jpg" />
+    <Content Include="Content\images\1058.jpg" />
+    <Content Include="Content\images\1060.jpg" />
+    <Content Include="Content\images\1061.jpg" />
+    <Content Include="Content\images\1065.jpg" />
+    <Content Include="Content\images\1071.jpg" />
+    <Content Include="Content\images\1072.JPG" />
+    <Content Include="Content\images\1076.jpg" />
+    <Content Include="Content\images\1079.jpg" />
+    <Content Include="Content\images\1087.jpg" />
+    <Content Include="Content\images\1091.jpg" />
+    <Content Include="Content\images\1098.jpg" />
+    <Content Include="Content\images\1099.JPG" />
+    <Content Include="Content\images\1106.jpg" />
+    <Content Include="Content\images\1120.jpg" />
+    <Content Include="Content\images\1132.jpg" />
+    <Content Include="Content\images\1134.jpg" />
+    <Content Include="Content\images\1136.jpg" />
+    <Content Include="Content\images\1140.JPG" />
+    <Content Include="Content\images\1142.JPG" />
+    <Content Include="Content\images\1143.jpg" />
+    <Content Include="Content\images\1160.jpg" />
+    <Content Include="Content\images\1165.jpg" />
+    <Content Include="Content\images\1189.JPG" />
+    <Content Include="Content\images\1220.jpg" />
+    <Content Include="Content\images\1221.jpg" />
+    <Content Include="Content\images\1243.jpg" />
+    <Content Include="Content\images\1245.jfif" />
+    <Content Include="Content\images\1254.jpg" />
+    <Content Include="Content\images\1256.jpg" />
+    <Content Include="Content\images\1298.JPG" />
+    <Content Include="Content\images\1332.jpg" />
+    <Content Include="Content\images\1333.jpg" />
     <Content Include="Content\images\8trithongminh.png" />
     <Content Include="Content\images\about-bg.png" />
     <Content Include="Content\images\achie-1.png" />
@@ -532,6 +568,15 @@
     <Content Include="Content\images\achie-img-before.png" />
     <Content Include="Content\images\achie-banner.png" />
     <Content Include="Content\images\banner-index.png" />
+    <Content Include="Content\images\baochi1.jpg" />
+    <Content Include="Content\images\baochi2.jpg" />
+    <Content Include="Content\images\baochi3.png" />
+    <Content Include="Content\images\baochi4.jpg" />
+    <Content Include="Content\images\baochi5.jpg" />
+    <Content Include="Content\images\baochi6.jpg" />
+    <Content Include="Content\images\baochi7.jpg" />
+    <Content Include="Content\images\baochi8.jpg" />
+    <Content Include="Content\images\baochi9.jpg" />
     <Content Include="Content\images\btn-back-square.png" />
     <Content Include="Content\images\btn-back.png" />
     <Content Include="Content\images\btn-book.png" />
@@ -680,6 +725,7 @@
     <Content Include="Content\images\ielt-nlpn.png" />
     <Content Include="Content\images\ielt-ntd.png" />
     <Content Include="Content\images\ielt-ntxn.png" />
+    <Content Include="Content\images\ielt-pathways.png" />
     <Content Include="Content\images\ielt-ptk.png" />
     <Content Include="Content\images\ielt-pvd.png" />
     <Content Include="Content\images\ielt-tgl.png" />
@@ -701,6 +747,7 @@
     <Content Include="Content\images\ielts-book2.png" />
     <Content Include="Content\images\ielts-book3.png" />
     <Content Include="Content\images\ielts-book4.png" />
+    <Content Include="Content\images\ielts-pathway-title.png" />
     <Content Include="Content\images\library-tieuchixettuyenielts.png" />
     <Content Include="Content\images\librarycefr.png" />
     <Content Include="Content\images\login-btn-bg.png" />
@@ -1274,6 +1321,7 @@
     <Content Include="Views\Revenue\RankOffice.cshtml" />
     <Content Include="Views\Vcms\Category.cshtml" />
     <Content Include="webfonts\Inter-VariableFont_opsz,wght.ttf" />
+    <Content Include="Views\Home\Articles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
