@@ -680,6 +680,7 @@
     <Content Include="Content\images\ielt-nlpn.png" />
     <Content Include="Content\images\ielt-ntd.png" />
     <Content Include="Content\images\ielt-ntxn.png" />
+    <Content Include="Content\images\ielt-pathways.png" />
     <Content Include="Content\images\ielt-ptk.png" />
     <Content Include="Content\images\ielt-pvd.png" />
     <Content Include="Content\images\ielt-tgl.png" />
