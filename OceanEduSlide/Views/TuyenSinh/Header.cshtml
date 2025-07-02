@@ -144,3 +144,24 @@
 </div>
 
 
+
+<div class="change-password-form">
+    <form action="/" method="post">
+        <h2><strong>Đổi mật khẩu</strong></h2>
+        <label><strong>Mật khẩu cũ</strong></label>
+        <input class="form-control mb-2" type="password" name="oldpassword" value="" required />
+        <label><strong>Mật khẩu mới</strong></label>
+        <input class="form-control mb-2" type="password" name="newpassword" value="" required />
+        <label><strong>Xác nhận mật khẩu</strong></label>
+        @*<div class="mb-4">*@
+        <input class="form-control mb-4" type="password" name="confirmpassword" value="" required />
+        @*<span>
+                    Mật khẩu không chính xác
+                </span>
+            </div>*@
+        <button type="submit"><strong>Xác nhận</strong></button>
+    </form>
+    <div class="close-form">
+        <i class="fa-solid fa-rectangle-xmark"></i>
+    </div>
+</div>

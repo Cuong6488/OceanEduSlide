@@ -2086,7 +2086,11 @@ body {
 
             .ielts-40 {
                 left: 31.7%;
-                /*width: 6.9%;*/
+            }
+
+            .ielts-45 {
+                left: 37.3%;
+                width: 5%;
             }
 
             .ielts-50 {
@@ -3738,7 +3742,7 @@ body {
     }
 }
 
-.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content {
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content, .pathway-book-content {
     background-image: url('images/pathway-discovery-bg.png');
 
     .btn-back-square {

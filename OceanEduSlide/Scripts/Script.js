@@ -763,8 +763,8 @@ function face() {
                     dots: false,
                     infinite: true,
                     speed: 1000,
-                    slidesToShow: 3,
-                    slidesToScroll: 1,
+                    slidesToShow: 5,
+                    slidesToScroll: 5,
                     autoplaySpeed: 2000,
                     arrows: true,
                     nextArrow: '<button type="button" class="slick-next"></button>',
@@ -1138,10 +1138,12 @@ function pathway() {
     });
     $(".pathways div").on("click", function () {
         var pwdetailClass = $(this).attr("class").split(" ")[0];
-        $(".pathway-index > .slide:not(." + pwdetailClass + ")").fadeOut(300, function () {
-            $(".pathway-index ." + pwdetailClass).fadeIn(300);
+        if (pwdetailClass === "toeic-400" || pwdetailClass === "toeic-450" || pwdetailClass === "toeic-500" || pwdetailClass === "toeic-550" || pwdetailClass === "toeic-600" || pwdetailClass === "toeic-650" || pwdetailClass === "toeic-700" || pathway !== "toeic") {
+            $(".pathway-index > .slide:not(." + pwdetailClass + ")").fadeOut(300, function () {
+                $(".pathway-index ." + pwdetailClass).fadeIn(300);
+            });
+        }
 
-        });
 
         if (pathway === "discovery") {
             //$(".discovery-text-star img").fadeOut(300);
@@ -1356,28 +1358,28 @@ function pathway() {
             $(".menu-btn").fadeOut(300);
         });
     });
-    $(".book1-toeic-text").on("click", function () {
+    $(".toeic-book1-content .btn-slide").on("click", function () {
         $(".pathway-index > .slide:not(.toeic-book2-content)").fadeOut(300, function () {
             $(".toeic-book2-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);
             //$(".menu-btn").fadeOut(300);
         });
     });
-    $(".book1-ielts-text").on("click", function () {
+    $(".ielts-book1-content .btn-slide").on("click", function () {
         $(".pathway-index > .slide:not(.ielts-book2-content)").fadeOut(300, function () {
             $(".ielts-book2-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);
             //$(".menu-btn").fadeOut(300);
         });
     });
-    $(".book2-ielts-text").on("click", function () {
+    $(".ielts-book2-content .btn-slide").on("click", function () {
         $(".pathway-index > .slide:not(.ielts-book3-content)").fadeOut(300, function () {
             $(".ielts-book3-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);
             //$(".menu-btn").fadeOut(300);
         });
     });
-    $(".book3-ielts-text").on("click", function () {
+    $(".ielts-book3-content .btn-slide").on("click", function () {
         $(".pathway-index > .slide:not(.ielts-book4-content)").fadeOut(300, function () {
             $(".ielts-book4-content").css("display", "flex");
             //$(".discovery-book1-content").fadeIn(300);

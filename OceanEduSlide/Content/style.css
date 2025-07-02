@@ -1704,7 +1704,10 @@ body {
 }
 .pathway-page .pathway-challenge .pathways-ielts .ielts-40, .pathway-page .pathway-focus .pathways-ielts .ielts-40, .pathway-page .pathway-toeic .pathways-ielts .ielts-40, .pathway-page .pathway-ielts .pathways-ielts .ielts-40 {
   left: 31.7%;
-  /*width: 6.9%;*/
+}
+.pathway-page .pathway-challenge .pathways-ielts .ielts-45, .pathway-page .pathway-focus .pathways-ielts .ielts-45, .pathway-page .pathway-toeic .pathways-ielts .ielts-45, .pathway-page .pathway-ielts .pathways-ielts .ielts-45 {
+  left: 37.3%;
+  width: 5%;
 }
 .pathway-page .pathway-challenge .pathways-ielts .ielts-50, .pathway-page .pathway-focus .pathways-ielts .ielts-50, .pathway-page .pathway-toeic .pathways-ielts .ielts-50, .pathway-page .pathway-ielts .pathways-ielts .ielts-50 {
   left: 43.5%;
@@ -3027,23 +3030,23 @@ body {
   height: 50px;
 }
 
-.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content {
+.map-slide1, .map-slide2, .book-focus-content, .teaching-method-focus-content, .book-toeic-content, .book-ielts-content, .pathway-book-content {
   background-image: url("images/pathway-discovery-bg.png");
 }
-.map-slide1 .btn-back-square, .map-slide2 .btn-back-square, .book-focus-content .btn-back-square, .teaching-method-focus-content .btn-back-square, .book-toeic-content .btn-back-square, .book-ielts-content .btn-back-square {
+.map-slide1 .btn-back-square, .map-slide2 .btn-back-square, .book-focus-content .btn-back-square, .teaching-method-focus-content .btn-back-square, .book-toeic-content .btn-back-square, .book-ielts-content .btn-back-square, .pathway-book-content .btn-back-square {
   height: 60px;
   left: 17px;
   bottom: 35px;
 }
-.map-slide1 .btn-back-square img, .map-slide2 .btn-back-square img, .book-focus-content .btn-back-square img, .teaching-method-focus-content .btn-back-square img, .book-toeic-content .btn-back-square img, .book-ielts-content .btn-back-square img {
+.map-slide1 .btn-back-square img, .map-slide2 .btn-back-square img, .book-focus-content .btn-back-square img, .teaching-method-focus-content .btn-back-square img, .book-toeic-content .btn-back-square img, .book-ielts-content .btn-back-square img, .pathway-book-content .btn-back-square img {
   height: 60px !important;
 }
-.map-slide1 .btn-slide, .map-slide2 .btn-slide, .book-focus-content .btn-slide, .teaching-method-focus-content .btn-slide, .book-toeic-content .btn-slide, .book-ielts-content .btn-slide {
+.map-slide1 .btn-slide, .map-slide2 .btn-slide, .book-focus-content .btn-slide, .teaching-method-focus-content .btn-slide, .book-toeic-content .btn-slide, .book-ielts-content .btn-slide, .pathway-book-content .btn-slide {
   height: 50px;
   width: 20px;
   bottom: 40px;
 }
-.map-slide1 .btn-slide img, .map-slide2 .btn-slide img, .book-focus-content .btn-slide img, .teaching-method-focus-content .btn-slide img, .book-toeic-content .btn-slide img, .book-ielts-content .btn-slide img {
+.map-slide1 .btn-slide img, .map-slide2 .btn-slide img, .book-focus-content .btn-slide img, .teaching-method-focus-content .btn-slide img, .book-toeic-content .btn-slide img, .book-ielts-content .btn-slide img, .pathway-book-content .btn-slide img {
   height: 100%;
 }
 
