@@ -1007,18 +1007,6 @@ function pathway() {
             $(".pathway-mid,.pathway-left").fadeOut(300, function () {
                 $(".pathway-index").fadeIn(300);
                 $(".pathway-index .slide").fadeOut(0);
-                if (pathway === "discovery") {
-                    text_title("CHƯƠNG TRÌNH HỌC / DISCOVERY ENGLISH 4-6 TUỔI")
-                    //$(".btns-text p").text();
-                }
-                if (pathway === "challenge") {
-                    text_title("CHƯƠNG TRÌNH HỌC / CHALLENGE ENGLISH 6-11 TUỔI")
-                    //$(".btns-text p").text();
-                }
-                if (pathway === "focus") {
-                    text_title("CHƯƠNG TRÌNH HỌC / FOCUS ENGLISH 11-16 TUỔI")
-                    //$(".btns-text p").text();
-                }
             });
             $(".logo-about").fadeOut(100);
             $(".star-index").fadeOut(100);
@@ -1026,58 +1014,14 @@ function pathway() {
         }
     });
     $(".btn-pathway").on("click", function () {
-        if (pathway === "discovery") {
-            $(".pathway-index > .slide:not(.pathway-discovery)").fadeOut(300, function () {
-                $(".pathway-discovery").fadeIn(300);
-            });
-        }
-        if (pathway === "challenge") {
-            $(".pathway-index > .slide:not(.pathway-challenge)").fadeOut(300, function () {
-                $(".pathway-challenge").fadeIn(300);
-            });
-        }
-        if (pathway === "focus") {
-            $(".pathway-index > .slide:not(.pathway-focus)").fadeOut(300, function () {
-                $(".pathway-focus").fadeIn(300);
-            });
-        }
-        if (pathway === "toeic") {
-            $(".pathway-index > .slide:not(.pathway-toeic)").fadeOut(300, function () {
-                $(".pathway-toeic").fadeIn(300);
-            });
-        }
-        if (pathway === "ielts") {
-            $(".pathway-index > .slide:not(.pathway-ielts)").fadeOut(300, function () {
-                $(".pathway-ielts").fadeIn(300);
-            });
-        }
+        $(".pathway-index > .slide:not(.pathway-" + pathway + ")").fadeOut(300, function () {
+            $(".pathway-" + pathway).fadeIn(300);
+        });
     });
     $(".btn-people").on("click", function () {
-        if (pathway === "discovery") {
-            $(".pathway-index > .slide:not(.overview-discovery)").fadeOut(300, function () {
-                $(".overview-discovery").fadeIn(300);
-            });
-        }
-        if (pathway === "challenge") {
-            $(".pathway-index > .slide:not(.overview-challenge)").fadeOut(300, function () {
-                $(".overview-challenge").fadeIn(300);
-            });
-        }
-        if (pathway === "focus") {
-            $(".pathway-index > .slide:not(.overview-focus)").fadeOut(300, function () {
-                $(".overview-focus").fadeIn(300);
-            });
-        }
-        if (pathway === "toeic") {
-            $(".pathway-index > .slide:not(.overview-toeic)").fadeOut(300, function () {
-                $(".overview-toeic").fadeIn(300);
-            });
-        }
-        if (pathway === "ielts") {
-            $(".pathway-index > .slide:not(.overview-ielts)").fadeOut(300, function () {
-                $(".overview-ielts").fadeIn(300);
-            });
-        }
+        $(".pathway-index > .slide:not(.overview-" + pathway + ")").fadeOut(300, function () {
+            $(".overview-" + pathway).fadeIn(300);
+        });
     });
     var slidenumber = 1;
     $(".overview-discovery .btn-back").on("click", function () {
@@ -1087,14 +1031,13 @@ function pathway() {
             });
             slidenumber = 1;
         }
-        else if (slidenumber === 3) {
-            $(".overview3-discovery").fadeOut(300, function () {
-                $(".overview2-discovery").fadeIn(300);
-                $(".overview-discovery-title").fadeIn(0);
-            });
-            slidenumber = 2;
-        }
-
+        //else if (slidenumber === 3) {
+        //    $(".overview3-discovery").fadeOut(300, function () {
+        //        $(".overview2-discovery").fadeIn(300);
+        //        $(".overview-discovery-title").fadeIn(0);
+        //    });
+        //    slidenumber = 2;
+        //}
     });
     $(".overview-discovery .btn-next").on("click", function () {
         if (slidenumber === 1) {
@@ -1104,12 +1047,22 @@ function pathway() {
             slidenumber = 2;
         }
         else if (slidenumber === 2) {
-            $(".overview2-discovery").fadeOut(300, function () {
-                $(".overview3-discovery").fadeIn(300);
-                $(".overview-discovery-title").fadeOut(0);
+            $(".overview-discovery").fadeOut(300, function () {
+                $(".pathway-index > .slide:not(.overview3-discovery)").fadeOut(300, function () {
+                    $(".overview3-discovery").fadeIn(300);
+                });
             });
-            slidenumber = 3;
+            //slidenumber = 3;
         }
+    });
+    $(".overview-toeic .btn-next,.overview-ielts .btn-next,.overview-challenge .btn-next,.overview-focus .btn-next").on("click", function () {
+        $(".pathway-index > .slide:not(.overview3-discovery)").fadeOut(300, function () {
+            $(".overview3-discovery").fadeIn(300);
+        });
+
+    });
+    $(".overview3-discovery .btn-back").on("click", function () {
+        $(".btn-people").trigger("click");
     });
     $(".eight-smart").on("click", function () {
         $(".pathway-index > .slide:not(.eight-smart-discovery)").fadeOut(300, function () {
@@ -1465,35 +1418,10 @@ function pathway() {
         });
     });
     $(".btn-setting").on("click", function () {
-        if (pathway === "discovery") {
-            $(".pathway-index > .slide:not(.teaching-method-discovery)").fadeOut(300, function () {
-                $(".teaching-method-discovery").fadeIn(300);
-            });
-        }
-        if (pathway === "challenge") {
-            $(".pathway-index > .slide:not(.teaching-method-challenge)").fadeOut(300, function () {
-                $(".teaching-method-challenge").fadeIn(300);
-                $(".teaching-method-challenge").css("display", "flex");
-            });
-        }
-        if (pathway === "focus") {
-            $(".pathway-index > .slide:not(.teaching-method-focus)").fadeOut(300, function () {
-                $(".teaching-method-focus").fadeIn(300);
-                $(".teaching-method-focus").css("display", "flex");
-            });
-        }
-        if (pathway === "toeic") {
-            $(".pathway-index > .slide:not(.teaching-method-toeic)").fadeOut(300, function () {
-                $(".teaching-method-toeic").fadeIn(300);
-                $(".teaching-method-toeic").css("display", "flex");
-            });
-        }
-        if (pathway === "ielts") {
-            $(".pathway-index > .slide:not(.teaching-method-ielts)").fadeOut(300, function () {
-                $(".teaching-method-ielts").fadeIn(300);
-                $(".teaching-method-ielts").css("display", "flex");
-            });
-        }
+        $(".pathway-index > .slide:not(.teaching-method-" + pathway + ")").fadeOut(300, function () {
+            $(".teaching-method-" + pathway).fadeIn(300);
+            $(".teaching-method-" + pathway).css("display", "flex");
+        });
     });
     $(".teaching-method-name1").on("click", function () {
         $(".teaching-method-content img").removeClass("active");
@@ -1632,31 +1560,9 @@ function pathway() {
         }
     });
     $(".btn-class").on("click", function () {
-        if (pathway === "discovery") {
-            $(".pathway-page").fadeOut(300, function () {
-                $(".course-outline-discovery").fadeIn(300);
-            });
-        }
-        if (pathway === "challenge") {
-            $(".pathway-page").fadeOut(300, function () {
-                $(".course-outline-challenge").fadeIn(300);
-            });
-        }
-        if (pathway === "focus") {
-            $(".pathway-page").fadeOut(300, function () {
-                $(".course-outline-focus").fadeIn(300);
-            });
-        }
-        if (pathway === "ielts") {
-            $(".pathway-page").fadeOut(300, function () {
-                $(".course-outline-ielts").fadeIn(300);
-            });
-        }
-        if (pathway === "toeic") {
-            $(".pathway-page").fadeOut(300, function () {
-                $(".course-outline-toeic").fadeIn(300);
-            });
-        }
+        $(".pathway-page").fadeOut(300, function () {
+            $(".course-outline-" + pathway).fadeIn(300);
+        });
     });
     $(".course-outline .btn-back-square").on("click", function () {
         $(".course-outline").fadeOut(300, function () {

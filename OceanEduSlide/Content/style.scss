@@ -1596,6 +1596,31 @@ body {
     width: 66%;
 }
 
+.overview3-discovery {
+    &-container {
+        & > :first-child {
+            position: relative;
+
+            img {
+                height: 5.5vw;
+                width: auto;
+            }
+        }
+    }
+
+    &-text {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translate(-50%,-100%);
+        width: 65%;
+        font-weight: 600;
+        color: white;
+        font-size: 32px;
+        text-shadow: 2px 2px 1px $blue;
+        font-family:josefinsans;
+    }
+}
 .pathway-page {
     /*.logo-anchor {
         display: none;
@@ -1648,30 +1673,6 @@ body {
                 }
             }
 
-            .overview3-discovery {
-                &-container {
-                    & > :first-child {
-                        position: relative;
-
-                        img {
-                            height: 5.5vw;
-                            width: auto;
-                        }
-                    }
-                }
-
-                &-text {
-                    position: absolute;
-                    top: -20px;
-                    left: 50%;
-                    transform: translate(-50%,-100%);
-                    width: 65%;
-                    font-weight: 600;
-                    color: white;
-                    font-size: 32px;
-                    text-shadow: 2px 2px 1px $blue;
-                }
-            }
 
             @media(max-width:1900px) {
                 .overview1-discovery {

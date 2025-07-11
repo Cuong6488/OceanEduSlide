@@ -1327,6 +1327,26 @@ body {
   width: 66%;
 }
 
+.overview3-discovery-container > :first-child {
+  position: relative;
+}
+.overview3-discovery-container > :first-child img {
+  height: 5.5vw;
+  width: auto;
+}
+.overview3-discovery-text {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  width: 65%;
+  font-weight: 600;
+  color: white;
+  font-size: 32px;
+  text-shadow: 2px 2px 1px #2D3AE2;
+  font-family: josefinsans;
+}
+
 .pathway-page {
   /*.logo-anchor {
       display: none;
@@ -1372,24 +1392,6 @@ body {
 .pathway-page .overview .overview-content .overview2-challenge > div, .pathway-page .overview .overview-content .overview2-focus > div, .pathway-page .overview .overview-content .overview2-toeic > div {
   font-size: 22px;
   padding: 7vh;
-}
-.pathway-page .overview .overview-content .overview3-discovery-container > :first-child {
-  position: relative;
-}
-.pathway-page .overview .overview-content .overview3-discovery-container > :first-child img {
-  height: 5.5vw;
-  width: auto;
-}
-.pathway-page .overview .overview-content .overview3-discovery-text {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translate(-50%, -100%);
-  width: 65%;
-  font-weight: 600;
-  color: white;
-  font-size: 32px;
-  text-shadow: 2px 2px 1px #2D3AE2;
 }
 @media (max-width: 1900px) {
   .pathway-page .overview .overview-content .overview1-discovery {
