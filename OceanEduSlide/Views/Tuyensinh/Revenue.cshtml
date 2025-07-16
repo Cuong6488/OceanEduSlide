@@ -193,8 +193,6 @@
             Chưa có chỉ tiêu doanh số
         </div>
     }
-
-
     <h2>Kế hoạch phân bổ doanh số theo tuần</h2>
     <div class="box_content mt-0">
         <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
@@ -204,7 +202,8 @@
                     <th rowspan="2" style="width: 120px">Họ tên nhân sự</th>
                     <th rowspan="2" style="max-width: 40px">Chức vụ</th>
                     <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu <br /> doanh số</th>
-                    <th colspan="2">Tháng</th>
+                    <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu DS <br /> cam kết <br /> hoàn thành</th>
+                    <th rowspan="2" style="min-width: 55px !important">% HT <br /> cam kết/ <br />tháng</th>
                     <th rowspan="2">Dự thu <br /> tháng trước</th>
                     <th rowspan="2">Số tiền <br /> thực chạy</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
@@ -214,8 +213,8 @@
 
                 </tr>
                 <tr class="text-center">
-                    <th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>
-                    <th style="min-width: 55px !important">% HT <br /> dự kiến/ <br />tháng</th>
+                    @*<th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>
+                    <th style="min-width: 55px !important">% HT <br /> dự kiến/ <br />tháng</th>*@
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                     {
                         <th style="min-width: 90px !important">Chỉ tiêu DS <br /> dự kiến <br /> hoàn thành</th>

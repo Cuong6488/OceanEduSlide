@@ -10,7 +10,7 @@ namespace OceanEduSlide.Models
     public class Debt
     {
         public int Id { get; set; }
-        [Display(Name = "Ngày phát sinh cọc")]
+        [Display(Name = "Ngày phát sinh cọc"), Required(ErrorMessage = "Hãy chọn ngày")]
         public string DepositDate { get; set; }
         [Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
         public int Month { get; set; }

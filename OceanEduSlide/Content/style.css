@@ -3486,3 +3486,7 @@ body {
 .toeic-book img {
   height: 100%;
 }
+
+.w100 {
+  width: 100px;
+}

@@ -67,7 +67,8 @@
     @if (Model.OfficeId != null)
     {
         <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
-        <div class="box_content mt-0">
+        <a class="btn quick-link" href="@Url.Action("CreateDebt")">Thêm mới công nợ</a>
+        <div class="box_content">
             @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>

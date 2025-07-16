@@ -1,24 +1,21 @@
 ﻿@model OceanEduSlide.ViewModels.InsertDebtViewModel
 @{
-    ViewBag.Title = "Cập nhật công nợ";
+    ViewBag.Title = "Thêm mới công nợ";
 }
 @*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
 <div class="container py-3">
-    <h2 class="mb-3">Cập nhật công nợ</h2>
-    <a class="btn quick-link" href="@Url.Action("ListDebt", new {month = Model.Debt.Month,year = Model.Debt.Year,officeId = Model.Debt.User.OfficeId})"><i class="far fa-list me-1"></i> Danh sách công nợ</a>
+    <h2 class="mb-3">Thêm mới công nợ</h2>
+    <a class="btn quick-link" href="@Url.Action("ListDebt", new {officeId = Model.User.OfficeId})"><i class="far fa-list me-1"></i> Danh sách công nợ</a>
     <div class="box_content">
-        @using (Html.BeginForm("UpdateDebt", "Event", FormMethod.Post))
+        @using (Html.BeginForm("CreateDebt", "Event", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
+            @Html.HiddenFor(a => a.Debt.Month)
+            @Html.HiddenFor(a => a.Debt.Year)
         <table class="form_table">
-            @Html.HiddenFor(a => a.Debt.Id)
             <tr>
                 <td class="form_name w-25">Nhân sự phụ trách</td>
-                <td class="form_text"> @Html.DisplayFor(model => model.Debt.User.Fullname)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.User.MaNhanVien)</td>
-                <td class="form_text"> @Html.DisplayFor(model => model.Debt.User.MaNhanVien)</td>
+                <td class="form_text"> @Html.DropDownListFor(model => model.Debt.UserId, Model.UserSelectList, "Chọn nhân sự")</td>
             </tr>
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DepositDate)</td>
@@ -108,7 +105,7 @@
             <tr>
                 <td class="form_name"></td>
                 <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    <input type="submit" class="btn quick-link" value="Thêm mới" />
                 </td>
             </tr>
 

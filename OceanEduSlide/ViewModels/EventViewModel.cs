@@ -57,6 +57,20 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<Debt> Debts { get; set; }
         public User User { get; set; }
     }
+    public class InsertDebtViewModel
+    {
+        public SelectList UserSelectList { get; set; }
+        [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ"),UIHint("MoneyBox")]
+        public string TotalMoney { get; set; }
+        [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox")]
+        public string DebtMoney { get; set; }
+        [Display(Name = "Tiền giảm lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox")]
+        public string DownMoney { get; set; }
+        public Debt Debt { get; set; }
+        public User User { get; set; }
+
+    }
+
     public class DownPathwayViewModel
     {
         public DownPathway DownPathway { get; set; }

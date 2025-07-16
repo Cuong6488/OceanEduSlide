@@ -437,6 +437,10 @@
     <Compile Include="Migrations\202506300734537_category.Designer.cs">
       <DependentUpon>202506300734537_category.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507160223214_date.cs" />
+    <Compile Include="Migrations\202507160223214_date.Designer.cs">
+      <DependentUpon>202507160223214_date.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Proposal.cs" />
@@ -1320,6 +1324,7 @@
     <Content Include="Views\Vcms\Category.cshtml" />
     <Content Include="webfonts\Inter-VariableFont_opsz,wght.ttf" />
     <Content Include="Views\Home\Articles.cshtml" />
+    <Content Include="Views\Event\CreateDebt.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1499,6 +1504,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202506300734537_category.resx">
       <DependentUpon>202506300734537_category.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507160223214_date.resx">
+      <DependentUpon>202507160223214_date.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

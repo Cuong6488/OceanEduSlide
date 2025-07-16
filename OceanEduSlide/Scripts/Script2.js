@@ -109,10 +109,19 @@ $(".targetuser_month_HO").each(function () {
     var elements = $(this).closest("tr").find(".input-RevenueUser_Week");
     elements.each(function (index) {
         var weekTarget = $(this).val().trim().replace(/\,/g, "");
+        var weekTarget_real = $(this).closest("td").nextAll(".week-real").first().text().trim().replace(/\,/g, "");
+
         if (weekTarget !== "" && targetuser_month_BM > 0) {
             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
             $(this).closest("td").next(".week-percent").text(percent_user_week);
-            totalWeekTarget += parseFloat(weekTarget) || 0;
+            if (weekTarget_real !== "") {
+                totalWeekTarget += parseFloat(weekTarget_real) || 0;
+            }
+            else {
+
+                totalWeekTarget += parseFloat(weekTarget) || 0;
+            }
+            //totalWeekTarget += parseFloat(weekTarget) || 0;
         }
     });
     //alert(totalWeekTarget);
@@ -205,6 +214,7 @@ $(".input-RevenueUser_Week").on("change", function () {
             var target_Month = parseFloat(target_Month_text);
             thisElement.closest("tr").find(".revenue-value-week_BM").each(function () {
                 var weekTarget = $(this).text().trim().replace(/\,/g, "");
+                var weekTarget_real = $(this).closest("td").nextAll(".week-real").first().text().trim().replace(/\,/g, "");
                 var input_Week = $(this).siblings(".input-RevenueUser_Week").val().trim();
                 if (input_Week === "")
                     emptyCount++;
@@ -212,8 +222,15 @@ $(".input-RevenueUser_Week").on("change", function () {
                     weekTarget = targetBM;
                 }
                 if (weekTarget !== "") {
-                    totalWeekTarget += parseFloat(weekTarget) || 0;
+                    if (weekTarget_real !== "") {
+                        totalWeekTarget += parseFloat(weekTarget_real) || 0;
+                    }
+                    else {
+
+                        totalWeekTarget += parseFloat(weekTarget) || 0;
+                    }
                 }
+                //alert(totalWeekTarget);
             });
             if (totalWeekTarget > target_Month) {
 
@@ -316,15 +333,15 @@ $(function eventFunction() {
                 thisElement.closest("tr").find(".day-target").find(".revenue-value").each(function () {
                     var dayTarget = $(this).text().trim().replace(/\,/g, "");
                     var input_Day = $(this).siblings(".input-RevenueUser_Day").val().trim();
-              
+
                     if (input_Day === "")
-                        emptyCount++; 
+                        emptyCount++;
                     if ($(this).is(thisElement.siblings())) {
                         dayTarget = targetBM;
                     }
                     if (dayTarget !== "") {
                         totalDayTarget += parseFloat(dayTarget) || 0;
-                    } 
+                    }
                 });
                 if (totalDayTarget > target_Week) {
 
@@ -421,7 +438,7 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
                 } else {
                     $.toast({
                         heading: 'Cập nhật thất bại',
-                        text:data.msg,
+                        text: data.msg,
                         icon: 'error'
                     })
                     //location.reload();
