@@ -222,7 +222,7 @@ $(".input-RevenueUser_Week").on("change", function () {
                     weekTarget = targetBM;
                 }
                 if (weekTarget !== "") {
-                    if (weekTarget_real !== "") {
+                    if (weekTarget_real !== "" && weekTarget_real < weekTarget) {
                         totalWeekTarget += parseFloat(weekTarget_real) || 0;
                     }
                     else {
