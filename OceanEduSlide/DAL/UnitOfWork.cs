@@ -16,6 +16,7 @@ namespace OceanEduSlide.DAL
         private GenericRepository<RevenueOffice_BM> _revenueOffice_BMRepository;
         private GenericRepository<RevenueUser_Month> _revenueUser_MonthRepository;
         private GenericRepository<RevenueUser_Month_BM> _revenueUser_Month_BMRepository;
+        private GenericRepository<RevenueUser_Month_BM_real> _revenueUser_Month_BM_realRepository;
         private GenericRepository<RevenueUser_Week> _revenueUser_WeekRepository;
         private GenericRepository<RevenueUser_Week_Real> _revenueUser_Week_RealRepository;
         private GenericRepository<RevenueUser_DayOfWeek> _revenueUser_DayOfWeekRepository;
@@ -56,6 +57,8 @@ namespace OceanEduSlide.DAL
            _revenueUser_MonthRepository ?? (_revenueUser_MonthRepository = new GenericRepository<RevenueUser_Month>(_context));
         public GenericRepository<RevenueUser_Month_BM> RevenueUser_Month_BMRepository =>
            _revenueUser_Month_BMRepository ?? (_revenueUser_Month_BMRepository = new GenericRepository<RevenueUser_Month_BM>(_context));
+        public GenericRepository<RevenueUser_Month_BM_real> RevenueUser_Month_BM_realRepository =>
+           _revenueUser_Month_BM_realRepository ?? (_revenueUser_Month_BM_realRepository = new GenericRepository<RevenueUser_Month_BM_real>(_context));
         public GenericRepository<RevenueUser_Week> RevenueUser_WeekRepository =>
            _revenueUser_WeekRepository ?? (_revenueUser_WeekRepository = new GenericRepository<RevenueUser_Week>(_context));
         public GenericRepository<RevenueUser_Week_Real> RevenueUser_Week_RealRepository =>

@@ -87,9 +87,10 @@ namespace OceanEduSlide.Controllers
                         User = a,
                         RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
                         RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
+                        Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
                     });
 
                     model.UserItems = userItems;
@@ -222,6 +223,22 @@ namespace OceanEduSlide.Controllers
 
             };
             _unitOfWork.RevenueUser_Month_BMRepository.Insert(revenue);
+            _unitOfWork.Save();
+            return Json(new { status = true });
+        }
+        [HttpPost]
+        public JsonResult AddOrUpdateRevenueMonthReal(int year, int month, int userId, decimal targetBM)
+        {
+            var revenue = new Models.RevenueUser_Month_BM_real
+            {
+                Year = year,
+                Month = month,
+                UserId = userId,
+                TargetBM = targetBM,
+                Active = true,
+
+            };
+            _unitOfWork.RevenueUser_Month_BM_realRepository.Insert(revenue);
             _unitOfWork.Save();
             return Json(new { status = true });
         }

@@ -213,7 +213,7 @@ namespace OceanEduSlide.Controllers
             {
                 (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now);
                 ViewBag.CurrentWeek = currentWeek;
-                var debt = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
                 && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
                 var model = new UserHomeViewModel
                 {
@@ -223,7 +223,7 @@ namespace OceanEduSlide.Controllers
                     RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year).Sum(a => a.TargetBM) ?? 0,
                     TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
                     RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && a.Month == DateTime.Now.Month && a.Year == DateTime.Now.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
-                    Debts = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
+                    Debts = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == User.Id && q.Year == (DateTime.Now.Month - 1 == 0 ? DateTime.Now.Year - 1 : DateTime.Now.Year) && q.Month == (DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1)
                     && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
                 };
                 model.TargetMonthPercent = model.TMonth > 0 ? model.RevenueMonthNow / model.TMonth * 100 : 0;
@@ -319,13 +319,13 @@ namespace OceanEduSlide.Controllers
                         {
                             User = x,
                             Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today),
-                            TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year).FirstOrDefault()?.TargetBM -
+                            TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Active && a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year).FirstOrDefault()?.TargetBM -
                             (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)) ?? 0,
                             RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year).Sum(a => a.TargetBM) ?? 0,
                             TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek).FirstOrDefault()?.TargetBM ?? 0,
                             RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
-                            Debts = _unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
+                            Debts = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)),
                             TargetBM = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today)?.ToList().Sum(i => i.TargetBM ?? 0),
                             DataQuantity = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today)?.ToList().Sum(i => i.DataQuantity ?? 0),
@@ -354,9 +354,9 @@ namespace OceanEduSlide.Controllers
                         model.Confirm1Real = userItems.Sum(a => a.Report?.Confirm1 ?? 0);
                         model.Confirm2Real = userItems.Sum(a => a.Report?.Confirm2 ?? 0);
                         model.RankOffice = _unitOfWork.RankOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId).FirstOrDefault();
-                        model.Debt = _unitOfWork.DebtRepository.GetQuery(q => q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
+                        model.Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
-                        model.DebtBad = _unitOfWork.DebtRepository.GetQuery(q => q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
+                        model.DebtBad = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.User.OfficeId == model.OfficeId && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type4 || q.TypeDebt == TypeDebt.Type5)).Sum(q => (decimal?)q.TotalMoney) ?? 0;
                     }
                 }

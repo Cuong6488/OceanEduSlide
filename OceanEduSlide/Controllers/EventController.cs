@@ -200,8 +200,6 @@ namespace OceanEduSlide.Controllers
 
                         var dt = targetBM_DT ?? 0;
                         var ci = Math.Round(dt / user.DT * 100);
-                        var ciDay = Math.Round(ci / 2);
-                        ci = ciDay * 2;
                         var cf3 = Math.Round(ci / user.CI * 100);
                         var cf2 = cf3;
                         if (user.Confirm3 > 0)
@@ -212,14 +210,6 @@ namespace OceanEduSlide.Controllers
                         var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
                         var dataDay = Math.Round(dataQuantity / (days.Count() - 1));
                         int i = 1;
-                        if (user.TypeUser == TypeUser.EC || user.TypeUser == TypeUser.CM)
-                        {
-                            ev.Range += (int)ci;
-                            if (user.TypeUser == TypeUser.EC)
-                                ev.RangeNewCustomer += (int)ci;
-                            else
-                                ev.RangeStudent += (int)ci;
-                        }
                         foreach (var day in days)
                         {
                             var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
@@ -294,15 +284,36 @@ namespace OceanEduSlide.Controllers
                             }
                             if (i >= days.Count() - 1)
                             {
-                                revenue.CI = ciDay;
                                 revenue.Confirm2 = cf2Day;
                                 if (i == days.Count())
+                                {
                                     revenue.DT = dt;
+                                    revenue.CI = ci;
+                                }
+
                             }
-                            _unitOfWork.Save();
                             i++;
                         }
+                        _unitOfWork.Save();
+                        var listrevenue = _unitOfWork.RevenueUser_DayOfWeekRepository
+                                            .GetQuery(a => a.User.OfficeId == User.OfficeId && a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek && a.DT != null, q => q.OrderByDescending(a => a.CreateDate))
+                                            .GroupBy(a => a.UserId).Select(g => g.FirstOrDefault()).ToList();
+                        ev.RangeStudent = 0;
+                        ev.RangeNewCustomer = 0;
+                        ev.Range = 0;
+                        foreach (var item in listrevenue)
+                        {
+                            if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.CM)
+                            {
+                                ev.Range += (int)item.CI;
+                                if (item.User.TypeUser == TypeUser.EC)
+                                    ev.RangeNewCustomer += (int)item.CI;
+                                else
+                                    ev.RangeStudent += (int)item.CI;
+                            }
+                        }
 
+                        _unitOfWork.Save();
                     }
                     else
                     {
@@ -763,6 +774,19 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("ListDebt", new { result = "add" });
             }
             return View(model);
+        }
+
+        [HttpPost]
+        public bool DeleteDebt(int debtId = 0)
+        {
+            var debt = _unitOfWork.DebtRepository.GetById(debtId);
+            if (debt == null)
+            {
+                return false;
+            }
+            debt.Active = !debt.Active;
+            _unitOfWork.Save();
+            return true;
         }
         public ActionResult UpdateDownPathway(int debtId)
         {

@@ -63,7 +63,7 @@ namespace OceanEduSlide.Models
         public Debt()
         {
             CreateDate = DateTime.Now;
-            //Active = true;
+            Active = true;
         }
     }
     public enum TypeDebt

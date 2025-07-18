@@ -191,6 +191,34 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
         });
     }
 });
+$(".input-RevenueUser_Month_BM_real").on("change", function () {
+    var thisElement = $(this);
+    if ($('.form-filter form').valid()) {
+        var userId = $(this).closest("tr").data("id");
+        var targetBM = $(this).val().replace(/\,/g, "");
+        year = $("select[name='Year']").val();
+        month = $("select[name='Month']").val();
+
+        $.post("/TuyenSinh/AddOrUpdateRevenueMonthReal", { year: year, month: month, targetBM: targetBM, userId: userId }, function (data) {
+            if (data.status) {
+                $.toast({
+                    heading: 'Cập nhật thành công',
+                    icon: 'success'
+                })
+                thisElement.siblings(".btnedit-input").css("display", "block");
+                thisElement.siblings(".revenue-value").css("display", "block");
+                thisElement.css("display", "none");
+                thisElement.siblings(".revenue-value").text(thisElement.val());
+            } else {
+                $.toast({
+                    heading: 'Cập nhật thất bại',
+                    icon: 'error'
+                })
+                location.reload();
+            }
+        });
+    }
+});
 $(".input-RevenueUser_Week").on("change", function () {
     var thisElement = $(this);
     if ($('.form-filter form').valid()) {

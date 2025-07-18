@@ -445,6 +445,10 @@
     <Compile Include="Migrations\202507180439144_categoryoffice.Designer.cs">
       <DependentUpon>202507180439144_categoryoffice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507180843577_RevenueUser_Month_BM_real.cs" />
+    <Compile Include="Migrations\202507180843577_RevenueUser_Month_BM_real.Designer.cs">
+      <DependentUpon>202507180843577_RevenueUser_Month_BM_real.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Proposal.cs" />
@@ -456,6 +460,7 @@
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\RankOffice.cs" />
     <Compile Include="Models\RevenueUser_DayOfWeek_Real.cs" />
+    <Compile Include="Models\RevenueUser_Month_BM_real.cs" />
     <Compile Include="Models\TypeFault.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
@@ -1515,6 +1520,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507180439144_categoryoffice.resx">
       <DependentUpon>202507180439144_categoryoffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507180843577_RevenueUser_Month_BM_real.resx">
+      <DependentUpon>202507180843577_RevenueUser_Month_BM_real.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
