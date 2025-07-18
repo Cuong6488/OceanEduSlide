@@ -537,7 +537,7 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 var tbl = result.Tables[0];
-                var users = _unitOfWork.UserRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                var users = _unitOfWork.UserRepository.GetQuery();
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officecode = tbl.Rows[i][0].ToString().Trim();
@@ -550,8 +550,7 @@ namespace OceanEduSlide.Controllers
                     }
                     var username = tbl.Rows[i][4].ToString().Trim();
                     if (username == "") continue;
-                    var countUser = users.Count(a => a.Username == username);
-                    if (countUser > 0) continue;
+                    var user = users.Where(a => a.Username == username).FirstOrDefault();
                     var password = tbl.Rows[i][5].ToString().Trim();
                     if (password == "") continue;
                     var password2 = HtmlHelpers.ComputeHash(password, "SHA256", null);
@@ -560,15 +559,26 @@ namespace OceanEduSlide.Controllers
                     var maxnhanvien = tbl.Rows[i][7].ToString().Trim();
                     var phanquyen = tbl.Rows[i][9].ToString().Trim();
                     var zones = tbl.Rows[i][10].ToString().Trim();
-                    var user = new User
+                    if (user != null)
                     {
-                        Username = username,
-                        Password = password2,
-                        Active = true,
-                        OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id,
-                        MaNhanVien = maxnhanvien,
-                        Fullname = fullname,
-                    };
+                        user.Password = password2;
+                        user.Active = true;
+                        user.OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id;
+                        user.MaNhanVien = maxnhanvien;
+                        user.Fullname = fullname;
+                    }
+                    else
+                    {
+                        user = new User
+                        {
+                            Username = username,
+                            Password = password2,
+                            Active = true,
+                            OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id,
+                            MaNhanVien = maxnhanvien,
+                            Fullname = fullname,
+                        };
+                    }
 
                     switch (phanquyen)
                     {
