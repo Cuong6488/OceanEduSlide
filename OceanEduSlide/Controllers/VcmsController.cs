@@ -623,6 +623,16 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListUser");
         }
+        public ActionResult DeleteUserWrong()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.MaNhanVien) && a.MaNhanVien.Length < 8);
+            foreach (var user in users)
+            {
+                user.Active = false;
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListUser");
+        }
         #endregion
 
         #region Category
