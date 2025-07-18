@@ -34,6 +34,8 @@
             <tr>
                 @*<th style="width: 80px">Thứ tự</th>*@
                 <th>Tên đăng nhập</th>
+                <th>Họ và tên</th>
+                <th>Mã nhân viên</th>
                 <th>Chi nhánh</th>
                 <th>Phân quyền</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
@@ -49,7 +51,16 @@
                         <a href="@Url.Action("UpdateUser", new { userId = user.Id })">@user.Username</a>
                     </td>
                     @*<td>@user.City.Name</td>*@
-                    <td>@user.Office.Name</td>
+
+                    <td>@user.Fullname</td>
+                    <td>@user.MaNhanVien</td>
+                    <td>
+                        @if (user.TypeUser != OceanEduSlide.Models.TypeUser.CV && user.TypeUser != OceanEduSlide.Models.TypeUser.HO)
+                        {
+                            @user.Office.Name
+
+                        }
+                    </td>
                     @*<td>
                                 <button type="button" class="btn btn-success" style="font-size:13px" onclick="checkBeforeRegister('@user.Id.ToString()', '@user.Username')">Đăng ký Face-Id</button>
 

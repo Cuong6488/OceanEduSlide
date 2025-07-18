@@ -14,9 +14,9 @@ namespace OceanEduSlide.Models
         public string Name { get; set; }
         [Display(Name = "Mã vùng"), UIHint("TextBox")]
         public string ShortCode { get; set; }
-        [Display(Name = "Tên ngắn"), UIHint("TextBox")]
-        public string ShortName { get; set; }
         [Display(Name = "Các chi nhánh"), UIHint("TextBox")]
+        public string ShortName { get; set; }
+        [Display(Name = "Các Id chi nhánh"), UIHint("TextBox")]
         public string OfficeIds { get; set; }
         [Display(Name = "Hotline"), StringLength(20, ErrorMessage = "Tối đa 20 ký tự"), UIHint("TextBox")]
         public string Hotline { get; set; }

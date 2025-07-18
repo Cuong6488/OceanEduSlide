@@ -38,7 +38,7 @@ namespace OceanEduSlide.Models
         public decimal DebtMoney2 { get; set; }
         [Display(Name = "Tiền còn lại phải thanh toán"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal RemainMoney { get; set; }
-        [Display(Name = "Hình thức thanh toán")]
+        [Display(Name = "Tình trạng khách hàng")]
         public TypeDebt? TypeDebt { get; set; }
         [Display(Name = "Kênh trả góp")]
         public ChannelPay? ChannelPay { get; set; }

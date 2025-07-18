@@ -37,6 +37,9 @@ namespace OceanEduSlide.Models
         [Display(Name = "Nhóm/ Vùng")]
         public string Zone { get; set; }
 
+        [Display(Name = "Các chi nhánh áp dụng")]
+        public string Offices { get; set; }
+
         [Display(Name = "Tháng")]
         public int? Month { get; set; }
         [Display(Name = "Loại danh mục"),Required]

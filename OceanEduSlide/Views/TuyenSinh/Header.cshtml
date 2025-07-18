@@ -1,6 +1,14 @@
 ﻿@using OceanEduSlide.Models
 @using OceanEduSlide.ViewModels
 @model HeaderViewModel
+<style>
+
+    #category1 th, #category1 td, #category2 th, #category2 td, #category3 th, #category3 td {
+        padding: 10px !important;
+        font-size: 15px;
+        text-align: left;
+    }
+</style>
 <div class="header d-flex">
     <div class="logo">
         <a href="/">
@@ -20,14 +28,14 @@
 
                             <div class=" hidden" id="category1">
                                 <h2>Quy định chung PTS</h2>
-                                <table class="list_table tablecenter table-striped">
+                                <table class="list_table table-striped box_content table-bordered mt-0" >
                                     <tbody>
                                         <tr>
-                                            <th style="text-align: center">Mục lục</th>
-                                            <th style="text-align: center">Nội dung</th>
-                                            <th style="text-align: center">Quy định</th>
-                                            <th style="text-align: center">Link đề xuất</th>
-                                            <th style="text-align: center">Link theo dõi</th>
+                                            <th >Mục lục</th>
+                                            <th >Nội dung</th>
+                                            <th >Quy định</th>
+                                            <th >Link đề xuất</th>
+                                            <th >Link theo dõi</th>
                                         </tr>
                                         @foreach (var item in Model.Categories1)
                                         {
@@ -52,14 +60,14 @@
 
                             <div class="hidden" id="category2">
                                 <h2>Quyết định PTS theo năm</h2>
-                                <table class="list_table tablecenter table-striped">
+                                <table class="list_table table-striped box_content mt-0">
                                     <tbody>
                                         <tr>
-                                            <th style="text-align: center">Mục lục</th>
-                                            <th style="text-align: center">Nội dung</th>
-                                            <th style="text-align: center">Số QĐ</th>
-                                            <th style="text-align: center">Link QĐ</th>
-                                            <th style="text-align: center">Bảng tính/ Ghi chú</th>
+                                            <th >Mục lục</th>
+                                            <th >Nội dung</th>
+                                            <th >Số QĐ</th>
+                                            <th >Link QĐ</th>
+                                            <th >Bảng tính/ Ghi chú</th>
                                         </tr>
                                         @foreach (var item in Model.Categories2)
                                         {
@@ -84,16 +92,16 @@
 
                             <div class="hidden" id="category3">
                                 <h2>Quyết định PTS theo tháng</h2>
-                                <table class="list_table tablecenter table-striped">
+                                <table class="list_table table-striped box_content mt-0">
                                     <tbody>
                                         <tr>
-                                            <th style="text-align: center">Mục lục</th>
-                                            <th style="text-align: center">Tháng</th>
-                                            <th style="text-align: center">Nhóm/ Vùng</th>
-                                            <th style="text-align: center">Nội dung</th>
-                                            <th style="text-align: center">Số QĐ</th>
-                                            <th style="text-align: center">Link QĐ</th>
-                                            <th style="text-align: center">Bảng tính/ Ghi chú</th>
+                                            <th >Mục lục</th>
+                                            <th >Tháng</th>
+                                            <th >Nhóm/ Vùng</th>
+                                            <th >Nội dung</th>
+                                            <th >Số QĐ</th>
+                                            <th >Link QĐ</th>
+                                            <th >Bảng tính/ Ghi chú</th>
                                         </tr>
                                         @foreach (var item in Model.Categories3)
                                         {

@@ -8,7 +8,7 @@
         <tbody>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Name)</th>
-                <th>@Html.DisplayNameFor(model => model.OfficeIds)</th>
+                <th>@Html.DisplayNameFor(model => model.ShortName)</th>
                 <th>@Html.DisplayNameFor(model => model.Active)</th>
                 <th></th>
             </tr>
@@ -16,7 +16,7 @@
             {
                 <tr data-id="@zone.Id">
                     <td class="left">@zone.Name</td>
-                    <td class="left">@zone.OfficeIds</td>
+                    <td class="left">@zone.ShortName</td>
                     <td>@Html.DisplayFor(a => zone.Active)</td>
                     <td class="list-icon">
                         @Html.ActionLink("Sửa", "UpdateZone", new { zoneId = zone.Id }) - <a href="javascript:;"onclick="deleteZone('@zone.Id')"  class="red-warring deleteZone" id="@zone.Id">Xóa</a>

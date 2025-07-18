@@ -53,8 +53,8 @@ namespace OceanEduSlide.Controllers
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode.ToString() + ","));
             }
             else
             {
@@ -628,8 +628,8 @@ namespace OceanEduSlide.Controllers
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
             }
             else
             {

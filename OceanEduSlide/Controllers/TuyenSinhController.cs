@@ -34,7 +34,7 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 Categories1 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type1),
                 Categories2 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2),
-                Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3),
+                Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3 && (","+ a.Offices + ",").Contains(","+ OfficeCode + ",")),
             };
             return PartialView(model);
         }
@@ -56,8 +56,8 @@ namespace OceanEduSlide.Controllers
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.Id + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.ZoneId.ToString() + ","));
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode.ToString() + ","));
 
             }
             else
