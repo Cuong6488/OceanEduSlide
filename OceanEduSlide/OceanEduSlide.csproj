@@ -1335,6 +1335,7 @@
     <Content Include="Views\Home\Articles.cshtml" />
     <Content Include="Views\Event\CreateDebt.cshtml" />
     <Content Include="Views\Vcms\InsertZoneExcel.cshtml" />
+    <Content Include="Views\Vcms\TestTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

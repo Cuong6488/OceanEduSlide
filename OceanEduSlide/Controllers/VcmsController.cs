@@ -566,6 +566,43 @@ namespace OceanEduSlide.Controllers
                         user.OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id;
                         user.MaNhanVien = maxnhanvien;
                         user.Fullname = fullname;
+                        switch (phanquyen)
+                        {
+                            case "ASM":
+                                user.TypeUser = TypeUser.ASM;
+                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zones).FirstOrDefault();
+                                if (z != null)
+                                {
+                                    user.ZoneId = z.Id;
+                                    user.Zone = z;
+                                }
+
+                                break;
+                            case "GĐTS":
+                                user.TypeUser = TypeUser.HO;
+                                break;
+                            case "EC":
+                                user.TypeUser = TypeUser.EC;
+                                break;
+                            case "BM":
+                                user.TypeUser = TypeUser.BM;
+                                break;
+                            case "BSA":
+                                user.TypeUser = TypeUser.SAB;
+                                break;
+                            case "ATL":
+                                user.TypeUser = TypeUser.ALT;
+                                break;
+                            case "CM":
+                                user.TypeUser = TypeUser.CM;
+                                break;
+                            case "Chuyên viên":
+                                user.TypeUser = TypeUser.CV;
+                                user.ZoneIds = "," + zones + ",";
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     else
                     {
@@ -578,46 +615,45 @@ namespace OceanEduSlide.Controllers
                             MaNhanVien = maxnhanvien,
                             Fullname = fullname,
                         };
-                    }
+                        switch (phanquyen)
+                        {
+                            case "ASM":
+                                user.TypeUser = TypeUser.ASM;
+                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zones).FirstOrDefault();
+                                if (z != null)
+                                {
+                                    user.ZoneId = z.Id;
+                                    user.Zone = z;
+                                }
 
-                    switch (phanquyen)
-                    {
-                        case "ASM":
-                            user.TypeUser = TypeUser.ASM;
-                            var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zones).FirstOrDefault();
-                            if (z != null)
-                            {
-                                user.ZoneId = z.Id;
-                                user.Zone = z;
-                            }
-
-                            break;
-                        case "GĐTS":
-                            user.TypeUser = TypeUser.HO;
-                            break;
-                        case "EC":
-                            user.TypeUser = TypeUser.EC;
-                            break;
-                        case "BM":
-                            user.TypeUser = TypeUser.BM;
-                            break;
-                        case "BSA":
-                            user.TypeUser = TypeUser.SAB;
-                            break;
-                        case "ATL":
-                            user.TypeUser = TypeUser.ALT;
-                            break;
-                        case "CM":
-                            user.TypeUser = TypeUser.CM;
-                            break;
-                        case "Chuyên viên":
-                            user.TypeUser = TypeUser.CV;
-                            user.ZoneIds = "," + zones + ",";
-                            break;
-                        default:
-                            break;
+                                break;
+                            case "GĐTS":
+                                user.TypeUser = TypeUser.HO;
+                                break;
+                            case "EC":
+                                user.TypeUser = TypeUser.EC;
+                                break;
+                            case "BM":
+                                user.TypeUser = TypeUser.BM;
+                                break;
+                            case "BSA":
+                                user.TypeUser = TypeUser.SAB;
+                                break;
+                            case "ATL":
+                                user.TypeUser = TypeUser.ALT;
+                                break;
+                            case "CM":
+                                user.TypeUser = TypeUser.CM;
+                                break;
+                            case "Chuyên viên":
+                                user.TypeUser = TypeUser.CV;
+                                user.ZoneIds = "," + zones + ",";
+                                break;
+                            default:
+                                break;
+                        }
+                        _unitOfWork.UserRepository.Insert(user);
                     }
-                    _unitOfWork.UserRepository.Insert(user);
                 }
                 _unitOfWork.Save();
             }
@@ -634,7 +670,10 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListUser");
         }
         #endregion
-
+        public ActionResult TestTable()
+        {
+            return View();
+        }
         #region Category
         public ActionResult Category(int type)
         {
