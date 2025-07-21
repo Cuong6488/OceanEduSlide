@@ -264,6 +264,8 @@
     <Compile Include="Controllers\FaceIdController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\ProposalController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ReportHomeController.cs" />
     <Compile Include="Controllers\TuyenSinhController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
@@ -449,7 +451,25 @@
     <Compile Include="Migrations\202507180843577_RevenueUser_Month_BM_real.Designer.cs">
       <DependentUpon>202507180843577_RevenueUser_Month_BM_real.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507190756568_reportdt.cs" />
+    <Compile Include="Migrations\202507190756568_reportdt.Designer.cs">
+      <DependentUpon>202507190756568_reportdt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202507190922243_group.cs" />
+    <Compile Include="Migrations\202507190922243_group.Designer.cs">
+      <DependentUpon>202507190922243_group.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202507210833574_data-allownull.cs" />
+    <Compile Include="Migrations\202507210833574_data-allownull.Designer.cs">
+      <DependentUpon>202507210833574_data-allownull.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202507211034114_rpcount.cs" />
+    <Compile Include="Migrations\202507211034114_rpcount.Designer.cs">
+      <DependentUpon>202507211034114_rpcount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ReportData.cs" />
+    <Compile Include="Models\ReportCategory.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Proposal.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -477,6 +497,7 @@
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\EventViewModel.cs" />
+    <Compile Include="ViewModels\ReportHomeViewModel .cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\ProposalViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
@@ -1336,6 +1357,9 @@
     <Content Include="Views\Event\CreateDebt.cshtml" />
     <Content Include="Views\Vcms\InsertZoneExcel.cshtml" />
     <Content Include="Views\Vcms\TestTable.cshtml" />
+    <Content Include="Views\Vcms\TestTable2.cshtml" />
+    <Content Include="Views\Report\Report.cshtml" />
+    <Content Include="Views\ReportHome\ReportKDCN.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1524,6 +1548,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507180843577_RevenueUser_Month_BM_real.resx">
       <DependentUpon>202507180843577_RevenueUser_Month_BM_real.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507190756568_reportdt.resx">
+      <DependentUpon>202507190756568_reportdt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507190922243_group.resx">
+      <DependentUpon>202507190922243_group.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507210833574_data-allownull.resx">
+      <DependentUpon>202507210833574_data-allownull.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507211034114_rpcount.resx">
+      <DependentUpon>202507211034114_rpcount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

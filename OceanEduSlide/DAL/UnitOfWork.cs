@@ -29,6 +29,12 @@ namespace OceanEduSlide.DAL
         private GenericRepository<TypeFault> _typeFaultRepository;
         private GenericRepository<RankOffice> _rankOfficeRepository;
         private GenericRepository<Category> _categoryRepository;
+        private GenericRepository<ReportCategory> _reportCategoryRepository;
+        private GenericRepository<ReportData> _reportDataRepository;
+        public GenericRepository<ReportCategory> ReportCategoryRepository =>
+           _reportCategoryRepository ?? (_reportCategoryRepository = new GenericRepository<ReportCategory>(_context));
+        public GenericRepository<ReportData> ReportDataRepository =>
+           _reportDataRepository ?? (_reportDataRepository = new GenericRepository<ReportData>(_context));
         public GenericRepository<RankOffice> RankOfficeRepository =>
            _rankOfficeRepository ?? (_rankOfficeRepository = new GenericRepository<RankOffice>(_context));
         public GenericRepository<RevenueUser_DayOfWeek_Real> RevenueUser_DayOfWeek_RealRepository =>

@@ -46,11 +46,10 @@
   font-family: "swiss-condensedbold";
   src: url("../webfonts/utm-swiss-condensedbold.ttf") format("truetype");
 }
-@media (min-width: 1390px) {
-  .container {
-    max-width: unset;
-  }
+.container {
+  max-width: unset;
 }
+
 .header .navbar li {
   font-size: 1rem;
   font-weight: 600;
@@ -236,4 +235,12 @@ h2 {
 
 .w100px {
   width: 100px !important;
+}
+
+#groupWrapper {
+  display: flex !important;
+  gap: 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
 }

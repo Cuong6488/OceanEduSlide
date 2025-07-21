@@ -672,7 +672,7 @@ namespace OceanEduSlide.Controllers
         #endregion
         public ActionResult TestTable()
         {
-            return View();
+            return View("TestTable2");
         }
         #region Category
         public ActionResult Category(int type)

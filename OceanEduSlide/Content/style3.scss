@@ -10,10 +10,12 @@ $blue: #2D3AE2;
     font-family: 'utm avo';
     src: url('../webfonts/utm avo.ttf') format('truetype');
 }
+
 @font-face {
     font-family: 'inter';
     src: url('../webfonts/inter-variablefont_opsz,wght.ttf') format('truetype');
 }
+
 @font-face {
     font-family: 'josefinsans';
     src: url('../webfonts/josefinsans-variablefont_wght.ttf') format('truetype');
@@ -63,11 +65,13 @@ $blue: #2D3AE2;
     font-family: 'swiss-condensedbold';
     src: url('../webfonts/utm-swiss-condensedbold.ttf') format('truetype');
 }
+
 @mixin custom-background( $position: center, $size: 100% 100%, $repeat: no-repeat) {
     background-position: $position;
     background-size: $size;
     background-repeat: $repeat;
 }
+
 @mixin text-truncate($q) {
     display: -webkit-box;
     -webkit-line-clamp: $q;
@@ -77,10 +81,8 @@ $blue: #2D3AE2;
     word-break: break-word;
 }
 
-@media (min-width: 1390px) {
-    .container {
-        max-width: unset;
-    }
+.container {
+    max-width: unset;
 }
 
 .header .navbar li {
@@ -245,7 +247,7 @@ h2 {
         border-radius: 0 0px 10px 10px;
 
         &-bm {
-            height:100%;
+            height: 100%;
         }
     }
 
@@ -275,7 +277,7 @@ h2 {
     padding: 8px;
     max-width: 500px;
     color: white;
-    font-size:16px;
+    font-size: 16px;
 
     &-bm {
         background: #ccc;
@@ -289,4 +291,11 @@ h2 {
 
 .w100px {
     width: 100px !important;
+}
+#groupWrapper {
+    display: flex !important;
+    gap: 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
 }

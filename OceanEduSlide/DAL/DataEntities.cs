@@ -21,6 +21,8 @@ namespace OceanEduSlide.DAL
         public DbSet<TypeFault> TypeFaults { get; set; }
         public DbSet<RankOffice> RankOffices { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<ReportCategory> ReportCategories { get; set; }
+        public DbSet<ReportData> ReportDatas { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Proposal>()

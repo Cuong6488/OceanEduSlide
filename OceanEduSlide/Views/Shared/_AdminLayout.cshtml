@@ -109,6 +109,14 @@
                             <div>@Html.ActionLink("QĐ PTS - Hàng tháng", "Category", "Vcms", new { type = 3 }, new { @class = "text_link" })</div>
                         </div>
                     </li>
+                    <li data-id="9">
+                        <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Báo cáo</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Báo cáo KD CN", "Report", "Report", new { type = 1 }, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Báo cáo KD NV", "Report", "Report", new { type = 2 }, new { @class = "text_link" })</div>
+                            @*<div>@Html.ActionLink("QĐ PTS - Hàng tháng", "Report", "Report", new { type = 3 }, new { @class = "text_link" })</div>*@
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>

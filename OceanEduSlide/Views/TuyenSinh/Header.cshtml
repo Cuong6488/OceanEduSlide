@@ -28,14 +28,14 @@
 
                             <div class=" hidden" id="category1">
                                 <h2>Quy định chung PTS</h2>
-                                <table class="list_table table-striped box_content table-bordered mt-0" >
+                                <table class="list_table table-striped box_content table-bordered mt-0">
                                     <tbody>
                                         <tr>
-                                            <th >Mục lục</th>
-                                            <th >Nội dung</th>
-                                            <th >Quy định</th>
-                                            <th >Link đề xuất</th>
-                                            <th >Link theo dõi</th>
+                                            <th>Mục lục</th>
+                                            <th>Nội dung</th>
+                                            <th>Quy định</th>
+                                            <th>Link đề xuất</th>
+                                            <th>Link theo dõi</th>
                                         </tr>
                                         @foreach (var item in Model.Categories1)
                                         {
@@ -63,11 +63,11 @@
                                 <table class="list_table table-striped box_content mt-0">
                                     <tbody>
                                         <tr>
-                                            <th >Mục lục</th>
-                                            <th >Nội dung</th>
-                                            <th >Số QĐ</th>
-                                            <th >Link QĐ</th>
-                                            <th >Bảng tính/ Ghi chú</th>
+                                            <th>Mục lục</th>
+                                            <th>Nội dung</th>
+                                            <th>Số QĐ</th>
+                                            <th>Link QĐ</th>
+                                            <th>Bảng tính/ Ghi chú</th>
                                         </tr>
                                         @foreach (var item in Model.Categories2)
                                         {
@@ -95,13 +95,13 @@
                                 <table class="list_table table-striped box_content mt-0">
                                     <tbody>
                                         <tr>
-                                            <th >Mục lục</th>
-                                            <th >Tháng</th>
-                                            <th >Nhóm/ Vùng</th>
-                                            <th >Nội dung</th>
-                                            <th >Số QĐ</th>
-                                            <th >Link QĐ</th>
-                                            <th >Bảng tính/ Ghi chú</th>
+                                            <th>Mục lục</th>
+                                            <th>Tháng</th>
+                                            <th>Nhóm/ Vùng</th>
+                                            <th>Nội dung</th>
+                                            <th>Số QĐ</th>
+                                            <th>Link QĐ</th>
+                                            <th>Bảng tính/ Ghi chú</th>
                                         </tr>
                                         @foreach (var item in Model.Categories3)
                                         {
@@ -140,6 +140,15 @@
                 {
                     <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
                 }
+            </li>
+            <li>
+                <a href="javascript:;">BÁO CÁO</a>
+                <ul class="ul-reset" style="top:150%">
+                    <li style="padding:7px 15px">
+                        <a href="@Url.Action("ReportKDCN","ReportHome")">Báo cáo KDCN</a>
+                    </li>
+
+                </ul>
             </li>
             <li>
                 <a class="change-password" href="javascript:;"><i class="fa-solid fa-key"></i></a>
