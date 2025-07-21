@@ -22,12 +22,13 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ReportKDCN(int? ZoneId, int? Month, int? Year)
+        public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
         {
 
             if (User.TypeUser == null)
                 return HttpNotFound();
 
+            var pageNumber = page ?? 1;
             var model = new ListReportHomeViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
