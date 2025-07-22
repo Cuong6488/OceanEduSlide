@@ -118,6 +118,10 @@
   min-width: 90px !important;
 }
 
+.col-w100 {
+  min-width: 100px !important;
+}
+
 .col-w65 {
   min-width: 65px !important;
 }

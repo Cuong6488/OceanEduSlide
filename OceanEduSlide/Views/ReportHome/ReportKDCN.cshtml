@@ -117,7 +117,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th class="col-w90" colspan="@category.Count">@category.Name</th>
+                                    <th class="col-w100" colspan="@category.Count">@category.Name</th>
                                 </tr>
                                 <tr>
                                     @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
@@ -131,7 +131,7 @@
                                 @foreach (var office in Model.Offices)
                                 {
                                     <tr>
-                                        @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.CategoryParent.ReportCategoryId == category.Id).Take(category.Count ?? 1))
+                                        @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
                                         {
                                             <td>@data.Data</td>
                                         }
