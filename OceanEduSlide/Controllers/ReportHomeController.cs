@@ -36,7 +36,7 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 ZoneId = ZoneId,
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
-                ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year), q=> q.OrderBy(a => a.Sort))
+                ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year) && a.ReportCategory.TypeCat == TypeCat.Type1, q => q.OrderBy(a => a.Sort))
                 //OfficeId = OfficeId,
             };
             if (User.TypeUser == TypeUser.HO)
@@ -61,10 +61,62 @@ namespace OceanEduSlide.Controllers
                 model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
             }
             ViewBag.OfficeIds = ",";
-            foreach(var item in model.ReportDatas)
+            foreach (var item in model.ReportDatas)
             {
                 ViewBag.OfficeIds += item.OfficeId + ",";
             }
+            return View(model);
+        }
+        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
+        {
+
+            if (User.TypeUser == null)
+                return HttpNotFound();
+            var pageNumber = page ?? 1;
+            var model = new ListReportHomeViewModel
+            {
+                Month = Month ?? DateTime.Now.Month,
+                Year = Year ?? DateTime.Now.Year,
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+                User = User,
+                ZoneId = ZoneId,
+                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
+                ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year) && a.ReportCategory.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Sort)),
+                OfficeId = OfficeId,
+            };
+            if (User.TypeUser == TypeUser.HO)
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                else
+                    model.OfficeId = User.OfficeId;
+            }
+
+            if (model.ZoneId != null)
+            {
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                //model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+            }
+            if (model.OfficeId != null)
+            {
+                model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
+                model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId);
+            }
+            string manhanviens = ",";
+            foreach (var item in model.ReportDatas)
+            {
+                if (!(manhanviens + ",").Contains("," + item.User?.MaNhanVien + ","))
+                    manhanviens += item.User?.MaNhanVien + ",";
+            }
+            ViewBag.MaNhanViens = manhanviens;
             return View(model);
         }
 

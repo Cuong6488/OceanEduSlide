@@ -467,6 +467,14 @@
     <Compile Include="Migrations\202507211034114_rpcount.Designer.cs">
       <DependentUpon>202507211034114_rpcount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507220756104_reporttype2.cs" />
+    <Compile Include="Migrations\202507220756104_reporttype2.Designer.cs">
+      <DependentUpon>202507220756104_reporttype2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202507220924344_reportuser.cs" />
+    <Compile Include="Migrations\202507220924344_reportuser.Designer.cs">
+      <DependentUpon>202507220924344_reportuser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ReportData.cs" />
     <Compile Include="Models\ReportCategory.cs" />
@@ -1360,6 +1368,7 @@
     <Content Include="Views\Vcms\TestTable2.cshtml" />
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\ReportHome\ReportKDCN.cshtml" />
+    <Content Include="Views\ReportHome\ReportKDNV.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1560,6 +1569,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507211034114_rpcount.resx">
       <DependentUpon>202507211034114_rpcount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507220756104_reporttype2.resx">
+      <DependentUpon>202507220756104_reporttype2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507220924344_reportuser.resx">
+      <DependentUpon>202507220924344_reportuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
