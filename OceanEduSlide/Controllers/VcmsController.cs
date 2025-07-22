@@ -1004,9 +1004,9 @@ namespace OceanEduSlide.Controllers
 
                 var tbl = result.Tables[0];
                 var zones = _unitOfWork.ZoneRepository.GetQuery();
-                var officeIds = "";
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
+                    var officeIds = "";
                     var officescode = tbl.Rows[i][0].ToString().Trim();
 
                     var fullname = tbl.Rows[i][1].ToString().Trim();

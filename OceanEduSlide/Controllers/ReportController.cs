@@ -79,7 +79,7 @@ namespace OceanEduSlide.Controllers
                                 lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
                             }
                             if (string.IsNullOrEmpty(lastCategoryParent)) continue;
-                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name == categoryChild && a.CategoryParent.Name == lastCategoryParent).FirstOrDefault();
+                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name == categoryChild && a.CategoryParent.Name.Trim() == lastCategoryParent).FirstOrDefault();
                             if (category == null)
                                 continue;
                             var oldData = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == DateTime.Now.Year && a.Month == monthInt && a.ReportCategoryId == category.Id).FirstOrDefault();
@@ -104,7 +104,7 @@ namespace OceanEduSlide.Controllers
                     }
                 _unitOfWork.Save();
             }
-            return View(new { type });
+            return RedirectToAction("Report", new { type });
         }
 
         protected override void Dispose(bool disposing)

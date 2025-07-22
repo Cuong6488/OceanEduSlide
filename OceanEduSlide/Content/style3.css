@@ -1,4 +1,5 @@
-﻿@font-face {
+﻿@charset "UTF-8";
+@font-face {
   font-family: "utm avo";
   src: url("../webfonts/utm avo.ttf") format("truetype");
 }
@@ -241,10 +242,249 @@ h2 {
   width: 100px !important;
 }
 
+/*#groupWrapper {
+    & > :nth-child(2n) {
+        .col-w100 {
+            background: #d4a604;
+            color: white
+        }
+
+        .col-w65 {
+            background: #fae496;
+        }
+    }
+
+    & > :nth-child(2n+1) {
+        .col-w100 {
+            background: #31783c;
+            color: white
+        }
+
+        .col-w65 {
+            background: #97c99f;
+        }
+    }
+}*/
+.columnGroup-1 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-1 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-2 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-2 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-3 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-3 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-4 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-4 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-5 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-5 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-6 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-6 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-7 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-7 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-8 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-8 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-9 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-9 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-10 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-10 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-11 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-11 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-12 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-12 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-13 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-13 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-14 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-14 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-15 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-15 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-16 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-16 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-17 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-17 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-18 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-18 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup-19 .col-w100 {
+  background: #31783c;
+  color: white;
+}
+.columnGroup-19 .col-w65 {
+  background: #97c99f;
+}
+
+.columnGroup-20 .col-w100 {
+  background: #d4a604;
+  color: white;
+}
+.columnGroup-20 .col-w65 {
+  background: #fae496;
+}
+
+.columnGroup table.no-right-border th,
+.columnGroup table.no-right-border td {
+  /*border-right: none;*/
+}
+
+/* Nếu muốn, dùng thêm margin để che overlap */
+.columnGroup table.no-right-border {
+  margin-right: -1px;
+}
+
+td, th {
+  height: 45px !important;
+}
+
+.h-90 {
+  height: 90px !important;
+}
+
+#OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
+  display: none !important;
+}
+
 #groupWrapper {
   display: flex !important;
   gap: 0;
+  /*border: 1px solid #ccc;*/
+  /*border-radius: 6px;*/
+  overflow: auto;
+  border-right: 1px solid #ccc;
+}
+
+.columnGroup {
+  flex-grow: 1;
+  margin-right: -1px; /* để border không bị dày lên */
+}
+.columnGroup table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-family: "Segoe UI", sans-serif;
+  border: none;
+}
+.columnGroup table th, .columnGroup table td {
   border: 1px solid #ccc;
-  border-radius: 6px;
-  overflow: hidden;
+  padding: 6px;
+  text-align: center;
+}
+.columnGroup thead th {
+  /*background-color: #f0f4ff;*/
+  font-weight: bold;
+}
+.columnGroup:hover {
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-group-id=group-0] {
+  flex-grow: 1;
+  /*margin-right: -1px;*/
+}
+[data-group-id=group-0] th {
+  background: #053d7d;
+  color: white;
 }

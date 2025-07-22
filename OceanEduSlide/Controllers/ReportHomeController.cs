@@ -59,8 +59,12 @@ namespace OceanEduSlide.Controllers
             {
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
                 model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
-            }    
-
+            }
+            ViewBag.OfficeIds = ",";
+            foreach(var item in model.ReportDatas)
+            {
+                ViewBag.OfficeIds += item.OfficeId + ",";
+            }
             return View(model);
         }
 

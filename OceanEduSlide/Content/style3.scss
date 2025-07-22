@@ -1,4 +1,4 @@
-$main-color: #00aeef;
+﻿$main-color: #00aeef;
 $secondmain-color: #2e3191;
 $linear: linear-gradient(180deg, #228B22 0%, #5EB22F 100%);
 $red: #DE0000;
@@ -163,6 +163,7 @@ $blue: #2D3AE2;
 .col-w90 {
     min-width: 90px !important;
 }
+
 .col-w100 {
     min-width: 100px !important;
 }
@@ -295,10 +296,113 @@ h2 {
 .w100px {
     width: 100px !important;
 }
+/*#groupWrapper {
+    & > :nth-child(2n) {
+        .col-w100 {
+            background: #d4a604;
+            color: white
+        }
+
+        .col-w65 {
+            background: #fae496;
+        }
+    }
+
+    & > :nth-child(2n+1) {
+        .col-w100 {
+            background: #31783c;
+            color: white
+        }
+
+        .col-w65 {
+            background: #97c99f;
+        }
+    }
+}*/
+$groupCount: 20;
+
+@for $i from 1 through $groupCount {
+    .columnGroup-#{$i} {
+        .col-w100 {
+            background: if($i % 2 == 1, #31783c, #d4a604);
+            color: white;
+        }
+
+        .col-w65 {
+            background: if($i % 2 == 1, #97c99f, #fae496);
+        }
+    }
+}
+
+.columnGroup table.no-right-border th,
+.columnGroup table.no-right-border td {
+    /*border-right: none;*/
+}
+
+/* Nếu muốn, dùng thêm margin để che overlap */
+.columnGroup table.no-right-border {
+    margin-right: -1px;
+}
+
+td, th {
+    height: 45px !important;
+}
+
+.h-90 {
+    height: 90px !important;
+}
+
+#OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
+    display: none !important;
+}
+
 #groupWrapper {
     display: flex !important;
     gap: 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    overflow: hidden;
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 6px;*/
+    overflow: auto;
+    border-right: 1px solid #ccc;
+}
+
+.columnGroup {
+    flex-grow: 1;
+    margin-right: -1px; /* để border không bị dày lên */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        font-family: "Segoe UI", sans-serif;
+        border: none;
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }
+    }
+
+    thead th {
+        /*background-color: #f0f4ff;*/
+        font-weight: bold;
+    }
+
+    &:hover {
+        box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+    }
+}
+
+
+
+
+
+
+
+[data-group-id="group-0"] {
+    flex-grow: 1;
+    /*margin-right: -1px;*/
+    th {
+        background: #053d7d;
+        color: white
+    }
 }
