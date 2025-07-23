@@ -1181,6 +1181,8 @@ namespace OceanEduSlide.Controllers
                         if (office != null)
                         {
                             office.ZoneId = zone.Id;
+                            if (!("," + zone.ShortName + ",").Contains("," + office.ShortCode + ","))
+                                zone.ShortName += "," + office.ShortCode;
                         }
                     }
                     _unitOfWork.Save();

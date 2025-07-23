@@ -56,6 +56,8 @@ namespace OceanEduSlide.Controllers
                 var tbl = result.Tables[0];
                 //var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Sort));
                 string lastCategoryParent = "";
+                //string previousCategoryParent = "";
+
 
                 if (type == 1)
                     for (int i = 2; i < tbl.Rows.Count; i++)
@@ -122,16 +124,25 @@ namespace OceanEduSlide.Controllers
                         var note = tbl.Rows[i][7].ToString().Trim();
                         var dayOff = tbl.Rows[i][8].ToString().Trim();
                         var daysWork = tbl.Rows[i][9].ToString().Trim();
-
+                        //int cChildSort = 1;
+                        //int group = 1;
                         for (int j = 10; j < tbl.Columns.Count; j++)
                         {
                             var value = tbl.Rows[i][j].ToString().Trim();
-                            //if (string.IsNullOrEmpty(value)) 
+                            //if (string.IsNullOrEmpty(value))
                             var categoryChild = tbl.Rows[1][j].ToString().Trim();      // danh mục con: "Thực tế"
                             if (string.IsNullOrEmpty(categoryChild)) continue;
                             var rawCategoryParentCategory = tbl.Rows[0][j].ToString().Trim();
                             if (!string.IsNullOrEmpty(rawCategoryParentCategory))
                             {
+                                //if (rawCategoryParentCategory != lastCategoryParent)
+                                //{
+                                //    previousCategoryParent = lastCategoryParent;
+                                //    lastCategoryParent = rawCategoryParentCategory;
+                                //    group++;
+                                //}
+
+
                                 lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
                             }
                             if (string.IsNullOrEmpty(lastCategoryParent)) continue;
