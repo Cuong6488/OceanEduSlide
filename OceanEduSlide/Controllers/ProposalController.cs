@@ -37,7 +37,7 @@ namespace OceanEduSlide.Controllers
                     model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "Name");
             }
             else
-                model.Proposal.OfficeId = User.OfficeId;
+                model.Proposal.OfficeId = (int)User.OfficeId;
             //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
             return View(model);
         }
@@ -51,7 +51,7 @@ namespace OceanEduSlide.Controllers
                     model.Proposal.Active = true;
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office != null)
-                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString()+ office.ShortCode;
+                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + office.ShortCode;
                 var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
                 if (z != null)
                 {
@@ -71,7 +71,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListProposal");
         }
 
-        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice,string MaDeXuat, string Result = "")
+        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string MaDeXuat, string Result = "")
         {
             if (User.TypeUser == null || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.ALT)
                 return HttpNotFound();
@@ -88,7 +88,7 @@ namespace OceanEduSlide.Controllers
                 MaDeXuat = MaDeXuat
             };
             var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
-            if(!string.IsNullOrEmpty(MaDeXuat))
+            if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
             if (Year.HasValue)
             {
@@ -107,7 +107,7 @@ namespace OceanEduSlide.Controllers
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
 
             }
-            else if(User.TypeUser == TypeUser.HO)
+            else if (User.TypeUser == TypeUser.HO)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
                 proposals = proposals.Where(a => a.Active);
@@ -242,7 +242,7 @@ namespace OceanEduSlide.Controllers
         {
             var proposal = _unitOfWork.ProposalRepository.GetById(id);
             if (proposal == null)
-                return Json(new {status = false});
+                return Json(new { status = false });
             proposal.NSSeen = true;
             _unitOfWork.Save();
             return Json(new { status = true });

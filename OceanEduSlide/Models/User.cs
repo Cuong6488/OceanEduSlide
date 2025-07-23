@@ -36,7 +36,7 @@ namespace OceanEduSlide.Models
         [Display(Name = "Tài khoản SaleKit")]
         public bool SaleKit { get; set; }
         [Display(Name = "Chi nhánh")]
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
         [Display(Name = "Phân quyền")]

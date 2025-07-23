@@ -34,8 +34,10 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 Categories1 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type1),
                 Categories2 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2),
-                Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3 && (","+ a.Offices + ",").Contains(","+ OfficeCode + ",")),
+                Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3),
             };
+            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB)
+                model.Categories3 = model.Categories3.Where(a => (","+ a.Offices + ",").Contains(","+ OfficeCode + ","));
             return PartialView(model);
         }
         public ActionResult Revenue(int? ZoneId,int? Month, int? OfficeId, int? Year, string Result = "")

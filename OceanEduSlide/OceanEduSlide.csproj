@@ -475,6 +475,10 @@
     <Compile Include="Migrations\202507220924344_reportuser.Designer.cs">
       <DependentUpon>202507220924344_reportuser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507230907317_officeidnull.cs" />
+    <Compile Include="Migrations\202507230907317_officeidnull.Designer.cs">
+      <DependentUpon>202507230907317_officeidnull.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ReportData.cs" />
     <Compile Include="Models\ReportCategory.cs" />
@@ -1575,6 +1579,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507220924344_reportuser.resx">
       <DependentUpon>202507220924344_reportuser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507230907317_officeidnull.resx">
+      <DependentUpon>202507230907317_officeidnull.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

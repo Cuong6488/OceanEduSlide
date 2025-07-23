@@ -563,7 +563,7 @@ namespace OceanEduSlide.Controllers
                     {
                         user.Password = password2;
                         user.Active = true;
-                        user.OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id;
+                        user.OfficeId = office?.Id ?? null;
                         user.MaNhanVien = maxnhanvien;
                         user.Fullname = fullname;
                         switch (phanquyen)
@@ -611,7 +611,7 @@ namespace OceanEduSlide.Controllers
                             Username = username,
                             Password = password2,
                             Active = true,
-                            OfficeId = office == null ? offices.FirstOrDefault()?.Id ?? 0 : office.Id,
+                            OfficeId = office?.Id ?? null,
                             MaNhanVien = maxnhanvien,
                             Fullname = fullname,
                         };
@@ -661,10 +661,15 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult DeleteUserWrong()
         {
-            var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.MaNhanVien) && a.MaNhanVien.Length < 8);
-            foreach (var user in users)
+            //var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.MaNhanVien) && a.MaNhanVien.Length < 8);
+            //foreach (var user in users)
+            //{
+            //    user.Active = false;
+            //}
+            var userNoOffices = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.HO || a.TypeUser == TypeUser.CV || a.TypeUser == TypeUser.ASM);
+            foreach (var user in userNoOffices)
             {
-                user.Active = false;
+                user.OfficeId = null;
             }
             _unitOfWork.Save();
             return RedirectToAction("ListUser");

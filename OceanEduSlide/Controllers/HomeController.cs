@@ -57,7 +57,8 @@ namespace OceanEduSlide.Controllers
                 }
 
                 var office = _unitOfWork.OfficeRepository.GetById(user.OfficeId);
-                var userData = user.Username + "|" + user.OfficeId + "|" + office.ShortCode;
+                // QL : Quản lý - không thuộc chi nhánh nào
+                var userData = user.Username + "|" + user.OfficeId + "|" + office?.ShortCode;
                 var ticket = new FormsAuthenticationTicket(2, user.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
