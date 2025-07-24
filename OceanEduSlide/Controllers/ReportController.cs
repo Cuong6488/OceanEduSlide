@@ -69,6 +69,8 @@ namespace OceanEduSlide.Controllers
                         if (string.IsNullOrEmpty(officeShortName)) continue;
                         var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeShortName).FirstOrDefault();
                         if (office == null) continue;
+                        int cChildSort = 1;
+                        int group = 1;
                         for (int j = 4; j < tbl.Columns.Count; j++)
                         {
                             var value = tbl.Rows[i][j].ToString().Trim();
@@ -78,10 +80,22 @@ namespace OceanEduSlide.Controllers
                             var rawCategoryParentCategory = tbl.Rows[0][j].ToString().Trim();
                             if (!string.IsNullOrEmpty(rawCategoryParentCategory))
                             {
-                                lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
+                                if (rawCategoryParentCategory != lastCategoryParent)
+                                {
+                                    if (j != 4)
+                                    {
+                                        cChildSort = 1;
+                                        group++;
+                                    }
+
+                                    lastCategoryParent = rawCategoryParentCategory;
+                                }
+                                //lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
                             }
                             if (string.IsNullOrEmpty(lastCategoryParent)) continue;
-                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name.Trim() == categoryChild && a.CategoryParent.Name.Trim() == lastCategoryParent && a.TypeCat == TypeCat.Type1).FirstOrDefault();
+                            //var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name.Trim() == categoryChild && a.CategoryParent.Name.Trim() == lastCategoryParent && a.TypeCat == TypeCat.Type1).FirstOrDefault();
+                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Sort == cChildSort && a.CategoryParent.Sort == group && a.TypeCat == TypeCat.Type1).FirstOrDefault();
+
                             if (category == null)
                                 continue;
                             var oldData = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == DateTime.Now.Year && a.Month == monthInt && a.ReportCategoryId == category.Id).FirstOrDefault();
@@ -102,6 +116,7 @@ namespace OceanEduSlide.Controllers
                             {
                                 oldData.Data = value;
                             }
+                            cChildSort++;
                         }
                     }
 
@@ -124,8 +139,8 @@ namespace OceanEduSlide.Controllers
                         var note = tbl.Rows[i][7].ToString().Trim();
                         var dayOff = tbl.Rows[i][8].ToString().Trim();
                         var daysWork = tbl.Rows[i][9].ToString().Trim();
-                        //int cChildSort = 1;
-                        //int group = 1;
+                        int cChildSort = 1;
+                        int group = 1;
                         for (int j = 10; j < tbl.Columns.Count; j++)
                         {
                             var value = tbl.Rows[i][j].ToString().Trim();
@@ -135,18 +150,23 @@ namespace OceanEduSlide.Controllers
                             var rawCategoryParentCategory = tbl.Rows[0][j].ToString().Trim();
                             if (!string.IsNullOrEmpty(rawCategoryParentCategory))
                             {
-                                //if (rawCategoryParentCategory != lastCategoryParent)
-                                //{
-                                //    previousCategoryParent = lastCategoryParent;
-                                //    lastCategoryParent = rawCategoryParentCategory;
-                                //    group++;
-                                //}
+                                if (rawCategoryParentCategory != lastCategoryParent)
+                                {
+                                    if (j != 10)
+                                    {
+                                        cChildSort = 1;
+                                        group++;
+                                    }
+
+                                    lastCategoryParent = rawCategoryParentCategory;
+                                }
 
 
-                                lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
+                                //lastCategoryParent = rawCategoryParentCategory; // danh mục cha: "Định biên sale"
                             }
                             if (string.IsNullOrEmpty(lastCategoryParent)) continue;
-                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name.Trim() == categoryChild && a.CategoryParent.Name.Trim() == lastCategoryParent && a.TypeCat == TypeCat.Type2).FirstOrDefault();
+                            //var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Name.Trim() == categoryChild && a.CategoryParent.Name.Trim() == lastCategoryParent && a.TypeCat == TypeCat.Type2).FirstOrDefault();
+                            var category = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Sort == cChildSort && a.CategoryParent.Sort == group && a.TypeCat == TypeCat.Type2).FirstOrDefault();
                             if (category == null)
                                 continue;
                             var oldData = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == DateTime.Now.Year && a.Month == monthInt && a.ReportCategoryId == category.Id).FirstOrDefault();
@@ -168,13 +188,20 @@ namespace OceanEduSlide.Controllers
                             {
                                 oldData.Data = value;
                             }
+
+                            cChildSort++;
                         }
                     }
                 _unitOfWork.Save();
             }
             return RedirectToAction("Report", new { type });
         }
-
+        public ActionResult ClearReport()
+        {
+            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery();
+            reportCategories.Delete();
+            return RedirectToAction("Index","Vcms");
+        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

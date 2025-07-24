@@ -479,7 +479,12 @@
     <Compile Include="Migrations\202507230907317_officeidnull.Designer.cs">
       <DependentUpon>202507230907317_officeidnull.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507241014595_calllog.cs" />
+    <Compile Include="Migrations\202507241014595_calllog.Designer.cs">
+      <DependentUpon>202507241014595_calllog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\ReportData.cs" />
     <Compile Include="Models\ReportCategory.cs" />
     <Compile Include="Models\Category.cs" />
@@ -1373,6 +1378,7 @@
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\ReportHome\ReportKDCN.cshtml" />
     <Content Include="Views\ReportHome\ReportKDNV.cshtml" />
+    <Content Include="Views\ReportHome\ListCall.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1582,6 +1588,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507230907317_officeidnull.resx">
       <DependentUpon>202507230907317_officeidnull.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507241014595_calllog.resx">
+      <DependentUpon>202507241014595_calllog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

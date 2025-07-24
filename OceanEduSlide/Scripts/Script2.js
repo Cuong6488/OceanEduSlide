@@ -127,11 +127,13 @@ $(".targetuser_month_HO").each(function () {
     //alert(totalWeekTarget);
     // Kiểm tra tổng số sau khi duyệt qua tất cả các phần tử
     if (totalWeekTarget !== targetuser_month_real) {
+        
         elements.each(function (index) {
             if (index >= currentWeek - 1) {
                 $(this).siblings(".revenue-value-week_BM").text("");
                 $(this).closest("td").next("td").text("");
                 $(this).val("");
+                
             }
         });
     }

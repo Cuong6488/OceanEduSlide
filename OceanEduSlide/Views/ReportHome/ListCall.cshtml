@@ -1,0 +1,33 @@
+﻿@using OceanEduSlide.Models
+@model  IEnumerable<CallLog>
+
+<h2>Danh sách cuộc gọi đã trả lời (ANSWERED)</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Thời gian</th>
+            <th>Số điện thoại</th>
+            <th>Máy nhánh</th>
+            <th>Thời lượng</th>
+            <th>Ghi âm</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CallDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                <td>@item.Phone</td>
+                <td>@item.Exten</td>
+                <td>@item.Duration giây</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.RecordingFile))
+                    {
+                        <a href="@item.RecordingFile" target="_blank">Nghe</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,11 +1,15 @@
-﻿using OceanEduSlide.DAL;
+﻿using Newtonsoft.Json;
+using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -18,6 +22,7 @@ namespace OceanEduSlide.Controllers
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
+
         public ActionResult Index()
         {
             return View();
@@ -108,7 +113,7 @@ namespace OceanEduSlide.Controllers
             if (model.OfficeId != null)
             {
                 model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
-                model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId);
+                model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.TypeUser != null);
             }
             string manhanviens = ",";
             foreach (var item in model.ReportDatas)
@@ -118,6 +123,90 @@ namespace OceanEduSlide.Controllers
             }
             ViewBag.MaNhanViens = manhanviens;
             return View(model);
+        }
+        public async Task<ActionResult> Sync()
+        {
+            await SyncCallLogsAsync();
+            return Content("Đã đồng bộ xong các cuộc gọi đã trả lời (ANSWERED).");
+        }
+        public ActionResult ListCall()
+        {
+            var logs = _unitOfWork.CallLogRepository
+                .GetQuery(c => c.Disposition == "ANSWERED")
+                .OrderByDescending(c => c.CallDate)
+                .Take(20);
+
+            return View(logs);
+        }
+
+        private async Task SyncCallLogsAsync()
+        {
+            int daysToCheck = 3;
+            DateTime today = DateTime.Today;
+
+            for (int i = 1; i <= daysToCheck; i++)
+            {
+                DateTime day = today.AddDays(-i);
+
+                bool hasData = _unitOfWork.CallLogRepository
+                    .GetQuery(x => DbFunctions.TruncateTime(x.CallDate) == day)
+                    .Any();
+
+                if (!hasData)
+                {
+                    await FetchAndSaveLogsAsync(day);
+                }
+            }
+        }
+
+        private async Task FetchAndSaveLogsAsync(DateTime day)
+        {
+            string user = "lvd";
+            string pass = "qazplm123`$%^";
+            string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
+
+            string tbegin = day.ToString("yyyy/MM/dd");
+            string tend = day.AddDays(1).ToString("yyyy/MM/dd");
+
+            string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
+
+            using (var http = new HttpClient())
+            {
+                try
+                {
+                    var json = await http.GetStringAsync(url);
+                    var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+
+                    var logs = allLogs
+                        .Where(l => l.Disposition == "ANSWERED")
+                        .ToList();
+
+                    foreach (var log in logs)
+                    {
+                        bool exists = _unitOfWork.CallLogRepository
+                            .GetQuery(c => c.UniqueId == log.UniqueId)
+                            .Any();
+
+                        if (!exists)
+                        {
+                            log.CallDateString = log.CallDate.ToString("dd-MM-yyyy");
+                            var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
+                            if (u != null)
+                            {
+                                log.UserId = u.Id;
+                                _unitOfWork.CallLogRepository.Insert(log);
+                            }
+                        }
+                    }
+
+                    _unitOfWork.Save();
+                    System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count} calls for {day:yyyy-MM-dd}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✗ Error syncing {day:yyyy-MM-dd}: {ex.Message}");
+                }
+            }
         }
 
     }
