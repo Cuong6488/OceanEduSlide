@@ -131,17 +131,19 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ListCall()
         {
+            int pageSize = 20;
+            int pageIndex = 1; // Ví dụ, bạn muốn lấy trang 1
+
             var logs = _unitOfWork.CallLogRepository
                 .GetQuery(c => c.Disposition == "ANSWERED")
-                .OrderByDescending(c => c.CallDate)
-                .Take(20);
+                .Take(pageSize);
 
             return View(logs);
         }
 
         private async Task SyncCallLogsAsync()
         {
-            int daysToCheck = 3;
+            int daysToCheck = 7;
             DateTime today = DateTime.Today;
 
             for (int i = 1; i <= daysToCheck; i++)
@@ -178,29 +180,54 @@ namespace OceanEduSlide.Controllers
                     var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
 
                     var logs = allLogs
-                        .Where(l => l.Disposition == "ANSWERED")
-                        .ToList();
-
-                    foreach (var log in logs)
+                                .Where(l => l.Disposition == "ANSWERED")
+                                .ToList();
+                    var uniqueIds = logs.Select(l => l.UniqueId).ToList();
+                    var existingUniqueIds = _unitOfWork.CallLogRepository
+            .GetQuery(c => uniqueIds.Contains(c.UniqueId)) // Truy vấn dựa trên danh sách UniqueId
+            .Select(c => c.UniqueId)
+            .ToList();
+                    var newLogs = logs
+            .Where(log => !existingUniqueIds.Contains(log.UniqueId))
+            .ToList();
+                    //foreach (var log in newLogs)
+                    //{
+                    //    log.CallDateString = log.CallDate.ToString("dd/MM/yyyy");
+                    //    var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
+                    //    if (u != null)
+                    //    {
+                    //        log.UserId = u.Id;
+                    //    }
+                    //    else
+                    //    {
+                    //        // Nếu không tìm thấy người dùng, xóa bản ghi khỏi newLogs
+                    //        System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
+                    //        newLogs.Remove(log);  // Loại bỏ log khỏi newLogs
+                    //        continue;  // Bỏ qua bản ghi này và chuyển sang bản ghi tiếp theo
+                    //    }
+                    //}
+                    newLogs.RemoveAll(log =>
                     {
-                        bool exists = _unitOfWork.CallLogRepository
-                            .GetQuery(c => c.UniqueId == log.UniqueId)
-                            .Any();
-
-                        if (!exists)
+                        var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
+                        if (u != null)
                         {
-                            log.CallDateString = log.CallDate.ToString("dd-MM-yyyy");
-                            var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
-                            if (u != null)
-                            {
-                                log.UserId = u.Id;
-                                _unitOfWork.CallLogRepository.Insert(log);
-                            }
+                            log.UserId = u.Id;  // Gán UserId cho log
+                            return false;  // Nếu tìm thấy người dùng, không xóa bản ghi này
                         }
+                        else
+                        {
+                            // Nếu không tìm thấy người dùng, xóa log khỏi newLogs
+                            System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
+                            return true;  // Xóa log này khỏi newLogs
+                        }
+                    });
+                    if (newLogs.Any())
+                    {
+                        _unitOfWork.CallLogRepository.InsertRange(newLogs);
+                        _unitOfWork.Save();
                     }
-
-                    _unitOfWork.Save();
-                    System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count} calls for {day:yyyy-MM-dd}");
+                    //_unitOfWork.Save();
+                    //System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count()} calls for {day:yyyy-MM-dd}");
                 }
                 catch (Exception ex)
                 {
