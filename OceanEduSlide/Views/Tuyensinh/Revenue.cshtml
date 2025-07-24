@@ -204,7 +204,7 @@
                     <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu <br /> doanh số</th>
                     <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu DS <br /> cam kết HT <br />(gồm DT cũ)</th>
                     <th rowspan="2" style="min-width: 55px !important">% HT <br /> cam kết/ <br />tháng</th>
-                    <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu DS <br /> cam kết + HT <br />thực tế</th>
+                    @*<th rowspan="2" style="min-width: 90px !important">Chỉ tiêu DS <br /> cam kết + HT <br />thực tế</th>*@
                     <th rowspan="2">Dự thu <br /> tháng trước</th>
                     <th rowspan="2">Số tiền <br /> thực chạy</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
@@ -277,7 +277,7 @@
                                 </td>
                                 <td class="percent_user_month">
                                 </td>
-                                <td>
+                                @*<td>
                                     @if (revenueOffice.RevenueUser_Month_BM_real != null)
                                     {
 
@@ -305,7 +305,7 @@
                                             <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Month_BM_real " />
                                         }
                                     }
-                                </td>
+                                </td>*@
                                 <td class="col-w90 debt-lastmonth">@revenueOffice.Debt.ToString("N0")</td>
                                 <td class="col-w90 real-target-month"></td>
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
@@ -366,8 +366,8 @@
                                 <td>
                                     Chưa cập nhật
                                 </td>
-                                <td>
-                                </td>
+                                @*<td>
+                                </td>*@
                                 <td>
                                 </td>
                                 <td>
