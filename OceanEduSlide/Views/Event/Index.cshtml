@@ -149,18 +149,22 @@
                                                 @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
                                                 if (ev.LinkUrl != null)
                                                 {
-                                                    <a class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a>
+                                                    <a style="color:blue" class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a> <br />
                                                 }
                                                 if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
                                                 {
-                                                    <a class="mt-2 d-inline-block" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                    <div class="d-flex justify-content-between">
+                                                        <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                        <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
+                                                    </div>
+
                                                 }
                                             }
                                             else
                                             {
                                                 if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
                                                 {
-                                                    <a href="@Url.Action("AddEvent",new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.Week,dayofWeek = i,typeEvent = j})">Cập nhật</a>
+                                                    <a class="text-danger" href="@Url.Action("AddEvent",new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.Week,dayofWeek = i,typeEvent = j})">Cập nhật</a>
                                                 }
                                             }
                                         </td>
@@ -181,11 +185,15 @@
                                                 @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
                                                 if (ev.LinkUrl != null)
                                                 {
-                                                    <a class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a>
+                                                    <a style="color:blue" class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a> <br />
                                                 }
                                                 if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
                                                 {
-                                                    <a class="mt-2 d-inline-block" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                    <div class="d-flex justify-content-between">
+                                                        <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                        <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
+
+                                                    </div>
                                                 }
 
                                             }
@@ -450,9 +458,9 @@
                                             <td class="day-target-number">
                                                 <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
                                                 @*<div class="btnhistory-input">
-                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                </div>*@
+                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                    </div>*@
                                                 <div class="revenue-value">
                                                     @(revenueUser_Day2.DT?.ToString("N0"))
                                                 </div>
@@ -537,9 +545,9 @@
                                             <td class="day-target-number">
                                                 <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
                                                 @*<div class="btnhistory-input">
-                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                </div>*@
+                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day2",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                    </div>*@
                                                 <div class="revenue-value">
                                                     @(revenueUser_Day2.DT?.ToString("N0"))
                                                 </div>

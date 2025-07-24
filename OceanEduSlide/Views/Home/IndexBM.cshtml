@@ -59,6 +59,8 @@
                 </div>
                 @if (Model.RankOffice != null)
                 {
+                    var dshtdt = decimal.Parse(Model.RankOffice.DSHT) + Model.Debt;
+                    var pthtdt = dshtdt / Model.TMonth * 100;
                     <div class="col">
                         <div class="box-remind">
                             <div class="remind-works remind-works-bm">
@@ -67,8 +69,8 @@
                                     Chỉ tiêu: <strong>@(Model.TMonth.ToString("N0"))đ</strong> <br />
                                     % Hoàn thành: <strong>@((decimal.Parse(Model.RankOffice.PTHT) * 100).ToString("N0"))%</strong> <br />
                                     Doanh số hoàn thành: <strong>@( decimal.Parse(Model.RankOffice.DSHT).ToString("N0"))đ</strong> <br />
-                                    % Hoàn thành dự thu: <strong>@((decimal.Parse(Model.RankOffice.PTHTDT) * 100).ToString("N0"))%</strong> <br />
-                                    Doanh số hoàn thành: <strong>@( decimal.Parse(Model.RankOffice.DSDT).ToString("N0"))đ</strong> <br />
+                                    % Hoàn thành dự thu: <strong>@(pthtdt.ToString("N0"))%</strong> <br />
+                                    Doanh số hoàn thành dự thu: <strong>@(dshtdt.ToString("N0"))đ</strong> <br />
                                 </div>
                                 <p class="box-remind-title mb-0"><strong>Công nợ</strong></p>
                                 <div class="box-remind-content">

@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
 {
@@ -618,6 +619,18 @@ namespace OceanEduSlide.Controllers
             model.Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == model.Event.OfficeId);
             return View(model);
         }
+        [HttpPost]
+        public JsonResult DeleteEvent(int evId)
+        {
+            var ev = _unitOfWork.EventRepository.GetById(evId);
+            if (ev == null)
+                return Json(new { status = false });
+            var listCV = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == evId);
+            listCV.Delete();
+            _unitOfWork.EventRepository.Delete(ev);
+            _unitOfWork.Save();
+            return Json(new { status = true });
+        }
         #endregion
 
         #region Công_nợ
@@ -664,7 +677,7 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
                 return HttpNotFound();
-            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && (a.OfficeId == User.OfficeId || ("," + User.Zone.OfficeIds + ",").Contains("," + a.Office.Id + ",")))
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == User.OfficeId && User.TypeUser != null)
             .Select(a => new
             {
                 Id = a.Id,
@@ -710,12 +723,12 @@ namespace OceanEduSlide.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "add" });
             }
-            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && (a.OfficeId == User.OfficeId || ("," + User.Zone.OfficeIds + ",").Contains("," + a.Office.Id + ",")))
-            .Select(a => new
-            {
-                Id = a.Id,
-                DisplayName = a.Fullname + " - " + a.MaNhanVien
-            }).ToList();
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == User.OfficeId && User.TypeUser != null)
+             .Select(a => new
+             {
+                 Id = a.Id,
+                 DisplayName = a.Fullname + " - " + a.MaNhanVien
+             }).ToList();
             model.UserSelectList = new SelectList(users, "Id", "DisplayName");
             model.User = User;
             return View(model);

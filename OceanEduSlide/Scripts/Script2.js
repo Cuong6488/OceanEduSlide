@@ -250,7 +250,7 @@ $(".input-RevenueUser_Week").on("change", function () {
                     weekTarget = targetBM;
                 }
                 if (weekTarget !== "") {
-                    if (weekTarget_real !== "" && weekTarget_real < weekTarget) {
+                    if (weekTarget_real !== "") {
                         totalWeekTarget += parseFloat(weekTarget_real) || 0;
                     }
                     else {
@@ -423,6 +423,24 @@ $(function eventFunction() {
 
         }
     });
+
+    $(".btn-delete-event").click(function () {
+        var evId = $(this).data("ev");
+        if (confirm("Bạn có chắc chắn xóa Sự kiện này không?")) {
+
+            $.post("/Event/DeleteEvent", { evId: evId }, function (data) {
+                if (data.status) {
+                    alert("Xóa thành công");
+                    location.reload();
+                }
+                else {
+
+                    alert("Xóa không thành công");
+                }
+            });
+        }
+    });
+
 });
 
 $(".input-RevenueUser_Day_DT").on("change", function () {

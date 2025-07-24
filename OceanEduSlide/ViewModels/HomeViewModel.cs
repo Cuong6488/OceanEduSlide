@@ -60,7 +60,7 @@ namespace OceanEduSlide.ViewModels
         public decimal TMonth { get; set; }
         public decimal RevenueMonthNow { get; set; }
         public decimal TWeek { get; set; }
-            public decimal TWeekReal { get; set; }
+        public decimal TWeekReal { get; set; }
         public decimal RevenueWeekNow { get; set; }
         [Display(Name = "Chỉ tiêu doanh số dự kiến"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal? TargetBM { get; set; }
