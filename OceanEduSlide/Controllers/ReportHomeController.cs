@@ -4,9 +4,11 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using Org.BouncyCastle.Asn1.X509;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -124,6 +126,8 @@ namespace OceanEduSlide.Controllers
             ViewBag.MaNhanViens = manhanviens;
             return View(model);
         }
+        #region Call
+
         public async Task<ActionResult> Sync()
         {
             await SyncCallLogsAsync();
@@ -183,13 +187,8 @@ namespace OceanEduSlide.Controllers
                                 .Where(l => l.Disposition == "ANSWERED")
                                 .ToList();
                     var uniqueIds = logs.Select(l => l.UniqueId).ToList();
-                    var existingUniqueIds = _unitOfWork.CallLogRepository
-            .GetQuery(c => uniqueIds.Contains(c.UniqueId)) // Truy vấn dựa trên danh sách UniqueId
-            .Select(c => c.UniqueId)
-            .ToList();
-                    var newLogs = logs
-            .Where(log => !existingUniqueIds.Contains(log.UniqueId))
-            .ToList();
+                    var existingUniqueIds = _unitOfWork.CallLogRepository.GetQuery(c => uniqueIds.Contains(c.UniqueId)).Select(c => c.UniqueId).ToList();
+                    var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
                     //foreach (var log in newLogs)
                     //{
                     //    log.CallDateString = log.CallDate.ToString("dd/MM/yyyy");
@@ -236,5 +235,129 @@ namespace OceanEduSlide.Controllers
             }
         }
 
+        public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
+        {
+
+            if (User.TypeUser == null)
+                return HttpNotFound();
+            var pageNumber = page ?? 1;
+
+            if (string.IsNullOrEmpty(startDay))
+                startDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+            if (string.IsNullOrEmpty(endDay))
+                endDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+            var model = new ListCallViewModel
+            {
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+                User = User,
+                ZoneId = ZoneId,
+                OfficeId = OfficeId,
+                StartDay = startDay,
+                EndDay = endDay 
+            };
+            if (User.TypeUser == TypeUser.HO)
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                else
+                    model.OfficeId = User.OfficeId;
+            }
+
+            if (model.ZoneId != null)
+            {
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                //model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+            }
+            if (model.OfficeId != null && !string.IsNullOrEmpty(startDay) && !string.IsNullOrEmpty(endDay))
+            {
+                DateTime StartDate = new DateTime();
+                DateTime EndDate = new DateTime();
+                if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                {
+                     StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                }
+                if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+                {
+                     EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+                }
+
+                var users = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser != null && a.OfficeId == model.OfficeId).ToList();
+                var userItems = users.Select(a => new ListCallViewModel.UserItem
+                {
+                    User = a,
+                    Over120s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 120).Count(),
+                    Over90s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 90 && p.BillSec <= 120).Count(),
+                    Over60s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 60 && p.BillSec <= 90).Count(),
+                    Under60s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 30 && p.BillSec < 60).Count(),
+                    Under30s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec < 30).Count(),
+
+                });
+                model.TotalOver120s = userItems.Sum(a => a.Over120s);
+                model.TotalOver90s = userItems.Sum(a => a.Over90s);
+                model.TotalOver60s = userItems.Sum(a => a.Over60s);
+                model.TotalUnder60s = userItems.Sum(a => a.Under60s);
+                model.TotalUnder30s = userItems.Sum(a => a.Under30s);
+                model.UserItems = userItems;
+            }
+            return View(model);
+
+        }
+        public PartialViewResult LoadListCall(int userId, int type, string startDay, string endDay)
+        {
+            var model = new LoadListCallViewModel
+            {
+                StartDay = startDay,
+                EndDay = endDay,
+                User = _unitOfWork.UserRepository.GetById(userId),
+            };
+            DateTime StartDate = new DateTime();
+            DateTime EndDate = new DateTime();
+            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+            {
+                StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+            }
+            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+            {
+                EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+            }
+            ViewBag.Type = "";
+            switch (type)
+            {
+                case 120:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 120);
+                    ViewBag.Type = "trên 2 phút";
+                    break;
+                case 90:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 90 && p.BillSec <= 120);
+                    ViewBag.Type = "trên 1,5 phút";
+                    break;
+                case 60:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 60 && p.BillSec <= 90);
+                    ViewBag.Type = "trên 1 phút";
+                    break;
+                case 59:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 30 && p.BillSec < 60);
+                    ViewBag.Type = "dưới 1 phút";
+                    break;
+                case 30:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec < 30);
+                    ViewBag.Type = "Dưới 30s";
+                    break;
+                default:
+                    break;
+            }
+
+            return PartialView(model);
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,172 @@
+﻿
+@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model ListCallViewModel
+@{
+    ViewBag.Title = "Thống kê cuộc gọi";
+}
+<style>
+    #OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
+        display: none !important;
+    }
+</style>
+<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter mb-5">
+    <div class="w-25 d-flex align-items-center">
+        <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
+        <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
+
+    </div>
+    <div class="w-25 d-flex align-items-center">
+        <p class="m-0 me-2" style="width:60px"><strong>Đến ngày:</strong></p>
+        <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
+
+    </div>
+    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+    {
+        <select name="ZoneId" class="form-select me-3 w-25">
+            <option value="">Chọn vùng</option>
+            @foreach (var item in Model.Zones)
+            {
+                <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+            }
+        </select>
+    }
+    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+    {
+        <select name="OfficeId" class="form-select w-25">
+            <option value="">Chọn chi nhánh</option>
+            @foreach (var item in Model.Offices)
+            {
+                <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+            }
+        </select>
+    }
+    else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+    {
+        <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+    }
+</form>
+<p class="text-danger">*Lưu ý: Cần chọn chi nhánh và khoảng thời gian để hiển thị thống kê</p>
+<h2>@ViewBag.Title</h2>
+@if (Model.UserItems != null)
+{
+
+    <div class="box_content mt-0">
+        <table class="list_table tablecenter table-striped listrevenue-user">
+            <tbody>
+                <tr class="text-center">
+                    <th rowspan="2" class="col-w150">Chi nhánh</th>
+                    <th rowspan="2">Mã nhân sự</th>
+                    <th rowspan="2" class="col-w100">Họ tên nhân sự</th>
+                    <th>Trên 2 phút</th>
+                    <th>Trên 1,5 phút</th>
+                    <th>Trên 1 phút</th>
+                    <th>Dưới 1 phút</th>
+                    <th>Dưới 30s</th>
+                    @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
+                    {
+                        <th colspan="4">Tuần @i</th>
+                    }
+
+                </tr>
+                <tr class="text-center">
+                    <th>@Model.TotalOver120s</th>
+                    <th>@Model.TotalOver90s</th>
+                    <th>@Model.TotalOver60s</th>
+                    <th>@Model.TotalUnder60s</th>
+                    <th>@Model.TotalUnder30s</th>
+                </tr>
+
+                @foreach (var item in Model.UserItems)
+                {
+                    <tr>
+                        <td>@item.User.Office.Name</td>
+                        <td>@item.User.MaNhanVien</td>
+                        <td>@item.User.Fullname</td>
+                        <td>
+                            @if (item.Over120s > 0)
+                            {
+                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                   data-fancybox data-type="ajax" data-touch="false">@item.Over120s</a>
+                            }
+                            else
+                            {
+                                @: 0
+                            }
+                        </td>
+                        <td>
+                            @if (item.Over90s > 0)
+                            {
+                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                   data-fancybox data-type="ajax" data-touch="false">@item.Over90s</a>
+                            }
+                            else
+                            {
+                                @: 0
+                            }
+                        </td>
+                        <td>
+                            @if (item.Over60s > 0)
+                            {
+                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                   data-fancybox data-type="ajax" data-touch="false">@item.Over60s</a>
+                            }
+                            else
+                            {
+                                @: 0
+                            }
+                        </td>
+                        <td>
+                            @if (item.Under60s > 0)
+                            {
+                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                   data-fancybox data-type="ajax" data-touch="false">@item.Under60s</a>
+                            }
+                            else
+                            {
+                                @: 0
+                            }
+                        </td>
+                        <td>
+                            @if (item.Under30s > 0)
+                            {
+                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                   data-fancybox data-type="ajax" data-touch="false">@item.Under30s</a>
+                            }
+                            else
+                            {
+                                @: 0
+                            }
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+}
+@section scripts
+{
+    @*<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>*@
+    <script>
+        var today = new Date();
+        $("#StartDay").datepicker({
+            dateFormat: 'dd/mm/yy',
+            maxDate: today,
+            onSelect: function () {
+                var startDay = $(this).datepicker('getDate');
+                $('#EndDay').datepicker('option', 'minDate', startDay);
+            }
+        }).attr('readonly', 'readonly');
+        $("#EndDay").datepicker({
+            dateFormat: 'dd/mm/yy',
+            maxDate: today,
+            onSelect: function () {
+                var endDate = $(this).datepicker('getDate');
+                $('#StartDay').datepicker('option', 'maxDate', endDate);
+            }
+        }).attr('readonly', 'readonly');
+    </script>
+}

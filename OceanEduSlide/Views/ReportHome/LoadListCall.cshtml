@@ -1,0 +1,27 @@
+﻿@model OceanEduSlide.ViewModels.LoadListCallViewModel
+<div class="box_content">
+    <h2>Danh sách cuộc gọi @ViewBag.Type từ @Model.StartDay - @Model.EndDay - nhân sự @(Model.User.Fullname)</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="text-align:center">Thời gian</th>
+                <th style="text-align: center">Thời lượng</th>
+                <th style="text-align: center">Nghe</th>
+            </tr>
+            @foreach (var item in Model.CallLogs)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CallDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.BillSec)
+                    </td>
+                    <td>
+                        <a target="_blank" href="@item.RecordingFile">Nghe</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

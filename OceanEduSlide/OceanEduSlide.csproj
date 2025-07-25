@@ -1379,6 +1379,8 @@
     <Content Include="Views\ReportHome\ReportKDCN.cshtml" />
     <Content Include="Views\ReportHome\ReportKDNV.cshtml" />
     <Content Include="Views\ReportHome\ListCall.cshtml" />
+    <Content Include="Views\ReportHome\ReportCall.cshtml" />
+    <Content Include="Views\ReportHome\LoadListCall.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
