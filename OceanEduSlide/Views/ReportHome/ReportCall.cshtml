@@ -14,7 +14,6 @@
     <div class="w-25 d-flex align-items-center">
         <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
         <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
-
     </div>
     <div class="w-25 d-flex align-items-center">
         <p class="m-0 me-2" style="width:60px"><strong>Đến ngày:</strong></p>
@@ -155,18 +154,10 @@
         $("#StartDay").datepicker({
             dateFormat: 'dd/mm/yy',
             maxDate: today,
-            onSelect: function () {
-                var startDay = $(this).datepicker('getDate');
-                $('#EndDay').datepicker('option', 'minDate', startDay);
-            }
         }).attr('readonly', 'readonly');
         $("#EndDay").datepicker({
             dateFormat: 'dd/mm/yy',
             maxDate: today,
-            onSelect: function () {
-                var endDate = $(this).datepicker('getDate');
-                $('#StartDay').datepicker('option', 'maxDate', endDate);
-            }
         }).attr('readonly', 'readonly');
     </script>
 }

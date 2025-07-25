@@ -19,7 +19,6 @@ $(".form-filter select").on("change", function (data) {
     }
 });
 $(".form-filter input").on("change", function (data) {
-    alert();
     let form = $(this).closest("form");
     if (form.valid()) { // Kiểm tra nếu form hợp lệ
         form.trigger('submit'); // Gọi sự kiện submit
