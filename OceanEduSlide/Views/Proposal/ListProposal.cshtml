@@ -18,14 +18,14 @@
     }
     <div class="d-flex">
         <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
-            <select name="Year" class="form-select me-3">
+            <select name="Year" class="form-select me-3 w-25">
                 <option value="">Chọn năm</option>
                 @for (int i = 2024; i <= DateTime.Now.Year; i++)
                 {
                     <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
                 }
             </select>
-            <select name="Month" class="form-select me-3">
+            <select name="Month" class="form-select me-3 w-25">
                 <option value="">Chọn tháng</option>
                 @for (int i = 1; i <= 12; i++)
                 {
@@ -34,7 +34,7 @@
             </select>
             @if (Model.User.TypeUser == TypeUser.ASM)
             {
-                <select name="OfficeId" class="form-select me-3">
+                <select name="OfficeId" class="form-select me-3 w-25">
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
@@ -44,7 +44,7 @@
             }
             else if (Model.User.TypeUser == TypeUser.BM)
             {
-                <select name="" class="form-select me-3" disabled>
+                <select name="" class="form-select me-3 w-25" disabled>
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
@@ -59,26 +59,26 @@
             }
             else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
             {
-                <select name="ZoneId" class="form-select me-3" @*data-item="zone"*@>
+                <select name="ZoneId" class="form-select me-3 w-25" @*data-item="zone"*@>
                     <option value="">Chọn vùng</option>
                     @foreach (var item in Model.Zones)
                     {
                         <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <select name="OfficeId" class="form-select me-3" @*data-item="office"*@>
+                <select name="OfficeId" class="form-select me-3 w-25" @*data-item="office"*@>
                     <option value="">Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
                         <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <select name="Notice" class="form-select me-3">
+                <select name="Notice" class="form-select me-3 ms-3 w-25">
                     <option value="">Tất cả</option>
                     <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phê duyệt</option>
                 </select>
             }
-        <input class="form-control me-3" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
+        <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
         </form>
         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
         {

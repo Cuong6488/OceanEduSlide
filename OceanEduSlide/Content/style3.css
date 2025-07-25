@@ -189,6 +189,34 @@ h2 {
 .form-filter input, .form-filter select {
   height: 35px;
 }
+.form-filter .select2-container {
+  min-width: 250px;
+}
+.form-filter .select2-container * {
+  font-family: "Roboto", sans-serif !important;
+  font-size: 12px;
+}
+.form-filter .select2 {
+  /*width: 100% !important;*/
+}
+.form-filter .select2 .select2-selection {
+  height: 33px;
+  border-color: black;
+}
+.form-filter .select2 .select2-selection__placeholder, .form-filter .select2 .select2-selection__clear {
+  height: 33px;
+  display: flex;
+  align-items: center;
+}
+.form-filter .select2 .select2-selection__arrow {
+  height: 33px;
+}
+.form-filter .select2 .select2-selection__rendered {
+  line-height: 33px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #dbdbdb;
+}
 
 .box-remind {
   background: rgba(255, 255, 255, 0.4);

@@ -167,6 +167,7 @@ $blue: #2D3AE2;
 .col-w100 {
     min-width: 100px !important;
 }
+
 .col-w150 {
     min-width: 150px !important;
 }
@@ -239,6 +240,41 @@ h2 {
 .form-filter {
     input, select {
         height: 35px;
+    }
+
+    .select2-container {
+        min-width:250px;
+        & * {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 12px;
+        }
+    }
+
+    .select2 {
+        /*width: 100% !important;*/
+
+        .select2-selection {
+            height: 33px;
+            border-color: black;
+        }
+
+
+        .select2-selection__placeholder, .select2-selection__clear {
+            height: 33px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-selection__arrow {
+            height: 33px;
+        }
+
+        .select2-selection__rendered {
+            line-height: 33px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #dbdbdb;
+        }
     }
 }
 

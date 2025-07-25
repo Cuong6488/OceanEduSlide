@@ -192,7 +192,16 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.Save();
 
                 }
-                else if (targetBM_DT != null)
+                else
+                {
+                    var rvn = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.DayofWeek == dayOfWeek && (int)a.WeekNumber == week, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+                    if (rvn != null)
+                    {
+                        rvn.Active = true;
+                    }
+                    _unitOfWork.Save();
+                }
+                if (targetBM_DT != null)
                 {
                     var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek).FirstOrDefault();
                     if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
@@ -321,6 +330,7 @@ namespace OceanEduSlide.Controllers
                         return Json(new { status = false, msg = "Ngày này không có sự kiện hoặc nhân sự không được phân công " });
                     }
                 }
+
                 return Json(new { status = true/*, msg = "Cập nhật thành công" */});
             }
             return Json(new { status = false, msg = "Chưa cập nhật các tỉ lệ chuyển đổi cho người dùng này" });

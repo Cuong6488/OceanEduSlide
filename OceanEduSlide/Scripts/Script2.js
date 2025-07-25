@@ -48,6 +48,9 @@ $(function () {
         thousands: ','
     });
 });
+$(document).ready(function () {
+    $('select[name="OfficeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });
+});
 $(".btn-edit-month").on("click", function () {
     $(this).css("display", "none");
     $(this).siblings(".revenue-value").css("display", "none");
@@ -127,13 +130,13 @@ $(".targetuser_month_HO").each(function () {
     //alert(totalWeekTarget);
     // Kiểm tra tổng số sau khi duyệt qua tất cả các phần tử
     if (totalWeekTarget !== targetuser_month_real) {
-        
+
         elements.each(function (index) {
             if (index >= currentWeek - 1) {
                 $(this).siblings(".revenue-value-week_BM").text("");
                 $(this).closest("td").next("td").text("");
                 $(this).val("");
-                
+
             }
         });
     }
@@ -349,13 +352,14 @@ $(function eventFunction() {
                 thisElement.css("display", "none");
                 thisElement.val(thisElement.siblings(".revenue-value").text());
             }
-            else if (targetBM === "")
-                $.toast({
-                    text: 'Vui lòng nhập chỉ tiêu doanh số dự kiến',
-                    icon: 'warning'
-                })
-            else {
+            //else if (targetBM === "") {
+            //    $.toast({
+            //        text: 'Vui lòng nhập chỉ tiêu doanh số dự kiến',
+            //        icon: 'warning'
+            //    })
+            //}
 
+            else {
                 var totalDayTarget = 0;
                 var emptyCount = 0;
 
@@ -369,9 +373,8 @@ $(function eventFunction() {
                     if ($(this).is(thisElement.siblings())) {
                         dayTarget = targetBM;
                     }
-                    if (dayTarget !== "") {
-                        totalDayTarget += parseFloat(dayTarget) || 0;
-                    }
+                    totalDayTarget += parseFloat(dayTarget) || 0;
+
                 });
                 if (totalDayTarget > target_Week) {
 

@@ -300,7 +300,7 @@ namespace OceanEduSlide.Controllers
                     Under60s = g.Count(x => x.BillSec >= 30 && x.BillSec < 60),
                     Under30s = g.Count(x => x.BillSec < 30)
                 }).ToList();
-                var users = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser != null && a.OfficeId == model.OfficeId).ToList();
+                var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.OfficeId == model.OfficeId);
                 //var userItems = users.Select(a => new ListCallViewModel.UserItem
                 //{
                 //    User = a,
@@ -336,63 +336,52 @@ namespace OceanEduSlide.Controllers
 
         }
         public PartialViewResult LoadListCall(int userId, int type, string startDay, string endDay)
-{
-    var model = new LoadListCallViewModel
-    {
-        StartDay = startDay,
-        EndDay = endDay,
-        User = _unitOfWork.UserRepository.GetById(userId),
-    };
+        {
+            var model = new LoadListCallViewModel
+            {
+                StartDay = startDay,
+                EndDay = endDay,
+                User = _unitOfWork.UserRepository.GetById(userId),
+            };
 
-    DateTime startDate = DateTime.MinValue;
-    DateTime endDate = DateTime.MaxValue;
+            DateTime startDate = new DateTime();
+            DateTime endDate = new DateTime();
 
-    if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-        startDate = cd.Date;
+            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                startDate = cd.Date;
 
-    if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
-        endDate = crd.Date;
+            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+                endDate = crd.Date.AddDays(1);
 
-    // Gán trước truy vấn cơ bản
-    var query = _unitOfWork.CallLogRepository.GetQuery(p =>
-        p.UserId == userId &&
-        DbFunctions.TruncateTime(p.CallDate) >= startDate &&
-        DbFunctions.TruncateTime(p.CallDate) <= endDate
-    );
+            switch (type)
+            {
+                case 120:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 120);
+                    ViewBag.Type = "trên 2 phút";
+                    break;
+                case 90:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 90 && p.BillSec <= 120);
+                    ViewBag.Type = "trên 1,5 phút";
+                    break;
+                case 60:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 60 && p.BillSec <= 90);
+                    ViewBag.Type = "trên 1 phút";
+                    break;
+                case 59:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 30 && p.BillSec < 60);
+                    ViewBag.Type = "dưới 1 phút";
+                    break;
+                case 30:
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30);
+                    ViewBag.Type = "Dưới 30s";
+                    break;
+                default:
+                    ViewBag.Type = "";
+                    break;
+            }
 
-    IQueryable<CallLog> filteredQuery = query;
-
-    switch (type)
-    {
-        case 120:
-            filteredQuery = query.Where(p => p.BillSec > 120);
-            ViewBag.Type = "trên 2 phút";
-            break;
-        case 90:
-            filteredQuery = query.Where(p => p.BillSec > 90 && p.BillSec <= 120);
-            ViewBag.Type = "trên 1,5 phút";
-            break;
-        case 60:
-            filteredQuery = query.Where(p => p.BillSec >= 60 && p.BillSec <= 90);
-            ViewBag.Type = "trên 1 phút";
-            break;
-        case 59:
-            filteredQuery = query.Where(p => p.BillSec >= 30 && p.BillSec < 60);
-            ViewBag.Type = "dưới 1 phút";
-            break;
-        case 30:
-            filteredQuery = query.Where(p => p.BillSec < 30);
-            ViewBag.Type = "Dưới 30s";
-            break;
-        default:
-            ViewBag.Type = "";
-            break;
-    }
-
-    model.CallLogs = filteredQuery.ToList();
-
-    return PartialView(model);
-}
+            return PartialView(model);
+        }
 
         //public PartialViewResult LoadListCall(int userId, int type, string startDay, string endDay)
         //{

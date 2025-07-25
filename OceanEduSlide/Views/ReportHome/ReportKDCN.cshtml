@@ -81,7 +81,7 @@
         </select>
         @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
         {
-            <select name="ZoneId" class="form-select me-3 w-25" required>
+            <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
                 @foreach (var item in Model.Zones)
                 {
