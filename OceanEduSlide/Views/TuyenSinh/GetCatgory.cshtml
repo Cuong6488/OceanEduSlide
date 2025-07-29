@@ -1,7 +1,7 @@
 ﻿@model CategoryViewModel
 @using OceanEduSlide.Models
 @using OceanEduSlide.ViewModels
-@{ 
+@{
     var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
     var lastYear = lastMonth == 12 ? DateTime.Now.Year - 1 : DateTime.Now.Year;
 }
@@ -12,13 +12,13 @@
         <option value="">Mục lục</option>
         @foreach (var item in Model.Indexs)
         {
-            <option value="@item" @(item == Model.MucLuc?"selected":"")>@item</option>
+            <option value="@item" @(item == Model.MucLuc ? "selected" : "")>@item</option>
         }
     </select>
     <select name="Month" class="form-select w-25 month-category">
         <option value="">Tất cả tháng</option>
-        <option value="@lastMonth" @(Model.Month == lastMonth? "selected":"")>Tháng @lastMonth - @lastYear</option>
-        <option value="@DateTime.Now.Month"@(Model.Month == DateTime.Now.Month && Model.Month != null? "selected":"")>Tháng @DateTime.Now.Month - @DateTime.Now.Year</option>
+        <option value="@lastMonth" @(Model.Month == lastMonth ? "selected" : "")>Tháng @lastMonth - @lastYear</option>
+        <option value="@DateTime.Now.Month" @(Model.Month == DateTime.Now.Month && Model.Month != null ? "selected" : "")>Tháng @DateTime.Now.Month - @DateTime.Now.Year</option>
     </select>
 </form>
 <table class="list_table table-striped box_content mt-0">
@@ -50,7 +50,15 @@
                         Link
                     </a>
                 </td>
-                <td><a style="word-break:break-word" target="_blank" href="@item.Note">Link</a> </td>
+                <td>
+                    <a data-fancybox
+                       data-type="iframe"
+                       data-src="@item.Note.Replace("/view", "/preview")"
+                       href="javascript:;"
+                       style="word-break:break-word">
+                        Link
+                    </a>
+                </td>
             </tr>
         }
     </tbody>

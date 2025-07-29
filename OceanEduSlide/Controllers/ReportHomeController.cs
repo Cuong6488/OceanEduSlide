@@ -37,11 +37,44 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == null)
                 return HttpNotFound();
             var pageNumber = page ?? 1;
+            // Truy vấn reportDatas từ database về bộ nhớ
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(
+                a => a.Active
+                     && a.Month == (Month ?? DateTime.Now.Month)
+                     && a.Year == (Year ?? DateTime.Now.Year)
+                     && a.ReportCategory.TypeCat == TypeCat.Type1
+                     && a.ReportCategoryId == 33,
+                q => q.OrderBy(a => a.Sort)
+            ).ToList(); // ToList() để chuyển về bộ nhớ
+
+            // Truy vấn offices từ database về bộ nhớ
+            var offices = _unitOfWork.OfficeRepository.GetQuery(
+                a => a.Active,
+                q => q.OrderBy(a => a.ZoneId)
+            ).ToList(); // ToList() để xử lý tiếp trong bộ nhớ
+
+            // Tạo dictionary chứa OfficeId -> Tổng Data
+            var officeDataDict = reportDatas
+                .GroupBy(r => r.OfficeId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(r =>
+                    {
+                        int val;
+                        var cleanedData = r.Data?.Replace(".", "");
+                        return int.TryParse(cleanedData, out val) ? val : 0;
+                    })
+                );
+
+            // Sắp xếp lại danh sách offices trong bộ nhớ
+            var sortedOffices = offices
+                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0)
+                .ToList();
             var model = new ListReportHomeViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+                Offices = sortedOffices,
                 User = User,
                 ZoneId = ZoneId,
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),

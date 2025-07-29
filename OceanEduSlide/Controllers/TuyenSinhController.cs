@@ -47,12 +47,12 @@ namespace OceanEduSlide.Controllers
                 .Select(a => a.Index) // Chọn trường bạn cần, có thể thay 'Index' bằng tên khác
                 .Distinct()
                 .ToList();
-            var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3);
+            var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3, q => q.OrderByDescending(a => a.Month));
             if(Month != null)
             {
                 catgories = catgories.Where(a => a.Month == Month);
             }
-            if(MucLuc != null)
+            if(!string.IsNullOrEmpty(MucLuc))
             {
                 catgories = catgories.Where(a => a.Index == MucLuc);
             }

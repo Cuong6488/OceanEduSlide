@@ -766,7 +766,8 @@ namespace OceanEduSlide.Controllers
                 }
                 else if (type == 3)
                 {
-                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3);
+                    var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
+                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3 && a.Month != lastMonth && a.Month != DateTime.Now.Month);
                     categories.Delete();
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {

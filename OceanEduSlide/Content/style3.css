@@ -467,16 +467,8 @@ h2 {
   margin-right: -1px;
 }
 
-td, th {
-  height: 45px !important;
-}
-
 .h-90 {
   height: 90px !important;
-}
-
-#OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
-  display: none !important;
 }
 
 #groupWrapper {
