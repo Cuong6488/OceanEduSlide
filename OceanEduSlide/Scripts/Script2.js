@@ -25,7 +25,14 @@ $(".form-filter input").on("change", function (data) {
         form.trigger('submit'); // Gọi sự kiện submit
     }
 });
+$("#form-category3").on("change", function (e) {
 
+    var mucluc = $(this).find(".mucluc").val();
+    var month = $(this).find(".month-category").val();
+    $.get("/TuyenSinh/GetCatgory", { mucluc: mucluc, month: month }, function (data) {
+        $("#category3").html(data);
+    });
+});
 //$("[data-item=zone]").on("change", function (data) {
 //    const id = $(this).val();
 //    var items = [];
@@ -472,7 +479,7 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
             month = $("select[name='Month']").val();
             week = $("select[name='Week']").val();
             dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
-            $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+            $.post("/Event/AddOrUpdateRevenueDay2", { year: year, month: month, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
                 if (data.status) {
                     $.toast({
                         heading: 'Cập nhật thành công',

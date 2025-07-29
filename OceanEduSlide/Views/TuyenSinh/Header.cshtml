@@ -89,12 +89,24 @@
                     }
                     @if (Model.Categories3.Any())
                     {
-
-                        <li style="padding:7px 15px">
+                        var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
+                        var lastYear = lastMonth == 12 ? DateTime.Now.Year - 1 : DateTime.Now.Year;
+                        <li style="padding:7px 15px" id="li-category">
                             <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Quyết định PTS theo tháng">Quyết định PTS theo tháng</a>
-
                             <div class="hidden" id="category3">
-                                <h2>Quyết định PTS theo tháng</h2>
+                                @*<h2>Quyết định PTS theo tháng</h2>
+                                <form id="form-category3" class="d-flex mt-3 mb-3" action="/" method="get">
+                                    <select name="MucLuc" class="form-select me-3 w-25 mucluc">
+                                        <option value="">Mục lục</option>
+                                        <option value="Chỉ tiêu">Chỉ tiêu</option>
+                                        <option value="QĐ UD">QĐ UD</option>
+                                    </select>
+                                    <select name="Month" class="form-select w-25 month-category">
+                                        <option value="">Tất cả tháng</option>
+                                        <option value="@lastMonth">Tháng @lastMonth - @lastYear</option>
+                                        <option value="@DateTime.Now.Month">Tháng @DateTime.Now.Month - @DateTime.Now.Year</option>
+                                    </select>
+                                </form>
                                 <table class="list_table table-striped box_content mt-0">
                                     <tbody>
                                         <tr>
@@ -128,7 +140,8 @@
                                             </tr>
                                         }
                                     </tbody>
-                                </table>
+                                </table>*@
+                                @Html.Action("GetCatgory")
                             </div>
                         </li>
                     }

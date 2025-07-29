@@ -18,6 +18,7 @@ namespace OceanEduSlide.ViewModels
         public int? Week { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public int? UserType { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
@@ -52,6 +53,7 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public int? UserType { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Debt> Debts { get; set; }
@@ -60,9 +62,9 @@ namespace OceanEduSlide.ViewModels
     public class InsertDebtViewModel
     {
         public SelectList UserSelectList { get; set; }
-        [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ"),UIHint("MoneyBox")]
+        [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ"),UIHint("MoneyBox"), Required(ErrorMessage ="Hãy nhập thành tiền")]
         public string TotalMoney { get; set; }
-        [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox")]
+        [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập tiền cọc giữ chỗ")]
         public string DebtMoney { get; set; }
         [Display(Name = "Tiền giảm lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox")]
         public string DownMoney { get; set; }

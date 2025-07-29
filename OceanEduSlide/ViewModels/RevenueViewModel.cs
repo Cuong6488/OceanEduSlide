@@ -15,6 +15,7 @@ namespace OceanEduSlide.ViewModels
         public int? Year { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public int? UserType { get; set; }
         public SelectList SelectOffices { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
@@ -39,6 +40,13 @@ namespace OceanEduSlide.ViewModels
     {
         public RevenueOffice RevenueOffice { get; set; }
         public SelectList SelectOffices { get; set; }
+    }
+    public class CategoryViewModel
+    {
+        public int? Month  { get; set; }
+        public string MucLuc { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+        public List<string> Indexs { get; set; }
     }
     public class RevenueOffice_BMViewModel
     {

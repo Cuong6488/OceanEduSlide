@@ -104,7 +104,7 @@ namespace OceanEduSlide.Controllers
                 if (Notice == 1)
                     proposals = proposals.Where(a => !a.CVSeen);
                 ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active && !a.CVSeen).Count();
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
 
             }
             else if (User.TypeUser == TypeUser.HO)

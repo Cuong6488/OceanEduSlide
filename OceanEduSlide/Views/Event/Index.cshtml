@@ -54,7 +54,7 @@
         }
         @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
         {
-            <select name="OfficeId" class="form-select w-25">
+            <select name="OfficeId" class="form-select w-25 me-3">
                 <option value="">Chọn chi nhánh</option>
                 @foreach (var item in Model.Offices)
                 {
@@ -64,16 +64,25 @@
         }
         @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
         {
-            <select name="" class="form-select w-25" disabled>
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                }
-            </select>
+            @*<select name="" class="form-select w-25" disabled>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>*@
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
 
         }
+        <select name="UserType" class="form-select w-25">
+            <option value="">Tất cả chức danh</option>
+            <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+            <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+            <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+            <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+            <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+            <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+        </select>
     </form>
     @if (Model.OfficeId != null)
     {
@@ -175,13 +184,22 @@
                                     for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                                     {
                                         var ev = Model.Events.FirstOrDefault(a => (int)a.DayofWeek == i && (int)a.TypeEvent == j);
-                                        <td>
+                                        <td class="text-start col-w200" style="padding:10px 15px !important">
                                             @if (ev != null)
                                             {
                                                 @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
                                                 @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
                                                 @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
-                                                @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                if (ev.Range > 0)
+                                                {
+                                                    @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                    @: @Html.LabelFor(a => ev.RangeStudent): @ev.RangeStudent <br />
+                                                    @: @Html.LabelFor(a => ev.RangeNewCustomer): @ev.RangeNewCustomer <br />
+                                                }
+                                                else
+                                                {
+                                                    @: @Html.LabelFor(a => ev.Range): Chưa cập nhật <br />
+                                                }
                                                 @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
                                                 if (ev.LinkUrl != null)
                                                 {
@@ -192,16 +210,15 @@
                                                     <div class="d-flex justify-content-between">
                                                         <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
                                                         <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
-
                                                     </div>
-                                                }
 
+                                                }
                                             }
                                             else
                                             {
                                                 if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
                                                 {
-                                                    <a href="@Url.Action("AddEvent",new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.Week,dayofWeek = i,typeEvent = j})">Cập nhật</a>
+                                                    <a class="text-danger" href="@Url.Action("AddEvent",new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId,week = Model.Week,dayofWeek = i,typeEvent = j})">Cập nhật</a>
                                                 }
                                             }
                                         </td>
@@ -226,7 +243,7 @@
                                 for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                                 {
                                     <td class="text-start" style="padding:10px 15px !important">
-                                        @Model.SumRevenue(i)
+                                        @((Model.SumRevenue(i)??0).ToString("N0"))đ
                                     </td>
                                 }
 
@@ -318,24 +335,71 @@
                                     {
                                         for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                                         {
-                                            var revenueUser_Day = item.Revenues.FirstOrDefault(a => (int)a.DayofWeek == i);
-                                            if (revenueUser_Day != null)
+                                            var revenueUser_Day = item.Revenues.Where(a => (int)a.DayofWeek == i);
+                                            if (revenueUser_Day.Any())
                                             {
-                                                <td class="text-start" style="padding:10px 15px !important">
-                                                    <div class="btnhistory-input">
-                                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
-                                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                                    </div>
-                                                    Chỉ tiêu doanh số dự kiến hoàn thành: @revenueUser_Day.TargetBM <br />
-                                                    SL KH check in dự kiến: @revenueUser_Day.CI <br />
-                                                    @if (revenueUser_Day.User.Confirm3 > 0)
-                                                    {
-                                                        @:Sl KH confiem lần thứ 3: @revenueUser_Day.Confirm3 <br />
+                                                <td class="text-start col-w200" style="padding:10px !important">
+                                                    @*<div class="btnhistory-input">
+                                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                               data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                        </div>*@
+                                                    @{
+                                                        bool fr = true;
                                                     }
 
-                                                    SL KH confirm lần thứ 2: @revenueUser_Day.Confirm2 <br />
-                                                    SL KH confirm lần thứ nhất: @revenueUser_Day.Confirm1 <br />
-                                                    SL data cần khai thác: : @revenueUser_Day.DataQuantity
+                                                    @foreach (var revenue in revenueUser_Day)
+                                                    {
+                                                        if (fr == false && revenue.Event == null)
+                                                        {
+                                                            continue;
+                                                        }
+                                                        if (revenue.EventId == null)
+                                                        {
+                                                            fr = false;
+                                                        }
+                                                        if (revenue.TargetBM != 0)
+                                                        {
+
+                                                            <div class="mb-2 p-2" style="background:#ccc">
+                                                                @if (revenue.Event?.Name != null)
+                                                                {
+                                                                    <p class="mb-2 text-danger">@(revenue.Event?.Name)</p>
+                                                                }
+
+                                                                @if (revenue.DataQuantity != null)
+                                                                {
+                                                                    @: SL data cần khai thác: : <strong>@Html.DisplayFor(a => revenue.DataQuantity)</strong> <br />
+                                                                }
+                                                                @if (revenue.Confirm1 != null)
+                                                                {
+                                                                    @: SL KH confirm lần thứ nhất: <strong>@Html.DisplayFor(a => revenue.Confirm1)</strong> <br />
+                                                                }
+                                                                @if (revenue.Confirm2 != null)
+                                                                {
+                                                                    @: SL KH confirm lần thứ 2: <strong>@Html.DisplayFor(a => revenue.Confirm2)</strong> <br />
+                                                                }
+                                                                @if (revenue.CI != null)
+                                                                {
+                                                                    @:  SL KH check in dự kiến: <strong>@Html.DisplayFor(a => revenue.CI)</strong><br />
+                                                                }
+                                                                @if (revenue.DT != null)
+                                                                {
+                                                                    @:  SL KH chuyển đổi số: <strong>@Html.DisplayFor(a => revenue.DT)</strong><br />
+                                                                }
+                                                                @if (revenue.TargetBM != null)
+                                                                {
+                                                                    @: Chỉ tiêu doanh số dự kiến hoàn thành: <strong>@Html.DisplayFor(a => revenue.TargetBM)</strong> <br />
+                                                                }
+
+                                                                @*@if (revenueUser_Day.User.Confirm3 > 0)
+                                                                    {
+                                                                        @:Sl KH confiem lần thứ 3: <strong>@Html.DisplayFor(a => revenue.Confirm3)</strong> <br />
+                                                                    }*@
+                                                            </div>
+                                                        }
+                                                    }
+
+
                                                 </td>
                                             }
                                             else
