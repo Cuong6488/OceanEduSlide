@@ -346,7 +346,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var model = new CreateTargetViewModel
             {
-                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM), "Id", "Username"),
+                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL), "Id", "Username"),
                 Revenue = new RevenueUser_Month()
                 {
                     Month = DateTime.Now.Month,
@@ -596,6 +596,9 @@ namespace OceanEduSlide.Controllers
                             case "CM":
                                 user.TypeUser = TypeUser.CM;
                                 break;
+                            case "TTL":
+                                user.TypeUser = TypeUser.TTL;
+                                break;
                             case "Chuyên viên":
                                 user.TypeUser = TypeUser.CV;
                                 user.ZoneIds = "," + zones + ",";
@@ -645,6 +648,9 @@ namespace OceanEduSlide.Controllers
                             case "CM":
                                 user.TypeUser = TypeUser.CM;
                                 break;
+                            case "TTL":
+                                user.TypeUser = TypeUser.TTL;
+                                break;
                             case "Chuyên viên":
                                 user.TypeUser = TypeUser.CV;
                                 user.ZoneIds = "," + zones + ",";
@@ -661,11 +667,11 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult DeleteUserWrong()
         {
-            //var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.MaNhanVien) && a.MaNhanVien.Length < 8);
-            //foreach (var user in users)
-            //{
-            //    user.Active = false;
-            //}
+            var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.MaNhanVien) && (a.MaNhanVien.Length < 8 || a.Username.Length < 8));
+            foreach (var user in users)
+            {
+                user.Active = false;
+            }
             var userNoOffices = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.HO || a.TypeUser == TypeUser.CV || a.TypeUser == TypeUser.ASM);
             foreach (var user in userNoOffices)
             {

@@ -79,5 +79,7 @@ namespace OceanEduSlide.Models
         CM,
         [Display(Name = "Chuyên viên")]
         CV,
+        [Display(Name = "TTL")]
+        TTL,
     }
 }

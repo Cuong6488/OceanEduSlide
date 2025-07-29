@@ -48,6 +48,13 @@ namespace OceanEduSlide.ViewModels
             public int Over60s { get; set; }
             public int Under60s { get; set; }
             public int Under30s { get; set; }
+            public int NoAns { get; set; }
+            public int Busy { get; set; }
+            public int Failed { get; set; }
+            public int TotalOver60s { get; set; }
+            public int TotalOver30s { get; set; }
+            public int Total { get; set; }
+
         }
 
     }

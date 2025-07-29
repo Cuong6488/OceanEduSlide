@@ -210,7 +210,7 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            if (User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.CM)
+            if (User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.TTL)
             {
                 (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now);
                 ViewBag.CurrentWeek = currentWeek;
@@ -280,7 +280,7 @@ namespace OceanEduSlide.Controllers
                     model.OfficeId = User.OfficeId;
                 if (model.OfficeId != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM));
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM));
                     int today = 0;
                     if (string.IsNullOrEmpty(Date))
                         Date = DateTime.Now.ToString("dd/MM/yyyy");
@@ -380,7 +380,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult Report()
         {
-            if (User.TypeUser != TypeUser.EC && User.TypeUser != TypeUser.SAB && User.TypeUser != TypeUser.ALT && User.TypeUser != TypeUser.CM)
+            if (User.TypeUser != TypeUser.EC && User.TypeUser != TypeUser.SAB && User.TypeUser != TypeUser.ALT && User.TypeUser != TypeUser.CM && User.TypeUser != TypeUser.TTL)
                 return HttpNotFound();
             var report = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == User.Id && DbFunctions.TruncateTime(DateTime.Now) == DbFunctions.TruncateTime(a.CreateDate)).FirstOrDefault();
             if (report != null)
@@ -491,7 +491,7 @@ namespace OceanEduSlide.Controllers
                     OfficeId = OfficeId,
                     Date = Date,
                 };
-                var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB));
+                var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL));
                 var officeName = _unitOfWork.OfficeRepository.GetById(OfficeId)?.Name;
                 ViewBag.OfficeName = officeName == null ? "" : "- Chi nhánh " + officeName;
                 var reportItems = users.ToList().Select(x => new ListReportViewModel.ReportItem

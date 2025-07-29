@@ -72,7 +72,7 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM)).ToList();
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
                     var userItems = users.Select(a => new EventViewModel.UserItem
                     {
                         User = a,
@@ -313,10 +313,10 @@ namespace OceanEduSlide.Controllers
                         ev.Range = 0;
                         foreach (var item in listrevenue)
                         {
-                            if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.CM)
+                            if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.CM || item.User.TypeUser == TypeUser.ALT)
                             {
                                 ev.Range += (int)item.CI;
-                                if (item.User.TypeUser == TypeUser.EC)
+                                if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.ALT)
                                     ev.RangeNewCustomer += (int)item.CI;
                                 else
                                     ev.RangeStudent += (int)item.CI;
@@ -545,7 +545,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
             };
             return View(model);
         }
@@ -584,7 +584,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;

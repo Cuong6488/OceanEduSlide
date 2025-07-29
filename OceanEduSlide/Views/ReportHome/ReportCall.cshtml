@@ -54,9 +54,9 @@
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
                 <tr class="text-center">
-                    <th rowspan="2" class="col-w150">Chi nhánh</th>
-                    <th rowspan="2">Mã nhân sự</th>
-                    <th rowspan="2" class="col-w100">Họ tên nhân sự</th>
+                    <th rowspan="2" class="col-w150 text-start px-2">Chi nhánh</th>
+                    <th rowspan="2" class="text-start px-2">Mã nhân sự</th>
+                    <th rowspan="2" class="col-w100 text-start px-2">Họ tên nhân sự</th>
                     <th>Trên 2 phút</th>
                     <th>Trên 1,5 phút</th>
                     <th>Trên 1 phút</th>
@@ -66,7 +66,10 @@
                     {
                         <th colspan="4">Tuần @i</th>
                     }
-
+                    <th colspan="3">Trạng thái khác</th>
+                    <th rowspan="2">Cuộc gọi <br /> trên 60s</th>
+                    <th rowspan="2">Cuộc gọi <br /> trên 30s</th>
+                    <th rowspan="2">Tổng <br /> cuộc gọi</th>
                 </tr>
                 <tr class="text-center">
                     <th>@Model.TotalOver120s</th>
@@ -74,18 +77,21 @@
                     <th>@Model.TotalOver60s</th>
                     <th>@Model.TotalUnder60s</th>
                     <th>@Model.TotalUnder30s</th>
+                    <th>No Answer</th>
+                    <th>Busy</th>
+                    <th>Failed</th>
                 </tr>
 
                 @foreach (var item in Model.UserItems)
                 {
                     <tr>
-                        <td>@item.User.Office.Name</td>
-                        <td>@item.User.MaNhanVien</td>
-                        <td>@item.User.Fullname</td>
+                        <td class="text-start px-2">@item.User.Office.ShortName</td>
+                        <td class="text-start px-2">@item.User.MaNhanVien</td>
+                        <td class="text-start px-2">@item.User.Fullname</td>
                         <td>
                             @if (item.Over120s > 0)
                             {
-                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over120s</a>
                             }
                             else
@@ -96,7 +102,7 @@
                         <td>
                             @if (item.Over90s > 0)
                             {
-                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over90s</a>
                             }
                             else
@@ -107,7 +113,7 @@
                         <td>
                             @if (item.Over60s > 0)
                             {
-                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over60s</a>
                             }
                             else
@@ -118,7 +124,7 @@
                         <td>
                             @if (item.Under60s > 0)
                             {
-                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under60s</a>
                             }
                             else
@@ -129,7 +135,7 @@
                         <td>
                             @if (item.Under30s > 0)
                             {
-                                <a title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under30s</a>
                             }
                             else
@@ -137,7 +143,12 @@
                                 @: 0
                             }
                         </td>
-
+                        <td>@item.NoAns</td>
+                        <td>@item.Busy</td>
+                        <td>@item.Failed</td>
+                        <td>@item.TotalOver60s</td>
+                        <td>@item.TotalOver30s</td>
+                        <td>@item.Total</td>
                     </tr>
                 }
 

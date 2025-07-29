@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Fido2NetLib;
+using Newtonsoft.Json;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
@@ -14,6 +15,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
 {
@@ -139,7 +141,7 @@ namespace OceanEduSlide.Controllers
             int pageIndex = 1; // Ví dụ, bạn muốn lấy trang 1
 
             var logs = _unitOfWork.CallLogRepository
-                .GetQuery(c => c.Disposition == "ANSWERED")
+                .GetQuery()
                 .Take(pageSize);
 
             return View(logs);
@@ -165,6 +167,73 @@ namespace OceanEduSlide.Controllers
             }
         }
 
+        //private async Task FetchAndSaveLogsAsync(DateTime day)
+        //{
+        //    string user = "lvd";
+        //    string pass = "qazplm123`$%^";
+        //    string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
+
+        //    string tbegin = day.ToString("yyyy/MM/dd");
+        //    string tend = day.AddDays(1).ToString("yyyy/MM/dd");
+
+        //    string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
+
+        //    using (var http = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            var json = await http.GetStringAsync(url);
+        //            var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+
+        //            var logs = allLogs.ToList();
+        //            var uniqueIds = logs.Select(l => l.UniqueId).ToList();
+        //            var existingUniqueIds = _unitOfWork.CallLogRepository.GetQuery(c => uniqueIds.Contains(c.UniqueId)).Select(c => c.UniqueId).ToList();
+        //            var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
+        //            //foreach (var log in newLogs)
+        //            //{
+        //            //    log.CallDateString = log.CallDate.ToString("dd/MM/yyyy");
+        //            //    var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
+        //            //    if (u != null)
+        //            //    {
+        //            //        log.UserId = u.Id;
+        //            //    }
+        //            //    else
+        //            //    {
+        //            //        // Nếu không tìm thấy người dùng, xóa bản ghi khỏi newLogs
+        //            //        System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
+        //            //        newLogs.Remove(log);  // Loại bỏ log khỏi newLogs
+        //            //        continue;  // Bỏ qua bản ghi này và chuyển sang bản ghi tiếp theo
+        //            //    }
+        //            //}
+        //            newLogs.RemoveAll(log =>
+        //            {
+        //                var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
+        //                if (u != null)
+        //                {
+        //                    log.UserId = u.Id;  // Gán UserId cho log
+        //                    return false;  // Nếu tìm thấy người dùng, không xóa bản ghi này
+        //                }
+        //                else
+        //                {
+        //                    // Nếu không tìm thấy người dùng, xóa log khỏi newLogs
+        //                    System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
+        //                    return true;  // Xóa log này khỏi newLogs
+        //                }
+        //            });
+        //            if (newLogs.Any())
+        //            {
+        //                _unitOfWork.CallLogRepository.InsertRange(newLogs);
+        //                _unitOfWork.Save();
+        //            }
+        //            //_unitOfWork.Save();
+        //            //System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count()} calls for {day:yyyy-MM-dd}");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine($"✗ Error syncing {day:yyyy-MM-dd}: {ex.Message}");
+        //        }
+        //    }
+        //}
         private async Task FetchAndSaveLogsAsync(DateTime day)
         {
             string user = "lvd";
@@ -182,51 +251,67 @@ namespace OceanEduSlide.Controllers
                 {
                     var json = await http.GetStringAsync(url);
                     var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
-
-                    var logs = allLogs
-                                .Where(l => l.Disposition == "ANSWERED")
-                                .ToList();
-                    var uniqueIds = logs.Select(l => l.UniqueId).ToList();
-                    var existingUniqueIds = _unitOfWork.CallLogRepository.GetQuery(c => uniqueIds.Contains(c.UniqueId)).Select(c => c.UniqueId).ToList();
-                    var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
-                    //foreach (var log in newLogs)
-                    //{
-                    //    log.CallDateString = log.CallDate.ToString("dd/MM/yyyy");
-                    //    var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
-                    //    if (u != null)
-                    //    {
-                    //        log.UserId = u.Id;
-                    //    }
-                    //    else
-                    //    {
-                    //        // Nếu không tìm thấy người dùng, xóa bản ghi khỏi newLogs
-                    //        System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
-                    //        newLogs.Remove(log);  // Loại bỏ log khỏi newLogs
-                    //        continue;  // Bỏ qua bản ghi này và chuyển sang bản ghi tiếp theo
-                    //    }
-                    //}
-                    newLogs.RemoveAll(log =>
+                    if (allLogs == null || allLogs.Count == 0)
                     {
-                        var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
-                        if (u != null)
+                        System.Diagnostics.Debug.WriteLine($"No logs found for {day:yyyy-MM-dd}");
+                        return;
+                    }
+
+                    var logs = allLogs.ToList();
+                    var uniqueIds = logs.Select(l => l.UniqueId).Distinct().ToList();
+
+                    // ✅ Chia nhỏ truy vấn để tránh lỗi biểu thức dài
+                    var existingUniqueIds = new HashSet<string>();
+                    int batchSize = 500;
+                    for (int i = 0; i < uniqueIds.Count; i += batchSize)
+                    {
+                        var batch = uniqueIds.Skip(i).Take(batchSize).ToList();
+                        var batchIds = _unitOfWork.CallLogRepository
+                            .GetQuery(c => batch.Contains(c.UniqueId))
+                            .Select(c => c.UniqueId)
+                            .ToList();
+                        foreach (var id in batchIds)
+                            existingUniqueIds.Add(id);
+                    }
+
+                    var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
+
+                    if (!newLogs.Any())
+                    {
+                        System.Diagnostics.Debug.WriteLine($"✓ No new logs to sync for {day:yyyy-MM-dd}");
+                        return;
+                    }
+
+                    // ✅ Tải toàn bộ người dùng 1 lần duy nhất
+                    var userDict = _unitOfWork.UserRepository.GetQuery(u => !string.IsNullOrEmpty(u.MaNhanVien) && u.Active).ToDictionary(u => u.MaNhanVien, u => u.Id);
+                    // ✅ Lọc các logs không tìm thấy user
+                    newLogs = newLogs
+                        .Where(log =>
                         {
-                            log.UserId = u.Id;  // Gán UserId cho log
-                            return false;  // Nếu tìm thấy người dùng, không xóa bản ghi này
-                        }
-                        else
-                        {
-                            // Nếu không tìm thấy người dùng, xóa log khỏi newLogs
-                            System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
-                            return true;  // Xóa log này khỏi newLogs
-                        }
-                    });
+                            if (userDict.TryGetValue(log.Exten, out var userId))
+                            {
+                                log.UserId = userId;
+                                //log.CallDateString = log.CallDate.ToString("dd/MM/yyyy"); // nếu cần
+                                return true;
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Skipping log.");
+                                return false;
+                            }
+                        })
+                        .ToList();
+
                     if (newLogs.Any())
                     {
                         _unitOfWork.CallLogRepository.InsertRange(newLogs);
                         _unitOfWork.Save();
+                        System.Diagnostics.Debug.WriteLine($"✓ Synced {newLogs.Count} new call logs for {day:yyyy-MM-dd}");
                     }
-                    //_unitOfWork.Save();
-                    //System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count()} calls for {day:yyyy-MM-dd}");
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"✓ No matching users for new logs on {day:yyyy-MM-dd}");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -234,6 +319,7 @@ namespace OceanEduSlide.Controllers
                 }
             }
         }
+
 
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {
@@ -298,19 +384,17 @@ namespace OceanEduSlide.Controllers
                     Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
                     Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
                     Under60s = g.Count(x => x.BillSec >= 30 && x.BillSec < 60),
-                    Under30s = g.Count(x => x.BillSec < 30)
+                    Under30s = g.Count(x => x.BillSec < 30 && x.Disposition == "ANSWERED"),
+                    NoAns = g.Count(x => x.Disposition == "NO ANSWER"),
+                    Busy = g.Count(x => x.Disposition == "BUSY"),
+                    Failed = g.Count(x => x.Disposition == "FAILED"),
+                    TotalOver60s = g.Count(x => x.BillSec >= 60),
+                    TotalOver30s = g.Count(x => x.BillSec >= 30),
+                    Total = g.Count(),
+
+
                 }).ToList();
                 var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.OfficeId == model.OfficeId);
-                //var userItems = users.Select(a => new ListCallViewModel.UserItem
-                //{
-                //    User = a,
-                //    Over120s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 120).Count(),
-                //    Over90s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 90 && p.BillSec <= 120).Count(),
-                //    Over60s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 60 && p.BillSec <= 90).Count(),
-                //    Under60s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 30 && p.BillSec < 60).Count(),
-                //    Under30s = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == a.Id && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec < 30).Count(),
-
-                //});
                 var userItems = users.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);
@@ -322,7 +406,13 @@ namespace OceanEduSlide.Controllers
                         Over90s = match?.Over90s ?? 0,
                         Over60s = match?.Over60s ?? 0,
                         Under60s = match?.Under60s ?? 0,
-                        Under30s = match?.Under30s ?? 0
+                        Under30s = match?.Under30s ?? 0,
+                        NoAns = match?.NoAns ?? 0,
+                        Busy = match?.Busy ?? 0,
+                        Failed = match?.Failed ?? 0,
+                        Total = match?.Total ?? 0,
+                        TotalOver30s = match?.TotalOver30s ?? 0,
+                        TotalOver60s = match?.TotalOver60s ?? 0,
                     };
                 }).ToList();
                 model.TotalOver120s = userItems.Sum(a => a.Over120s);
@@ -372,7 +462,7 @@ namespace OceanEduSlide.Controllers
                     ViewBag.Type = "dưới 1 phút";
                     break;
                 case 30:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30 && p.Disposition == "ANSWERED");
                     ViewBag.Type = "Dưới 30s";
                     break;
                 default:
@@ -382,54 +472,12 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-
-        //public PartialViewResult LoadListCall(int userId, int type, string startDay, string endDay)
-        //{
-        //    var model = new LoadListCallViewModel
-        //    {
-        //        StartDay = startDay,
-        //        EndDay = endDay,
-        //        User = _unitOfWork.UserRepository.GetById(userId),
-        //    };
-        //    DateTime StartDate = new DateTime();
-        //    DateTime EndDate = new DateTime();
-        //    if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-        //    {
-        //        StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-        //    }
-        //    if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
-        //    {
-        //        EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
-        //    }
-        //    ViewBag.Type = "";
-        //    switch (type)
-        //    {
-        //        case 120:
-        //            model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 120);
-        //            ViewBag.Type = "trên 2 phút";
-        //            break;
-        //        case 90:
-        //            model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec > 90 && p.BillSec <= 120);
-        //            ViewBag.Type = "trên 1,5 phút";
-        //            break;
-        //        case 60:
-        //            model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 60 && p.BillSec <= 90);
-        //            ViewBag.Type = "trên 1 phút";
-        //            break;
-        //        case 59:
-        //            model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec >= 30 && p.BillSec < 60);
-        //            ViewBag.Type = "dưới 1 phút";
-        //            break;
-        //        case 30:
-        //            model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && DbFunctions.TruncateTime(p.CallDate) <= DbFunctions.TruncateTime(EndDate) && DbFunctions.TruncateTime(p.CallDate) >= DbFunctions.TruncateTime(StartDate) && p.BillSec < 30);
-        //            ViewBag.Type = "Dưới 30s";
-        //            break;
-        //        default:
-        //            break;
-        //    }
-
-        //    return PartialView(model);
-        //}
+        public ActionResult ClearCallLogs()
+        {
+            var calllogs = _unitOfWork.CallLogRepository.GetQuery();
+            calllogs.Delete();
+            return RedirectToAction("ReportCall");
+        }
 
         #endregion
     }

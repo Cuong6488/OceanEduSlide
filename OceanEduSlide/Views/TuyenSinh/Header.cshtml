@@ -108,13 +108,22 @@
                                         </tr>
                                         @foreach (var item in Model.Categories3)
                                         {
+                                            var QDLink = item.QDLink + "/preview";
                                             <tr>
                                                 <td>@item.Index</td>
                                                 <td>@item.Month</td>
                                                 <td>@item.Zone</td>
                                                 <td>@item.Content</td>
                                                 <td>@item.QDNumber</td>
-                                                <td><a style="word-break:break-word" target="_blank" href="@item.QDLink">Link</a> </td>
+                                                <td>
+                                                    <a data-fancybox
+                                                       data-type="iframe"
+                                                       data-src="@item.QDLink.Replace("/view", "/preview")"
+                                                       href="javascript:;"
+                                                       style="word-break:break-word">
+                                                        Link
+                                                    </a>
+                                                </td>
                                                 <td><a style="word-break:break-word" target="_blank" href="@item.Note">Link</a> </td>
                                             </tr>
                                         }

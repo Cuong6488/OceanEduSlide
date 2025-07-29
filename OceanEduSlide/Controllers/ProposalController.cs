@@ -73,7 +73,7 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string MaDeXuat, string Result = "")
         {
-            if (User.TypeUser == null || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.ALT)
+            if (User.TypeUser == null || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.TTL || User.TypeUser == TypeUser.ALT)
                 return HttpNotFound();
             ViewBag.Result = Result;
             var model = new ProposalViewModel

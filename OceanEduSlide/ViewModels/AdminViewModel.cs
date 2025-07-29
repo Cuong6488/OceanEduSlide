@@ -74,8 +74,8 @@ namespace OceanEduSlide.ViewModels
 
         [Display(Name = "Tài khoản SaleKit", Description = "Hoạt động")]
         public bool SaleKit { get; set; }
-        [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
-        public int OfficeId { get; set; }
+        [Display(Name = "Chi nhánh")]
+        public int? OfficeId { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
         [Display(Name = "Phân quyền")]

@@ -12,6 +12,7 @@ $("#AlertBox").delay(5000).slideUp(500);
 //    dropdown: true,
 //    scrollbar: true
 //});
+
 $(".form-filter select").on("change", function (data) {
     let form = $(this).closest("form");
     if (form.valid()) { // Kiểm tra nếu form hợp lệ

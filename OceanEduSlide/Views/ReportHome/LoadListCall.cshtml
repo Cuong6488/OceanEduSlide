@@ -6,7 +6,7 @@
             <tr>
                 <th style="text-align:center">Thời gian</th>
                 <th style="text-align: center">Thời lượng</th>
-                <th style="text-align: center">Nghe</th>
+                <th style="text-align: center">Nghe lại cuộc gọi</th>
             </tr>
             @foreach (var item in Model.CallLogs)
             {
@@ -18,7 +18,10 @@
                         @Html.DisplayFor(a => item.BillSec)s
                     </td>
                     <td>
-                        <a target="_blank" href="@item.RecordingFile">Nghe</a>
+                        <audio controls>
+                            <source src="@item.RecordingFile" type="audio/wav">
+                            Trình duyệt của bạn không hỗ trợ audio.
+                        </audio>
                     </td>
                 </tr>
             }
