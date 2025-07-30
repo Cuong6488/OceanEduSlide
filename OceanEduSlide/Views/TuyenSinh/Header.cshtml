@@ -47,31 +47,43 @@
                                                 <td>@item.Index</td>
                                                 <td>@item.Content</td>
                                                 <td>
-                                                    <a data-fancybox
-                                                       data-type="iframe"
-                                                       data-src="@item.Regulation.Replace("/view", "/preview")"
-                                                       href="javascript:;"
-                                                       style="word-break:break-word">
-                                                        Link
-                                                    </a>
+                                                    @if (!string.IsNullOrEmpty(item.Regulation))
+                                                    {
+                                                        <a data-fancybox
+                                                           data-type="iframe"
+                                                           data-src="@item.Regulation.Replace("/view", "/preview")"
+                                                           href="javascript:;"
+                                                           style="word-break:break-word">
+                                                            Link
+                                                        </a>
+                                                    }
+
                                                 </td>
                                                 <td>
-                                                    <a data-fancybox
-                                                       data-type="iframe"
-                                                       data-src="@item.ProposalLink.Replace("/view", "/preview")"
-                                                       href="javascript:;"
-                                                       style="word-break:break-word">
-                                                        Link
-                                                    </a>
+                                                    @if (!string.IsNullOrEmpty(item.ProposalLink))
+                                                    {
+                                                        <a data-fancybox
+                                                           data-type="iframe"
+                                                           data-src="@(item.ProposalLink.Contains("/viewform") ? item.ProposalLink : item.ProposalLink.Replace("/view", "/preview"))"
+                                                           href="javascript:;"
+                                                           style="word-break:break-word">
+                                                            Link
+                                                        </a>
+                                                    }
+
                                                 </td>
                                                 <td>
-                                                    <a data-fancybox
-                                                       data-type="iframe"
-                                                       data-src="@item.FollowLink.Replace("/view", "/preview")"
-                                                       href="javascript:;"
-                                                       style="word-break:break-word">
-                                                        Link
-                                                    </a>
+                                                    @if (!string.IsNullOrEmpty(item.FollowLink))
+                                                    {
+                                                        <a data-fancybox
+                                                           data-type="iframe"
+                                                           data-src="@(item.FollowLink.Contains("/viewform") ? item.FollowLink : item.FollowLink.Replace("/view", "/preview"))"
+                                                           href="javascript:;"
+                                                           style="word-break:break-word">
+                                                            Link
+                                                        </a>
+                                                    }
+
                                                 </td>
                                             </tr>
                                         }
@@ -104,22 +116,30 @@
                                                 <td>@item.Content</td>
                                                 <td>@item.QDNumber</td>
                                                 <td>
-                                                    <a data-fancybox
-                                                       data-type="iframe"
-                                                       data-src="@item.QDLink.Replace("/view", "/preview")"
-                                                       href="javascript:;"
-                                                       style="word-break:break-word">
-                                                        Link
-                                                    </a>
+                                                    @if (!string.IsNullOrEmpty(item.QDLink))
+                                                    {
+                                                        <a data-fancybox
+                                                           data-type="iframe"
+                                                           data-src="@(item.QDLink.Contains("/viewform") ? item.QDLink : item.QDLink.Replace("/view", "/preview"))"
+                                                           href="javascript:;"
+                                                           style="word-break:break-word">
+                                                            Link
+                                                        </a>
+                                                    }
+
                                                 </td>
                                                 <td>
-                                                    <a data-fancybox
-                                                       data-type="iframe"
-                                                       data-src="@item.Note.Replace("/view", "/preview")"
-                                                       href="javascript:;"
-                                                       style="word-break:break-word">
-                                                        Link
-                                                    </a>
+                                                    @if (!string.IsNullOrEmpty(item.Note))
+                                                    {
+                                                        <a data-fancybox
+                                                           data-type="iframe"
+                                                           data-src="@(item.Note.Contains("/viewform") ? item.Note : item.Note.Replace("/view", "/preview"))"
+                                                           href="javascript:;"
+                                                           style="word-break:break-word">
+                                                            Link
+                                                        </a>
+                                                    }
+
                                                 </td>
                                             </tr>
                                         }
