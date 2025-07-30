@@ -4,6 +4,8 @@
 }
 @using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
+@using PagedList.Mvc
+
 @model ListReportHomeViewModel
 
 <style>
@@ -49,126 +51,99 @@
     </form>
     <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
     <a class="btn quick-link" href="@Url.Action("Report", "Report", new {type = 1})">Cập nhật báo cáo KDCN</a>
-        <div class="box_content d-flex">
-            <div class="columnGroup" data-group-id="group-0">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th class="h-90" rowspan="2">Tháng</th>
-                            <th rowspan="2" class="col-w90 h-90">Vùng</th>
-                            <th rowspan="2" class="col-w200 h-90">Chi nhánh</th>
-                        </tr>
-                        <tr>
-                        </tr>
-                        @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
-                        {
-                            <tr class="tr1">
-                                <td>@Model.Month</td>
-                                <td class="text-start">@(office.Zone?.Name)</td>
-                                <td class="text-start">@office.ShortName</td>
-                            </tr>
-                        }
-                        @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
-                        {
-                            <tr class="tr2">
-                                <td>@Model.Month</td>
-                                <td class="text-start">@(office.Zone?.Name)</td>
-                                <td class="text-start">@office.ShortName</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-            </div>
-            <div id="groupWrapper">
-                @foreach (var group in Model.ReportCategories.Where(c => c.ReportCategoryId == null).GroupBy(c => c.Group))
-                {
-                    var groupId = group.Key;
-                    int total = group.Count();
-                    int i = 1;
-
-                    <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
-
-                        @foreach (var category in group)
-                        {
-                            var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
-
-                            <table class="@tableClass">
-                                <thead>
-                                    <tr>
-                                        <th class="col-w100" colspan="@category.Count">@category.Name</th>
-                                    </tr>
-                                    <tr>
-                                        @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
-                                        {
-                                            <th class="col-w65">@child.Name</th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
-                                    {
-                                        <tr class="tr1">
-                                            @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
-                                            {
-                                                <td>@data.Data</td>
-                                            }
-                                        </tr>
-                                    }
-
-                                    @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
-                                    {
-                                        <tr class="tr2">
-                                            @for (var j = 1; j <= category.Count; j++)
-                                            {
-                                                <td></td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                            i++;
-
-                        }
-                    </div>
-                }
-
-                @*@foreach (var category in Model.ReportCategories.Where(a => a.ReportCategoryId == null))
+    <div class="box_content d-flex">
+        <div class="columnGroup" data-group-id="group-0">
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="h-90" rowspan="2">Tháng</th>
+                        <th rowspan="2" class="col-w90 h-90">Vùng</th>
+                        <th rowspan="2" class="col-w200 h-90">Chi nhánh</th>
+                    </tr>
+                    <tr>
+                    </tr>
+                    @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
                     {
-                        <div class="columnGroup columnGroup-@category.Group" data-group-id="group-@category.Group">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="col-w100" colspan="@category.Count">@category.Name</th>
-                                    </tr>
-                                    <tr>
-                                        @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
-                                        {
-                                            <th class="col-w65">@child.Name</th>
-                                        }
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var office in Model.Offices)
-                                    {
-                                        <tr>
-                                            @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
-                                            {
-                                                <td>@data.Data</td>
-                                            }
-                                        </tr>
-                                    }
-
-                                </tbody>
-                            </table>
-                        </div>
-                    }*@
-            </div>
+                        <tr class="tr1">
+                            <td>@Model.Month</td>
+                            <td class="text-start">@(office.Zone?.Name)</td>
+                            <td class="text-start">@office.ShortName</td>
+                        </tr>
+                    }
+                    @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+                    {
+                        <tr class="tr2">
+                            <td>@Model.Month</td>
+                            <td class="text-start">@(office.Zone?.Name)</td>
+                            <td class="text-start">@office.ShortName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
         </div>
-    
+        <div id="groupWrapper">
+            @foreach (var group in Model.ReportCategories.Where(c => c.ReportCategoryId == null).GroupBy(c => c.Group))
+            {
+                var groupId = group.Key;
+                int total = group.Count();
+                int i = 1;
 
+                <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
+
+                    @foreach (var category in group)
+                    {
+                        var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
+
+                        <table class="@tableClass">
+                            <thead>
+                                <tr>
+                                    <th class="col-w100" colspan="@category.Count">@category.Name</th>
+                                </tr>
+                                <tr>
+                                    @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
+                                    {
+                                        <th class="col-w65">@child.Name</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
+                                {
+                                    <tr class="tr1">
+                                        @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
+                                        {
+                                            <td>@data.Data</td>
+                                        }
+                                    </tr>
+                                }
+
+                                @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+                                {
+                                    <tr class="tr2">
+                                        @for (var j = 1; j <= category.Count; j++)
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        i++;
+
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+    @if (Model.Offices.PageCount > 1)
+    {
+        <div class="text-center">
+            @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
+
+        </div>
+    }
 </div>
 @section scripts
 {

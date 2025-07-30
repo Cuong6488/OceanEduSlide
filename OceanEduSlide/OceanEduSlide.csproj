@@ -1382,6 +1382,11 @@
     <Content Include="Views\ReportHome\ReportCall.cshtml" />
     <Content Include="Views\ReportHome\LoadListCall.cshtml" />
     <Content Include="Views\TuyenSinh\GetCatgory.cshtml" />
+    <Content Include="Views\Revenue\TargetOffice.cshtml" />
+    <Content Include="Views\Revenue\ListRevenueOffice.cshtml" />
+    <Content Include="Views\Revenue\TargetUser.cshtml" />
+    <Content Include="Views\Revenue\ListRevenueUser.cshtml" />
+    <Content Include="Views\Revenue\RevenueUserWeek_Real.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

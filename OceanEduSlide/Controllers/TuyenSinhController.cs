@@ -280,14 +280,14 @@ namespace OceanEduSlide.Controllers
             return Json(new { status = true });
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueWeek(int year, int month, int userId, decimal targetBM, int weekNumber)
+        public JsonResult AddOrUpdateRevenueWeek(int year, int month, int userId, decimal? targetBM, int weekNumber)
         {
             var revenue = new RevenueUser_Week
             {
                 Year = year,
                 Month = month,
                 UserId = userId,
-                TargetBM = targetBM,
+                TargetBM = targetBM ?? 0,
                 Active = true,
             };
             switch (weekNumber)

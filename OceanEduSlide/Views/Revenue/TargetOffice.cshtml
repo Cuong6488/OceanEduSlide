@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Cập nhật chỉ tiêu chi nhánh";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Cập nhật chỉ tiêu chi nhánh</h2>
+@*<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>*@
+<a class="btn quick-link" href="@Url.Action("ListRevenueOffice")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>
+
+<div class="box_content">
+    @using (Html.BeginForm("TargetOffice", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+
+        <table class="form_table">
+            <tr>
+                <td class="form_name">Đính kèm File</td>
+                <td class="form_text"><input type="file" name="TargetOfficeFile" value="" /></td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Xác nhận" />
+                </td>
+            </tr>
+        </table>
+    }
+</div>

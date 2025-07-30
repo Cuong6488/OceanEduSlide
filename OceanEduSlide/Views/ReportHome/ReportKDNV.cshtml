@@ -4,7 +4,8 @@
 }
 @using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
-@model ListReportHomeViewModel
+@using PagedList.Mvc
+@model ListReportNVHomeViewModel
 
 <style>
     td, th {
@@ -100,8 +101,6 @@
     </form>
     <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
     <a class="btn quick-link" href="@Url.Action("Report", "Report", new {type = 2})">Cập nhật báo cáo KDNV</a>
-    @if (Model.OfficeId != null)
-    {
         <div class="box_content d-flex">
             <div class="columnGroup" data-group-id="group-0">
                 <table>
@@ -194,43 +193,17 @@
                         }
                     </div>
                 }
-
-                @*@foreach (var category in Model.ReportCategories.Where(a => a.ReportCategoryId == null))
-                    {
-                        <div class="columnGroup columnGroup-@category.Group" data-group-id="group-@category.Group">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="col-w100" colspan="@category.Count">@category.Name</th>
-                                    </tr>
-                                    <tr>
-                                        @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
-                                        {
-                                            <th class="col-w65">@child.Name</th>
-                                        }
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var office in Model.Offices)
-                                    {
-                                        <tr>
-                                            @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
-                                            {
-                                                <td>@data.Data</td>
-                                            }
-                                        </tr>
-                                    }
-
-                                </tbody>
-                            </table>
-                        </div>
-                    }*@
             </div>
 
         </div>
-    }
+    
+    @if (Model.Users.PageCount > 1)
+    {
+        <div class="text-center">
+            @Html.PagedListPager(Model.Users, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }))
 
+        </div>
+    }
 </div>
 @section scripts
 {

@@ -50,12 +50,13 @@ $("#form-category3").on("change", function (e) {
 //        $("[data-item=office]").html(items.join(""));
 //    }
 //});
-$(function () {
-    $(".input-number").maskMoney({
-        precision: 0,
-        thousands: ','
-    });
-});
+//$(function () {
+//    $(".input-number").maskMoney({
+//        precision: 0,
+//        thousands: ',',
+//    });
+//});
+
 $(document).ready(function () {
     $('select[name="OfficeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });
 });
@@ -163,8 +164,7 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
         var userId = $(this).closest("tr").data("id");
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
-        month = $("select[name='Month']").val();
-
+        month = $(".month-select").val();
         $.post("/TuyenSinh/AddOrUpdateRevenueMonth", { year: year, month: month, targetBM: targetBM, userId: userId }, function (data) {
             if (data.status) {
                 $.toast({
@@ -210,7 +210,7 @@ $(".input-RevenueUser_Month_BM_real").on("change", function () {
         var userId = $(this).closest("tr").data("id");
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
-        month = $("select[name='Month']").val();
+        month = $(".month-select").val();
 
         $.post("/TuyenSinh/AddOrUpdateRevenueMonthReal", { year: year, month: month, targetBM: targetBM, userId: userId }, function (data) {
             if (data.status) {
@@ -238,7 +238,7 @@ $(".input-RevenueUser_Week").on("change", function () {
         var userId = $(this).closest("tr").data("id");
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
-        month = $("select[name='Month']").val();
+        month = $(".month-select").val();
         weekNumber = thisElement.siblings(".input-weekNumber").val();
         var target_Month_text = thisElement.closest("tr").find(".real-target-month").text().trim().replace(/\,/g, "");
         if (target_Month_text === "") {
@@ -401,7 +401,7 @@ $(function eventFunction() {
                 }
                 else {
                     year = $("select[name='Year']").val();
-                    month = $("select[name='Month']").val();
+                    month = $(".month-select").val();
                     week = $("select[name='Week']").val();
                     dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
                     $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
@@ -476,7 +476,7 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
             })
         else {
             year = $("select[name='Year']").val();
-            month = $("select[name='Month']").val();
+            month = $(".month-select").val();
             week = $("select[name='Week']").val();
             dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
             $.post("/Event/AddOrUpdateRevenueDay2", { year: year, month: month, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
@@ -506,4 +506,24 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
         }
 
     }
+});
+$(function () {
+    $(".input-number").each(function () {
+        const inputVal = $(this).val();
+
+        // Nếu không có giá trị hoặc giá trị là '0'
+        if (inputVal === "" || inputVal === "0") {
+            $(this).maskMoney({
+                precision: 0,
+                thousands: ',',
+                allowZero: true
+            });
+        } else {
+            $(this).maskMoney({
+                precision: 0,
+                thousands: ','
+                // allowZero không cần thiết nếu đã có giá trị khác
+            });
+        }
+    });
 });

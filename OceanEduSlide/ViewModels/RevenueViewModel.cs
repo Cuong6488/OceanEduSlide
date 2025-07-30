@@ -67,6 +67,12 @@ namespace OceanEduSlide.ViewModels
         public SelectList SelectOffices { get; set; }
         public int? OfficeId { get; set; }
     }
+    public class ListRevenueUserViewModel
+    {
+        public PagedList.IPagedList<RevenueUser_Month> Revenues { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public int? OfficeId { get; set; }
+    }
     public class LoadHistoryRevenueUser_MonthViewModel
     {
         public User User { get; set; }

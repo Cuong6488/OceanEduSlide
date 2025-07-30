@@ -6,6 +6,7 @@ using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using Org.BouncyCastle.Asn1.X509;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -33,27 +34,19 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
         {
-
             if (User.TypeUser == null)
                 return HttpNotFound();
             var pageNumber = page ?? 1;
-            // Truy vấn reportDatas từ database về bộ nhớ
-            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(
-                a => a.Active
-                     && a.Month == (Month ?? DateTime.Now.Month)
-                     && a.Year == (Year ?? DateTime.Now.Year)
-                     && a.ReportCategory.TypeCat == TypeCat.Type1
-                     && a.ReportCategoryId == 33,
-                q => q.OrderBy(a => a.Sort)
-            ).ToList(); // ToList() để chuyển về bộ nhớ
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year)
+                        && a.ReportCategory.TypeCat == TypeCat.Type1
+                        && a.ReportCategoryId == 35, q => q.OrderBy(a => a.Sort)
+                        ).ToList();
 
-            // Truy vấn offices từ database về bộ nhớ
             var offices = _unitOfWork.OfficeRepository.GetQuery(
                 a => a.Active,
                 q => q.OrderBy(a => a.ZoneId)
-            ).ToList(); // ToList() để xử lý tiếp trong bộ nhớ
+            ).ToList();
 
-            // Tạo dictionary chứa OfficeId -> Tổng Data
             var officeDataDict = reportDatas
                 .GroupBy(r => r.OfficeId)
                 .ToDictionary(
@@ -68,13 +61,14 @@ namespace OceanEduSlide.Controllers
 
             // Sắp xếp lại danh sách offices trong bộ nhớ
             var sortedOffices = offices
-                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0)
-                .ToList();
+                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0);
+            IEnumerable<Office> filteredOffices = sortedOffices;
+
             var model = new ListReportHomeViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
-                Offices = sortedOffices,
+                //Offices = sortedOffices,
                 User = User,
                 ZoneId = ZoneId,
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
@@ -86,22 +80,33 @@ namespace OceanEduSlide.Controllers
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                filteredOffices = filteredOffices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
             }
             else
             {
                 model.ZoneId = User.ZoneId;
                 if (User.TypeUser == TypeUser.ASM)
-                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    //model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    filteredOffices = filteredOffices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+
+
                 else
-                    model.Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Id == User.OfficeId);
+                    //model.Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Id == User.OfficeId);
+                    filteredOffices = filteredOffices.Where(a => a.Id == User.OfficeId);
+
             }
 
             if (model.ZoneId != null)
             {
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                filteredOffices = filteredOffices.Where(a => a.ZoneId == model.ZoneId);
+
+                //model.Offices = sortedOffices.ToPagedList(20, pageNumber);
                 model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
             }
+            //var finalOffices = filteredOffices.OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0).ToList();
+
+            model.Offices = filteredOffices.ToPagedList(pageNumber, 15);
             ViewBag.OfficeIds = ",";
             foreach (var item in model.ReportDatas)
             {
@@ -115,7 +120,30 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == null)
                 return HttpNotFound();
             var pageNumber = page ?? 1;
-            var model = new ListReportHomeViewModel
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year)
+                        && a.ReportCategory.TypeCat == TypeCat.Type2
+                        && a.ReportCategoryId == 88, q => q.OrderBy(a => a.Sort)
+                        ).ToList();
+            var users = _unitOfWork.UserRepository.GetQuery(
+               a => a.Active && a.TypeUser != null && a.OfficeId != null,
+               q => q.OrderBy(a => a.OfficeId)
+           ).ToList();
+
+            var userDataDict = reportDatas
+                .GroupBy(r => r.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(r =>
+                    {
+                        int val;
+                        var cleanedData = r.Data?.Replace(".", "");
+                        return int.TryParse(cleanedData, out val) ? val : 0;
+                    })
+                );
+            var sortedUsers = users
+                .OrderByDescending(o => userDataDict.ContainsKey(o.Id) ? userDataDict[o.Id] : 0).ThenBy(a => a.OfficeId);
+            IEnumerable<User> filteredUsers = sortedUsers;
+            var model = new ListReportNVHomeViewModel
             {
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
@@ -132,26 +160,43 @@ namespace OceanEduSlide.Controllers
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
+
             }
             else
             {
                 model.ZoneId = User.ZoneId;
                 if (User.TypeUser == TypeUser.ASM)
+                {
                     model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
+                }
+
+
                 else
+                {
                     model.OfficeId = User.OfficeId;
+                    filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
+                }
+
+
             }
 
             if (model.ZoneId != null)
             {
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
                 //model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+                filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
+
             }
             if (model.OfficeId != null)
             {
                 model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
-                model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.TypeUser != null);
+                //model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.TypeUser != null);
+                filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
+
             }
+            model.Users = filteredUsers.ToPagedList(pageNumber, 15);
             string manhanviens = ",";
             foreach (var item in model.ReportDatas)
             {

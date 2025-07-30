@@ -24,7 +24,7 @@
             <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
         }
     </select>
-    <select name="Month" class="form-select me-3 w-25" required>
+    <select name="Month" class="form-select me-3 w-25 month-select" required>
         <option value="">Chọn tháng</option>
         @for (int i = 1; i <= 12; i++)
         {

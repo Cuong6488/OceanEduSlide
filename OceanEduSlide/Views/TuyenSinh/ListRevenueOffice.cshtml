@@ -40,7 +40,7 @@
                         <th>Chỉ tiêu doanh số học vụ</th>
                         <th>Chỉ tiêu doanh số kế toán</th>
                         <th>Hoạt động</th>
-                        <th style="width: 140px;"></th>
+                        @*<th style="width: 140px;"></th>*@
                     </tr>
                     @foreach (var revenueOffice in Model.RevenueOffices)
                     {
@@ -63,10 +63,10 @@
                             <td>
                                 @Html.DisplayFor(model => revenueOffice.Active)<br />
                             </td>
-                            <td>
+                            @*<td>
                                 @Html.ActionLink("Sửa", "UpdateRevenueOffice", new { proId = revenueOffice.Id })
                                 - <a href="javascript:;" onclick="deleteRevenueOffice('@revenueOffice.Id')" class="red-warring">Xóa</a>
-                            </td>
+                            </td>*@
                         </tr>
                     }
                     @if (Model.RevenueOffices.PageCount > 1)
