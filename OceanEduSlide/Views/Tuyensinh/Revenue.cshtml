@@ -26,7 +26,7 @@
                     <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
                 }
             </select>
-            <select name="Month" class="form-select me-3 w-25" required>
+            <select name="Month" class="form-select me-3 w-25 month-select" required>
                 <option value="">Chọn tháng</option>
                 @for (int i = 1; i <= 12; i++)
                 {
@@ -35,7 +35,7 @@
             </select>
             @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
             {
-                <select name="ZoneId" class="form-select me-3 w-25" required>
+                <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
                     @foreach (var item in Model.Zones)
                     {
@@ -147,54 +147,6 @@
                 </tbody>
             </table>
         </div>
-        @*<div class="revenue-office d-lg-flex mb-3">
-                <div class="mb-2 mb-lg-0 me-4">
-                    Chỉ tiêu doanh số tuyển sinh: <span>@Model.RevenueOffice.Target_TS.ToString("N0")đ</span>
-                </div>
-                <div class="mb-2 mb-lg-0 me-4">
-                    Chỉ tiêu doanh số học vụ: <span>@Model.RevenueOffice.Target_HV.ToString("N0")đ</span>
-                </div>
-                <div>
-                    Chỉ tiêu doanh số kế toán: <span>@Model.RevenueOffice.Target_SAB.ToString("N0")đ</span>
-                </div>
-            </div>
-            <div class="fw-bold mb-1">
-                Kế hoạch phân bổ doanh số
-            </div>
-            var revenueOffice_BM = Model.RevenueOffice_BMs.FirstOrDefault();
-
-            if (revenueOffice_BM != null)
-            {
-                decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
-                decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / revenueOffice_BM.TargetBM_TS * 1000) / 10;
-                decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
-                decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
-                <div class="revenue-office d-lg-flex mb-3">
-                    <div class="mb-2 mb-lg-0 me-4">
-                        Cam kết hoàn thành doanh số: <span>@revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)</span>
-                    </div>
-                    <div class="mb-2 mb-lg-0 me-4">
-                        Phân bổ DS theo ghi danh mới: <span>@revenueOffice_BM.TargetBM_New.ToString("N0")đ (@New_percent%)</span>
-                    </div>
-                    <div class="mb-2 mb-lg-0 me-4">
-                        Phân bổ DS theo tái phí: <span>@revenueOffice_BM.TargetBM_HV.ToString("N0")đ (@HV_percent%)</span>
-                    </div>
-                    <div class="mb-2 mb-lg-0 me-4">
-                        Phân bổ DS theo SAB: <span>@revenueOffice_BM.TargetBM_SAB.ToString("N0")đ (@SAB_percent%)</span>
-                    </div>
-
-                    <div class="btnhistory-input">
-                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueOffice",  new{month = Model.Month,year = Model.Year,officeId = Model.OfficeId})"
-                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-success mb-3">
-                    Chưa cập nhật kế hoạch phân bổ doanh số
-                </div>
-            }*@
     }
     else
     {
@@ -240,7 +192,7 @@
                     {
                         <tr data-id="@revenueOffice.User.Id">
                             <td class="col-w90">
-                                @revenueOffice.User.Fullname
+                                @revenueOffice.User.Fullname <br /> @revenueOffice.User.MaNhanVien
                             </td>
                             <td>
                                 @revenueOffice.User.TypeUser
