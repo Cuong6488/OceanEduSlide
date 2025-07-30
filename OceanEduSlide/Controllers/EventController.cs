@@ -787,6 +787,10 @@ namespace OceanEduSlide.Controllers
                 debt.ContactStatus = model.Debt.ContactStatus;
                 debt.HandleWay = model.Debt.HandleWay;
                 debt.GrossDate = model.Debt.GrossDate;
+                debt.Cth = model.Debt.Cth;
+                debt.DiscountName = model.Debt.DiscountName;
+                debt.StudentCode = model.Debt.StudentCode;
+                debt.StudentName = model.Debt.StudentName;
                 debt.TotalMoney = Convert.ToDecimal(model.TotalMoney.Replace(",", ""));
                 debt.DebtMoney = Convert.ToDecimal(model.DebtMoney.Replace(",", ""));
                 if (model.Debt.TypeDebt == TypeDebt.Type1 || model.Debt.TypeDebt == TypeDebt.Type2)

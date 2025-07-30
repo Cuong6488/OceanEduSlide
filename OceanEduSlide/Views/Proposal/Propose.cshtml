@@ -9,50 +9,57 @@
         @using (Html.BeginForm("Propose", "Proposal", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
-            <table class="form_table">
-                @Html.HiddenFor(a => a.Proposal.UserId)
-                @if (Model.Proposal.User.TypeUser == OceanEduSlide.Models.TypeUser.ASM)
+        <table class="form_table">
+            @Html.HiddenFor(a => a.Proposal.UserId)
+            @if (Model.Proposal.User.TypeUser == OceanEduSlide.Models.TypeUser.ASM)
+            {
+                if (Model.SelectOffices != null)
                 {
-                    if (Model.SelectOffices != null)
-                    {
-                        <tr>
-                            <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
-                            <td class="form_text">
-                                @Html.DropDownListFor(model => model.Proposal.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select" })
-                                @Html.ValidationMessageFor(model => model.Proposal.OfficeId)
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
-                            <td class="form_text alert alert-success">
-                                Chưa cài đặt vùng
-                            </td>
-                        </tr>
-                    }
+                    <tr>
+                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                        <td class="form_text">
+                            @Html.DropDownListFor(model => model.Proposal.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(model => model.Proposal.OfficeId)
+                        </td>
+                    </tr>
                 }
-
                 else
                 {
-                    @Html.HiddenFor(a => a.Proposal.OfficeId)
+                    <tr>
+                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                        <td class="form_text alert alert-success">
+                            Chưa cài đặt vùng
+                        </td>
+                    </tr>
                 }
-                <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
-                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
-                </tr>
-                <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
-                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
-                </tr>
-                <tr>
-                    <td class="form_name"></td>
-                    <td class="form_text">
-                        <input type="submit" class="btn quick-link" value="Đề xuất" />
-                    </td>
-                </tr>
-            </table>
+            }
+
+            else
+            {
+                @Html.HiddenFor(a => a.Proposal.OfficeId)
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
+                <td class="form_text">
+                    @Html.DropDownListFor(model => model.Proposal.ProposalTypeId, Model.SelectProposalTypes, "Chọn loại đề xuất", new { @class = "form-select" })
+                    @Html.ValidationMessageFor(model => model.Proposal.ProposalTypeId)
+                </td>            
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Đề xuất" />
+                </td>
+            </tr>
+        </table>
         }
     </div>
 </div>

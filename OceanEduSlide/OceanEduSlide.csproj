@@ -483,6 +483,10 @@
     <Compile Include="Migrations\202507241014595_calllog.Designer.cs">
       <DependentUpon>202507241014595_calllog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202507301016311_typeproposal.cs" />
+    <Compile Include="Migrations\202507301016311_typeproposal.Designer.cs">
+      <DependentUpon>202507301016311_typeproposal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\ReportData.cs" />
@@ -498,6 +502,7 @@
     <Compile Include="Models\RankOffice.cs" />
     <Compile Include="Models\RevenueUser_DayOfWeek_Real.cs" />
     <Compile Include="Models\RevenueUser_Month_BM_real.cs" />
+    <Compile Include="Models\ProposalType.cs" />
     <Compile Include="Models\TypeFault.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
@@ -1387,6 +1392,9 @@
     <Content Include="Views\Revenue\TargetUser.cshtml" />
     <Content Include="Views\Revenue\ListRevenueUser.cshtml" />
     <Content Include="Views\Revenue\RevenueUserWeek_Real.cshtml" />
+    <Content Include="Views\Vcms\CreateProposalType.cshtml" />
+    <Content Include="Views\Vcms\ListProposalType.cshtml" />
+    <Content Include="Views\Vcms\UpdateProposalType..cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1599,6 +1607,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202507241014595_calllog.resx">
       <DependentUpon>202507241014595_calllog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202507301016311_typeproposal.resx">
+      <DependentUpon>202507301016311_typeproposal.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,0 +1,29 @@
+﻿
+@model IEnumerable<OceanEduSlide.Models.ProposalType>
+<head>
+    <link href=" https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" rel="stylesheet" />
+</head>
+<div class="box_content">
+    <table class="list_table" id="list-proposalType">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Content)</th>
+                <th>@Html.DisplayNameFor(model => model.Active)</th>
+                <th></th>
+            </tr>
+            @foreach (var proposalType in Model)
+            {
+                <tr data-id="@proposalType.Id">
+                    <td class="left">@proposalType.Content</td>
+                    <td>@Html.DisplayFor(a => proposalType.Active)</td>
+                    <td class="list-icon">
+                        @Html.ActionLink("Sửa", "UpdateProposalType", new { proposalTypeId = proposalType.Id }) - <a href="javascript:;" onclick="deleteProposalType('@proposalType.Id')" class="red-warring deleteProposalType" id="@proposalType.Id">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/Content/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/jquery.toast.js"></script>
+<script src="~/Scripts/scriptAdmin.js"></script>

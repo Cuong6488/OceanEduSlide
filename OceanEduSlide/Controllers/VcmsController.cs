@@ -1462,6 +1462,83 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region Loai_de_xuat
+        public PartialViewResult ListProposalType()
+        {
+            var model = _unitOfWork.ProposalTypeRepository.Get();
+            return PartialView(model);
+        }
+        public ActionResult CreateProposalType(string result = "")
+        {
+            ViewBag.Result = result;
+            //var model = new CreateProposalTypeViewModel
+            //{
+            //    ProposalType = new ProposalType(),
+            //    Offices = _unitOfWork.OfficeRepository.Get()
+            //    //SelectOffice = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name")
+            //};
+            return View(new ProposalType());
+        }
+        [HttpPost]
+        public ActionResult CreateProposalType(ProposalType model)
+        {
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.ProposalTypeRepository.Insert(model);
+                _unitOfWork.Save();
+                return RedirectToAction("CreateProposalType", new { result = "add" });
+            }
+            else
+            {
+                return HttpNotFound();
+            }
+        }
+        public ActionResult UpdateProposalType(int proposalTypeId)
+        {
+            var proposalType = _unitOfWork.ProposalTypeRepository.GetById(proposalTypeId);
+            if (proposalType == null)
+            {
+                return RedirectToAction("CreateProposalType");
+            }
+            //var model = new CreateProposalTypeViewModel
+            //{
+            //    ProposalType = proposalType,
+            //    Offices = _unitOfWork.OfficeRepository.Get()
+            //};
+            return View(proposalType);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateProposalType(ProposalType model)
+        {
+            if (ModelState.IsValid)
+            {
+                var proposalType = _unitOfWork.ProposalTypeRepository.GetById(model.Id);
+                if (proposalType != null)
+                {
+
+                    proposalType.Content = model.Content;
+                    proposalType.Active = model.Active;
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateProposalType", new { result = "add" });
+                }
+            }
+            return HttpNotFound();
+
+        }
+        [HttpPost]
+        public bool DeleteProposalType(int proposalTypeId = 0)
+        {
+            var proposalType = _unitOfWork.ProposalTypeRepository.GetById(proposalTypeId);
+            if (proposalType == null)
+            {
+                return false;
+            }
+            proposalType.Active = false;
+            _unitOfWork.Save();
+            return true;
+        }
+        #endregion
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

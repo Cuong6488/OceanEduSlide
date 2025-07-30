@@ -44,7 +44,16 @@
             </tr>
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Debt.Cth)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.Cth)</td>
+                <td class="form_text">
+                    <select name="Debt.Cth" class="form_control">
+                        <option value="" disabled selected>Chọn chương trình học</option>
+                        <option @(Model.Debt.Cth == "Anh văn nhi đồng"?"selected":"") value="Anh văn nhi đồng">Anh văn nhi đồng</option>
+                        <option @(Model.Debt.Cth == "Anh văn thiếu nhi"?"selected":"") value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
+                        <option @(Model.Debt.Cth == "T.A học thuật Trung học"?"selected":"") value="T.A học thuật Trung học">T.A học thuật Trung học</option>
+                        <option @(Model.Debt.Cth == "Luyện thi IELTS"?"selected":"") value="Luyện thi IELTS">Luyện thi IELTS</option>
+                        <option @(Model.Debt.Cth == "T.A giao tiếp quốc tế TOEIC"?"selected":"") value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DiscountName)</td>

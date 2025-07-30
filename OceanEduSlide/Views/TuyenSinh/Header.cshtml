@@ -10,7 +10,7 @@
     }
 
     #category1, #category2, #category3 {
-        min-width: 80%;
+        min-width: 90%;
     }
 </style>
 <div class="header d-flex">
@@ -18,6 +18,11 @@
         <a href="/">
             <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
         </a>
+        @*@if (Model.User.Office != null)
+        {
+            <div>@(Model.User.Office.Name)</div>
+
+        }*@
     </div>
     <div class="navbar-container">
         <ul class="navbar ul-reset d-flex">

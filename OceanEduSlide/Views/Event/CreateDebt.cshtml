@@ -12,104 +12,113 @@
             @Html.ValidationSummary(true)
             @Html.HiddenFor(a => a.Debt.Month)
             @Html.HiddenFor(a => a.Debt.Year)
-        <table class="form_table">
-            <tr>
-                <td class="form_name w-25">Nhân sự phụ trách</td>
-                <td class="form_text"> @Html.DropDownListFor(model => model.Debt.UserId, Model.UserSelectList, "Chọn nhân sự")</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DepositDate)</td>
-                <td class="form_text">
-                    @Html.TextBoxFor(model => model.Debt.DepositDate, new { @class = "date-picker w100" })
-                    @Html.ValidationMessageFor(model => model.Debt.DepositDate)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.GrossDate)</td>
-                <td class="form_text">
-                    @Html.TextBoxFor(model => model.Debt.GrossDate, new { @class = "date-picker w100" })
-                    @Html.ValidationMessageFor(model => model.Debt.GrossDate)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.StudentName)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.StudentName)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.StudentCode)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.StudentCode)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.Cth)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.Cth)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DiscountName)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.DiscountName)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.Pathway)</td>
-                <td class="form_text"> @Html.TextBoxFor(model => model.Debt.Pathway, new { @class = "w100" })</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.TotalMoney)</td>
-                <td class="form_text"> @Html.EditorFor(model => model.TotalMoney)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.DebtMoney)</td>
-                <td class="form_text">@Html.EditorFor(model => model.DebtMoney)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.DownMoney)</td>
-                <td class="form_text">@Html.EditorFor(model => model.DownMoney)</td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.TypeDebt)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.Debt.TypeDebt, "Chọn loại cọc", new { @class = "form_control" })
-                    @Html.ValidationMessageFor(model => model.Debt.TypeDebt)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.TypePay)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.Debt.TypePay, "Chọn hình thức thanh toán", new { @class = "form_control" })
-                    @Html.ValidationMessageFor(model => model.Debt.TypePay)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Debt.ChannelPay)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.Debt.ChannelPay, "Chọn kênh trả góp", new { @class = "form_control" })
-                    @Html.ValidationMessageFor(model => model.Debt.ChannelPay)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Debt.HardContent)</td>
-                <td class="form_text">
-                    @Html.EditorFor(model => model.Debt.HardContent)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Debt.ContactStatus)</td>
-                <td class="form_text">
-                    @Html.EditorFor(model => model.Debt.ContactStatus)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Debt.HandleWay)</td>
-                <td class="form_text">
-                    @Html.EditorFor(model => model.Debt.HandleWay)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Thêm mới" />
-                </td>
-            </tr>
+            <table class="form_table">
+                <tr>
+                    <td class="form_name w-25">Nhân sự phụ trách</td>
+                    <td class="form_text"> @Html.DropDownListFor(model => model.Debt.UserId, Model.UserSelectList, "Chọn nhân sự")</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DepositDate)</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.Debt.DepositDate, new { @class = "date-picker w100" })
+                        @Html.ValidationMessageFor(model => model.Debt.DepositDate)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.GrossDate)</td>
+                    <td class="form_text">
+                        @Html.TextBoxFor(model => model.Debt.GrossDate, new { @class = "date-picker w100" })
+                        @Html.ValidationMessageFor(model => model.Debt.GrossDate)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.StudentName)</td>
+                    <td class="form_text"> @Html.TextBoxFor(model => model.Debt.StudentName)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.StudentCode)</td>
+                    <td class="form_text"> @Html.TextBoxFor(model => model.Debt.StudentCode)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.Cth)</td>
+                    <td class="form_text">
+                        <select name="Debt.Cth" class="form_control">
+                            <option value="" disabled selected>Chọn chương trình học</option>
+                            <option value="Anh văn nhi đồng">Anh văn nhi đồng</option>
+                            <option value="Anh văn thiếu nhi">Anh văn thiếu nhi</option>
+                            <option value="T.A học thuật Trung học">T.A học thuật Trung học</option>
+                            <option value="Luyện thi IELTS">Luyện thi IELTS</option>
+                            <option value="T.A giao tiếp quốc tế TOEIC">T.A giao tiếp quốc tế TOEIC</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.DiscountName)</td>
+                    <td class="form_text"> @Html.TextBoxFor(model => model.Debt.DiscountName)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.Pathway)</td>
+                    <td class="form_text"> @Html.TextBoxFor(model => model.Debt.Pathway, new { @class = "w100" })</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.TotalMoney)</td>
+                    <td class="form_text"> @Html.EditorFor(model => model.TotalMoney)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DebtMoney)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.DebtMoney)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.DownMoney)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.DownMoney)</td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.TypeDebt)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Debt.TypeDebt, "Chọn loại cọc", new { @class = "form_control" })
+                        @Html.ValidationMessageFor(model => model.Debt.TypeDebt)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.TypePay)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Debt.TypePay, "Chọn hình thức thanh toán", new { @class = "form_control" })
+                        @Html.ValidationMessageFor(model => model.Debt.TypePay)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Debt.ChannelPay)</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.Debt.ChannelPay, "Chọn kênh trả góp", new { @class = "form_control" })
+                        @Html.ValidationMessageFor(model => model.Debt.ChannelPay)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Debt.HardContent)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Debt.HardContent)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Debt.ContactStatus)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Debt.ContactStatus)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Debt.HandleWay)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Debt.HandleWay)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Thêm mới" />
+                    </td>
+                </tr>
 
-        </table>
+            </table>
         }
     </div>
 </div>

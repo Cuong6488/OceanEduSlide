@@ -28,7 +28,7 @@ namespace OceanEduSlide.Controllers
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
-                //SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content")
+                SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content")
             };
             if (User.TypeUser == TypeUser.ASM)
             {
@@ -68,6 +68,7 @@ namespace OceanEduSlide.Controllers
             //        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains(a.Id.ToString())), "Id", "Name");
             //}
             //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
+
             return RedirectToAction("ListProposal");
         }
 
@@ -190,6 +191,8 @@ namespace OceanEduSlide.Controllers
             {
                 Proposal = proposal,
                 //SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content")
+                SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content")
+
             };
             //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
             return View(model);
@@ -202,6 +205,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("ListProposal");
             proposal.Body = model.Proposal.Body;
             proposal.Url = model.Proposal.Url;
+            proposal.ProposalTypeId = model.Proposal.ProposalTypeId;
             proposal.Active = true;
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });

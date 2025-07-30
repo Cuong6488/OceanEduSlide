@@ -19,6 +19,7 @@ namespace OceanEduSlide.DAL
         public DbSet<Zone> Zones { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<TypeFault> TypeFaults { get; set; }
+        public DbSet<ProposalType> ProposalTypes { get; set; }
         public DbSet<RankOffice> RankOffices { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ReportCategory> ReportCategories { get; set; }

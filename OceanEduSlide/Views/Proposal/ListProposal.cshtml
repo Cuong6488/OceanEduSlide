@@ -52,9 +52,9 @@
                     }
                 </select>
                 @*<select name="Notice" class="form-select me-3">
-                    <option value="">Tất cả</option>
-                    <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
-                </select>*@
+                        <option value="">Tất cả</option>
+                        <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
+                    </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
             else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
@@ -78,7 +78,7 @@
                     <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phê duyệt</option>
                 </select>
             }
-        <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
+            <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
         </form>
         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
         {
@@ -126,18 +126,21 @@
                         Chi nhánh
                     </th>
                     <th class="col-w90">
+                        Loại đề xuất
+                    </th>
+                    <th class="col-w90">
                         Nhân sự <br /> đề xuất
                     </th>
                     <th class="col-w90">
                         Ngày đề xuất
                     </th>
                     @*<th class="col-w90">
-            Phân loại <br /> đề xuất
-        </th>*@
-                    <th class="col-w200">
+                            Phân loại <br /> đề xuất
+                        </th>*@
+                    <th class="col-w400">
                         Nội dung và lý do đề xuất
                     </th>
-                    <th class="col-w90">
+                    <th class="col-w90" style="width:300px">
                         Hồ sơ, <br /> tài liệu <br />minh chứng <br />kèm theo
                     </th>
                     <th class="col-w200">
@@ -150,8 +153,8 @@
                         Tổng hợp lỗi
                     </th>
                     @*<th class="col-w90">
-            BM Duyệt
-        </th>*@
+                            BM Duyệt
+                        </th>*@
                     @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                     {
                         <th></th>
@@ -166,11 +169,12 @@
                         <td>@item.Zone.Name</td>
                         <td>@item.CVName</td>
                         <td>@item.Office.Name</td>
+                        <td>@(item.ProposalType?.Content)</td>
                         <td>@item.User.Fullname</td>
                         <td>@Html.DisplayFor(a => item.CreateDate)</td>
                         @*<td>@Html.DisplayFor(a => item.TypeProposal)</td>*@
                         <td>@Html.Raw(item.Body)</td>
-                        <td>@item.Url</td>
+                        <td style="word-break:break-word">@item.Url</td>
                         <td>@item.CVFeedBack</td>
                         <td>@Html.DisplayFor(a => item.TypeApprove)</td>
                         <td>@(item.TypeFault?.Content)</td>

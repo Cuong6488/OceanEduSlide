@@ -11,6 +11,7 @@ namespace OceanEduSlide.ViewModels
     public class ProposeViewModel
     {
         public SelectList SelectOffices { get; set; }
+        public SelectList SelectProposalTypes { get; set; }
         public Proposal Proposal { get; set; }
 
     }

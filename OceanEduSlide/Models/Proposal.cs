@@ -28,6 +28,8 @@ namespace OceanEduSlide.Models
         public string MaDeXuat { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
         public int? TypeFaultId { get; set; }
+        [Display(Name = "Phân loại đề xuất")]
+        public int? ProposalTypeId { get; set; }
         public int? FaultNumber { get; set; }
         [Display(Name = "Kết luận")]
         public TypeApprove? TypeApprove { get; set; }
@@ -39,6 +41,7 @@ namespace OceanEduSlide.Models
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
         public virtual TypeFault TypeFault { get; set; }
+        public virtual ProposalType ProposalType { get; set; }
         public virtual Office Office { get; set; }
         public virtual Zone Zone { get; set; }
         public Proposal()

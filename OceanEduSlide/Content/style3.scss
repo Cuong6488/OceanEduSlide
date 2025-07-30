@@ -90,6 +90,13 @@ $blue: #2D3AE2;
     font-weight: 600;
 }
 
+    .fancybox-slide--iframe .fancybox-content {
+        width: 90%;
+        height: 100%;
+        max-width: 90%;
+        max-height: 100%;
+    }
+
 .logo-title {
     border-bottom: 1px solid #ccc;
 
@@ -179,11 +186,13 @@ $blue: #2D3AE2;
 .col-w200 {
     min-width: 250px !important;
 }
+.col-w400 {
+    min-width: 400px !important;
+}
 
 h2 {
     margin-bottom: 5px !important;
 }
-
 .notice {
     position: relative;
     display: flex;

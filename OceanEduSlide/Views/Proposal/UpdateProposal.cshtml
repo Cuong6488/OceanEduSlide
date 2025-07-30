@@ -9,62 +9,68 @@
         @using (Html.BeginForm("UpdateProposal", "Proposal", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
-            <table class="form_table">
-                @Html.HiddenFor(a => a.Proposal.Id)
+        <table class="form_table">
+            @Html.HiddenFor(a => a.Proposal.Id)
+            <tr>
+                <td class="form_name w-25">Nhân sự đề xuất</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Office.Name)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Office.Name)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
+                <td class="form_text">
+                    @(Model.Proposal.ProposalType?.Content)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Proposal.CreateDate)</td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
+                <td class="form_text"> @Html.Raw(Model.Proposal.Body)</td>
+            </tr>
+            @if (Model.Proposal.Url != null)
+            {
                 <tr>
-                    <td class="form_name w-25">Nhân sự đề xuất</td>
-                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Url)</td>
+                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Url)</td>
                 </tr>
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Office.Name)</td>
-                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Office.Name)</td>
-                </tr>
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
-                    <td class="form_text"> @Html.DisplayFor(model => model.Proposal.CreateDate)</td>
-                </tr>
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
-                    <td class="form_text"> @Html.Raw(Model.Proposal.Body)</td>
-                </tr>
-                @if (Model.Proposal.Url != null)
-                {
-                    <tr>
-                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Url)</td>
-                        <td class="form_text"> @Html.DisplayFor(model => model.Proposal.Url)</td>
-                    </tr>
-                }
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CVFeedBack)</td>
-                    <td class="form_text">
-                        @Html.EditorFor(model => model.Proposal.CVFeedBack)
-                    </td>
-                </tr>
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeFaultId)</td>
-                    <td class="form_text">
-                        @Html.DropDownListFor(model => model.Proposal.TypeFaultId, Model.SelectFault, "Chọn tổng hợp lỗi", new { @class = "form-select" })
-                    </td>
-                </tr>
-                <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
-                    <td class="form_text">
-                        @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
-                    </td>
-                </tr>
-                @*<tr>
-                    <td class="form_name w-25faultnumbertext ">@Html.LabelFor(model => model.Proposal.FaultNumber)</td>
-                    <td class="form_text">
-                        @Html.EditorFor(model => model.Proposal.FaultNumber)
-                    </td>
-                </tr>*@
-                <tr>
-                    <td class="form_name"></td>
-                    <td class="form_text">
-                        <input type="submit" class="btn quick-link" value="Cập nhật" />
-                    </td>
-                </tr>
-            </table>
+            }
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CVFeedBack)</td>
+                <td class="form_text">
+                    @Html.EditorFor(model => model.Proposal.CVFeedBack)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeFaultId)</td>
+                <td class="form_text">
+                    @Html.DropDownListFor(model => model.Proposal.TypeFaultId, Model.SelectFault, "Chọn tổng hợp lỗi", new { @class = "form-select" })
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
+                </td>
+            </tr>
+            @*<tr>
+            <td class="form_name w-25faultnumbertext ">@Html.LabelFor(model => model.Proposal.FaultNumber)</td>
+            <td class="form_text">
+                @Html.EditorFor(model => model.Proposal.FaultNumber)
+            </td>
+        </tr>*@
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+        </table>
         }
     </div>
 </div>

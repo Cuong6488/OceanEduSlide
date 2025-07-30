@@ -56,6 +56,13 @@
   font-weight: 600;
 }
 
+.fancybox-slide--iframe .fancybox-content {
+  width: 90%;
+  height: 100%;
+  max-width: 90%;
+  max-height: 100%;
+}
+
 .logo-title {
   border-bottom: 1px solid #ccc;
 }
@@ -133,6 +140,10 @@
 
 .col-w200 {
   min-width: 250px !important;
+}
+
+.col-w400 {
+  min-width: 400px !important;
 }
 
 h2 {
