@@ -52,9 +52,9 @@
                     }
                 </select>
                 @*<select name="Notice" class="form-select me-3">
-                        <option value="">Tất cả</option>
-                        <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
-                    </select>*@
+                <option value="">Tất cả</option>
+                <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
+            </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
             else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
@@ -73,11 +73,19 @@
                         <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <select name="Notice" class="form-select me-3 ms-3 w-25">
+                <select name="Notice" class="form-select me-3 w-25">
                     <option value="">Tất cả</option>
                     <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phê duyệt</option>
                 </select>
             }
+
+            <select name="Type" class="form-select me-3 w-25">
+                <option value="">Loại đề xuất</option>
+                @foreach (var item in Model.ProposalTypes)
+                {
+                    <option value="@item" @(item == Model.Type ? "selected" : "")>@item</option>
+                }
+            </select>
             <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
         </form>
         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)

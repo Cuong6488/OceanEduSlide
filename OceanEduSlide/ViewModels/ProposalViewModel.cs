@@ -27,6 +27,8 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Proposal> Proposals { get; set; }
         public User User { get; set; }
+        public List<string> ProposalTypes { get; set; }
+        public string Type { get; set; }
     }
     public class ApproveViewModel
     {
