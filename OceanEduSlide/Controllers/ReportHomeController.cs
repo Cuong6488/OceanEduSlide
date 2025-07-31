@@ -248,7 +248,7 @@ namespace OceanEduSlide.Controllers
                 }
                 else
                 {
-                    logger.Info("Ngay "+ day.ToString("dd/MM/yyyy") + " da co du lieu");
+                    logger.Info("Ngay " + day.ToString("dd/MM/yyyy") + " da co du lieu");
                 }
             }
         }
@@ -269,15 +269,15 @@ namespace OceanEduSlide.Controllers
                 try
                 {
                     var json = await http.GetStringAsync(url);
-                    if(json.Length < 10)
+                    if (string.IsNullOrEmpty(json) || json?.Length < 10)
                     {
-                    logger.Info(json);
+                        logger.Info(json);
                     }
-                    var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+                        var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
                     if (allLogs == null || allLogs.Count == 0)
                     {
                         System.Diagnostics.Debug.WriteLine($"No logs found for {day:yyyy-MM-dd}");
-                        logger.Info("Khong co ban ghi nao ngay "+  day.ToString("dd/MM/yyyy"));
+                        logger.Info("Khong co ban ghi nao ngay " + day.ToString("dd/MM/yyyy"));
                         return;
                     }
 
