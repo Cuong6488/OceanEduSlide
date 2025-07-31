@@ -1186,6 +1186,7 @@ namespace OceanEduSlide.Controllers
                     zone.Active = model.Zone.Active;
                     _unitOfWork.Save();
                     string[] a = zone.OfficeIds.Trim(',').Split(',');
+                    zone.ShortName = "";
                     foreach (var item in a)
                     {
                         int officeId = int.Parse(item);
@@ -1193,10 +1194,10 @@ namespace OceanEduSlide.Controllers
                         if (office != null)
                         {
                             office.ZoneId = zone.Id;
-                            if (!("," + zone.ShortName + ",").Contains("," + office.ShortCode + ","))
-                                zone.ShortName += "," + office.ShortCode;
+                            zone.ShortName += "," + office.ShortCode;
                         }
                     }
+                    zone.ShortName = zone.ShortName.Trim(',');
                     _unitOfWork.Save();
 
                     return RedirectToAction("CreateZone", new { result = "add" });

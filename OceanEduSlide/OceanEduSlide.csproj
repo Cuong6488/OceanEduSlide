@@ -130,6 +130,9 @@
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=7.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Tokens.7.0.2\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.6.0.2\lib\net46\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="NSec.Cryptography, Version=20.2.0.0, Culture=neutral, PublicKeyToken=531c072d5efee047, processorArchitecture=MSIL">
       <HintPath>..\packages\NSec.Cryptography.20.2.0\lib\netstandard2.0\NSec.Cryptography.dll</HintPath>
     </Reference>
@@ -1129,6 +1132,7 @@
     <Content Include="Content\style.scss" />
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
+    <Content Include="Nlog.config" />
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
@@ -1398,6 +1402,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="logs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

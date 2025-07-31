@@ -98,25 +98,6 @@ $(".targetuser_month_HO").each(function () {
     }
     var currentWeek = $("input[name='CurrentWeek']").val();
     var totalWeekTarget = 0;
-    //$(this).closest("tr").find(".input-RevenueUser_Week").each(function (index) {
-    //    var weekTarget = $(this).val().trim().replace(/\,/g, "");
-    //    if (weekTarget !== "" && targetuser_month_BM > 0) {
-    //        var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
-    //        $(this).closest("td").next(".week-percent").text(percent_user_week);
-    //        totalWeekTarget += parseFloat(weekTarget) || 0;
-    //    }
-    //    if (/*targetuser_month_BM > 0 &&*/ totalWeekTarget !== targetuser_month_real) {
-    //        if (index >= currentWeek) {
-    //            $(this).siblings(".revenue-value-week_BM").text("");
-    //            //$(this).siblings(".btnedit-input").css("display","none");
-    //            $(this).closest("td").next("td").text("");
-    //            $(this).val("");
-    //            //$(this).css("display", "block");
-
-    //        }
-    //    }
-    //});
-    //var totalWeekTarget = 0;
 
     var elements = $(this).closest("tr").find(".input-RevenueUser_Week");
     elements.each(function (index) {
@@ -130,24 +111,30 @@ $(".targetuser_month_HO").each(function () {
                 totalWeekTarget += parseFloat(weekTarget_real) || 0;
             }
             else {
-
                 totalWeekTarget += parseFloat(weekTarget) || 0;
             }
-            //totalWeekTarget += parseFloat(weekTarget) || 0;
         }
     });
-    //alert(totalWeekTarget);
     // Kiểm tra tổng số sau khi duyệt qua tất cả các phần tử
     if (totalWeekTarget !== targetuser_month_real) {
-
-        elements.each(function (index) {
-            if (index >= currentWeek - 1) {
-                $(this).siblings(".revenue-value-week_BM").text("");
-                $(this).closest("td").next("td").text("");
-                $(this).val("");
-
+        var diffirent = totalWeekTarget - targetuser_month_real;
+        if (diffirent < 0) {
+            {
+                diffirent = diffirent * -1;
+                $(this).closest("tr").find(".difference-target").css("color", "red");
             }
-        });
+        }
+        $(this).closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
+
+        //$(this).closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
+        //elements.each(function (index) {
+        //    if (index >= currentWeek - 1) {
+        //        $(this).siblings(".revenue-value-week_BM").text("");
+        //        $(this).closest("td").next("td").text("");
+        //        $(this).val("");
+
+        //    }
+        //});
     }
     $(this).closest("tr").find(".week-real").each(function () {
         var weekReal = $(this).text().trim().replace(/\,/g, "");
@@ -185,13 +172,51 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
                     var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
                     thisElement.closest("td").siblings(".percent_user_month").text(percent_user_month);
                     var currentWeek = $("input[name='CurrentWeek']").val();
+                    var totalWeekTarget = 0;
+
                     thisElement.closest("tr").find(".revenue-value-week_BM").each(function (index) {
-                        if (index >= currentWeek) {
-                            $(this).siblings(".input-RevenueUser_Week").val("");
-                            $(this).closest("td").next("td").text("");
-                            $(this).text("");
+                        //if (index >= currentWeek) {
+                        //    $(this).siblings(".input-RevenueUser_Week").val("");
+                        //    $(this).closest("td").next("td").text("");
+                        //    $(this).text("");
+                        //}
+                        var weekTarget = $(this).text().trim().replace(/\,/g, "");
+                        var weekTarget_real = $(this).nextAll(".week-real").first().text().trim().replace(/\,/g, "");
+                        if (weekTarget !== "" && targetuser_month_BM > 0) {
+                            var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
+                            $(this).closest("td").next(".week-percent").text(percent_user_week);
+                            if (weekTarget_real !== "") {
+                                totalWeekTarget += parseFloat(weekTarget_real) || 0;
+                            }
+                            else {
+                                totalWeekTarget += parseFloat(weekTarget) || 0;
+                            }
                         }
 
+                    });
+                    if (totalWeekTarget !== real_target_month) {
+
+                        var diffirent = totalWeekTarget - real_target_month;
+                        if (diffirent < 0) {
+                            diffirent = diffirent * -1;
+                            thisElement.closest("tr").find(".difference-target").css("color", "red");
+                        }
+                        else {
+                            thisElement.closest("tr").find(".difference-target").css("color", "black");
+
+                        }
+                        thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
+
+                    }
+                    else {
+                        thisElement.closest("tr").find(".difference-target").text("");
+                    }
+                    $(this).closest("tr").find(".week-real").each(function () {
+                        var weekReal = $(this).text().trim().replace(/\,/g, "");
+                        if (weekReal !== "") {
+                            var percent_user_week = Math.round(weekReal / targetuser_month_BM * 100);
+                            $(this).closest("td").next("td").text(percent_user_week);
+                        }
                     });
                 }
             } else {
@@ -296,6 +321,18 @@ $(".input-RevenueUser_Week").on("change", function () {
                             heading: 'Cập nhật thành công',
                             icon: 'success'
                         })
+                        if (totalWeekTarget < target_Month) {
+                            var diffirent = totalWeekTarget - target_Month;
+                            diffirent = diffirent * -1;
+                            thisElement.closest("tr").find(".difference-target").css("color", "red");
+                            thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
+
+                        }
+                        else {
+                            thisElement.closest("tr").find(".difference-target").text("");
+
+                        }
+                        thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
                         thisElement.siblings(".btnedit-input").css("display", "block");
                         thisElement.siblings(".revenue-value").css("display", "block");
                         thisElement.css("display", "none");
@@ -509,21 +546,25 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
 });
 $(function () {
     $(".input-number").each(function () {
-        const inputVal = $(this).val();
+        //const inputVal = $(this).val();
 
-        // Nếu không có giá trị hoặc giá trị là '0'
-        if (inputVal === "" || inputVal === "0") {
-            $(this).maskMoney({
-                precision: 0,
-                thousands: ',',
-                allowZero: true
-            });
-        } else {
-            $(this).maskMoney({
-                precision: 0,
-                thousands: ','
-                // allowZero không cần thiết nếu đã có giá trị khác
-            });
-        }
+        //if (inputVal === "" || inputVal === "0") {
+        //    $(this).maskMoney({
+        //        precision: 0,
+        //        thousands: ',',
+        //        allowZero: true
+        //    });
+        //} else {
+        $(this).maskMoney({
+            precision: 0,
+            thousands: ','
+            // allowZero không cần thiết nếu đã có giá trị khác
+        });
+        //}
     });
 });
+//$(".input-number").maskMoney({
+//    precision: 0,
+//    thousands: ","
+//});
+
