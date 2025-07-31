@@ -51,8 +51,8 @@ namespace OceanEduSlide.Controllers
                     model.Proposal.Active = true;
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office != null)
-                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") +DateTime.Now.Month.ToString("00") +DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") +DateTime.Now.Minute.ToString("00") +office.ShortCode;
-                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
+                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
+                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.Office.ZoneId).FirstOrDefault();
                 if (z != null)
                 {
                     model.Proposal.ZoneId = z.Id;

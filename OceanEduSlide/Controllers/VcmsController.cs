@@ -429,7 +429,7 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ListUser(int? page, string username, int? officeId, string result = "")
+        public ActionResult ListUser(int? page, string username, int? officeId,int? trung, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -448,6 +448,18 @@ namespace OceanEduSlide.Controllers
                     users = users.Where(l => l.Username.Contains(newkey) || l.Fullname.Contains(newkey) || l.MaNhanVien.Contains(newkey));
                 }
             }
+            if (trung == 1)
+            {
+                var duplicatedMaNhanViens = users
+                    .GroupBy(u => u.MaNhanVien)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                users = users.Where(u => duplicatedMaNhanViens.Contains(u.MaNhanVien) && u.MaNhanVien != null);
+            }
+
+
             var model = new ListUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
@@ -557,6 +569,11 @@ namespace OceanEduSlide.Controllers
 
                     var fullname = tbl.Rows[i][6].ToString().Trim();
                     var maxnhanvien = tbl.Rows[i][7].ToString().Trim();
+                    if (!string.IsNullOrEmpty(maxnhanvien))
+                    {
+                        var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == maxnhanvien).FirstOrDefault();
+                        if (u != null) continue;
+                    }
                     var phanquyen = tbl.Rows[i][9].ToString().Trim();
                     var zones = tbl.Rows[i][10].ToString().Trim();
                     if (user != null)
@@ -564,7 +581,6 @@ namespace OceanEduSlide.Controllers
                         user.Password = password2;
                         user.Active = true;
                         user.OfficeId = office?.Id ?? null;
-                        user.MaNhanVien = maxnhanvien;
                         user.Fullname = fullname;
                         switch (phanquyen)
                         {

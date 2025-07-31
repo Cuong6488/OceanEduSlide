@@ -13,19 +13,20 @@
         min-width: 90%;
     }
 </style>
+
 <div class="header d-flex">
     <div class="logo">
         <a href="/">
             <img src="~/Content/images/logo-index.png" alt="Ocean Edu" />
         </a>
-        @*@if (Model.User.Office != null)
-        {
-            <div>@(Model.User.Office.Name)</div>
 
-        }*@
     </div>
     <div class="navbar-container">
         <ul class="navbar ul-reset d-flex">
+            @if (Model.User.Office != null)
+            {
+                <li class="office-name me-0">@(Model.User.Office.Name)</li>
+            }
             <li>
                 <a href="javascript:;">DANH MỤC QĐ</a>
                 <ul class="ul-reset" style="top:150%">

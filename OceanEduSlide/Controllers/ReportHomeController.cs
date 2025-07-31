@@ -230,7 +230,7 @@ namespace OceanEduSlide.Controllers
 
         private async Task SyncCallLogsAsync()
         {
-            int daysToCheck = 1;
+            int daysToCheck = 3;
             DateTime today = DateTime.Today;
 
             for (int i = 1; i <= daysToCheck; i++)
@@ -273,7 +273,7 @@ namespace OceanEduSlide.Controllers
                     {
                         logger.Info(json);
                     }
-                        var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+                    var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
                     if (allLogs == null || allLogs.Count == 0)
                     {
                         System.Diagnostics.Debug.WriteLine($"No logs found for {day:yyyy-MM-dd}");
@@ -309,7 +309,9 @@ namespace OceanEduSlide.Controllers
                     }
 
                     // ✅ Tải toàn bộ người dùng 1 lần duy nhất
-                    var userDict = _unitOfWork.UserRepository.GetQuery(u => !string.IsNullOrEmpty(u.MaNhanVien) && u.Active).ToDictionary(u => u.MaNhanVien, u => u.Id);
+                    var userDict = _unitOfWork.UserRepository.GetQuery(u => !string.IsNullOrEmpty(u.MaNhanVien) && u.Active).ToList()
+                                    .GroupBy(u => u.MaNhanVien).Select(g => g.First()).ToDictionary(u => u.MaNhanVien, u => u.Id);
+
                     // ✅ Lọc các logs không tìm thấy user
                     newLogs = newLogs
                         .Where(log =>
@@ -348,74 +350,6 @@ namespace OceanEduSlide.Controllers
                 }
             }
         }
-
-        //private async Task FetchAndSaveLogsAsync(DateTime day)
-        //{
-        //    string user = "lvd";
-        //    string pass = "qazplm123`$%^";
-        //    string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
-
-        //    string tbegin = day.ToString("yyyy/MM/dd");
-        //    string tend = day.AddDays(1).ToString("yyyy/MM/dd");
-
-        //    string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
-
-        //    using (var http = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            var json = await http.GetStringAsync(url);
-        //            var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
-
-        //            var logs = allLogs.ToList();
-        //            var uniqueIds = logs.Select(l => l.UniqueId).ToList();
-        //            var existingUniqueIds = _unitOfWork.CallLogRepository.GetQuery(c => uniqueIds.Contains(c.UniqueId)).Select(c => c.UniqueId).ToList();
-        //            var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
-        //            //foreach (var log in newLogs)
-        //            //{
-        //            //    log.CallDateString = log.CallDate.ToString("dd/MM/yyyy");
-        //            //    var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
-        //            //    if (u != null)
-        //            //    {
-        //            //        log.UserId = u.Id;
-        //            //    }
-        //            //    else
-        //            //    {
-        //            //        // Nếu không tìm thấy người dùng, xóa bản ghi khỏi newLogs
-        //            //        System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
-        //            //        newLogs.Remove(log);  // Loại bỏ log khỏi newLogs
-        //            //        continue;  // Bỏ qua bản ghi này và chuyển sang bản ghi tiếp theo
-        //            //    }
-        //            //}
-        //            newLogs.RemoveAll(log =>
-        //            {
-        //                var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == log.Exten).FirstOrDefault();
-        //                if (u != null)
-        //                {
-        //                    log.UserId = u.Id;  // Gán UserId cho log
-        //                    return false;  // Nếu tìm thấy người dùng, không xóa bản ghi này
-        //                }
-        //                else
-        //                {
-        //                    // Nếu không tìm thấy người dùng, xóa log khỏi newLogs
-        //                    System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Removing log.");
-        //                    return true;  // Xóa log này khỏi newLogs
-        //                }
-        //            });
-        //            if (newLogs.Any())
-        //            {
-        //                _unitOfWork.CallLogRepository.InsertRange(newLogs);
-        //                _unitOfWork.Save();
-        //            }
-        //            //_unitOfWork.Save();
-        //            //System.Diagnostics.Debug.WriteLine($"✓ Synced {logs.Count()} calls for {day:yyyy-MM-dd}");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            System.Diagnostics.Debug.WriteLine($"✗ Error syncing {day:yyyy-MM-dd}: {ex.Message}");
-        //        }
-        //    }
-        //}
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {
 
@@ -489,7 +423,7 @@ namespace OceanEduSlide.Controllers
 
 
                 }).ToList();
-                var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.OfficeId == model.OfficeId);
+                var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.Active && a.OfficeId == model.OfficeId);
                 var userItems = users.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);

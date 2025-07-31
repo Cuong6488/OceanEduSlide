@@ -554,7 +554,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && a.Active && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
             };
             return View(model);
         }
@@ -579,7 +579,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);
-            model.Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == model.Event.OfficeId);
+            model.Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == model.Event.OfficeId);
             return View(model);
         }
         public ActionResult UpdateEvent(int evId)
@@ -593,7 +593,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;
@@ -635,7 +635,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek((int)model.Event.WeekNumber, model.Event.Year, model.Event.Month);
-            model.Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == model.Event.OfficeId);
+            model.Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == model.Event.OfficeId);
             return View(model);
         }
         [HttpPost]

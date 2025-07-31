@@ -51,9 +51,18 @@
   max-width: unset;
 }
 
+.header .navbar {
+  position: relative;
+}
 .header .navbar li {
   font-size: 1rem;
   font-weight: 600;
+}
+.header .navbar .office-name {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  text-align: left;
 }
 
 .fancybox-slide--iframe .fancybox-content {

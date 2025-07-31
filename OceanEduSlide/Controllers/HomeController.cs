@@ -280,7 +280,7 @@ namespace OceanEduSlide.Controllers
                     model.OfficeId = User.OfficeId;
                 if (model.OfficeId != null)
                 {
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM));
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM));
                     int today = 0;
                     if (string.IsNullOrEmpty(Date))
                         Date = DateTime.Now.ToString("dd/MM/yyyy");
@@ -491,7 +491,7 @@ namespace OceanEduSlide.Controllers
                     OfficeId = OfficeId,
                     Date = Date,
                 };
-                var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL));
+                var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL));
                 var officeName = _unitOfWork.OfficeRepository.GetById(OfficeId)?.Name;
                 ViewBag.OfficeName = officeName == null ? "" : "- Chi nhánh " + officeName;
                 var reportItems = users.ToList().Select(x => new ListReportViewModel.ReportItem

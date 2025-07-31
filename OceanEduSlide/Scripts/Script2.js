@@ -181,11 +181,12 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
                         //    $(this).text("");
                         //}
                         var weekTarget = $(this).text().trim().replace(/\,/g, "");
-                        var weekTarget_real = $(this).nextAll(".week-real").first().text().trim().replace(/\,/g, "");
+                        var weekTarget_real = $(this).closest("td").nextAll(".week-real").first().text().trim().replace(/\,/g, "");
                         if (weekTarget !== "" && targetuser_month_BM > 0) {
                             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
                             $(this).closest("td").next(".week-percent").text(percent_user_week);
                             if (weekTarget_real !== "") {
+                                //alert(weekTarget_real);
                                 totalWeekTarget += parseFloat(weekTarget_real) || 0;
                             }
                             else {
