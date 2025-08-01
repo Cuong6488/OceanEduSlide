@@ -161,7 +161,9 @@
                         <li style="padding:7px 15px" id="li-category">
                             <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Quyết định PTS theo tháng">Quyết định PTS theo tháng</a>
                             <div class="hidden" id="category3">
-                                @Html.Action("GetCatgory")
+                                <div id="category3-content">
+                                    @Html.Action("GetCatgory")
+                                </div>
                             </div>
                         </li>
                     }

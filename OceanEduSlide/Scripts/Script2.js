@@ -30,7 +30,7 @@ $("#form-category3").on("change", function (e) {
     var mucluc = $(this).find(".mucluc").val();
     var month = $(this).find(".month-category").val();
     $.get("/TuyenSinh/GetCatgory", { mucluc: mucluc, month: month }, function (data) {
-        $("#category3").html(data);
+        $("#category3-content").html(data);
     });
 });
 //$("[data-item=zone]").on("change", function (data) {

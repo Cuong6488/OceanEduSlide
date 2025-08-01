@@ -48,7 +48,9 @@ namespace OceanEduSlide.Controllers
                 .Distinct()
                 .ToList();
             var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3, q => q.OrderByDescending(a => a.Month));
-            if(Month != null)
+            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
+                catgories = catgories.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+            if (Month != null)
             {
                 catgories = catgories.Where(a => a.Month == Month);
             }
