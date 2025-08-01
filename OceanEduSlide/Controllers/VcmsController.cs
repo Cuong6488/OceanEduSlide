@@ -341,44 +341,44 @@ namespace OceanEduSlide.Controllers
 
             return RedirectToAction("ListUser");
         }
-        public ActionResult CreateTarget(string result = "")
-        {
-            ViewBag.Result = result;
-            var model = new CreateTargetViewModel
-            {
-                SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL), "Id", "Username"),
-                Revenue = new RevenueUser_Month()
-                {
-                    Month = DateTime.Now.Month,
-                    Year = DateTime.Now.Year,
-                }
-            };
-            return View(model);
-        }
-        [HttpPost]
-        public ActionResult CreateTarget(CreateTargetViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                //var m = new RevenueUser_Month
-                //{
-                //    Target = model.Revenue.Target,
-                //    UserId = model.Revenue.UserId,
-                //    Year = model.Revenue.Year,
-                //    Month = model.Revenue.Month,
-                //};
-                _unitOfWork.RevenueUser_MonthRepository.Insert(model.Revenue);
-                _unitOfWork.Save();
-                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+        //public ActionResult CreateTarget(string result = "")
+        //{
+        //    ViewBag.Result = result;
+        //    var model = new CreateTargetViewModel
+        //    {
+        //        SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL), "Id", "Username"),
+        //        Revenue = new RevenueUser_Month()
+        //        {
+        //            Month = DateTime.Now.Month,
+        //            Year = DateTime.Now.Year,
+        //        }
+        //    };
+        //    return View(model);
+        //}
+        //[HttpPost]
+        //public ActionResult CreateTarget(CreateTargetViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //var m = new RevenueUser_Month
+        //        //{
+        //        //    Target = model.Revenue.Target,
+        //        //    UserId = model.Revenue.UserId,
+        //        //    Year = model.Revenue.Year,
+        //        //    Month = model.Revenue.Month,
+        //        //};
+        //        _unitOfWork.RevenueUser_MonthRepository.Insert(model.Revenue);
+        //        _unitOfWork.Save();
+        //        //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
 
-                return RedirectToAction("CreateTarget", new { result = "add" });
+        //        return RedirectToAction("CreateTarget", new { result = "add" });
 
-            }
-            else
-            {
-                return HttpNotFound();
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //}
         public ActionResult CreateUser(string result = "")
         {
             ViewBag.Result = result;
@@ -406,7 +406,7 @@ namespace OceanEduSlide.Controllers
                 var exist2 = _unitOfWork.UserRepository.GetQuery().Any(z => !string.IsNullOrEmpty(model.MaNhanVien) && z.MaNhanVien.Equals(model.MaNhanVien));
                 if (exist2)
                 {
-                    ModelState.AddModelError("", @"Đã tồn tại nhân sự có mã nhân viên "+ model.MaNhanVien);
+                    ModelState.AddModelError("", @"Đã tồn tại nhân sự có mã nhân viên " + model.MaNhanVien);
                     model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
                     model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
                     return View(model);
@@ -436,7 +436,7 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             }
         }
-        public ActionResult ListUser(int? page, string username, int? officeId,int? trung, string result = "")
+        public ActionResult ListUser(int? page, string username, int? officeId, int? trung, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -576,11 +576,7 @@ namespace OceanEduSlide.Controllers
 
                     var fullname = tbl.Rows[i][6].ToString().Trim();
                     var maxnhanvien = tbl.Rows[i][7].ToString().Trim();
-                    if (!string.IsNullOrEmpty(maxnhanvien))
-                    {
-                        var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == maxnhanvien).FirstOrDefault();
-                        if (u != null) continue;
-                    }
+
                     var phanquyen = tbl.Rows[i][9].ToString().Trim();
                     var zones = tbl.Rows[i][10].ToString().Trim();
                     if (user != null)
@@ -613,6 +609,9 @@ namespace OceanEduSlide.Controllers
                             case "BSA":
                                 user.TypeUser = TypeUser.SAB;
                                 break;
+                            case "SAB":
+                                user.TypeUser = TypeUser.SAB;
+                                break;
                             case "ATL":
                                 user.TypeUser = TypeUser.ALT;
                                 break;
@@ -632,6 +631,11 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(maxnhanvien))
+                        {
+                            var u = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == maxnhanvien).FirstOrDefault();
+                            if (u != null) continue;
+                        }
                         user = new User
                         {
                             Username = username,
@@ -1398,6 +1402,7 @@ namespace OceanEduSlide.Controllers
                             Active = true
                         };
                         _unitOfWork.DiscountRepository.Insert(discount);
+
                     }
                 }
                 _unitOfWork.Save();

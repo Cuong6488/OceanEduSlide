@@ -177,32 +177,32 @@ namespace OceanEduSlide.Controllers
 
             return (workingWeeks, currentWeek);
         }
-        public ActionResult RevenueOffice()
-        {
-            if (User.TypeUser != TypeUser.HO)
-                return RedirectToAction("Index","Home");
-            var model = new RevenueOfficeViewModel
-            {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
-                RevenueOffice = new RevenueOffice { Active = true },
-            };
-            ViewBag.Year = DateTime.Now.Year;
-            return View(model);
-        }
-        [HttpPost]
-        public ActionResult RevenueOffice(RevenueOfficeViewModel model)
-        {
-            if (User.TypeUser != TypeUser.HO)
-                return RedirectToAction("Index","Home");
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.RevenueOfficeRepository.Insert(model.RevenueOffice);
-                _unitOfWork.Save();
-                return RedirectToAction("ListRevenueOffice", new { result = "add" });
-            }
-            ViewBag.Year = DateTime.Now.Year;
-            return View(model);
-        }
+        //public ActionResult RevenueOffice()
+        //{
+        //    if (User.TypeUser != TypeUser.HO)
+        //        return RedirectToAction("Index","Home");
+        //    var model = new RevenueOfficeViewModel
+        //    {
+        //        SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
+        //        RevenueOffice = new RevenueOffice { Active = true },
+        //    };
+        //    ViewBag.Year = DateTime.Now.Year;
+        //    return View(model);
+        //}
+        //[HttpPost]
+        //public ActionResult RevenueOffice(RevenueOfficeViewModel model)
+        //{
+        //    if (User.TypeUser != TypeUser.HO)
+        //        return RedirectToAction("Index","Home");
+        //    if (ModelState.IsValid)
+        //    {
+        //        _unitOfWork.RevenueOfficeRepository.Insert(model.RevenueOffice);
+        //        _unitOfWork.Save();
+        //        return RedirectToAction("ListRevenueOffice", new { result = "add" });
+        //    }
+        //    ViewBag.Year = DateTime.Now.Year;
+        //    return View(model);
+        //}
 
         public ActionResult RevenueOffice_BM(int officeId, int month, int year)
         {
