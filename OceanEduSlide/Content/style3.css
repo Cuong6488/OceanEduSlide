@@ -532,3 +532,8 @@ h2 {
   background: #053d7d;
   color: white;
 }
+
+#category3 thead {
+  position: sticky;
+  top: 0;
+}

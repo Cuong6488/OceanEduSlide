@@ -60,7 +60,11 @@
                 @if (Model.RankOffice != null)
                 {
                     var dshtdt = decimal.Parse(Model.RankOffice.DSHT) + Model.Debt;
-                    var pthtdt = dshtdt / Model.TMonth * 100;
+                    decimal pthtdt = 0;
+                    if (Model.TMonth != 0)
+                    {
+                        pthtdt = dshtdt / Model.TMonth * 100;
+                    }
                     <div class="col">
                         <div class="box-remind">
                             <div class="remind-works remind-works-bm">

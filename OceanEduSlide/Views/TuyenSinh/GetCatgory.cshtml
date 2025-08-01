@@ -22,7 +22,7 @@
     </select>
 </form>
 <table class="list_table table-striped box_content mt-0">
-    <tbody>
+    <thead>
         <tr>
             <th>Mục lục</th>
             <th>Tháng</th>
@@ -32,6 +32,9 @@
             <th>Link QĐ</th>
             <th>Bảng tính/ Ghi chú</th>
         </tr>
+    </thead>
+    
+    <tbody>
         @foreach (var item in Model.Categories)
         {
             var QDLink = item.QDLink + "/preview";
@@ -46,7 +49,7 @@
                     {
                         <a data-fancybox
                            data-type="iframe"
-                           data-src="@(item.QDLink.Contains("/viewform") ? item.QDLink : item.QDLink.Replace("/view", "/preview"))" 
+                           data-src="@(item.QDLink.Contains("/viewform") ? item.QDLink : item.QDLink.Replace("/view", "/preview"))"
                            href="javascript:;"
                            style="word-break:break-word">
                             Link
