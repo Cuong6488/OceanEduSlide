@@ -50,6 +50,20 @@ namespace OceanEduSlide.Controllers
             var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3, q => q.OrderByDescending(a => a.Month));
             if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
                 catgories = catgories.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+            else if(User.TypeUser == TypeUser.ASM)
+            {
+                var zoneId = User.ZoneId;
+
+                var officeShortCodes = _unitOfWork.OfficeRepository
+                    .GetQuery(o => o.ZoneId == zoneId)
+                    .Select(o => o.ShortCode)
+                    .ToList();
+
+                // Lọc các Category có chứa ít nhất một ShortCode trong Offices
+                catgories = catgories.Where(cat =>
+                    officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ","))
+                );
+            }    
             if (Month != null)
             {
                 catgories = catgories.Where(a => a.Month == Month);
