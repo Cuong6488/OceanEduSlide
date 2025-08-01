@@ -533,7 +533,7 @@ h2 {
   color: white;
 }
 
-#category3 thead {
+#category3 th {
   position: sticky;
   top: 0;
 }

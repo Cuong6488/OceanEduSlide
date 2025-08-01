@@ -33,10 +33,17 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.MaNhanVien)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.TextBoxFor(model => model.Users.FirstOrDefault().MaNhanVien, new { @class = "form_control w300", @readonly = "readonly" })
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Users.FirstOrDefault().Fullname)</td>
                     <td class="form_text">
                         @*<input autocomplete="off" type="type" name="name" value="" />*@
-                        @Html.TextBoxFor(model => model.Users.FirstOrDefault().Fullname, new { @class = "form_control w300", @readonly = "readonly" })
+                        @Html.TextBoxFor(model => model.Users.FirstOrDefault().Fullname, new { @class = "form_control w300" })
                         @Html.ValidationMessageFor(model => model.Fullname)
                     </td>
                 </tr>

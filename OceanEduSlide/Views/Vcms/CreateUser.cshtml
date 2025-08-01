@@ -39,6 +39,13 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.MaNhanVien)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.EditorFor(model => model.MaNhanVien, new { @class = "form_control w300" })
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Fullname)</td>
                     <td class="form_text">
                         @*<input autocomplete="off" type="type" name="name" value="" />*@

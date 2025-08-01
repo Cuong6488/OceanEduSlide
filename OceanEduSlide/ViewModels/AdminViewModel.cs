@@ -62,6 +62,8 @@ namespace OceanEduSlide.ViewModels
         public string Username { get; set; }
         [Display(Name = "Họ và tên"), UIHint("TextBox")]
         public string Fullname { get; set; }
+        [Display(Name = "Mã nhân viên"), UIHint("TextBox")]
+        public string MaNhanVien { get; set; }
         [Display(Name = "Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu mới"),
          StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
         public string Password { get; set; }

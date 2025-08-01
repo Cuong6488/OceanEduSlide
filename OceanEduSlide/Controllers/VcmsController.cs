@@ -403,6 +403,14 @@ namespace OceanEduSlide.Controllers
                     model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
                     return View(model);
                 }
+                var exist2 = _unitOfWork.UserRepository.GetQuery().Any(z => !string.IsNullOrEmpty(model.MaNhanVien) && z.MaNhanVien.Equals(model.MaNhanVien));
+                if (exist2)
+                {
+                    ModelState.AddModelError("", @"Đã tồn tại nhân sự có mã nhân viên "+ model.MaNhanVien);
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
+                    return View(model);
+                }
                 else
                 {
                     var m = new User
@@ -428,7 +436,6 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             }
         }
-
         public ActionResult ListUser(int? page, string username, int? officeId,int? trung, string result = "")
         {
             ViewBag.Result = result;
@@ -782,8 +789,7 @@ namespace OceanEduSlide.Controllers
                 }
                 else if (type == 3)
                 {
-                    var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
-                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3 && a.Month != lastMonth && a.Month != DateTime.Now.Month);
+                    var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3);
                     categories.Delete();
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
