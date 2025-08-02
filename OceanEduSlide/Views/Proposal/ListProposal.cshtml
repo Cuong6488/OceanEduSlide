@@ -1,5 +1,6 @@
 ﻿@using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
+@using PagedList.Mvc
 @model ProposalViewModel
 @{
     ViewBag.Title = "Danh sách đề xuất";
@@ -8,6 +9,11 @@
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error {
         display: none !important;
+    }
+
+    td {
+        text-align: left !important;
+        padding: 2px 7px !important;
     }
 </style>
 @*@Html.Action("Header", "TuyenSinh", new { name = "Danh sách công nợ" })*@
@@ -52,9 +58,9 @@
                     }
                 </select>
                 @*<select name="Notice" class="form-select me-3">
-                <option value="">Tất cả</option>
-                <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
-            </select>*@
+                        <option value="">Tất cả</option>
+                        <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
+                    </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
             else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
@@ -115,10 +121,9 @@
     @*@if (Model.ZoneId != null)
         {*@
     <h2>DANH SÁCH ĐỀ XUẤT</h2>
-    <div class="box_content mt-0">
-        @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+    <div class="box_content mt-0 no-scroll">
         <table class="list_table tablecenter table-striped text-center">
-            <tbody>
+            <thead class="thead-sticky">
                 <tr>
                     <th>STT</th>
                     <th class="col-w65">
@@ -143,9 +148,9 @@
                         Ngày đề xuất
                     </th>
                     @*<th class="col-w90">
-                            Phân loại <br /> đề xuất
-                        </th>*@
-                    <th class="col-w400">
+                        Phân loại <br /> đề xuất
+                    </th>*@
+                    <th style="min-width:600px !important">
                         Nội dung và lý do đề xuất
                     </th>
                     <th class="col-w90" style="width:300px">
@@ -161,22 +166,25 @@
                         Tổng hợp lỗi
                     </th>
                     @*<th class="col-w90">
-                            BM Duyệt
-                        </th>*@
+                        BM Duyệt
+                    </th>*@
                     @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                     {
                         <th></th>
                     }
                 </tr>
-                @{int stt = 1; }
+            </thead>
+
+            @{int stt = 1 + (Model.Page - 1) * ViewBag.PageSize; }
+            <tbody>
                 @foreach (var item in Model.Proposals)
                 {
                     <tr data-id="@item.Id">
                         <td>@stt</td>
-                        <td>@item.MaDeXuat</td>
+                        <td style="word-break:break-word">@item.MaDeXuat</td>
                         <td>@item.Zone.Name</td>
                         <td>@item.CVName</td>
-                        <td>@item.Office.Name</td>
+                        <td>@item.Office.ShortName</td>
                         <td>@(item.ProposalType?.Content)</td>
                         <td>@item.User.Fullname</td>
                         <td>@Html.DisplayFor(a => item.CreateDate)</td>
@@ -215,7 +223,15 @@
 
             </tbody>
         </table>
+        @if (Model.Proposals.PageCount > 1)
+        {
+            <div class="text-center">
+                @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+            </div>
+        }
     </div>
+    @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+   
     @*}*@
 </div>
 @section scripts{

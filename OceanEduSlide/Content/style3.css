@@ -126,6 +126,9 @@
 .box_content {
   overflow: auto !important;
 }
+.box_content.no-scroll {
+  overflow: unset !important;
+}
 
 .list_table tr th, .list_table tr td {
   padding: 2px;
@@ -533,7 +536,17 @@ h2 {
   color: white;
 }
 
+.thead-sticky th {
+  position: sticky;
+  top: -1px;
+  z-index: 10;
+}
+
+#category3 {
+  overflow: unset;
+}
 #category3 th {
   position: sticky;
-  top: 0;
+  top: -7px;
+  z-index: 10;
 }

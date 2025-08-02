@@ -175,6 +175,10 @@ $blue: #2D3AE2;
 
 .box_content {
     overflow: auto !important;
+
+    &.no-scroll {
+        overflow: unset !important;
+    }
 }
 
 .list_table tr th, .list_table tr td {
@@ -457,9 +461,19 @@ $groupCount: 20;
         color: white
     }
 }
-#category3{
-    th{
-        position:sticky;
-        top:0;
+
+.thead-sticky th {
+    position: sticky;
+    top: -1px;
+    z-index: 10;
+}
+
+#category3 {
+    overflow: unset;
+
+    th {
+        position: sticky;
+        top: -7px;
+        z-index: 10;
     }
 }

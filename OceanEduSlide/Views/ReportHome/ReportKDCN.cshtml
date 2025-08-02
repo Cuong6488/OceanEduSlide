@@ -141,7 +141,6 @@
     {
         <div class="text-center">
             @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
-
         </div>
     }
 </div>

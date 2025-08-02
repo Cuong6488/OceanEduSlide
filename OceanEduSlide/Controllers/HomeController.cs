@@ -118,7 +118,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult IndexSaleKit()
         {
             if (!User.SaleKit && User.TypeUser != null)
-                return HttpNotFound();
+                return RedirectToAction("Index");
             return View();
         }
         public JsonResult GetDiscount(string cth, double pathway)
@@ -209,7 +209,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult Index(int? officeId, string Date, string Result = "")
         {
             if (User.TypeUser == null)
-                return HttpNotFound();
+                return RedirectToAction("IndexSaleKit");
             if (User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.TTL)
             {
                 (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now);

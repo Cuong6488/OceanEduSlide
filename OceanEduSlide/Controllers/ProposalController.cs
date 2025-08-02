@@ -4,6 +4,7 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,7 @@ namespace OceanEduSlide.Controllers
                 if (z != null)
                 {
                     model.Proposal.ZoneId = z.Id;
+                    model.Proposal.CVName = _unitOfWork.UserRepository.GetQuery(a => a.ZoneIds.Contains(z.ShortCode)).FirstOrDefault()?.Fullname;
                     _unitOfWork.ProposalRepository.Insert(model.Proposal);
                     _unitOfWork.Save();
                     return RedirectToAction("ListProposal", new { Result = "add" });
@@ -72,11 +74,13 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListProposal");
         }
 
-        public ActionResult ListProposal(int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string MaDeXuat, string Type, string Result = "")
+        public ActionResult ListProposal(int? page,int? zoneId, int? officeId, int? Month, int? Year, int? Notice, string MaDeXuat, string Type, string Result = "")
         {
             if (User.TypeUser == null || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.TTL || User.TypeUser == TypeUser.ALT)
                 return HttpNotFound();
             ViewBag.Result = Result;
+            var pageSize = 10;
+            ViewBag.PageSize = pageSize;
             var types = _unitOfWork.ProposalTypeRepository
                 .GetQuery()
                 .Select(a => a.Content) // Chọn trường bạn cần, có thể thay 'Index' bằng tên khác
@@ -94,6 +98,7 @@ namespace OceanEduSlide.Controllers
                 MaDeXuat = MaDeXuat,
                 ProposalTypes = types,
                 Type = Type,
+                Page = page?? 1
             };
             var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
             if (!string.IsNullOrEmpty(MaDeXuat))
@@ -117,7 +122,7 @@ namespace OceanEduSlide.Controllers
                 proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
                 if (Notice == 1)
                     proposals = proposals.Where(a => !a.CVSeen);
-                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.ZoneId + ",") && a.Active && !a.CVSeen).Count();
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active && !a.CVSeen).Count();
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
 
             }
@@ -156,12 +161,12 @@ namespace OceanEduSlide.Controllers
             {
                 proposals = proposals.Where(a => a.ZoneId == model.ZoneId);
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-                var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
-                var user = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.CV && a.ZoneIds.Contains("," + zone.ShortCode + ",")).FirstOrDefault();
-                if (user != null)
-                {
-                    ViewBag.CVName = user.Fullname ?? user.Username;
-                }
+                //var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
+                //var user = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.CV && a.ZoneIds.Contains("," + zone.ShortCode + ",")).FirstOrDefault();
+                //if (user != null)
+                //{
+                //    ViewBag.CVName = user.Fullname ?? user.Username;
+                //}
             }
             if (model.OfficeId != null)
             {
@@ -170,7 +175,7 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.CV)
                 proposals = proposals.Where(a => a.UserId == User.Id);
 
-            model.Proposals = proposals;
+            model.Proposals = proposals.ToPagedList(page ?? 1,pageSize);
             return View(model);
             //}
             //else
@@ -220,6 +225,11 @@ namespace OceanEduSlide.Controllers
             proposal.Url = model.Proposal.Url;
             proposal.ProposalTypeId = model.Proposal.ProposalTypeId;
             proposal.Active = true;
+            if (string.IsNullOrEmpty(proposal.CVName))
+            {
+                proposal.CVName = _unitOfWork.UserRepository.GetQuery(a => a.ZoneIds.Contains(","+proposal.Zone.ShortCode +",")).FirstOrDefault()?.Fullname;
+
+            }
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }

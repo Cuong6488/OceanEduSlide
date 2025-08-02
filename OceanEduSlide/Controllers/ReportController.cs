@@ -74,6 +74,7 @@ namespace OceanEduSlide.Controllers
                         for (int j = 4; j < tbl.Columns.Count; j++)
                         {
                             var value = tbl.Rows[i][j].ToString().Trim();
+                            var valueReal = "";
                             //if (string.IsNullOrEmpty(value)) 
                             var categoryChild = tbl.Rows[1][j].ToString().Trim();      // danh mục con: "Thực tế"
                             if (string.IsNullOrEmpty(categoryChild)) continue;
@@ -98,6 +99,12 @@ namespace OceanEduSlide.Controllers
 
                             if (category == null)
                                 continue;
+                            if (!string.IsNullOrEmpty(value))
+                                if (category.Name.Contains("%"))
+                                    valueReal = Math.Round(decimal.Parse(value) * 100, 1).ToString() + "%";
+                                else
+                                    valueReal = decimal.Parse(value).ToString("N0");
+
                             var oldData = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == DateTime.Now.Year && a.Month == monthInt && a.ReportCategoryId == category.Id).FirstOrDefault();
                             if (oldData == null)
                             {
@@ -107,14 +114,14 @@ namespace OceanEduSlide.Controllers
                                     Year = DateTime.Now.Year,
                                     OfficeId = office.Id,
                                     ReportCategoryId = category.Id,
-                                    Data = value,
+                                    Data = valueReal,
                                     Sort = j
                                 };
                                 _unitOfWork.ReportDataRepository.Insert(data);
                             }
                             else
                             {
-                                oldData.Data = value;
+                                oldData.Data = valueReal;
                             }
                             cChildSort++;
                         }
@@ -200,7 +207,7 @@ namespace OceanEduSlide.Controllers
         {
             var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery();
             reportCategories.Delete();
-            return RedirectToAction("Index","Vcms");
+            return RedirectToAction("Index", "Vcms");
         }
         protected override void Dispose(bool disposing)
         {

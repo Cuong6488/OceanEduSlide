@@ -1,4 +1,5 @@
 ﻿using OceanEduSlide.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,7 @@ namespace OceanEduSlide.ViewModels
     }
     public class ProposalViewModel
     {
+        public int Page { get; set; }
         public int? Year { get; set; }
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
@@ -25,7 +27,7 @@ namespace OceanEduSlide.ViewModels
         public string MaDeXuat { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
-        public IEnumerable<Proposal> Proposals { get; set; }
+        public IPagedList<Proposal> Proposals { get; set; }
         public User User { get; set; }
         public List<string> ProposalTypes { get; set; }
         public string Type { get; set; }

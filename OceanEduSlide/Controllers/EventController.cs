@@ -559,12 +559,14 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult AddEvent(AddEventViewModel model)
+        public ActionResult AddEvent(AddEventViewModel model, int DayQuantity)
         {
             if (ModelState.IsValid)
             {
                 model.Event.UserIds = "," + model.Event.UserIds;
-                if (model.Event.Days.Length == 2)
+                if (model.Event.Days.Length == 2 && DayQuantity != 1)
+                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                else if (model.Event.Days.Length == 2 && DayQuantity != 1)
                     ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
                 else
                 {
