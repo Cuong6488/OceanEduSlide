@@ -1,7 +1,203 @@
-﻿@{
+﻿@*@{
+        ViewBag.Title = "Báo cáo KDCN";
+        string officeIds = ViewBag.OfficeIds;
+    }
+    @using OceanEduSlide.ViewModels
+    @using OceanEduSlide.Models
+    @using PagedList.Mvc
+
+    @model ListReportHomeViewModel
+
+<style>
+    td, th {
+        height: 45px !important;
+    }
+
+    .h-90 {
+        height: 90px !important;
+    }
+
+    #OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
+        display: none !important;
+    }
+</style>
+
+<div class="container py-3">
+    <form action="@Url.Action(" ReportKDCN")" method="get" class="d-flex form-filter mb-5">
+        <select name="Year" class="form-select me-3 w-25" required">
+            <option value="">Chọn năm</option>
+            @for (int i = 2024; i <= DateTime.Now.Year; i++)
+            {
+            <option value="@i" @(Model.Year= =i ? "selected" : "" )>@i</option>
+            }
+        </select>
+        <select name="Month" class="form-select me-3 w-25" required>
+            <option value="">Chọn tháng</option>
+            @for (int i = 1; i <= 12; i++)
+            {
+            <option value="@i" @(Model.Month= =i ? "selected" : "" )>Tháng @i</option>
+            }
+        </select>
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        {
+        <select name="ZoneId" class="form-select me-3 w-25">
+            <option value="">Chọn vùng</option>
+            @foreach (var item in Model.Zones)
+            {
+            <option value="@item.Id" @(Model.ZoneId= =item.Id ? "selected" : "" )>@item.Name</option>
+            }
+        </select>
+        }
+    </form>
+    <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
+    <a class="btn quick-link" href="@Url.Action(" Report", "Report" , new {type=1})">Cập nhật báo cáo KDCN</a>
+    <div class="box_content d-flex">
+        <div class="columnGroup" data-group-id="group-0">
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="h-90" rowspan="2">Tháng</th>
+                        <th rowspan="2" class="col-w90 h-90">Vùng</th>
+                        <th rowspan="2" class="col-w200 h-90">Chi nhánh</th>
+                    </tr>
+                    <tr>
+                    </tr>
+                    @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
+                    {
+                    <tr class="tr1">
+                        <td>@Model.Month</td>
+                        <td class="text-start">@(office.Zone?.Name)</td>
+                        <td class="text-start">@office.ShortName</td>
+                    </tr>
+                    }
+                    @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+                    {
+                    <tr class="tr2">
+                        <td>@Model.Month</td>
+                        <td class="text-start">@(office.Zone?.Name)</td>
+                        <td class="text-start">@office.ShortName</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+        <div id="groupWrapper">
+            @foreach (var group in Model.ReportCategories.Where(c => c.ReportCategoryId == null).GroupBy(c => c.Group))
+            {
+            var groupId = group.Key;
+            int total = group.Count();
+            int i = 1;
+
+            <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
+
+                @foreach (var category in group)
+                {
+                var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
+
+                <table class="@tableClass">
+                    <thead>
+                        <tr>
+                            <th class="col-w100" colspan="@category.Count">@category.Name</th>
+                        </tr>
+                        <tr>
+                            @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
+                            {
+                            <th class="col-w65">@child.Name</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
+                        {
+                        <tr class="tr1">
+                            @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
+                            {
+                            <td>@data.Data</td>
+                            }
+                        </tr>
+                        }
+
+                        @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+                        {
+                        <tr class="tr2">
+                            @for (var j = 1; j <= category.Count; j++)
+                            {
+                            <td></td>
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                i++;
+
+                }
+            </div>
+            }
+        </div>
+
+    </div>
+    @if (Model.Offices.PageCount > 1)
+    {
+    <div class="text-center">
+        @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
+    </div>
+    }
+</div>
+    @section scripts
+    {
+<script>
+    $(function () {
+        const wrapper = $("#groupWrapper");
+
+        wrapper.sortable({
+            axis: "x",
+            items: ".columnGroup",
+            update: function () {
+                const order = wrapper.children().map(function () {
+                    return $(this).attr("data-group-id");
+                }).get();
+                localStorage.setItem("groupOrder", JSON.stringify(order));
+            }
+        });
+
+        const savedOrder = JSON.parse(localStorage.getItem("groupOrder") || "[]");
+        if (savedOrder.length) {
+            savedOrder.forEach(id => {
+                const group = wrapper.find(`[data-group-id="${id}"]`);
+                wrapper.append(group);
+            });
+        }
+    });
+</script>
+
+    }*@
+@{
     ViewBag.Title = "Báo cáo KDCN";
-    string officeIds = ViewBag.OfficeIds;
+
+    string officeIds = ViewBag.OfficeIds ?? ",";
+    var officeIdList = (officeIds ?? "")
+    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+    .Select(id =>
+    {
+        return int.TryParse(id, out int val) ? (int?)val : null;
+    })
+    .Where(val => val.HasValue)
+    .Select(val => val.Value)
+    .ToHashSet();
+
+
+    var officeHasData = Model.Offices.Where(o => officeIdList.Contains(o.Id)).ToList();
+    var officeNoData = Model.Offices.Where(o => !officeIdList.Contains(o.Id)).ToList();
+
+    var reportDataDict = Model.ReportDatas
+        .GroupBy(d => new { d.OfficeId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
+        .ToDictionary(
+            g => g.Key,
+            g => g.OrderBy(d => d.Sort).ToList()
+        );
 }
+
 @using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
 @using PagedList.Mvc
@@ -24,7 +220,7 @@
 
 <div class="container py-3">
     <form action="@Url.Action("ReportKDCN")" method="get" class="d-flex form-filter mb-5">
-        <select name="Year" class="form-select me-3 w-25" required">
+        <select name="Year" class="form-select me-3 w-25" required>
             <option value="">Chọn năm</option>
             @for (int i = 2024; i <= DateTime.Now.Year; i++)
             {
@@ -49,8 +245,10 @@
             </select>
         }
     </form>
+
     <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
-    <a class="btn quick-link" href="@Url.Action("Report", "Report", new {type = 1})">Cập nhật báo cáo KDCN</a>
+    <a class="btn quick-link" href="@Url.Action("Report", "Report", new { type = 1 })">Cập nhật báo cáo KDCN</a>
+
     <div class="box_content d-flex">
         <div class="columnGroup" data-group-id="group-0">
             <table>
@@ -60,9 +258,9 @@
                         <th rowspan="2" class="col-w90 h-90">Vùng</th>
                         <th rowspan="2" class="col-w200 h-90">Chi nhánh</th>
                     </tr>
-                    <tr>
-                    </tr>
-                    @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
+                    <tr></tr>
+
+                    @foreach (var office in officeHasData)
                     {
                         <tr class="tr1">
                             <td>@Model.Month</td>
@@ -70,7 +268,8 @@
                             <td class="text-start">@office.ShortName</td>
                         </tr>
                     }
-                    @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+
+                    @foreach (var office in officeNoData)
                     {
                         <tr class="tr2">
                             <td>@Model.Month</td>
@@ -80,8 +279,8 @@
                     }
                 </tbody>
             </table>
-
         </div>
+
         <div id="groupWrapper">
             @foreach (var group in Model.ReportCategories.Where(c => c.ReportCategoryId == null).GroupBy(c => c.Group))
             {
@@ -90,10 +289,10 @@
                 int i = 1;
 
                 <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
-
                     @foreach (var category in group)
                     {
                         var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
+                        var subCategories = Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id).ToList();
 
                         <table class="@tableClass">
                             <thead>
@@ -101,27 +300,37 @@
                                     <th class="col-w100" colspan="@category.Count">@category.Name</th>
                                 </tr>
                                 <tr>
-                                    @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
+                                    @foreach (var child in subCategories)
                                     {
                                         <th class="col-w65">@child.Name</th>
                                     }
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var office in Model.Offices.Where(a => officeIds.Contains("," + a.Id + ",")))
+                                @foreach (var office in officeHasData)
                                 {
                                     <tr class="tr1">
-                                        @foreach (var data in Model.ReportDatas.Where(a => a.OfficeId == office.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
+                                        @{
+                                            var key = new { OfficeId = office.Id, CategoryId = category.Id };
+                                            var dataList = reportDataDict.ContainsKey(key) ? reportDataDict[key] : new List<ReportData>();
+                                        }
+
+                                        @foreach (var data in dataList.Take(category.Count ?? 1))
                                         {
                                             <td>@data.Data</td>
+                                        }
+
+                                        @for (var k = dataList.Count; k < (category.Count ?? 1); k++)
+                                        {
+                                            <td></td>
                                         }
                                     </tr>
                                 }
 
-                                @foreach (var office in Model.Offices.Where(a => !officeIds.Contains("," + a.Id + ",")))
+                                @foreach (var office in officeNoData)
                                 {
                                     <tr class="tr2">
-                                        @for (var j = 1; j <= category.Count; j++)
+                                        @for (var j = 0; j < (category.Count ?? 1); j++)
                                         {
                                             <td></td>
                                         }
@@ -130,13 +339,12 @@
                             </tbody>
                         </table>
                         i++;
-
                     }
                 </div>
             }
         </div>
-
     </div>
+
     @if (Model.Offices.PageCount > 1)
     {
         <div class="text-center">
@@ -144,6 +352,7 @@
         </div>
     }
 </div>
+
 @section scripts
 {
     <script>
@@ -170,5 +379,4 @@
             }
         });
     </script>
-
 }

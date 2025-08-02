@@ -88,11 +88,16 @@
             <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Event.Days)</td>
                 <td class="form_text">
+                    @{
+                        int d = 0;
+                    }
                     @Html.TextBoxFor(model => model.Event.Days, new { @type = "hidden" })
                     @if (ViewBag.WorkingWeeks != (int)Model.Event.WeekNumber)
                     {
                         for (int i = 9 - ViewBag.DayOfWeeks; i <= (int)Model.Event.DayofWeek; i++)
                         {
+                            d += 1;
+
                             <label>
                                 <input type="checkbox" value="@i," @((Model.Event.Days ?? "").Contains(i.ToString()) ? "checked" : "") />
                                 @(i == 8?"Chủ nhật": "Thứ "+ i )
@@ -103,6 +108,8 @@
                     {
                         for (int i = 2; i <= (int)Model.Event.DayofWeek; i++)
                         {
+                            d += 1;
+
                             <label>
                                 <input type="checkbox" value="@i," @((Model.Event.Days ?? "").Contains(i.ToString()) ? "checked" : "") />
                                 @(i == 8?"Chủ nhật": "Thứ "+ i )
@@ -117,6 +124,7 @@
                 <td class="form_name"></td>
                 <td class="form_text">
                     <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    <input type="hidden" name="DayQuantity" value="@d" />
                 </td>
             </tr>
 

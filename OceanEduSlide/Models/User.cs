@@ -33,6 +33,8 @@ namespace OceanEduSlide.Models
         public decimal RevenueAverage { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [Display(Name = "Tài khoản đã đổi mật khẩu")]
+        public bool OldAcount { get; set; }
         [Display(Name = "Tài khoản SaleKit")]
         public bool SaleKit { get; set; }
         [Display(Name = "Chi nhánh")]

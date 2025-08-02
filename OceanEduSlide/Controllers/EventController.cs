@@ -199,8 +199,6 @@ namespace OceanEduSlide.Controllers
             }
             return Json(new { status = false, msg = "Chưa cập nhật các tỉ lệ chuyển đổi cho người dùng này" });
 
-
-
         }
 
         [HttpPost]
@@ -224,11 +222,16 @@ namespace OceanEduSlide.Controllers
                     var cf2 = cf3;
                     if (user.Confirm3 > 0)
                         cf2 = Math.Round(cf3 / user.Confirm3 * 100);
-                    var cf2Day = Math.Round(cf2 / 2);
                     var cf1 = Math.Round(cf2 / user.Confirm2 * 100);
-                    var cf1Day = Math.Round(cf1 / (days.Count() - 1));
                     var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
-                    var dataDay = Math.Round(dataQuantity / (days.Count() - 1));
+                    decimal dataDay = 0, cf1Day = 0, cf2Day = 0;
+                    if (days.Count > 1)
+                    {
+                        dataDay = Math.Round(dataQuantity / (days.Count() - 1));
+                        cf1Day = Math.Round(cf1 / (days.Count() - 1));
+                        cf2Day = Math.Round(cf2 / 2);
+                    }
+
                     int i = 1;
                     foreach (var day in days)
                     {
@@ -297,22 +300,33 @@ namespace OceanEduSlide.Controllers
 
                             _unitOfWork.RevenueUser_DayOfWeekRepository.Insert(revenue);
                         }
-                        if (i < days.Count())
+                        if (days.Count() > 1)
                         {
-                            revenue.DataQuantity = dataDay;
-                            revenue.Confirm1 = cf1Day;
-                        }
-                        if (i >= days.Count() - 1)
-                        {
-                            revenue.Confirm2 = cf2Day;
-                            if (i == days.Count())
+                            if (i < days.Count())
                             {
-                                revenue.DT = dt;
-                                revenue.CI = ci;
+                                revenue.DataQuantity = dataDay;
+                                revenue.Confirm1 = cf1Day;
                             }
+                            if (i >= days.Count() - 1)
+                            {
+                                revenue.Confirm2 = cf2Day;
+                                if (i == days.Count())
+                                {
+                                    revenue.DT = dt;
+                                    revenue.CI = ci;
+                                }
 
+                            }
+                            i++;
                         }
-                        i++;
+                        else
+                        {
+                            revenue.DataQuantity = dataQuantity;
+                            revenue.Confirm1 = cf1;
+                            revenue.Confirm2 = cf2;
+                            revenue.DT = dt;
+                            revenue.CI = ci;
+                        }
                     }
                     _unitOfWork.Save();
                     var listrevenue = _unitOfWork.RevenueUser_DayOfWeekRepository
@@ -566,8 +580,8 @@ namespace OceanEduSlide.Controllers
                 model.Event.UserIds = "," + model.Event.UserIds;
                 if (model.Event.Days.Length == 2 && DayQuantity != 1)
                     ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
-                else if (model.Event.Days.Length == 2 && DayQuantity != 1)
-                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                //else if (model.Event.Days.Length == 2 && DayQuantity == 1)
+                //    ModelState.AddModelError("", @"Phải có ít nhất 1 ngày triển khai");
                 else
                 {
                     model.Event.Days = model.Event.Days.TrimEnd(',');
@@ -604,15 +618,18 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult UpdateEvent(AddEventViewModel model)
+        public ActionResult UpdateEvent(AddEventViewModel model, int DayQuantity)
         {
             var ev = _unitOfWork.EventRepository.GetById(model.Event.Id);
             if (ev == null)
                 return RedirectToAction("Index");
             if (ModelState.IsValid)
             {
-                if (model.Event.Days.Length == 2)
+                if (model.Event.Days.Length == 2 && DayQuantity != 1)
+                {
                     ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                }
+
                 else
                 {
                     ev.TimeFrom = model.Event.TimeFrom;

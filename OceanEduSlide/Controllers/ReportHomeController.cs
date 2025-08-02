@@ -35,7 +35,6 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        #region Call
         //public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
         //{
         //    if (User.TypeUser == null)
@@ -123,67 +122,168 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == null)
                 return HttpNotFound();
 
-            var pageNumber = page ?? 1;
-            var month = Month ?? DateTime.Now.Month;
-            var year = Year ?? DateTime.Now.Year;
+            int currentMonth = Month ?? DateTime.Now.Month;
+            int currentYear = Year ?? DateTime.Now.Year;
+            int pageNumber = page ?? 1;
 
-            // Truy vấn dữ liệu báo cáo một lần
-            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(
-                a => a.Active &&
-                     a.Month == month &&
-                     a.Year == year &&
-                     a.ReportCategory.TypeCat == TypeCat.Type1 &&
-                     a.ReportCategoryId == 35,
-                q => q.OrderBy(a => a.Sort)
-            ).ToList();
+            // Truy vấn ReportData: chỉ lấy các field cần thiết để tính toán
+            var reportDataRaw = _unitOfWork.ReportDataRepository
+                .GetQuery(a =>
+                    a.Active &&
+                    a.Month == currentMonth &&
+                    a.Year == currentYear &&
+                    a.ReportCategory.TypeCat == TypeCat.Type1 &&
+                    a.ReportCategoryId == 35)
+                .Select(a => new { a.OfficeId, a.Data }) // giảm payload rất nhiều
+                .AsNoTracking()
+                .ToList();
 
-            // Truy vấn danh sách văn phòng
-            var offices = _unitOfWork.OfficeRepository.GetQuery(
-                a => a.Active,
-                q => q.OrderBy(a => a.ZoneId)
-            ).ToList();
-
-            // Tính tổng dữ liệu theo OfficeId (song song)
-            var officeDataDict = reportDatas
-                .AsParallel()
+            // Tính tổng theo OfficeId
+            var officeDataDict = reportDataRaw
                 .GroupBy(r => r.OfficeId)
                 .ToDictionary(
                     g => g.Key,
                     g => g.Sum(r =>
                     {
                         int val;
-                        var cleaned = r.Data?.Replace(".", "").Replace(",", "");
+                        var cleaned = r.Data?.Replace(".", "").Replace(",", "") ?? "0";
                         return int.TryParse(cleaned, out val) ? val : 0;
                     })
                 );
 
-            // Sắp xếp văn phòng theo tổng dữ liệu
-            var sortedOffices = offices
-                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0);
+            // Truy vấn Office kèm theo điều kiện lọc
+            IQueryable<Office> officeQuery = _unitOfWork.OfficeRepository
+                .GetQuery(a => a.Active)
+                .AsNoTracking(); // nhẹ hơn
 
-            IEnumerable<Office> filteredOffices = sortedOffices;
+            // Lọc theo quyền user
+            if (User.TypeUser == TypeUser.CV)
+            {
+                officeQuery = officeQuery.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+            }
+            else if (User.TypeUser == TypeUser.ASM)
+            {
+                officeQuery = officeQuery.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+            }
+            else if (User.TypeUser != TypeUser.HO)
+            {
+                officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
+            }
 
-            // Khởi tạo model
+            if (ZoneId.HasValue)
+            {
+                officeQuery = officeQuery.Where(a => a.ZoneId == ZoneId.Value);
+            }
+
+            // Lấy danh sách offices đã lọc và sắp xếp
+            var filteredOffices = officeQuery
+                .ToList() // chỉ ToList khi đã có filter
+                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0)
+                .ToPagedList(pageNumber, 15);
+
+            // Lấy danh sách ReportData (full) cho hiển thị
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
+                a.Active &&
+                a.Month == currentMonth &&
+                a.Year == currentYear &&
+                a.ReportCategory.TypeCat == TypeCat.Type1);
+
+            if (ZoneId.HasValue)
+            {
+                reportDatas = reportDatas.Where(a => a.Office.ZoneId == ZoneId.Value);
+            }
+
             var model = new ListReportHomeViewModel
             {
-                Month = month,
-                Year = year,
+                Month = currentMonth,
+                Year = currentYear,
                 User = User,
                 ZoneId = ZoneId,
-                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(
-                    a => a.Active && a.TypeCat == TypeCat.Type1,
-                    q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)
-                ),
-                ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(
-                    a => a.Active &&
-                         a.Month == month &&
-                         a.Year == year &&
-                         a.ReportCategory.TypeCat == TypeCat.Type1,
-                    q => q.OrderBy(a => a.Sort)
-                )
+                Offices = filteredOffices,
+                ReportCategories = _unitOfWork.ReportCategoryRepository
+                    .GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1,
+                              q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort))
+                    .AsNoTracking(),
+                ReportDatas = reportDatas.AsNoTracking()
             };
 
-            // Phân quyền theo loại người dùng
+            // Zones theo quyền
+            if (User.TypeUser == TypeUser.HO)
+            {
+                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            }
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = _unitOfWork.ZoneRepository
+                    .Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+            }
+            else
+            {
+                model.ZoneId = User.ZoneId;
+            }
+
+            // Gán danh sách OfficeId cho ViewBag
+            ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId).Distinct()) + ",";
+
+            return View(model);
+        }
+        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
+        {
+            if (User.TypeUser == null)
+                return HttpNotFound();
+
+            var pageNumber = page ?? 1;
+            var selectedMonth = Month ?? DateTime.Now.Month;
+            var selectedYear = Year ?? DateTime.Now.Year;
+
+            // Lấy dữ liệu báo cáo theo điều kiện
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active
+                    && a.Month == selectedMonth
+                    && a.Year == selectedYear
+                    && a.ReportCategory.TypeCat == TypeCat.Type2
+                    && a.ReportCategoryId == 88,
+                q => q.OrderBy(a => a.Sort))
+                .ToList();
+
+            // Lấy danh sách user có OfficeId và TypeUser
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser != null && a.OfficeId != null,
+                    q => q.OrderBy(a => a.OfficeId))
+                .ToList();
+
+            // Tính tổng giá trị reportData cho từng user (đã parse số liệu)
+            var userDataDict = reportDatas
+                .GroupBy(r => r.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(r =>
+                    {
+                        int val;
+                        var cleanedData = r.Data?.Replace(",", "");
+                        return int.TryParse(cleanedData, out val) ? val : 0;
+                    })
+                );
+
+            // Sắp xếp user theo tổng giá trị data giảm dần rồi theo OfficeId
+            var sortedUsers = users
+                .OrderByDescending(o => userDataDict.ContainsKey(o.Id) ? userDataDict[o.Id] : 0)
+                .ThenBy(a => a.OfficeId);
+
+            IEnumerable<User> filteredUsers = sortedUsers;
+
+            // Tạo model view
+            var model = new ListReportNVHomeViewModel
+            {
+                Month = selectedMonth,
+                Year = selectedYear,
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+                User = User,
+                ZoneId = ZoneId,
+                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
+                ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Sort)),
+                OfficeId = OfficeId,
+            };
+
+            // Phân quyền theo TypeUser để lọc vùng, chi nhánh, nhân viên
             if (User.TypeUser == TypeUser.HO)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -191,7 +291,8 @@ namespace OceanEduSlide.Controllers
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                filteredOffices = filteredOffices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
             }
             else
             {
@@ -199,29 +300,139 @@ namespace OceanEduSlide.Controllers
 
                 if (User.TypeUser == TypeUser.ASM)
                 {
-                    filteredOffices = filteredOffices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
                 }
                 else
                 {
-                    filteredOffices = filteredOffices.Where(a => a.Id == User.OfficeId);
+                    model.OfficeId = User.OfficeId;
+                    filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
                 }
             }
 
-            // Lọc theo ZoneId nếu có
             if (model.ZoneId != null)
             {
-                filteredOffices = filteredOffices.Where(a => a.ZoneId == model.ZoneId);
-                model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
             }
 
-            // Phân trang văn phòng
-            model.Offices = filteredOffices.ToPagedList(pageNumber, 15);
+            if (model.OfficeId != null)
+            {
+                model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
+                filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
+                ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId)) + ",";
+            }
 
-            // Tạo danh sách OfficeIds cho ViewBag
-            ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId)) + ",";
+            // Phân trang cho danh sách user
+            model.Users = filteredUsers.ToPagedList(pageNumber, 15);
+
+            // Tạo chuỗi MaNhanViens dùng để phân biệt user có dữ liệu báo cáo
+            string manhanviens = ",";
+            foreach (var item in model.ReportDatas)
+            {
+                if (!manhanviens.Contains("," + item.User?.MaNhanVien + ","))
+                    manhanviens += item.User?.MaNhanVien + ",";
+            }
+
+            ViewBag.MaNhanViens = manhanviens;
 
             return View(model);
         }
+
+        //public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
+        //{
+
+        //    if (User.TypeUser == null)
+        //        return HttpNotFound();
+        //    var pageNumber = page ?? 1;
+        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year)
+        //                && a.ReportCategory.TypeCat == TypeCat.Type2
+        //                && a.ReportCategoryId == 88, q => q.OrderBy(a => a.Sort)
+        //                ).ToList();
+        //    var users = _unitOfWork.UserRepository.GetQuery(
+        //       a => a.Active && a.TypeUser != null && a.OfficeId != null,
+        //       q => q.OrderBy(a => a.OfficeId)
+        //   ).ToList();
+
+        //    var userDataDict = reportDatas
+        //        .GroupBy(r => r.UserId)
+        //        .ToDictionary(
+        //            g => g.Key,
+        //            g => g.Sum(r =>
+        //            {
+        //                int val;
+        //                var cleanedData = r.Data?.Replace(".", "");
+        //                return int.TryParse(cleanedData, out val) ? val : 0;
+        //            })
+        //        );
+        //    var sortedUsers = users
+        //        .OrderByDescending(o => userDataDict.ContainsKey(o.Id) ? userDataDict[o.Id] : 0).ThenBy(a => a.OfficeId);
+        //    IEnumerable<User> filteredUsers = sortedUsers;
+        //    var model = new ListReportNVHomeViewModel
+        //    {
+        //        Month = Month ?? DateTime.Now.Month,
+        //        Year = Year ?? DateTime.Now.Year,
+        //        Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+        //        User = User,
+        //        ZoneId = ZoneId,
+        //        ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
+        //        ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == (Month ?? DateTime.Now.Month) && a.Year == (Year ?? DateTime.Now.Year) && a.ReportCategory.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Sort)),
+        //        OfficeId = OfficeId,
+        //    };
+        //    if (User.TypeUser == TypeUser.HO)
+        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+        //    else if (User.TypeUser == TypeUser.CV)
+        //    {
+        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+        //        model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+        //        filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
+
+        //    }
+        //    else
+        //    {
+        //        model.ZoneId = User.ZoneId;
+        //        if (User.TypeUser == TypeUser.ASM)
+        //        {
+        //            model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+        //            filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
+        //        }
+
+
+        //        else
+        //        {
+        //            model.OfficeId = User.OfficeId;
+        //            filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
+        //        }
+
+
+        //    }
+
+        //    if (model.ZoneId != null)
+        //    {
+        //        model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+        //        //model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+        //        filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
+
+        //    }
+        //    if (model.OfficeId != null)
+        //    {
+        //        model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
+        //        //model.Users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.TypeUser != null);
+        //        filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
+        //        // Tạo danh sách OfficeIds cho ViewBag
+        //        ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId)) + ",";
+
+        //    }
+        //    model.Users = filteredUsers.ToPagedList(pageNumber, 15);
+        //    string manhanviens = ",";
+        //    foreach (var item in model.ReportDatas)
+        //    {
+        //        if (!(manhanviens + ",").Contains("," + item.User?.MaNhanVien + ","))
+        //            manhanviens += item.User?.MaNhanVien + ",";
+        //    }
+        //    ViewBag.MaNhanViens = manhanviens;
+        //    return View(model);
+        //}
         public ActionResult ListCall()
         {
             int pageSize = 20;
@@ -233,6 +444,7 @@ namespace OceanEduSlide.Controllers
 
             return View(logs);
         }
+        #region CallLogs
         public async Task<ActionResult> Sync()
         {
             await SyncCallLogsAsync();

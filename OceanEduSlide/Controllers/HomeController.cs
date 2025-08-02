@@ -17,6 +17,7 @@ using System.Web.Security;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
+    //[ForcePasswordChangeFilter]
     public class HomeController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
@@ -58,7 +59,7 @@ namespace OceanEduSlide.Controllers
 
                 var office = _unitOfWork.OfficeRepository.GetById(user.OfficeId);
                 // QL : Quản lý - không thuộc chi nhánh nào
-                var userData = user.Username + "|" + user.OfficeId + "|" + office?.ShortCode;
+                var userData = user.Username + "|" + user.OfficeId + "|" + office?.ShortCode + "|" + user.OldAcount;
                 var ticket = new FormsAuthenticationTicket(2, user.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
                 var encTicket = FormsAuthentication.Encrypt(ticket);
                 Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
@@ -110,6 +111,11 @@ namespace OceanEduSlide.Controllers
 
         }
 
+        public ActionResult ChangePasswordRequired()
+        {
+            return View();
+
+        }
 
         #endregion
 

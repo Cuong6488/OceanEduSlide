@@ -69,4 +69,35 @@ namespace OceanEduSlide.Filters
             base.OnActionExecuting(filterContext);
         }
     }
+    public class ForcePasswordChangeFilter : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var cookie = filterContext.HttpContext.Request.Cookies[".ASPXAUTHMEMBER"];
+            if (cookie != null)
+            {
+                var ticketInfo = FormsAuthentication.Decrypt(cookie.Value);
+                var data = ticketInfo.UserData.Split('|');
+
+                // Ví dụ: DaDoiMatKhau nằm ở vị trí cuối cùng
+                var daDoiMatKhau = data.Length > 3 && bool.TryParse(data[3], out var isChanged) && isChanged;
+
+                var routeData = filterContext.RouteData;
+                var controller = routeData.Values["controller"].ToString().ToLower();
+                var action = routeData.Values["action"].ToString().ToLower();
+
+                // Chỉ redirect nếu chưa đổi mật khẩu và không phải đang ở trang đổi mật khẩu
+                if (!daDoiMatKhau && !(controller == "home" && action == "changepasswordrequired"))
+                {
+                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary
+                {
+                    { "controller", "Home" },
+                    { "action", "ChangePasswordRequired" }
+                });
+                }
+            }
+
+            base.OnActionExecuting(filterContext);
+        }
+    }
 }
