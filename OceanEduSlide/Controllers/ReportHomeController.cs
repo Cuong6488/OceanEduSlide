@@ -35,7 +35,7 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-
+        #region Call
         //public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
         //{
         //    if (User.TypeUser == null)
