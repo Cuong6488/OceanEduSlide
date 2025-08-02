@@ -17,7 +17,7 @@ using System.Web.Security;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
-    //[ForcePasswordChangeFilter]
+    [ForcePasswordChangeFilter]
     public class HomeController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
@@ -78,6 +78,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         //[Route("thoat-he-thong")]
+        [OverrideActionFilters]
         public RedirectToRouteResult LogOut()
         {
             var cookie = Request.Cookies[".ASPXAUTHMEMBER"];
@@ -117,6 +118,29 @@ namespace OceanEduSlide.Controllers
 
         }
 
+        [HttpPost]
+        public ActionResult ChangePasswordRequired(ChangePassWordUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (HtmlHelpers.VerifyHash(model.OldPassword, "SHA256", User.Password))
+                {
+                    User.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                    User.OldAcount = true;
+                    _unitOfWork.Save();
+                    var office = _unitOfWork.OfficeRepository.GetById(User.OfficeId);
+                    // QL : Quản lý - không thuộc chi nhánh nào
+                    var userData = User.Username + "|" + User.OfficeId + "|" + office?.ShortCode + "|" + User.OldAcount;
+                    var ticket = new FormsAuthenticationTicket(2, User.Username, DateTime.Now, DateTime.Now.AddDays(1), true, userData);
+                    var encTicket = FormsAuthentication.Encrypt(ticket);
+                    Response.Cookies.Add(new HttpCookie(".ASPXAUTHMEMBER", encTicket));
+                    return RedirectToAction("IndexShare");
+
+                }
+                ModelState.AddModelError("", @"Mật khẩu hiện tại không đúng, vui lòng nhập lại");
+            }
+            return View();
+        }
         #endregion
 
         #region SaleKit
@@ -330,7 +354,7 @@ namespace OceanEduSlide.Controllers
                             (_unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)) ?? 0,
                             RevenueMonthNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year).Sum(a => a.TargetBM) ?? 0,
-                            TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek, q=> q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()?.TargetBM ?? 0,
+                            TWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()?.TargetBM ?? 0,
                             RevenueWeekNow = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek).Sum(a => a.TargetBM) ?? 0,
                             Debts = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)),

@@ -14,6 +14,7 @@ using System.Web.Mvc;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
+    [ForcePasswordChangeFilter]
     public class ProposalController : Controller
     {
         // GET: Proposal

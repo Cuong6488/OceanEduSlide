@@ -22,6 +22,7 @@ using NLog;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
+    [ForcePasswordChangeFilter]
     public class ReportHomeController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();

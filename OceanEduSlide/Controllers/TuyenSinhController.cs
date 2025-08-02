@@ -18,6 +18,7 @@ using System.Web.Security;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
+    [ForcePasswordChangeFilter]
     public class TuyenSinhController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();

@@ -22,6 +22,7 @@ using Z.EntityFramework.Plus;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
+    [ForcePasswordChangeFilter]
     public class EventController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();

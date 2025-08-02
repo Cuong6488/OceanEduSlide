@@ -2,6 +2,7 @@
 using ExcelDataReader;
 using Helpers;
 using OceanEduSlide.DAL;
+using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
@@ -21,6 +22,7 @@ using Z.EntityFramework.Plus;
 namespace OceanEduSlide.Controllers
 {
     [Authorize]
+    [ForcePasswordChangeFilter]
     public class RevenueController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();

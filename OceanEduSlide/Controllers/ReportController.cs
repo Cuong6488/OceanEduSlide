@@ -2,6 +2,7 @@
 using ExcelDataReader;
 using Helpers;
 using OceanEduSlide.DAL;
+using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;

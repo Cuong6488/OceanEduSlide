@@ -87,7 +87,7 @@ namespace OceanEduSlide.Filters
                 var action = routeData.Values["action"].ToString().ToLower();
 
                 // Chỉ redirect nếu chưa đổi mật khẩu và không phải đang ở trang đổi mật khẩu
-                if (!daDoiMatKhau && !(controller == "home" && action == "changepasswordrequired"))
+                if (!daDoiMatKhau && !(controller == "home" && (action == "changepasswordrequired")))
                 {
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary
                 {

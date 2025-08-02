@@ -15,6 +15,18 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<Category> Categories2 { get; set; }
         public IEnumerable<Category> Categories3 { get; set; }
     }
+
+    public class ChangePassWordUserViewModel
+    {
+        [Display(Name = "Mật khẩu hiện tại"), Required(ErrorMessage = "Hãy nhập mật khẩu hiện tại"), UIHint("Password")]
+        public string OldPassword { get; set; }
+        [Display(Name = "Mật khẩu mới"), Required(ErrorMessage = "Hãy nhập mật khẩu mới"),
+         StringLength(60, ErrorMessage = "Tối đa 60 ký tự"), UIHint("Password")]
+        public string Password { get; set; }
+        [Display(Name = "Nhập lại mật khẩu"), Compare("Password", ErrorMessage = "Nhập lại mật khẩu không chính xác"),
+         UIHint("Password")]
+        public string ConfirmPassword { get; set; }
+    }
     public class UserHomeViewModel
     {
         public IEnumerable<Debt> Debts { get; set; }
