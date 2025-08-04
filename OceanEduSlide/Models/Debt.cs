@@ -18,6 +18,8 @@ namespace OceanEduSlide.Models
         public int Year { get; set; }
         [Display(Name = "Nhân sự"), Required(ErrorMessage = "Hãy chọn nhân sự")]
         public int UserId { get; set; }
+        [Display(Name = "Công nợ gốc")]
+        public int? DebtId { get; set; }
         [Display(Name = "Họ tên học viên")]
         public string StudentName { get; set; }
         [Display(Name = "Mã học viên")]
@@ -60,6 +62,8 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<DownPathway> DownPathways { get; set; }
+        public virtual ICollection<Debt> Debts { get; set; }
+        public virtual Debt DebtParent { get; set; }
         public Debt()
         {
             CreateDate = DateTime.Now;

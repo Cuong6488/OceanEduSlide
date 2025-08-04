@@ -708,16 +708,22 @@ namespace OceanEduSlide.Controllers
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
+                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month && a.DebtId == null);
                 if (office != null)
-                    model.Debts = _unitOfWork.DebtRepository.GetQuery(a => a.User.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month);
+                    debts = debts.Where(a => a.User.OfficeId == model.OfficeId);
                 if (UserType != null)
-                    model.Debts = model.Debts.Where(a => (int)a.User.TypeUser == UserType);
+                    debts = debts.Where(a => (int)a.User.TypeUser == UserType);
+                var debtitems = debts.ToList().Select(x => new DebtViewModel.DebtItem
+                {
+                    DebtParentId = x.Id,
+                    Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id) && a.Year == model.Year && a.Month == model.Month, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
+                });
             }
             return View(model);
         }
         public ActionResult CreateDebt()
         {
-            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+            if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.CV || User.TypeUser == null)
                 return HttpNotFound();
             var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == User.OfficeId && User.TypeUser != null)
             .Select(a => new
@@ -778,11 +784,11 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult UpdateDebt(int id)
         {
-            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
-                return HttpNotFound();
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
                 return RedirectToAction("Index");
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.Id != debt.UserId)
+                return HttpNotFound();
             var model = new InsertDebtViewModel
             {
                 Debt = debt,

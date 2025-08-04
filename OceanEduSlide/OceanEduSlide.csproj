@@ -510,6 +510,10 @@
     <Compile Include="Migrations\202508021027179_oldacount.Designer.cs">
       <DependentUpon>202508021027179_oldacount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508041018055_debtparent.cs" />
+    <Compile Include="Migrations\202508041018055_debtparent.Designer.cs">
+      <DependentUpon>202508041018055_debtparent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\ReportData.cs" />
@@ -1638,6 +1642,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508021027179_oldacount.resx">
       <DependentUpon>202508021027179_oldacount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508041018055_debtparent.resx">
+      <DependentUpon>202508041018055_debtparent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
