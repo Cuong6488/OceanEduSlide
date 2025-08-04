@@ -550,3 +550,22 @@ h2 {
   top: -7px;
   z-index: 10;
 }
+
+.content-td {
+  min-width: 600px;
+}
+@media (max-width: 1750px) {
+  .content-td {
+    min-width: 400px;
+  }
+}
+@media (max-width: 1550px) {
+  .content-td {
+    min-width: 300px;
+  }
+}
+@media (max-width: 1350px) {
+  .content-td {
+    min-width: 200px;
+  }
+}

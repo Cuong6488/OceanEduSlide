@@ -90,6 +90,39 @@ namespace OceanEduSlide.ViewModels
         }
         public IEnumerable<User> Users { get; set; }
     }
+    public class UpdateUserViewModel
+    {
+        [Display(Name = "Tên đăng nhập"), Required(ErrorMessage = "Hãy điền tên đăng nhập"), UIHint("TextBox")]
+        public string Username { get; set; }
+        [Display(Name = "Họ và tên"), UIHint("TextBox")]
+        public string Fullname { get; set; }
+        [Display(Name = "Mã nhân viên"), UIHint("TextBox")]
+        public string MaNhanVien { get; set; }
+        [Display(Name = "Mật khẩu (không bắt buộc)"),StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
+        public string Password { get; set; }
+        [Display(Name = "Nhập lại mật khẩu"), System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Nhập lại mật khẩu không chính xác"),
+         UIHint("Password")]
+        public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Hoạt động", Description = "Hoạt động")]
+        public bool Active { get; set; }
+
+        [Display(Name = "Tài khoản SaleKit", Description = "Hoạt động")]
+        public bool SaleKit { get; set; }
+        [Display(Name = "Chi nhánh")]
+        public int? OfficeId { get; set; }
+        [Display(Name = "Vùng")]
+        public int? ZoneId { get; set; }
+        [Display(Name = "Phân quyền")]
+        public TypeUser? TypeUser { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public SelectList SelectZones { get; set; }
+        public UpdateUserViewModel()
+        {
+            Active = true;
+        }
+        public IEnumerable<User> Users { get; set; }
+    }
 
     public class CreateTargetViewModel
     {

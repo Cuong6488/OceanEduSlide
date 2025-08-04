@@ -39,5 +39,7 @@ namespace OceanEduSlide.ViewModels
         [UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}")]
         public string Number { get; set; }
         public SelectList SelectFault { get; set; }
+        public int? Notice { get; set; }
+
     }
 }

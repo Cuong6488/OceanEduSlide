@@ -429,7 +429,7 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.Save();
                     //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
 
-                    return RedirectToAction("CreateUser", new { result = "add" });
+                    return RedirectToAction("ListUser", new { result = "add" });
                 }
             }
             else
@@ -485,7 +485,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateUser(int id)
         {
-            var model = new CreateUserViewModel
+            var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
@@ -498,14 +498,15 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public ActionResult UpdateUser(CreateUserViewModel model)
+        public ActionResult UpdateUser(UpdateUserViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = _unitOfWork.UserRepository.GetQuery(z => z.Username == model.Username).FirstOrDefault();
                 if (user != null)
                 {
-                    user.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+                    if (model.Password != null)
+                        user.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
                     user.OfficeId = model.OfficeId;
                     user.ZoneId = model.ZoneId;
                     user.Active = model.Active;
@@ -513,7 +514,7 @@ namespace OceanEduSlide.Controllers
                     user.TypeUser = model.TypeUser;
                     user.Fullname = model.Fullname;
                     _unitOfWork.Save();
-                    return RedirectToAction("CreateUser", new { result = "update" });
+                    return RedirectToAction("ListUser", new { result = "update" });
                 }
             }
             return HttpNotFound();

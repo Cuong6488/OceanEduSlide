@@ -477,3 +477,18 @@ $groupCount: 20;
         z-index: 10;
     }
 }
+.content-td {
+    min-width: 600px;
+
+    @media(max-width:1750px) {
+        min-width: 400px;
+    }
+
+    @media(max-width:1550px) {
+        min-width: 300px;
+    }
+
+    @media(max-width:1350px) {
+        min-width: 200px;
+    }
+}

@@ -579,17 +579,17 @@ namespace OceanEduSlide.Controllers
             if (ModelState.IsValid)
             {
                 model.Event.UserIds = "," + model.Event.UserIds;
-                if (model.Event.Days.Length == 2 && DayQuantity != 1)
-                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
-                //else if (model.Event.Days.Length == 2 && DayQuantity == 1)
-                //    ModelState.AddModelError("", @"Phải có ít nhất 1 ngày triển khai");
-                else
-                {
-                    model.Event.Days = model.Event.Days.TrimEnd(',');
-                    _unitOfWork.EventRepository.Insert(model.Event);
-                    _unitOfWork.Save();
-                    return RedirectToAction("Index", new { result = "add" });
-                }
+                //if (model.Event.Days.Length == 2 && DayQuantity != 1)
+                //    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                ////else if (model.Event.Days.Length == 2 && DayQuantity == 1)
+                ////    ModelState.AddModelError("", @"Phải có ít nhất 1 ngày triển khai");
+                //else
+                //{
+                model.Event.Days = model.Event.Days.TrimEnd(',');
+                _unitOfWork.EventRepository.Insert(model.Event);
+                _unitOfWork.Save();
+                return RedirectToAction("Index", new { result = "add" });
+                //}
 
             }
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month, DateTime.Now);
@@ -626,29 +626,29 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("Index");
             if (ModelState.IsValid)
             {
-                if (model.Event.Days.Length == 2 && DayQuantity != 1)
-                {
-                    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
-                }
+                //if (model.Event.Days.Length == 2 && DayQuantity != 1)
+                //{
+                //    ModelState.AddModelError("", @"Phải có ít nhất 2 ngày triển khai");
+                //}
 
-                else
-                {
-                    ev.TimeFrom = model.Event.TimeFrom;
-                    ev.TimeTo = model.Event.TimeTo;
-                    ev.Ages = model.Event.Ages;
-                    ev.TypeJoin = model.Event.TypeJoin;
-                    ev.TypeEvent = model.Event.TypeEvent;
-                    ev.LinkUrl = model.Event.LinkUrl;
-                    ev.LinkName = model.Event.LinkName;
-                    //ev.Range = model.Event.Range;
-                    //ev.RangeStudent = model.Event.RangeStudent;
-                    //ev.RangeNewCustomer = model.Event.RangeNewCustomer;
-                    ev.Name = model.Event.Name;
-                    ev.UserIds = model.Event.UserIds;
-                    ev.Days = model.Event.Days.TrimEnd(',');
-                    _unitOfWork.Save();
-                    return RedirectToAction("Index", new { result = "add" });
-                }
+                //else
+                //{
+                ev.TimeFrom = model.Event.TimeFrom;
+                ev.TimeTo = model.Event.TimeTo;
+                ev.Ages = model.Event.Ages;
+                ev.TypeJoin = model.Event.TypeJoin;
+                ev.TypeEvent = model.Event.TypeEvent;
+                ev.LinkUrl = model.Event.LinkUrl;
+                ev.LinkName = model.Event.LinkName;
+                //ev.Range = model.Event.Range;
+                //ev.RangeStudent = model.Event.RangeStudent;
+                //ev.RangeNewCustomer = model.Event.RangeNewCustomer;
+                ev.Name = model.Event.Name;
+                ev.UserIds = model.Event.UserIds;
+                ev.Days = model.Event.Days.TrimEnd(',');
+                _unitOfWork.Save();
+                return RedirectToAction("Index", new { result = "add" });
+                //}
 
             }
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(model.Event.Year, model.Event.Month, DateTime.Now);
@@ -709,7 +709,7 @@ namespace OceanEduSlide.Controllers
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
-                    model.Debts = _unitOfWork.DebtRepository.GetQuery(a => a.User.OfficeId == model.OfficeId && a.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && a.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1));
+                    model.Debts = _unitOfWork.DebtRepository.GetQuery(a => a.User.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month);
                 if (UserType != null)
                     model.Debts = model.Debts.Where(a => (int)a.User.TypeUser == UserType);
             }

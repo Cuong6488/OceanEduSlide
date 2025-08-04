@@ -11,6 +11,7 @@
             @Html.ValidationSummary(true)
         <table class="form_table">
             @Html.HiddenFor(a => a.Proposal.Id)
+            @Html.HiddenFor(a => a.Notice)
             <tr>
                 <td class="form_name w-25">Nhân sự đề xuất</td>
                 <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>

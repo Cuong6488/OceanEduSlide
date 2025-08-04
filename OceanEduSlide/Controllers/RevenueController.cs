@@ -134,6 +134,8 @@ namespace OceanEduSlide.Controllers
 
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
                     if (office == null) continue;
+                    var countNVHV = _unitOfWork.UserRepository.GetQuery(a => (a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL) && a.OfficeId == office.Id).Count();
+                    var countNVKT = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.SAB && a.OfficeId == office.Id).Count();
                     var month = tbl.Rows[i][4].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     var monthInt = int.Parse(month);
@@ -153,9 +155,8 @@ namespace OceanEduSlide.Controllers
                     if (revenue != null)
                     {
                         revenue.Target_TS = targetTSDec;
-                        revenue.Target_HV = targetHVDec;
-                        revenue.Target_SAB = targetKTDec;
-
+                        revenue.Target_HV = targetHVDec * countNVHV;
+                        revenue.Target_SAB = targetKTDec * countNVKT;
                     }
                     else
                     {
@@ -165,8 +166,8 @@ namespace OceanEduSlide.Controllers
                             Month = monthInt,
                             Year = yearInt,
                             Target_TS = targetTSDec,
-                            Target_HV = targetHVDec,
-                            Target_SAB = targetKTDec,
+                            Target_HV = targetHVDec * countNVHV,
+                            Target_SAB = targetKTDec * countNVKT,
                             Active = true,
                         };
                         _unitOfWork.RevenueOfficeRepository.Insert(newRevenue);

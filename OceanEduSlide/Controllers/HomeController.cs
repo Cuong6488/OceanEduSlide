@@ -125,7 +125,14 @@ namespace OceanEduSlide.Controllers
             {
                 if (HtmlHelpers.VerifyHash(model.OldPassword, "SHA256", User.Password))
                 {
+                    if (model.OldPassword == model.Password)
+                    {
+                        ModelState.AddModelError("", @"Mật khẩu mới không được giống mật khẩu cũ");
+                        return View();
+
+                    }
                     User.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
+
                     User.OldAcount = true;
                     _unitOfWork.Save();
                     var office = _unitOfWork.OfficeRepository.GetById(User.OfficeId);
