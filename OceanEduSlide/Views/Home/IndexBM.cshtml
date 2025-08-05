@@ -227,7 +227,7 @@
                                 }
                                 <p class="box-remind-title mb-0"><strong>Doanh số trong tháng</strong></p>
                                 <div class="box-remind-content">
-                                    <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@userItem.TMonth.ToString("N0")đ</strong></p>
+                                    <p class="mb-2 text-danger">Tổng chỉ tiêu: <strong>@(Math.Max(userItem.TMonth,0).ToString("N0"))đ</strong></p>
                                     Hoàn thành:  <strong>@userItem.RevenueMonthNow.ToString("N0")đ</strong><br />
                                     % Hoàn thành:  <strong>@userItem.TargetMonthPercent.ToString("N0")%</strong><br />
                                     % Dự thu:  <strong>@userItem.RemainPercent.ToString("N0")%</strong><br />

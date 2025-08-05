@@ -1424,6 +1424,8 @@
     <Content Include="Views\Vcms\ListProposalType.cshtml" />
     <Content Include="Views\Vcms\UpdateProposalType..cshtml" />
     <Content Include="Views\Home\ChangePasswordRequired.cshtml" />
+    <Content Include="Views\Vcms\UnActiveUserExcel.cshtml" />
+    <Content Include="Views\Event\LoadHistoryDedt.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

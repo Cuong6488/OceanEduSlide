@@ -178,16 +178,18 @@
             <li>
                 <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
             </li>
-            <li>
-                @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
-                {
+            @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+            {
+                <li>
                     <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
-                }
-                else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
-                {
+                </li>
+            }
+            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+            {
+                <li>
                     <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
-                }
-            </li>
+                </li>
+            }
             <li>
                 <a href="javascript:;">BÁO CÁO</a>
                 <ul class="ul-reset" style="top:150%">

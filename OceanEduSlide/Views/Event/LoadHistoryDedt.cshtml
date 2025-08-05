@@ -1,0 +1,112 @@
+﻿@model IEnumerable<OceanEduSlide.Models.Debt>
+@using OceanEduSlide.Models
+
+<div class="container">
+    <div class="box_content pt-4">
+
+        <table class="list_table tablecenter table-striped text-center">
+            <tbody>
+                <tr>
+                    <th rowspan="2">STT</th>
+                    <th rowspan="2" class="col-w90">
+                        Ngày sửa
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Ngày phát sinh cọc
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Họ tên <br /> học viên
+                    </th>
+                    <th rowspan="2" class="col-w65">
+                        Mã học viên
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Chương trình học
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tên QĐ ưu đãi
+                    </th>
+                    <th rowspan="2">
+                        Lộ trình
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Thành tiền
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tiền cọc <br /> giữ chỗ
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tiền cọc <br /> bổ sung <br /> làm hồ sơ
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Loại cọc
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tiền giảm <br /> lộ trình
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tiền còn lại phải thanh toán
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Hình thức thanh toán
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Kênh trả góp
+                    </th>
+                    <th rowspan="2" class="col-w65">
+                        Tình trạng hồ sơ
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Ngày phát sinh gộp phí
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        NS phụ trách
+                    </th>
+                    <th colspan="3">Khó khăn của cọc</th>
+
+                </tr>
+                <tr>
+                    <th class="col-w90">Nội dung <br /> khó khăn</th>
+                    <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
+                    <th class="col-w90">Hướng xử lý</th>
+                </tr>
+                @{
+                    int stt = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@stt</td>
+                        <td>@Html.DisplayFor(a => item.CreateDate)</td>
+                        <td>@Html.DisplayFor(a => item.DepositDate)</td>
+                        <td>@item.StudentName</td>
+                        <td>@item.StudentCode</td>
+                        <td>@item.Cth</td>
+                        <td>@item.DiscountName</td>
+                        <td>@item.Pathway.ToString("N1")</td>
+                        <td>@Html.DisplayFor(a => item.TotalMoney)</td>
+                        <td>@Html.DisplayFor(a => item.DebtMoney)</td>
+                        <td>@Html.DisplayFor(a => item.DebtMoney2)</td>
+                        <td>
+                            @Html.DisplayFor(a => item.TypeDebt)
+                        </td>
+                        <td>@Html.DisplayFor(a => item.DownMoney)</td>
+                        <td>@Html.DisplayFor(a => item.RemainMoney)</td>
+                        <td>@Html.DisplayFor(a => item.TypePay)</td>
+                        <td>@Html.DisplayFor(a => item.ChannelPay)</td>
+                        <td>@Html.DisplayFor(a => item.FileStatus)</td>
+                        <td>@Html.DisplayFor(a => item.GrossDate)</td>
+                        <td>@(item.User.Fullname??item.User.Username)</td>
+                        <td>@item.HardContent</td>
+                        <td>@item.ContactStatus</td>
+                        <td>@item.HandleWay</td>
+                    </tr>
+                    stt++;
+                }
+
+            </tbody>
+        </table>
+    </div>
+        @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+    </div>
+

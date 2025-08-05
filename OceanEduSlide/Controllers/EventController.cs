@@ -709,6 +709,8 @@ namespace OceanEduSlide.Controllers
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month && a.DebtId == null);
+                if (User.TypeUser != TypeUser.BM)
+                    debts = debts.Where(a => a.UserId == User.Id);
                 if (office != null)
                     debts = debts.Where(a => a.User.OfficeId == model.OfficeId);
                 if (UserType != null)
@@ -718,8 +720,16 @@ namespace OceanEduSlide.Controllers
                     DebtParentId = x.Id,
                     Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id) && a.Year == model.Year && a.Month == model.Month, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
                 });
+                model.DebtItems = debtitems;
             }
             return View(model);
+        }
+        public PartialViewResult LoadHistoryDedt(int debtId)
+        {
+            var debt = _unitOfWork.DebtRepository.GetById(debtId);
+            
+            var model = _unitOfWork.DebtRepository.Get(a => a.DebtId == debt.DebtId || a.Id == debt.DebtId, q=> q.OrderByDescending(a => a.CreateDate));
+            return PartialView(model);
         }
         public ActionResult CreateDebt()
         {
@@ -787,11 +797,44 @@ namespace OceanEduSlide.Controllers
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
                 return RedirectToAction("Index");
+            Debt debtparent = null;
+            if (debt.DebtId == null)
+                debtparent = debt;
+            else
+            {
+                debtparent = _unitOfWork.DebtRepository.GetById(debt.DebtId);
+                if (debtparent == null)
+                    return RedirectToAction("Index");
+            }
             if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.Id != debt.UserId)
                 return HttpNotFound();
             var model = new InsertDebtViewModel
             {
-                Debt = debt,
+                Debt = new Debt
+                {
+                    DebtId = debtparent.Id,
+                    DepositDate = debt.DepositDate,
+                    Month = debt.Month,
+                    Year = debt.Year,
+                    UserId = debt.UserId,
+                    StudentName = debt.StudentName,
+                    StudentCode = debt.StudentCode,
+                    Cth = debt.Cth,
+                    DiscountName = debt.DiscountName,
+                    Pathway = debt.Pathway,
+                    DebtMoney2 = debt.DebtMoney2,
+                    RemainMoney = debt.RemainMoney,
+                    TypeDebt = debt.TypeDebt,
+                    ChannelPay = debt.ChannelPay,
+                    TypePay = debt.TypePay,
+                    FileStatus = debt.FileStatus,
+                    GrossDate = debt.GrossDate,
+                    HardContent = debt.HardContent,
+                    ContactStatus = debt.ContactStatus,
+                    HandleWay = debt.HandleWay,
+                    User = debt.User
+
+                },
                 DebtMoney = debt.DebtMoney.ToString("N0"),
                 TotalMoney = debt.TotalMoney.ToString("N0"),
                 DownMoney = debt.DownMoney.ToString("N0"),
@@ -801,42 +844,52 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public ActionResult UpdateDebt(InsertDebtViewModel model)
         {
-            var debt = _unitOfWork.DebtRepository.GetById(model.Debt.Id);
+            var debt = _unitOfWork.DebtRepository.GetById(model.Debt.DebtId);
             if (debt == null)
                 return RedirectToAction("ListDebt");
             if (ModelState.IsValid)
             {
-                debt.TypeDebt = model.Debt.TypeDebt;
-                debt.TypePay = model.Debt.TypePay;
-                debt.ChannelPay = model.Debt.ChannelPay;
-                debt.HardContent = model.Debt.HardContent;
-                debt.ContactStatus = model.Debt.ContactStatus;
-                debt.HandleWay = model.Debt.HandleWay;
-                debt.GrossDate = model.Debt.GrossDate;
-                debt.Cth = model.Debt.Cth;
-                debt.DiscountName = model.Debt.DiscountName;
-                debt.StudentCode = model.Debt.StudentCode;
-                debt.StudentName = model.Debt.StudentName;
-                debt.TotalMoney = Convert.ToDecimal(model.TotalMoney.Replace(",", ""));
-                debt.DebtMoney = Convert.ToDecimal(model.DebtMoney.Replace(",", ""));
+                //debt.TypeDebt = model.Debt.TypeDebt;
+                //debt.TypePay = model.Debt.TypePay;
+                //debt.ChannelPay = model.Debt.ChannelPay;
+                //debt.HardContent = model.Debt.HardContent;
+                //debt.ContactStatus = model.Debt.ContactStatus;
+                //debt.HandleWay = model.Debt.HandleWay;
+                //debt.GrossDate = model.Debt.GrossDate;
+                //debt.Cth = model.Debt.Cth;
+                //debt.DiscountName = model.Debt.DiscountName;
+                //debt.StudentCode = model.Debt.StudentCode;
+                //debt.StudentName = model.Debt.StudentName;
+                model.Debt.TotalMoney = Convert.ToDecimal(model.TotalMoney.Replace(",", ""));
+                model.Debt.DebtMoney = Convert.ToDecimal(model.DebtMoney.Replace(",", ""));
                 if (model.Debt.TypeDebt == TypeDebt.Type1 || model.Debt.TypeDebt == TypeDebt.Type2)
-                    debt.DownMoney = 0;
+                    model.Debt.DownMoney = 0;
                 else
-                    debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
+                    model.Debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
                 if (model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card)
-                    debt.DebtMoney2 = debt.TotalMoney * 20 / 100;
+                    model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
                 else
-                    debt.DebtMoney2 = 0;
-                debt.RemainMoney = debt.TotalMoney - debt.DebtMoney - debt.DebtMoney2;
+                    model.Debt.DebtMoney2 = 0;
+                model.Debt.RemainMoney = model.Debt.TotalMoney - model.Debt.DebtMoney - model.Debt.DebtMoney2;
                 if (DateTime.TryParse(model.Debt.DepositDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
                 {
                     var date = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                    debt.DepositDate = date.ToString("dd/MM/yyyy");
-                    debt.Year = date.Year;
-                    debt.Month = date.Month;
+                    model.Debt.DepositDate = date.ToString("dd/MM/yyyy");
+                    model.Debt.Year = date.Year;
+                    model.Debt.Month = date.Month;
+                }
+                _unitOfWork.DebtRepository.Insert(model.Debt);
+                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.DebtId == model.Debt.DebtId || a.Id == model.Debt.DebtId);
+                foreach(var item in debts)
+                {
+                    //item.DepositDate = model.Debt.DepositDate;
+                    item.Month = model.Debt.Month;
+                    item.Year = model.Debt.Year;
+                    item.TypeDebt = model.Debt.TypeDebt;
+
                 }
                 _unitOfWork.Save();
-                return RedirectToAction("ListDebt", new { result = "add" });
+                return RedirectToAction("ListDebt", new { result = "update" });
             }
             return View(model);
         }
@@ -849,10 +902,22 @@ namespace OceanEduSlide.Controllers
             {
                 return false;
             }
-            debt.Active = !debt.Active;
+            if(debt.DebtId != null)
+            {
+                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Id == debt.DebtId || a.DebtId == debt.DebtId);
+                foreach(var item in debts)
+                {
+                    item.Active = !debt.Active;
+                }
+            }
+            else
+            {
+                debt.Active = !debt.Active;
+            }
             _unitOfWork.Save();
             return true;
         }
+
         public ActionResult UpdateDownPathway(int debtId)
         {
             if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)

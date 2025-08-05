@@ -14,6 +14,10 @@
 <div class="container py-3">
     @if (ViewBag.Result == "add")
     {
+        <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+    }
+    else if (ViewBag.Result == "update")
+    {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
     <form action="@Url.Action("ListDebt")" method="get" class="d-flex form-filter mb-5">
@@ -139,9 +143,9 @@
                         </th>
                         <th colspan="3">Khó khăn của cọc</th>
                         @*@if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
-                        {*@
-                            <th rowspan="2"></th>
-                            @*}*@
+                            {*@
+                        <th rowspan="2"></th>
+                        @*}*@
 
                     </tr>
                     <tr>
@@ -149,30 +153,30 @@
                         <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
                         <th class="col-w90">Hướng xử lý</th>
                     </tr>
-                    @if (Model.Debts != null)
+                    @if (Model.DebtItems != null)
                     {
                         int stt = 1;
-                        foreach (var item in Model.Debts.Where(a => a.Active))
+                        foreach (var item in Model.DebtItems.Where(a => a.Debt.Active))
                         {
                             <tr>
                                 <td>@stt</td>
-                                <td>@Html.DisplayFor(a => item.DepositDate)</td>
-                                <td>@item.StudentName</td>
-                                <td>@item.StudentCode</td>
-                                <td>@item.Cth</td>
-                                <td>@item.DiscountName</td>
-                                <td>@item.Pathway.ToString("N1")</td>
-                                <td>@Html.DisplayFor(a => item.TotalMoney)</td>
-                                <td>@Html.DisplayFor(a => item.DebtMoney)</td>
-                                <td>@Html.DisplayFor(a => item.DebtMoney2)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DepositDate)</td>
+                                <td>@item.Debt.StudentName</td>
+                                <td>@item.Debt.StudentCode</td>
+                                <td>@item.Debt.Cth</td>
+                                <td>@item.Debt.DiscountName</td>
+                                <td>@item.Debt.Pathway.ToString("N1")</td>
+                                <td>@Html.DisplayFor(a => item.Debt.TotalMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney2)</td>
                                 <td>
-                                    @Html.DisplayFor(a => item.TypeDebt)
-                                    @if (item.TypeDebt == TypeDebt.Type3)
+                                    @Html.DisplayFor(a => item.Debt.TypeDebt)
+                                    @if (item.Debt.TypeDebt == TypeDebt.Type3)
                                     {
-                                        if (item.DownPathways.Any())
+                                        if (item.Debt.DownPathways.Any())
                                         {
                                             <div class="btnhistory-input">
-                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Id})"
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Debt.Id})"
                                                    data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                             </div>
                                         }
@@ -181,26 +185,38 @@
                                         {
 
                                             <div class="btnedit-input-debt">
-                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Debt.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
                                             </div>
 
                                         }
                                     }
 
                                 </td>
-                                <td>@Html.DisplayFor(a => item.DownMoney)</td>
-                                <td>@Html.DisplayFor(a => item.RemainMoney)</td>
-                                <td>@Html.DisplayFor(a => item.TypePay)</td>
-                                <td>@Html.DisplayFor(a => item.ChannelPay)</td>
-                                <td>@Html.DisplayFor(a => item.FileStatus)</td>
-                                <td>@Html.DisplayFor(a => item.GrossDate)</td>
-                                <td>@(item.User.Fullname??item.User.Username)</td>
-                                <td>@item.HardContent</td>
-                                <td>@item.ContactStatus</td>
-                                <td>@item.HandleWay</td>
-                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.UserId)
+                                <td>@Html.DisplayFor(a => item.Debt.DownMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.RemainMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.TypePay)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.ChannelPay)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.FileStatus)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.GrossDate)</td>
+                                <td>@(item.Debt.User.Fullname??item.Debt.User.Username)</td>
+                                <td>@item.Debt.HardContent</td>
+                                <td>@item.Debt.ContactStatus</td>
+                                <td>@item.Debt.HandleWay</td>
+                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.Debt.UserId)
                                 {
-                                    <td class="col-w65"><a href="@Url.Action("UpdateDebt", new {id = item.Id})">Sửa</a> - <a class="text-danger" href="javascript:;" onclick="deleteDebt('@item.Id')">Xóa</a></td>
+                                    <td class="col-w65">
+                                        <a href="@Url.Action("UpdateDebt", new {id = item.Debt.Id})">Sửa</a> - <a class="text-danger" href="javascript:;" onclick="deleteDebt('@item.Debt.Id')">Xóa</a> <br />
+                                        @if (item.Debt.DebtId != null)
+                                        {
+                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDedt",  new{debtId = item.Debt.Id})"
+                                               data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i> Lịch sử</a>
+                                        }
+
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
                                 }
                             </tr>
                             stt++;
@@ -269,10 +285,8 @@
                             NS phụ trách
                         </th>
                         <th colspan="3">Khó khăn của cọc</th>
-                        @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
-                        {
-                            <th rowspan="2"></th>
-                        }
+                        <th rowspan="2"></th>
+
 
                     </tr>
                     <tr>
@@ -280,30 +294,30 @@
                         <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
                         <th class="col-w90">Hướng xử lý</th>
                     </tr>
-                    @if (Model.Debts != null)
+                    @if (Model.DebtItems != null)
                     {
                         int stt = 1;
-                        foreach (var item in Model.Debts.Where(a => !a.Active))
+                        foreach (var item in Model.DebtItems.Where(a => !a.Debt.Active))
                         {
                             <tr>
                                 <td>@stt</td>
-                                <td>@Html.DisplayFor(a => item.DepositDate)</td>
-                                <td>@item.StudentName</td>
-                                <td>@item.StudentCode</td>
-                                <td>@item.Cth</td>
-                                <td>@item.DiscountName</td>
-                                <td>@item.Pathway.ToString("N1")</td>
-                                <td>@Html.DisplayFor(a => item.TotalMoney)</td>
-                                <td>@Html.DisplayFor(a => item.DebtMoney)</td>
-                                <td>@Html.DisplayFor(a => item.DebtMoney2)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DepositDate)</td>
+                                <td>@item.Debt.StudentName</td>
+                                <td>@item.Debt.StudentCode</td>
+                                <td>@item.Debt.Cth</td>
+                                <td>@item.Debt.DiscountName</td>
+                                <td>@item.Debt.Pathway.ToString("N1")</td>
+                                <td>@Html.DisplayFor(a => item.Debt.TotalMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney2)</td>
                                 <td>
-                                    @Html.DisplayFor(a => item.TypeDebt)
-                                    @if (item.TypeDebt == TypeDebt.Type3)
+                                    @Html.DisplayFor(a => item.Debt.TypeDebt)
+                                    @if (item.Debt.TypeDebt == TypeDebt.Type3)
                                     {
-                                        if (item.DownPathways.Any())
+                                        if (item.Debt.DownPathways.Any())
                                         {
                                             <div class="btnhistory-input">
-                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Id})"
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Debt.Id})"
                                                    data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                             </div>
                                         }
@@ -312,26 +326,30 @@
                                         {
 
                                             <div class="btnedit-input-debt">
-                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Debt.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
                                             </div>
 
                                         }
                                     }
 
                                 </td>
-                                <td>@Html.DisplayFor(a => item.DownMoney)</td>
-                                <td>@Html.DisplayFor(a => item.RemainMoney)</td>
-                                <td>@Html.DisplayFor(a => item.TypePay)</td>
-                                <td>@Html.DisplayFor(a => item.ChannelPay)</td>
-                                <td>@Html.DisplayFor(a => item.FileStatus)</td>
-                                <td>@Html.DisplayFor(a => item.GrossDate)</td>
-                                <td>@(item.User.Fullname??item.User.Username)</td>
-                                <td>@item.HardContent</td>
-                                <td>@item.ContactStatus</td>
-                                <td>@item.HandleWay</td>
-                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
+                                <td>@Html.DisplayFor(a => item.Debt.DownMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.RemainMoney)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.TypePay)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.ChannelPay)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.FileStatus)</td>
+                                <td>@Html.DisplayFor(a => item.Debt.GrossDate)</td>
+                                <td>@(item.Debt.User.Fullname??item.Debt.User.Username)</td>
+                                <td>@item.Debt.HardContent</td>
+                                <td>@item.Debt.ContactStatus</td>
+                                <td>@item.Debt.HandleWay</td>
+                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.Debt.UserId)
                                 {
-                                    <td class="col-w65"><a href="javascript:;" onclick="deleteDebt('@item.Id')">Khôi phục</a></td>
+                                    <td class="col-w65"><a href="javascript:;" onclick="deleteDebt('@item.Debt.Id')">Khôi phục</a></td>
+                                }
+                                else
+                                {
+                                    <td></td>
                                 }
                             </tr>
                             stt++;
