@@ -658,6 +658,11 @@
     <Content Include="Content\images\baochi7.jpg" />
     <Content Include="Content\images\baochi8.jpg" />
     <Content Include="Content\images\baochi9.jpg" />
+    <Content Include="Content\images\btc-pic1-pc.png" />
+    <Content Include="Content\images\btc-pic2-pc.png" />
+    <Content Include="Content\images\btc-pic3-pc.png" />
+    <Content Include="Content\images\btc-pic4-pc.png" />
+    <Content Include="Content\images\btc-pic5-pc.png" />
     <Content Include="Content\images\btn-back-square.png" />
     <Content Include="Content\images\btn-back.png" />
     <Content Include="Content\images\btn-book.png" />
@@ -1426,6 +1431,8 @@
     <Content Include="Views\Home\ChangePasswordRequired.cshtml" />
     <Content Include="Views\Vcms\UnActiveUserExcel.cshtml" />
     <Content Include="Views\Event\LoadHistoryDedt.cshtml" />
+    <Content Include="Views\Event\LoadHistoryEvent.cshtml" />
+    <Content Include="Views\Home\BackToSchool.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

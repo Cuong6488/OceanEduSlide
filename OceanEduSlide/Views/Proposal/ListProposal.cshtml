@@ -63,7 +63,7 @@
                     </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
-            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.PKT)
             {
                 <select name="ZoneId" class="form-select w-25 me-3" @*data-item="zone"*@>
                     <option value="">Chọn vùng</option>
@@ -89,7 +89,8 @@
                     else
                     {
                         <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
-                        <option value="5" @(Model.Notice == 5 ? "selected" : "")>Đã phê duyệt</option>
+                        <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
+                        <option value="5" @(Model.Notice == 5 ? "selected" : "")> Không phê duyệt</option>
                     }
                 </select>
             }
@@ -141,8 +142,12 @@
     @*@if (Model.ZoneId != null)
         {*@
     <h2>DANH SÁCH ĐỀ XUẤT</h2>
-    <a class="btn quick-link" href="@Url.Action("Propose")"><i class="fal fa-plus-circle me-1"></i>Thêm mới đề xuất</a>
-    <div class="box_content no-scroll">
+    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+    {
+        <a class="btn quick-link" href="@Url.Action("Propose")"><i class="fal fa-plus-circle me-1"></i>Thêm mới đề xuất</a>
+
+    }
+    <div class="box_content no-scroll @(Model.User.TypeUser != TypeUser.BM && Model.User.TypeUser != TypeUser.ASM?"mt-0":"")">
         <table class="list_table tablecenter table-striped text-center">
             <thead class="thead-sticky">
                 <tr>

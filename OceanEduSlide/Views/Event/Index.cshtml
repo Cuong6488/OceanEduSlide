@@ -142,6 +142,10 @@
                                         <td class="text-start col-w200" style="padding:10px 15px !important">
                                             @if (ev != null)
                                             {
+                                                <div class="btnhistory-input">
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                </div>
                                                 @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
                                                 @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
                                                 @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
@@ -187,6 +191,11 @@
                                         <td class="text-start col-w200" style="padding:10px 15px !important">
                                             @if (ev != null)
                                             {
+
+                                                <div class="btnhistory-input">
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i})"
+                                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                                </div>
                                                 @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
                                                 @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
                                                 @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
@@ -234,7 +243,7 @@
                                 for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
                                 {
                                     <td class="text-start" style="padding:10px 15px !important">
-                                        @((Model.SumRevenue(i)??0).ToString("N0"))đ
+                                        @((Model.SumRevenue(i, (int)Model.Week, Model.Month ?? 0,Model.Year ??0)??0).ToString("N0"))đ
                                     </td>
                                 }
                             }
@@ -243,7 +252,7 @@
                                 for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
                                 {
                                     <td class="text-start" style="padding:10px 15px !important">
-                                        @((Model.SumRevenue(i)??0).ToString("N0"))đ
+                                        @((Model.SumRevenue(i, (int)Model.Week, Model.Month ?? 0, Model.Year ?? 0) ??0).ToString("N0"))đ
                                     </td>
                                 }
 
@@ -462,7 +471,7 @@
                                     @(item.User.Fullname ?? item.User.Username)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(a =>item.User.TypeUser)
+                                    @Html.DisplayFor(a => item.User.TypeUser)
                                 </td>
                                 <td>
                                     @item.User.MaNhanVien

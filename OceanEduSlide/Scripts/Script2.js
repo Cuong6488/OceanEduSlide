@@ -13,6 +13,16 @@ $("#AlertBox").delay(5000).slideUp(500);
 //    scrollbar: true
 //});
 
+$('.backtoschool').slick({
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    fade: true,
+    dots: true,
+    autoplay: true,
+    nextArrow: '<button type="button" class="slick-next"><i class="fa fa-chevron-right"></i></button>',
+    prevArrow: '<button type="button" class="slick-prev"><i class="fa fa-chevron-left"></i></button>',
+});
 $(".form-filter select").on("change", function (data) {
     let form = $(this).closest("form");
     if (form.valid()) { // Kiểm tra nếu form hợp lệ

@@ -1,0 +1,46 @@
+﻿@model OceanEduSlide.ViewModels.LoadHistoryEventViewModel
+<div class="box_content">
+    <h2>Lịch sử cập nhật sự kiện @Html.DisplayFor(a => a.DayofWeek) - @Html.DisplayFor(a => a.WeekNumber) - tháng @Model.Month - @Model.Year CN @Model.Office.ShortName</h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Thời gian</th>
+                <th>Loại hoạt động</th>
+                <th>Tên hoạt động</th>
+                <th>Đối tượng tham gia</th>
+                <th>Lứa tuổi</th>
+                <th>Thời gian tổ chức</th>
+                <th>Link</th>
+            </tr>
+            @foreach (var item in Model.Events)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TypeEvent)
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TypeJoin)
+                    </td>
+                    <td>
+                        @item.Ages
+                    </td>
+                    <td>
+                        @item.TimeFrom - @item.TimeTo
+                    </td>
+                    <td>
+                        @if (item.LinkUrl != null)
+                        {
+                            <a target="_blank" href="@item.LinkUrl">@item.LinkName</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

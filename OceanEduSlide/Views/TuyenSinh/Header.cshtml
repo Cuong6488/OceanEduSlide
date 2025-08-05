@@ -23,188 +23,196 @@
     </div>
     <div class="navbar-container">
         <ul class="navbar ul-reset d-flex">
-            @if (Model.User.Office != null)
+            @if (Model.User.TypeUser != TypeUser.PKT)
             {
-                <li class="office-name me-0">@(Model.User.Office.Name)</li>
-            }
-            <li>
-                <a href="javascript:;">DANH MỤC QĐ</a>
-                <ul class="ul-reset" style="top:150%">
-                    @if (Model.Categories1.Any())
-                    {
+                if (Model.User.Office != null)
+                {
+                    <li class="office-name me-0">@(Model.User.Office.Name)</li>
+                }
+                <li>
+                    <a href="javascript:;">DANH MỤC QĐ</a>
+                    <ul class="ul-reset" style="top:150%">
+                        @if (Model.Categories1.Any())
+                        {
 
-                        <li style="padding:7px 15px">
-                            <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung PTS">Quy định chung PTS</a>
+                            <li style="padding:7px 15px">
+                                <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung PTS">Quy định chung PTS</a>
 
-                            <div class=" hidden" id="category1">
-                                <h2>Quy định chung PTS</h2>
-                                <table class="list_table table-striped box_content table-bordered mt-0">
-                                    <tbody>
-                                        <tr>
-                                            <th>Mục lục</th>
-                                            <th>Nội dung</th>
-                                            <th>Quy định</th>
-                                            <th>Link đề xuất</th>
-                                            <th>Link theo dõi</th>
-                                        </tr>
-                                        @foreach (var item in Model.Categories1)
-                                        {
+                                <div class=" hidden" id="category1">
+                                    <h2>Quy định chung PTS</h2>
+                                    <table class="list_table table-striped box_content table-bordered mt-0">
+                                        <tbody>
                                             <tr>
-                                                <td>@item.Index</td>
-                                                <td>@item.Content</td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(item.Regulation))
-                                                    {
-                                                        <a data-fancybox
-                                                           data-type="iframe"
-                                                           data-src="@item.Regulation.Replace("/view", "/preview")"
-                                                           href="javascript:;"
-                                                           style="word-break:break-word">
-                                                            Link
-                                                        </a>
-                                                    }
-
-                                                </td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(item.ProposalLink))
-                                                    {
-                                                        <a data-fancybox
-                                                           data-type="iframe"
-                                                           data-src="@(item.ProposalLink.Contains("/viewform") ? item.ProposalLink : item.ProposalLink.Replace("/view", "/preview"))"
-                                                           href="javascript:;"
-                                                           style="word-break:break-word">
-                                                            Link
-                                                        </a>
-                                                    }
-
-                                                </td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(item.FollowLink))
-                                                    {
-                                                        <a data-fancybox
-                                                           data-type="iframe"
-                                                           data-src="@(item.FollowLink.Contains("/viewform") ? item.FollowLink : item.FollowLink.Replace("/view", "/preview"))"
-                                                           href="javascript:;"
-                                                           style="word-break:break-word">
-                                                            Link
-                                                        </a>
-                                                    }
-
-                                                </td>
+                                                <th>Mục lục</th>
+                                                <th>Nội dung</th>
+                                                <th>Quy định</th>
+                                                <th>Link đề xuất</th>
+                                                <th>Link theo dõi</th>
                                             </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </li>
-                    }
-                    @if (Model.Categories2.Any())
-                    {
+                                            @foreach (var item in Model.Categories1)
+                                            {
+                                                <tr>
+                                                    <td>@item.Index</td>
+                                                    <td>@item.Content</td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(item.Regulation))
+                                                        {
+                                                            <a data-fancybox
+                                                               data-type="iframe"
+                                                               data-src="@item.Regulation.Replace("/view", "/preview")"
+                                                               href="javascript:;"
+                                                               style="word-break:break-word">
+                                                                Link
+                                                            </a>
+                                                        }
 
-                        <li style="padding:7px 15px">
-                            <a href="javascript:;" data-fancybox data-src="#category2" data-caption="Quyết định PTS theo năm">Quyết định PTS theo năm</a>
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(item.ProposalLink))
+                                                        {
+                                                            <a data-fancybox
+                                                               data-type="iframe"
+                                                               data-src="@(item.ProposalLink.Contains("/viewform") ? item.ProposalLink : item.ProposalLink.Replace("/view", "/preview"))"
+                                                               href="javascript:;"
+                                                               style="word-break:break-word">
+                                                                Link
+                                                            </a>
+                                                        }
 
-                            <div class="hidden" id="category2">
-                                <h2>Quyết định PTS theo năm</h2>
-                                <table class="list_table table-striped box_content mt-0">
-                                    <tbody>
-                                        <tr>
-                                            <th>Mục lục</th>
-                                            <th>Nội dung</th>
-                                            <th>Số QĐ</th>
-                                            <th>Link QĐ</th>
-                                            <th>Bảng tính/ Ghi chú</th>
-                                        </tr>
-                                        @foreach (var item in Model.Categories2)
-                                        {
-                                            <tr>
-                                                <td>@item.Index</td>
-                                                <td>@item.Content</td>
-                                                <td>@item.QDNumber</td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(item.QDLink))
-                                                    {
-                                                        <a data-fancybox
-                                                           data-type="iframe"
-                                                           data-src="@(item.QDLink.Contains("/viewform") ? item.QDLink : item.QDLink.Replace("/view", "/preview"))"
-                                                           href="javascript:;"
-                                                           style="word-break:break-word">
-                                                            Link
-                                                        </a>
-                                                    }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(item.FollowLink))
+                                                        {
+                                                            <a data-fancybox
+                                                               data-type="iframe"
+                                                               data-src="@(item.FollowLink.Contains("/viewform") ? item.FollowLink : item.FollowLink.Replace("/view", "/preview"))"
+                                                               href="javascript:;"
+                                                               style="word-break:break-word">
+                                                                Link
+                                                            </a>
+                                                        }
 
-                                                </td>
-                                                <td>
-                                                    @if (!string.IsNullOrEmpty(item.Note))
-                                                    {
-                                                        <a data-fancybox
-                                                           data-type="iframe"
-                                                           data-src="@(item.Note.Contains("/viewform") ? item.Note : item.Note.Replace("/view", "/preview"))"
-                                                           href="javascript:;"
-                                                           style="word-break:break-word">
-                                                            Link
-                                                        </a>
-                                                    }
-
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </li>
-                    }
-                    @if (Model.Categories3.Any())
-                    {
-                        var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
-                        var lastYear = lastMonth == 12 ? DateTime.Now.Year - 1 : DateTime.Now.Year;
-                        <li style="padding:7px 15px" id="li-category">
-                            <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Quyết định PTS theo tháng">Quyết định PTS theo tháng</a>
-                            <div class="hidden" id="category3">
-                                <div id="category3-content">
-                                    @Html.Action("GetCatgory")
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </li>
-            <li>
-                <a href="@Url.Action("Revenue","TuyenSinh")">PHÂN BỔ DOANH SỐ</a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index","Event")">SỰ KIỆN</a>
-            </li>
-            <li>
-                <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
-            </li>
-            @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
-            {
-                <li>
-                    <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
-                </li>
-            }
-            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
-            {
-                <li>
-                    <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
-                </li>
-            }
-            <li>
-                <a href="javascript:;">BÁO CÁO</a>
-                <ul class="ul-reset" style="top:150%">
-                    <li style="padding:7px 15px">
-                        <a href="@Url.Action("ReportKDCN","ReportHome")">Báo cáo KDCN</a>
-                    </li>
-                    <li style="padding:7px 15px">
-                        <a href="@Url.Action("ReportKDNV","ReportHome")">Báo cáo KDNV</a>
-                    </li>
-                    <li style="padding:7px 15px">
-                        <a href="@Url.Action("ReportCall","ReportHome")">Báo cáo cuộc gọi</a>
-                    </li>
+                            </li>
+                        }
+                        @if (Model.Categories2.Any())
+                        {
 
-                </ul>
-            </li>
+                            <li style="padding:7px 15px">
+                                <a href="javascript:;" data-fancybox data-src="#category2" data-caption="Quyết định PTS theo năm">Quyết định PTS theo năm</a>
+
+                                <div class="hidden" id="category2">
+                                    <h2>Quyết định PTS theo năm</h2>
+                                    <table class="list_table table-striped box_content mt-0">
+                                        <tbody>
+                                            <tr>
+                                                <th>Mục lục</th>
+                                                <th>Nội dung</th>
+                                                <th>Số QĐ</th>
+                                                <th>Link QĐ</th>
+                                                <th>Bảng tính/ Ghi chú</th>
+                                            </tr>
+                                            @foreach (var item in Model.Categories2)
+                                            {
+                                                <tr>
+                                                    <td>@item.Index</td>
+                                                    <td>@item.Content</td>
+                                                    <td>@item.QDNumber</td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(item.QDLink))
+                                                        {
+                                                            <a data-fancybox
+                                                               data-type="iframe"
+                                                               data-src="@(item.QDLink.Contains("/viewform") ? item.QDLink : item.QDLink.Replace("/view", "/preview"))"
+                                                               href="javascript:;"
+                                                               style="word-break:break-word">
+                                                                Link
+                                                            </a>
+                                                        }
+
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(item.Note))
+                                                        {
+                                                            <a data-fancybox
+                                                               data-type="iframe"
+                                                               data-src="@(item.Note.Contains("/viewform") ? item.Note : item.Note.Replace("/view", "/preview"))"
+                                                               href="javascript:;"
+                                                               style="word-break:break-word">
+                                                                Link
+                                                            </a>
+                                                        }
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+                        }
+                        @if (Model.Categories3.Any())
+                        {
+                            var lastMonth = DateTime.Now.Month - 1 == 0 ? 12 : DateTime.Now.Month - 1;
+                            var lastYear = lastMonth == 12 ? DateTime.Now.Year - 1 : DateTime.Now.Year;
+                            <li style="padding:7px 15px" id="li-category">
+                                <a href="javascript:;" data-fancybox data-src="#category3" data-caption="Quyết định PTS theo tháng">Quyết định PTS theo tháng</a>
+                                <div class="hidden" id="category3">
+                                    <div id="category3-content">
+                                        @Html.Action("GetCatgory")
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li>
+                    <a href="@Url.Action("Revenue","TuyenSinh")">PHÂN BỔ DOANH SỐ</a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Event")">SỰ KIỆN</a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
+                </li>
+                if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                {
+                    <li>
+                        <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
+                    </li>
+                }
+                else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+                {
+                    <li>
+                        <a href="@Url.Action("ListProposal","Proposal")">ĐỀ XUẤT</a>
+                    </li>
+                }
+                <li>
+                    <a href="javascript:;">BÁO CÁO</a>
+                    <ul class="ul-reset" style="top:150%">
+                        <li style="padding:7px 15px">
+                            <a href="@Url.Action("ReportKDCN","ReportHome")">Báo cáo KDCN</a>
+                        </li>
+                        <li style="padding:7px 15px">
+                            <a href="@Url.Action("ReportKDNV","ReportHome")">Báo cáo KDNV</a>
+                        </li>
+                        <li style="padding:7px 15px">
+                            <a href="@Url.Action("ReportCall","ReportHome")">Báo cáo cuộc gọi</a>
+                        </li>
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="@Url.Action("ListProposal","Proposal")">DANH SÁCH ĐỀ XUẤT</a>
+                </li>
+            }
             <li>
                 <a class="change-password" href="javascript:;"><i class="fa-solid fa-key"></i></a>
             </li>

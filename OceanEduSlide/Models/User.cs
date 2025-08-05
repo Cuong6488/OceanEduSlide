@@ -83,5 +83,7 @@ namespace OceanEduSlide.Models
         CV,
         [Display(Name = "TTL")]
         TTL,
+        [Display(Name = "Phòng kế toán")]
+        PKT,
     }
 }

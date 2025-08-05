@@ -18,10 +18,12 @@
         {
             @Html.ValidationSummary(true)
         <table class="form_table">
-            @Html.HiddenFor(a => a.Event.Id)
+            @Html.HiddenFor(a => a.Event.OfficeId)
+            @Html.HiddenFor(a => a.EventParentId)
+
             @*@Html.HiddenFor(a => a.Event.Range)
-            @Html.HiddenFor(a => a.Event.RangeNewCustomer)
-            @Html.HiddenFor(a => a.Event.RangeStudent)*@
+        @Html.HiddenFor(a => a.Event.RangeNewCustomer)
+        @Html.HiddenFor(a => a.Event.RangeStudent)*@
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Event.TypeEvent)</td>
                 <td class="form_text">
@@ -67,7 +69,7 @@
                 <td class="form_text">@Html.EditorFor(model => model.Event.LinkUrl)</td>
             </tr>
             <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Event.Days)</td>
+                <td class="form_name">@Html.LabelFor(model => model.Event.LinkName)</td>
                 <td class="form_text">@Html.EditorFor(model => model.Event.LinkName)</td>
             </tr>
             <tr>

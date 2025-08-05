@@ -212,7 +212,7 @@ namespace OceanEduSlide.Controllers
 
             if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
             {
-                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek).FirstOrDefault();
+                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek,q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
                 if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
                 {
                     List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
@@ -360,8 +360,68 @@ namespace OceanEduSlide.Controllers
             }
             return Json(new { status = false, msg = "Chưa cập nhật các tỉ lệ chuyển đổi cho người dùng này" });
 
+        }
 
+        public PartialViewResult LoadHistoryEvent(int year, int month, int officeId, int weekNumber, int dayOfWeek)
+        {
+            var model = new LoadHistoryEventViewModel
+            {
+                Year = year,
+                Month = month,
+                Office = _unitOfWork.OfficeRepository.GetById(officeId),
+                Events = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && a.OfficeId == officeId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek, q => q.OrderBy(a => a.CreateDate)),
+            };
+            switch (weekNumber)
+            {
+                case 1:
+                    model.WeekNumber = WeekNumber.Week1;
+                    break;
+                case 2:
+                    model.WeekNumber = WeekNumber.Week2;
+                    break;
+                case 3:
+                    model.WeekNumber = WeekNumber.Week3;
+                    break;
+                case 4:
+                    model.WeekNumber = WeekNumber.Week4;
+                    break;
+                case 5:
+                    model.WeekNumber = WeekNumber.Week5;
+                    break;
+                case 6:
+                    model.WeekNumber = WeekNumber.Week6;
+                    break;
+                default:
+                    break;
+            }
+            switch (dayOfWeek)
+            {
+                case 2:
+                    model.DayofWeek = DayofWeek.Monday;
+                    break;
+                case 3:
+                    model.DayofWeek = DayofWeek.Tuesday;
+                    break;
+                case 4:
+                    model.DayofWeek = DayofWeek.Wednessday;
+                    break;
+                case 5:
+                    model.DayofWeek = DayofWeek.Thursday;
+                    break;
+                case 6:
+                    model.DayofWeek = DayofWeek.Friday;
+                    break;
+                case 7:
+                    model.DayofWeek = DayofWeek.Saturday;
+                    break;
+                case 8:
+                    model.DayofWeek = DayofWeek.Sunday;
+                    break;
+                default:
+                    break;
+            }
 
+            return PartialView(model);
         }
         public PartialViewResult LoadHistoryRevenueUser_Day(int year, int month, int userId, int weekNumber, int dayOfWeek)
         {
@@ -609,7 +669,29 @@ namespace OceanEduSlide.Controllers
             ev.Days += ",";
             var model = new AddEventViewModel
             {
-                Event = ev,
+                Event = new Event
+                {
+                    OfficeId = ev.OfficeId,
+                    Year = ev.Year,
+                    Month = ev.Month,
+                    WeekNumber = ev.WeekNumber,
+                    DayofWeek = ev.DayofWeek,
+                    TypeEvent = ev.TypeEvent,
+                    TypeJoin = ev.TypeJoin,
+                    UserIds = ev.UserIds,
+                    Days = ev.Days,
+                    Name = ev.Name,
+                    Ages = ev.Ages,
+                    Range = ev.Range,
+                    RangeStudent = ev.RangeStudent,
+                    RangeNewCustomer = ev.RangeNewCustomer,
+                    TimeFrom = ev.TimeFrom,
+                    TimeTo = ev.TimeTo,
+                    LinkName = ev.LinkName,
+                    LinkUrl = ev.LinkUrl,
+                    Office = ev.Office,
+                },
+                EventParentId = ev.Id,
                 Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month, DateTime.Now);
@@ -621,7 +703,7 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public ActionResult UpdateEvent(AddEventViewModel model, int DayQuantity)
         {
-            var ev = _unitOfWork.EventRepository.GetById(model.Event.Id);
+            var ev = _unitOfWork.EventRepository.GetById(model.EventParentId);
             if (ev == null)
                 return RedirectToAction("Index");
             if (ModelState.IsValid)
@@ -633,19 +715,27 @@ namespace OceanEduSlide.Controllers
 
                 //else
                 //{
-                ev.TimeFrom = model.Event.TimeFrom;
-                ev.TimeTo = model.Event.TimeTo;
-                ev.Ages = model.Event.Ages;
-                ev.TypeJoin = model.Event.TypeJoin;
-                ev.TypeEvent = model.Event.TypeEvent;
-                ev.LinkUrl = model.Event.LinkUrl;
-                ev.LinkName = model.Event.LinkName;
-                //ev.Range = model.Event.Range;
-                //ev.RangeStudent = model.Event.RangeStudent;
-                //ev.RangeNewCustomer = model.Event.RangeNewCustomer;
-                ev.Name = model.Event.Name;
-                ev.UserIds = model.Event.UserIds;
-                ev.Days = model.Event.Days.TrimEnd(',');
+                //ev.TimeFrom = model.Event.TimeFrom;
+                //ev.TimeTo = model.Event.TimeTo;
+                //ev.Ages = model.Event.Ages;
+                //ev.TypeJoin = model.Event.TypeJoin;
+                //ev.TypeEvent = model.Event.TypeEvent;
+                //ev.LinkUrl = model.Event.LinkUrl;
+                //ev.LinkName = model.Event.LinkName;
+                ////ev.Range = model.Event.Range;
+                ////ev.RangeStudent = model.Event.RangeStudent;
+                ////ev.RangeNewCustomer = model.Event.RangeNewCustomer;
+                //ev.Name = model.Event.Name;
+                //ev.UserIds = model.Event.UserIds;
+                //ev.Days = model.Event.Days.TrimEnd(',');
+
+                model.Event.Days = model.Event.Days.TrimEnd(',');
+                model.Event.Year = ev.Year;
+                model.Event.Month = ev.Month;
+                model.Event.WeekNumber = ev.WeekNumber;
+                model.Event.DayofWeek = ev.DayofWeek;
+
+                _unitOfWork.EventRepository.Insert(model.Event);
                 _unitOfWork.Save();
                 return RedirectToAction("Index", new { result = "add" });
                 //}

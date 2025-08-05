@@ -37,11 +37,11 @@ namespace OceanEduSlide.ViewModels
         //{
         //    return Revenues?.Where(r => (int)r.DayofWeek == dayOfWeek).Sum(r => r.TargetBM) ?? null;
         //}
-        public decimal? SumRevenue(int dayOfWeek)
+        public decimal? SumRevenue(int dayOfWeek, int week, int month, int year)
         {
             return UserItems?
                 .Select(userItem => userItem.Revenues?
-                    .Where(r => (int)r.DayofWeek == dayOfWeek)
+                    .Where(r => (int)r.DayofWeek == dayOfWeek && r.Year == year && r.Month == month && (int)r.WeekNumber == week && r.TargetBM != null)
                     .FirstOrDefault()?.TargetBM)
                 .Sum() ?? null;
         }
@@ -67,7 +67,7 @@ namespace OceanEduSlide.ViewModels
     public class InsertDebtViewModel
     {
         public SelectList UserSelectList { get; set; }
-        [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ"),UIHint("MoneyBox"), Required(ErrorMessage ="Hãy nhập thành tiền")]
+        [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập thành tiền")]
         public string TotalMoney { get; set; }
         [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập tiền cọc giữ chỗ")]
         public string DebtMoney { get; set; }
@@ -88,6 +88,7 @@ namespace OceanEduSlide.ViewModels
     public class AddEventViewModel
     {
         public Event Event { get; set; }
+        public int? EventParentId { get; set; }
 
         public IEnumerable<User> Users { get; set; }
     }
@@ -112,6 +113,15 @@ namespace OceanEduSlide.ViewModels
     {
         public User User { get; set; }
         public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public WeekNumber WeekNumber { get; set; }
+        public DayofWeek DayofWeek { get; set; }
+    }
+    public class LoadHistoryEventViewModel
+    {
+        public Office Office { get; set; }
+        public IEnumerable<Event> Events { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
         public WeekNumber WeekNumber { get; set; }
