@@ -5,3 +5,13 @@
 <div class="banner">
     <img src="~/Content/images/banner-index.png" alt="banner">
 </div>
+@section scripts
+    {
+    <script>
+        /*homeJs();*/
+        $(".logo a").on("click", function (e) {
+            e.preventDefault();
+            window.location.href = "/home/indexshare";
+        });
+    </script>
+}

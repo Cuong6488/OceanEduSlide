@@ -187,9 +187,13 @@
             </a>
         }
     </div>*@
-@*@section scripts
+@section scripts
     {
-        <script>
-            homeJs();
-        </script>
-    }*@
+    <script>
+        /*homeJs();*/
+        $(".logo a").on("click", function (e) {
+            e.preventDefault();
+            window.location.href = "/home/indexshare";
+        });
+    </script>
+}

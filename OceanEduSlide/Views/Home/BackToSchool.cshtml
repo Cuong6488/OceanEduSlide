@@ -7,11 +7,67 @@
 <a class="logo-anchor" href="@Url.Action("IndexSaleKit","Home")">
     <img src="~/Content/images/logo.png" />
 </a>
-<div class="backtoschool h-100">
-    <img src="~/Content/images/btc-pic1-pc.png" />
-    <img src="~/Content/images/btc-pic2-pc.png" />
-    <img src="~/Content/images/btc-pic3-pc.png" />
-    <img src="~/Content/images/btc-pic4-pc.png" />
-    <img src="~/Content/images/btc-pic5-pc.png" />
+<div class="backtoschool pc">
+    <div class="img-container">
+        <img class="img-main" src="~/Content/images/btc-pic1-pc.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic2-pc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic3-pc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic4-pc.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic5-pc.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
+</div>
+<div class="backtoschool tab">
+    <div class="img-container">
+        <img class="img-main" src="~/Content/images/btc-pic1-tab.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic2-tab.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic3-tab.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic4-tab.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
+    <div class="img-container">
+        <img class="logo-btc" src="~/Content/images/logo-btc.png" />
+        <img class="img-main" src="~/Content/images/btc-pic5-tab.png" />
+        <img class="tag" src="~/Content/images/tag-btc.png" />
+    </div>
 </div>
 
+@section scripts
+    {
+    <script>
+        $('.backtoschool').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            fade: false,
+            dots: false,
+            autoplay: false,
+            nextArrow: '<button type="button" class="slick-next"></button>',
+            prevArrow: '<button type="button" class="slick-prev"></button>',
+        });
+    </script>
+}

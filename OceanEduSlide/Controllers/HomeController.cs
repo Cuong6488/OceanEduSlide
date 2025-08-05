@@ -236,7 +236,7 @@ namespace OceanEduSlide.Controllers
             var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
             return View(office);
         }
-        [Route("Bo-qua-tang-back-to-school")]
+        [Route("bo-qua-tang-back-to-school")]
         public ActionResult BackToSchool()
         {
             return View();

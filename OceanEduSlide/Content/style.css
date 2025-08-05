@@ -3491,7 +3491,58 @@ body {
   width: 100px;
 }
 
-.backtoschool img {
+.backtoschool {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.backtoschool .img-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+.backtoschool .img-main {
   width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+.backtoschool .logo-btc {
+  width: 13vw;
+  position: absolute;
+  right: 3vw;
+  top: 1.5vw;
+  z-index: 10;
+}
+.backtoschool .tag {
+  position: absolute;
+  width: 42vw;
+  bottom: 5px;
+  right: 0;
+  z-index: 10;
+}
+.backtoschool .slick-prev {
+  left: 10px;
+}
+.backtoschool .slick-next {
+  right: 10px;
+}
+.backtoschool .slick-list {
+  margin: 0;
+}
+.backtoschool .slick-slide {
+  margin: 0;
+}
+.backtoschool.pc {
+  display: none;
+}
+.backtoschool.tab {
+  display: block;
+}
+@media (min-aspect-ratio: 1.4) {
+  .backtoschool.pc {
+    display: block;
+  }
+  .backtoschool.tab {
+    display: none;
+  }
 }

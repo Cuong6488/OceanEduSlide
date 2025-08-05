@@ -659,10 +659,15 @@
     <Content Include="Content\images\baochi8.jpg" />
     <Content Include="Content\images\baochi9.jpg" />
     <Content Include="Content\images\btc-pic1-pc.png" />
+    <Content Include="Content\images\btc-pic1-tab.png" />
     <Content Include="Content\images\btc-pic2-pc.png" />
+    <Content Include="Content\images\btc-pic2-tab.png" />
     <Content Include="Content\images\btc-pic3-pc.png" />
+    <Content Include="Content\images\btc-pic3-tab.png" />
     <Content Include="Content\images\btc-pic4-pc.png" />
+    <Content Include="Content\images\btc-pic4-tab.png" />
     <Content Include="Content\images\btc-pic5-pc.png" />
+    <Content Include="Content\images\btc-pic5-tab.png" />
     <Content Include="Content\images\btn-back-square.png" />
     <Content Include="Content\images\btn-back.png" />
     <Content Include="Content\images\btn-book.png" />
@@ -838,6 +843,7 @@
     <Content Include="Content\images\librarycefr.png" />
     <Content Include="Content\images\login-btn-bg.png" />
     <Content Include="Content\images\login-title.png" />
+    <Content Include="Content\images\logo-btc.png" />
     <Content Include="Content\images\logo-index.png" />
     <Content Include="Content\images\Logo-white.png" />
     <Content Include="Content\images\logo.png" />
@@ -927,6 +933,7 @@
     <Content Include="Content\images\star-index7.png" />
     <Content Include="Content\images\star-index8.png" />
     <Content Include="Content\images\star-index9.png" />
+    <Content Include="Content\images\tag-btc.png" />
     <Content Include="Content\images\Teacher-joanlee.jpg" />
     <Content Include="Content\images\Teacher-AARON.jpg" />
     <Content Include="Content\images\Teacher-AUREA.jpg" />

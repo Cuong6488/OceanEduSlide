@@ -26,12 +26,12 @@
                         <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <input type="text" name="Date" value="@Model.Date" class="date-picker form-control ms-3" required readonly  style="flex:1"/>
+                <input type="text" name="Date" value="@Model.Date" class="date-picker form-control ms-3" required readonly style="flex:1" />
             </form>
         }
         else
         {
-            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5 justify-content-center align-items-center" style="max-width:150px" >
+            <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5 justify-content-center align-items-center" style="max-width:150px">
                 <input type="text" name="Date" value="@Model.Date" class="date-picker form-control" required readonly />
             </form>
         }
@@ -295,6 +295,11 @@
             yearRange: "1900:2100",
             //maxDate: today,
         });
+        $(".logo a").on("click", function (e) {
+            e.preventDefault();
+            window.location.href = "/home/indexshare";
+        });
+        //homeJs();
     </script>
 
 }

@@ -712,7 +712,8 @@ body {
         bottom: 45px;
         right: 60px;
         height: 50px;
-        z-index:2;
+        z-index: 2;
+
         li {
             &:not(:last-child) {
                 margin-right: 7px;
@@ -1618,9 +1619,10 @@ body {
         color: white;
         font-size: 32px;
         text-shadow: 2px 2px 1px $blue;
-        font-family:josefinsans;
+        font-family: josefinsans;
     }
 }
+
 .pathway-page {
     /*.logo-anchor {
         display: none;
@@ -2769,7 +2771,7 @@ body {
         max-width: 85%;
         object-fit: contain;
 
-        &-challenge,&-toeic {
+        &-challenge, &-toeic {
             width: 80%;
             height: unset;
             display: block;
@@ -3254,7 +3256,7 @@ body {
         }
     }
 
-    &-focus, &-toeic,&-ielts {
+    &-focus, &-toeic, &-ielts {
         .teaching-method-name {
             height: unset;
             width: 40%;
@@ -4268,7 +4270,8 @@ body {
     visibility: hidden;
     transition: .3s;
     font-family: montserrat;
-    z-index:3;
+    z-index: 3;
+
     &.active {
         opacity: 1;
         visibility: visible;
@@ -4310,19 +4313,82 @@ body {
         }
     }
 }
-.toeic-book{
-    height:25vw;
-    img{
-        height:100%;
+
+.toeic-book {
+    height: 25vw;
+
+    img {
+        height: 100%;
     }
 }
-.w100{
-    width:100px;
+
+.w100 {
+    width: 100px;
 }
 
 .backtoschool {
-    img{
-        width:100%;
-        object-fit:cover;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    .img-container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    .img-main {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .logo-btc {
+        width: 13vw;
+        position: absolute;
+        right: 3vw;
+        top: 1.5vw;
+        z-index: 10;
+    }
+
+    .tag{
+        position:absolute;
+        width:42vw;
+        bottom:5px;
+        right:0;
+        z-index:10;
+    }
+    .slick-prev {
+        left: 10px;
+    }
+
+    .slick-next {
+        right: 10px;
+    }
+
+    .slick-list {
+        margin: 0;
+    }
+
+    .slick-slide {
+        margin: 0;
+    }
+
+    &.pc {
+        display: none;
+    }
+
+    &.tab {
+        display: block;
+    }
+
+    @media (min-aspect-ratio: 1.4) {
+        &.pc {
+            display: block;
+        }
+
+        &.tab {
+            display: none;
+        }
     }
 }
