@@ -120,8 +120,16 @@
                         {
                             decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
                             decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / Model.RevenueOffice.Target_TS * 1000) / 10;
-                            decimal SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
-                            decimal HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
+                            decimal SAB_percent = 100;
+                            if(Model.RevenueOffice.Target_SAB > 0)
+                            {
+                                SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
+                            }
+                            decimal HV_percent = 100;
+                            if (Model.RevenueOffice.Target_HV > 0)
+                            {
+                                HV_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_HV / Model.RevenueOffice.Target_HV * 1000) / 10;
+                            }
                             <td>
                                 @revenueOffice_BM.TargetBM_TS.ToString("N0")đ (@TS_percent%)
                             </td>
