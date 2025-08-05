@@ -2,7 +2,7 @@
 @using OceanEduSlide.Models
 
 <div class="container">
-    <div class="box_content pt-4">
+    <div class="box_content pt-4 mt-0">
 
         <table class="list_table tablecenter table-striped text-center">
             <tbody>
@@ -38,9 +38,9 @@
                     <th rowspan="2" class="col-w90">
                         Tiền cọc <br /> bổ sung <br /> làm hồ sơ
                     </th>
-                    <th rowspan="2" class="col-w90">
+                    @*<th rowspan="2" class="col-w90">
                         Loại cọc
-                    </th>
+                    </th>*@
                     <th rowspan="2" class="col-w90">
                         Tiền giảm <br /> lộ trình
                     </th>
@@ -87,9 +87,9 @@
                         <td>@Html.DisplayFor(a => item.TotalMoney)</td>
                         <td>@Html.DisplayFor(a => item.DebtMoney)</td>
                         <td>@Html.DisplayFor(a => item.DebtMoney2)</td>
-                        <td>
+                        @*<td>
                             @Html.DisplayFor(a => item.TypeDebt)
-                        </td>
+                        </td>*@
                         <td>@Html.DisplayFor(a => item.DownMoney)</td>
                         <td>@Html.DisplayFor(a => item.RemainMoney)</td>
                         <td>@Html.DisplayFor(a => item.TypePay)</td>
