@@ -78,7 +78,7 @@ namespace OceanEduSlide.Filters
             var currentController = filterContext.RouteData.Values["controller"]?.ToString().ToLower();
             var currentAction = filterContext.RouteData.Values["action"]?.ToString().ToLower();
 
-            if (userTypeRaw == "PKT")
+            if (userTypeRaw == "PKT" && bool.Parse(dataParts[3]) != false)
             {
                 if (!filterContext.IsChildAction)
                 {
