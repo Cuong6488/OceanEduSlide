@@ -78,7 +78,7 @@
             @if (Model.Users.PageCount > 1)
             {
                 <tr>
-                    <td colspan="5">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username }))</td>
+                    <td colspan="7">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username }))</td>
                 </tr>
             }
         </tbody>

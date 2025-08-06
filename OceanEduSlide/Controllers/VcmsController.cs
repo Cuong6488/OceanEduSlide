@@ -504,6 +504,16 @@ namespace OceanEduSlide.Controllers
             model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
             return View(model);
         }
+        public ActionResult UpdateMaNhanVien()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => string.IsNullOrEmpty(a.MaNhanVien) && a.TypeUser != null);
+            foreach (var u in users)
+            {
+                u.MaNhanVien = u.Username;
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListUser");
+        }
         [HttpPost]
         public ActionResult UpdateUser(UpdateUserViewModel model)
         {
@@ -877,7 +887,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Office
-        public ActionResult ListOffice(int? page, string name,int? trung, string result = "")
+        public ActionResult ListOffice(int? page, string name, int? trung, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;

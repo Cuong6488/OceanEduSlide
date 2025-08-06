@@ -212,8 +212,19 @@ namespace OceanEduSlide.Controllers
 
             if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
             {
-                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+                //var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+                var evs = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate));
+                if (evs.Any())
+                {
+                    foreach (var item in evs.Skip(1))
+                    {
+                        var rvns = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == item.Id);
+                        rvns.Delete();
+                    }
 
+                    _unitOfWork.Save();
+                }
+                var ev = evs.FirstOrDefault();
                 if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
                 {
                     List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
@@ -238,15 +249,6 @@ namespace OceanEduSlide.Controllers
                     foreach (var day in days)
                     {
                         var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
-                        var revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId != null && a.Event.DayofWeek == ev.DayofWeek && a.Event.WeekNumber == ev.WeekNumber && a.Event.Month == ev.Month && a.User.OfficeId == ev.OfficeId && (int)a.DayofWeek == day && a.UserId == userId, q=> q.OrderByDescending(a => a.CreateDate));
-                        if(revenues.Count() > 1)
-                        {
-                            foreach(var r in revenues.Skip(1))
-                            {
-                                _unitOfWork.RevenueUser_DayOfWeekRepository.Delete(r);
-                            }
-                            _unitOfWork.Save();
-                        }
                         if (revenue == null)
                         {
                             revenue = new RevenueUser_DayOfWeek
@@ -766,8 +768,10 @@ namespace OceanEduSlide.Controllers
                 return Json(new { status = false });
             var listCV = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == evId);
             listCV.Delete();
-            _unitOfWork.EventRepository.Delete(ev);
-            _unitOfWork.Save();
+            var listev = _unitOfWork.EventRepository.GetQuery(a => a.OfficeId == ev.OfficeId && a.DayofWeek == ev.DayofWeek && a.WeekNumber == ev.WeekNumber && a.Month == ev.Month && a.Year == ev.Year);
+            listev.Delete();
+            //_unitOfWork.EventRepository.Delete(ev);
+            //_unitOfWork.Save();
             return Json(new { status = true });
         }
         #endregion
@@ -808,7 +812,7 @@ namespace OceanEduSlide.Controllers
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
-                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month && a.DebtId == null);
+                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year < model.Year || (a.Year == model.Year && a.Month <= model.Month) && a.DebtId == null);
                 if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM)
                     debts = debts.Where(a => a.UserId == User.Id);
                 if (office != null)
@@ -818,8 +822,8 @@ namespace OceanEduSlide.Controllers
                 var debtitems = debts.ToList().Select(x => new DebtViewModel.DebtItem
                 {
                     DebtParentId = x.Id,
-                    Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id) && a.Year == model.Year && a.Month == model.Month, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
-                });
+                    Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id), q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
+                }).Where(x => x.Debt != null);
                 model.DebtItems = debtitems;
             }
             return View(model);

@@ -82,6 +82,8 @@ namespace OceanEduSlide.Models
         Type4,
         [Display(Name = "Hoàn cọc")]
         Type5,
+        [Display(Name = "Công nợ hoàn thành")]
+        Type6,
     }
     public enum TypePay
     {
