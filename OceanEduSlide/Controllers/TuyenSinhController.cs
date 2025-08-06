@@ -234,7 +234,6 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public ActionResult RevenueOffice_BM(RevenueOffice_BMViewModel model)
         {
-
             model.RevenueOffice.TargetBM_New = Convert.ToDecimal(model.TargetBM_New.Replace(",", ""));
             model.RevenueOffice.TargetBM_HV = Convert.ToDecimal(model.TargetBM_HV.Replace(",", ""));
             model.RevenueOffice.TargetBM_SAB = Convert.ToDecimal(model.TargetBM_SAB.Replace(",", ""));

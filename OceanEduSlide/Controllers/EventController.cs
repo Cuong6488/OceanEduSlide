@@ -799,7 +799,7 @@ namespace OceanEduSlide.Controllers
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month && a.DebtId == null);
-                if (User.TypeUser != TypeUser.BM)
+                if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM )
                     debts = debts.Where(a => a.UserId == User.Id);
                 if (office != null)
                     debts = debts.Where(a => a.User.OfficeId == model.OfficeId);
