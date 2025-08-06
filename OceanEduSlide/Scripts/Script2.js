@@ -87,12 +87,21 @@ $(".targetuser_month_HO").each(function () {
     var targetuser_month_real = 0;
     if (targetuser_month_HO_text !== "Chưa cập nhật") {
         var targetuser_month_HO = targetuser_month_HO_text.replace(/\,/g, "");
-        targetuser_month_BM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs").val().replace(/\,/g, "");
+        //targetuser_month_BM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs").val().replace(/\,/g, "");
+        var $inputBM = $(this).closest("tr").find(".input-RevenueUser_Month_BMs");
+
+        if ($inputBM.length) {
+            targetuser_month_BM = $inputBM.val().replace(/\,/g, "");
+        } else {
+            targetuser_month_BM = $(this).closest("tr").find(".revenue-value-month_BM").text().trim().replace(/\,/g, "");
+        }
+
         if (targetuser_month_BM !== "" && targetuser_month_HO !== "") {
             var percent_user_month = Math.round(targetuser_month_BM / targetuser_month_HO * 100);
             $(this).siblings(".percent_user_month").text(percent_user_month);
             var debt = $(this).siblings(".debt-lastmonth").text().replace(/\,/g, "");
             var targetuser_month_real = Math.max((targetuser_month_BM - debt), 0);
+            //alert(targetuser_month_real);
             $(this).siblings(".real-target-month").text(targetuser_month_real.toLocaleString("en-US"));
         }
     }

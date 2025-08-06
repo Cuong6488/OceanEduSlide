@@ -425,6 +425,7 @@ namespace OceanEduSlide.Controllers
                         Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
                         Username = model.Username,
                         Fullname = model.Fullname,
+                        MaNhanVien = model.MaNhanVien,
                         OfficeId = model.OfficeId,
                         ZoneId = model.ZoneId,
                         Active = model.Active,
@@ -519,6 +520,7 @@ namespace OceanEduSlide.Controllers
                     user.SaleKit = model.SaleKit;
                     user.TypeUser = model.TypeUser;
                     user.Fullname = model.Fullname;
+                    user.MaNhanVien = model.MaNhanVien;
                     _unitOfWork.Save();
                     return RedirectToAction("ListUser", new { result = "update" });
                 }
@@ -875,7 +877,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Office
-        public ActionResult ListOffice(int? page, string name, string result = "")
+        public ActionResult ListOffice(int? page, string name,int? trung, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -893,6 +895,16 @@ namespace OceanEduSlide.Controllers
                 {
                     offices = offices.Where(l => l.Name.Contains(newkey));
                 }
+            }
+            if (trung == 1)
+            {
+                var duplicatedMaChiNhanh = offices
+                    .GroupBy(u => u.ShortCode)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                offices = offices.Where(u => duplicatedMaChiNhanh.Contains(u.ShortCode));
             }
             var model = new ListOfficeViewModel
             {
@@ -1635,9 +1647,7 @@ namespace OceanEduSlide.Controllers
                 var revenueHO = revenueHOs.Where(a => a.OfficeId == office.Id).FirstOrDefault();
                 var revenue = revenues.Where(a => a.OfficeId == office.Id).FirstOrDefault();
                 dt.Rows.Add(office.ShortName, office.Zone?.Name, 8, revenueHO != null ? revenueHO.Target_TS.ToString("N0") : "", revenue != null ? revenue.TargetBM_TS.ToString("N0") : "");
-
             }
-
             var filename = $"danh-sach-cam-ket-hoan-thanh-DS-CN.xlsx";
             using (var pck = new ExcelPackage())
             {

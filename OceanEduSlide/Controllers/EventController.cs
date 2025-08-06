@@ -212,7 +212,8 @@ namespace OceanEduSlide.Controllers
 
             if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
             {
-                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek,q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+                var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+
                 if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
                 {
                     List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
@@ -237,6 +238,15 @@ namespace OceanEduSlide.Controllers
                     foreach (var day in days)
                     {
                         var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
+                        var revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId != null && a.Event.DayofWeek == ev.DayofWeek && a.Event.WeekNumber == ev.WeekNumber && a.Event.Month == ev.Month && a.User.OfficeId == ev.OfficeId && (int)a.DayofWeek == day && a.UserId == userId, q=> q.OrderByDescending(a => a.CreateDate));
+                        if(revenues.Count() > 1)
+                        {
+                            foreach(var r in revenues.Skip(1))
+                            {
+                                _unitOfWork.RevenueUser_DayOfWeekRepository.Delete(r);
+                            }
+                            _unitOfWork.Save();
+                        }
                         if (revenue == null)
                         {
                             revenue = new RevenueUser_DayOfWeek
@@ -799,7 +809,7 @@ namespace OceanEduSlide.Controllers
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month && a.DebtId == null);
-                if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM )
+                if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM)
                     debts = debts.Where(a => a.UserId == User.Id);
                 if (office != null)
                     debts = debts.Where(a => a.User.OfficeId == model.OfficeId);
@@ -817,8 +827,8 @@ namespace OceanEduSlide.Controllers
         public PartialViewResult LoadHistoryDedt(int debtId)
         {
             var debt = _unitOfWork.DebtRepository.GetById(debtId);
-            
-            var model = _unitOfWork.DebtRepository.Get(a => a.DebtId == debt.DebtId || a.Id == debt.DebtId, q=> q.OrderByDescending(a => a.CreateDate));
+
+            var model = _unitOfWork.DebtRepository.Get(a => a.DebtId == debt.DebtId || a.Id == debt.DebtId, q => q.OrderByDescending(a => a.CreateDate));
             return PartialView(model);
         }
         public ActionResult CreateDebt()
@@ -856,7 +866,8 @@ namespace OceanEduSlide.Controllers
                 else
                     model.Debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
                 if (model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card)
-                    model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
+                    //model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
+                    model.Debt.DebtMoney2 = Convert.ToDecimal(model.DebtMoney2.Replace(",", ""));
                 else
                     model.Debt.DebtMoney2 = 0;
                 model.Debt.RemainMoney = model.Debt.TotalMoney - model.Debt.DebtMoney - model.Debt.DebtMoney2;
@@ -926,6 +937,7 @@ namespace OceanEduSlide.Controllers
 
                 },
                 DebtMoney = debt.DebtMoney.ToString("N0"),
+                DebtMoney2 = debt.DebtMoney2.ToString("N0"),
                 TotalMoney = debt.TotalMoney.ToString("N0"),
                 DownMoney = debt.DownMoney.ToString("N0"),
             };
@@ -957,7 +969,8 @@ namespace OceanEduSlide.Controllers
                 else
                     model.Debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
                 if (model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card)
-                    model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
+                    //model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
+                    model.Debt.DebtMoney2 = Convert.ToDecimal(model.DebtMoney2.Replace(",", ""));
                 else
                     model.Debt.DebtMoney2 = 0;
                 model.Debt.RemainMoney = model.Debt.TotalMoney - model.Debt.DebtMoney - model.Debt.DebtMoney2;
@@ -970,13 +983,12 @@ namespace OceanEduSlide.Controllers
                 }
                 _unitOfWork.DebtRepository.Insert(model.Debt);
                 var debts = _unitOfWork.DebtRepository.GetQuery(a => a.DebtId == model.Debt.DebtId || a.Id == model.Debt.DebtId);
-                foreach(var item in debts)
+                foreach (var item in debts)
                 {
                     //item.DepositDate = model.Debt.DepositDate;
                     item.Month = model.Debt.Month;
                     item.Year = model.Debt.Year;
                     item.TypeDebt = model.Debt.TypeDebt;
-
                 }
                 _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "update" });
@@ -992,10 +1004,10 @@ namespace OceanEduSlide.Controllers
             {
                 return false;
             }
-            if(debt.DebtId != null)
+            if (debt.DebtId != null)
             {
                 var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Id == debt.DebtId || a.DebtId == debt.DebtId);
-                foreach(var item in debts)
+                foreach (var item in debts)
                 {
                     item.Active = !debt.Active;
                 }
