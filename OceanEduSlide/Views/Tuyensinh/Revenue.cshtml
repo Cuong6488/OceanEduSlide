@@ -78,11 +78,11 @@
         </form>
     </div>
     @*@if (Model.User.TypeUser == TypeUser.HO)
-    {
-        <a class="py-3 d-inline-block add-revenue-office" href="@Url.Action("RevenueOffice")">
-            Thêm chỉ tiêu doanh số
-        </a>
-    }*@
+        {
+            <a class="py-3 d-inline-block add-revenue-office" href="@Url.Action("RevenueOffice")">
+                Thêm chỉ tiêu doanh số
+            </a>
+        }*@
     @if (Model.RevenueOffice != null)
     {
 
@@ -121,7 +121,7 @@
                             decimal TS_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_TS / Model.RevenueOffice.Target_TS * 1000) / 10;
                             decimal New_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_New / Model.RevenueOffice.Target_TS * 1000) / 10;
                             decimal SAB_percent = 100;
-                            if(Model.RevenueOffice.Target_SAB > 0)
+                            if (Model.RevenueOffice.Target_SAB > 0)
                             {
                                 SAB_percent = Math.Round((decimal)revenueOffice_BM.TargetBM_SAB / Model.RevenueOffice.Target_SAB * 1000) / 10;
                             }
@@ -286,6 +286,11 @@
                                                 </div>
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
                                             }
+                                            else if(ViewBag.CurrentWeek > i)
+                                            {
+                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" value="0"/>
+
+                                            }
 
                                         }
                                     </td>
@@ -309,7 +314,7 @@
                                     Chưa cập nhật
                                 </td>
                                 @*<td>
-            </td>*@
+                                    </td>*@
                                 <td>
                                 </td>
                                 <td>
