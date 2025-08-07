@@ -289,19 +289,19 @@ namespace OceanEduSlide.Controllers
                     case DayOfWeek.Tuesday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Tuesday);
                         break;
-                    case DayOfWeek.Thursday:
+                    case DayOfWeek.Wednesday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Thursday);
                         break;
-                    case DayOfWeek.Friday:
+                    case DayOfWeek.Thursday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Friday);
                         break;
-                    case DayOfWeek.Wednesday:
+                    case DayOfWeek.Friday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Wednessday);
                         break;
-                    case DayOfWeek.Sunday:
+                    case DayOfWeek.Saturday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Sunday);
                         break;
-                    case DayOfWeek.Saturday:
+                    case DayOfWeek.Sunday:
                         model.Revenues = model.Revenues.Where(a => a.DayofWeek == DayofWeek.Saturday);
                         break;
                     default:
@@ -346,19 +346,19 @@ namespace OceanEduSlide.Controllers
                             case DayOfWeek.Tuesday:
                                 today = 3;
                                 break;
-                            case DayOfWeek.Thursday:
+                            case DayOfWeek.Wednesday:
                                 today = 4;
                                 break;
-                            case DayOfWeek.Friday:
+                            case DayOfWeek.Thursday:
                                 today = 5;
                                 break;
-                            case DayOfWeek.Wednesday:
+                            case DayOfWeek.Friday:
                                 today = 6;
                                 break;
-                            case DayOfWeek.Sunday:
+                            case DayOfWeek.Saturday:
                                 today = 7;
                                 break;
-                            case DayOfWeek.Saturday:
+                            case DayOfWeek.Sunday:
                                 today = 8;
                                 break;
                             default:
@@ -370,7 +370,7 @@ namespace OceanEduSlide.Controllers
                         var userItems = users.ToList().Select(x => new BMHomeViewModel.UserItem
                         {
                             User = x,
-                            Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today),
+                            Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year && (int)a.WeekNumber == currentWeek && (int)a.DayofWeek == today, q=> q.OrderByDescending(a => a.CreateDate)),
                             //TMonth = (_unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Active && a.UserId == x.Id && a.Month == date.Month && a.Year == date.Year).FirstOrDefault()?.TargetBM -
                             //(_unitOfWork.DebtRepository.GetQuery(q => q.UserId == x.Id && q.Year == (date.Month - 1 == 0 ? date.Year - 1 : date.Year) && q.Month == (date.Month - 1 == 0 ? 12 : date.Month - 1)
                             //&& (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)) ?? 0,
@@ -490,19 +490,19 @@ namespace OceanEduSlide.Controllers
                     model.Report.DayofWeek = DayofWeek.Tuesday;
                     break;
                 case DayOfWeek.Thursday:
-                    model.Report.DayofWeek = DayofWeek.Thursday;
-                    break;
-                case DayOfWeek.Friday:
-                    model.Report.DayofWeek = DayofWeek.Friday;
-                    break;
-                case DayOfWeek.Wednesday:
                     model.Report.DayofWeek = DayofWeek.Wednessday;
                     break;
+                case DayOfWeek.Friday:
+                    model.Report.DayofWeek = DayofWeek.Thursday;
+                    break;
+                case DayOfWeek.Wednesday:
+                    model.Report.DayofWeek = DayofWeek.Friday;
+                    break;
                 case DayOfWeek.Sunday:
-                    model.Report.DayofWeek = DayofWeek.Sunday;
+                    model.Report.DayofWeek = DayofWeek.Saturday;
                     break;
                 case DayOfWeek.Saturday:
-                    model.Report.DayofWeek = DayofWeek.Saturday;
+                    model.Report.DayofWeek = DayofWeek.Sunday;
                     break;
                 default:
                     break;

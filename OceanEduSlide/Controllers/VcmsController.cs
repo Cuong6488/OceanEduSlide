@@ -27,7 +27,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OceanEduSlide.Controllers
 {
-    [Authorize]
+    [Authorize, AdminRoleFilters]
     public class VcmsController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
@@ -36,8 +36,9 @@ namespace OceanEduSlide.Controllers
 
 
         #region Admin
-        public ActionResult Index()
+        public ActionResult Index(string roll = "")
         {
+            ViewBag.Role = roll;
             var model = new InfoAdminViewModel
             {
                 Admins = Admins,
@@ -213,6 +214,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult CreateAdmin(string result = "")
         {
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             ViewBag.Result = result;
             var model = new CreateAdminViewModel
             {
@@ -271,6 +274,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult UpdateAdmin(int id)
         {
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             var model = new CreateAdminViewModel
             {
                 Admins = Admins.Where(z => z.Id == id),
@@ -397,7 +402,7 @@ namespace OceanEduSlide.Controllers
         {
 
             if (Role != RoleAdmin.Admin)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             ViewBag.Result = result;
             var model = new CreateUserViewModel
             {
@@ -454,7 +459,7 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             }
         }
-        public ActionResult ListUser(int? page, string username, int? officeId, int? trung, string result = "")
+        public ActionResult ListUser(int? page, string username, int? officeId, int? trung, int? active, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -464,6 +469,14 @@ namespace OceanEduSlide.Controllers
             if (officeId.HasValue)
             {
                 users = users.Where(l => l.OfficeId == officeId);
+            }
+            if (active == 1)
+            {
+                users = users.Where(l => l.Active);
+            }
+            if (active == 2)
+            {
+                users = users.Where(l => !l.Active);
             }
             if (username != null)
             {
@@ -491,6 +504,7 @@ namespace OceanEduSlide.Controllers
                 Users = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
                 Username = username,
+                active = active,
                 MemberCredentials = _unitOfWork.MemberCredentialRepository.GetQuery(),
             };
             return View(model);
@@ -513,7 +527,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult UpdateUser(int id)
         {
             if (Role != RoleAdmin.Admin)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
@@ -564,7 +578,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult InsertUserExcel()
         {
             if (Role != RoleAdmin.Admin)
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             return View();
         }
         [HttpPost]

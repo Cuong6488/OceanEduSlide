@@ -136,6 +136,7 @@ namespace OceanEduSlide.ViewModels
         public PagedList.IPagedList<User> Users { get; set; }
         public SelectList SelectOffices { get; set; }
         public int? officeId { get; set; }
+        public int? active { get; set; }
         public string Username { get; set; }
         public IEnumerable<MemberCredential> MemberCredentials { get; set; }
     }

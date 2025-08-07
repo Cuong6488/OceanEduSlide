@@ -314,6 +314,7 @@
     <Compile Include="DAL\GenericRepository.cs" />
     <Compile Include="DAL\UnitOfWork.cs" />
     <Compile Include="EnumHelpers\EnumExtensions.cs" />
+    <Compile Include="Filters\AuthorLoginFilters.cs" />
     <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

@@ -18,10 +18,18 @@
     <form action="@Url.Action("ListUser")" method="get">
         <div class="row">
             @*<div class="col-lg-4">
-                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
-                </div>*@
+            <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+        </div>*@
             <div class="col-lg-4">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg-4">
+                <label>Trạng thái</label>
+                <select name="active" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.active == 1?"selected":"")>Hoạt động</option>
+                    <option value="2" @(Model.active == 2?"selected":"")>Không hoạt động</option>
+                </select>
             </div>
             <div class="col-lg-4 align-self-center">
                 <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
@@ -78,7 +86,7 @@
             @if (Model.Users.PageCount > 1)
             {
                 <tr>
-                    <td colspan="7">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username }))</td>
+                    <td colspan="7">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username,active = Model.active }))</td>
                 </tr>
             }
         </tbody>

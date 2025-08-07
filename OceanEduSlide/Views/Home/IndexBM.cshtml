@@ -101,8 +101,18 @@
                                 <p class="box-remind-title mb-0"><strong>Chi tiết công việc ngày</strong></p>
                                 @if (userItem.Revenues.Any())
                                 {
+                                    bool fr = true;
+
                                     foreach (var item in userItem.Revenues)
                                     {
+                                        if (fr == false && item.Event == null)
+                                        {
+                                            continue;
+                                        }
+                                        if (item.EventId == null)
+                                        {
+                                            fr = false;
+                                        }
                                         <div class="box-remind-content">
                                             @if (item.Event?.Name != null)
                                             {<div class="d-flex">
