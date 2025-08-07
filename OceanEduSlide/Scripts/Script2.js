@@ -116,7 +116,7 @@ $(".targetuser_month_HO").each(function () {
         if (weekTarget !== "" && targetuser_month_BM > 0) {
             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
             $(this).closest("td").next(".week-percent").text(percent_user_week);
-            if (weekTarget_real !== "") {
+            if (weekTarget_real !== "" && index < currentWeek - 1) {
                 totalWeekTarget += parseFloat(weekTarget_real) || 0;
             }
             else {
