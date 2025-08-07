@@ -8,6 +8,7 @@
         <tbody>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Username)</th>
+                <th>@Html.DisplayNameFor(model => model.RoleAdmin)</th>
                 <th>@Html.DisplayNameFor(model => model.Active)</th>
                 <th></th>
             </tr>
@@ -15,6 +16,7 @@
             {
                 <tr data-id="@admin.Username">
                     <td class="left">@admin.Username</td>
+                    <td class="left">@Html.DisplayFor( a=> admin.RoleAdmin)</td>
                     <td>@Html.DisplayFor(a => admin.Active)</td>
                     <td class="list-icon">
                         @Html.ActionLink("Sửa", "UpdateAdmin", new { id = admin.Id }) - <a href="javascript:;" class="red-warring deleteAdmin" id="@admin.Username">Xóa</a>

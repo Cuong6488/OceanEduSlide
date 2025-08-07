@@ -26,6 +26,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">Phân Quyền</td>
+                    <td class="form_text">
+                        @Html.EnumDropDownListFor(model => model.RoleAdmin)
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Password)</td>
                     <td class="form_text">
                         @Html.PasswordFor(model => model.Password, new { @class = "form_control w300" })

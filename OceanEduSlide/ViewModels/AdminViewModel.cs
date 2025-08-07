@@ -50,6 +50,7 @@ namespace OceanEduSlide.ViewModels
 
         [Display(Name = "Hoạt động", Description = "Hoạt động")]
         public bool Active { get; set; }
+        public RoleAdmin RoleAdmin { get; set; }
         public CreateAdminViewModel()
         {
             Active = true;

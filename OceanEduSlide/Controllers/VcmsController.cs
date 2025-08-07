@@ -32,6 +32,8 @@ namespace OceanEduSlide.Controllers
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
+        private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
+
 
         #region Admin
         public ActionResult Index()
@@ -153,8 +155,10 @@ namespace OceanEduSlide.Controllers
                 var admin = _unitOfWork.AdminRepository.Get(a => a.Username == model.Username && a.Active).SingleOrDefault();
                 if (admin != null && HtmlHelpers.VerifyHash(model.Password, "SHA256", admin.Password))
                 {
+                    //var ticket = new FormsAuthenticationTicket(1, model.Username.ToLower(), DateTime.Now, DateTime.Now.AddDays(30), true,
+                    //    admin.ToString(), FormsAuthentication.FormsCookiePath);
                     var ticket = new FormsAuthenticationTicket(1, model.Username.ToLower(), DateTime.Now, DateTime.Now.AddDays(30), true,
-                        admin.ToString(), FormsAuthentication.FormsCookiePath);
+                        admin.RoleAdmin.ToString(), FormsAuthentication.FormsCookiePath);
                     var encTicket = FormsAuthentication.Encrypt(ticket);
                     // Create the cookie.
                     Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
@@ -234,6 +238,7 @@ namespace OceanEduSlide.Controllers
                         Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
                         Username = model.Username,
                         Active = model.Active,
+                        RoleAdmin = model.RoleAdmin,
                     };
                     _unitOfWork.AdminRepository.Insert(m);
                     _unitOfWork.Save();
@@ -269,6 +274,7 @@ namespace OceanEduSlide.Controllers
             var model = new CreateAdminViewModel
             {
                 Admins = Admins.Where(z => z.Id == id),
+                RoleAdmin = Admins.FirstOrDefault(z => z.Id == id)?.RoleAdmin ?? RoleAdmin.Admin,
             };
             return View(model);
         }
@@ -282,6 +288,7 @@ namespace OceanEduSlide.Controllers
                 {
                     admin.Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null);
                     admin.Active = model.Active;
+                    admin.RoleAdmin = model.RoleAdmin;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateAdmin", new { result = "update" });
                 }
@@ -388,6 +395,9 @@ namespace OceanEduSlide.Controllers
         //}
         public ActionResult CreateUser(string result = "")
         {
+
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index");
             ViewBag.Result = result;
             var model = new CreateUserViewModel
             {
@@ -490,8 +500,20 @@ namespace OceanEduSlide.Controllers
             var model = _unitOfWork.MemberCredentialRepository.Get(a => a.UserId == userId);
             return View(model);
         }
+        public ActionResult UpdateMaNhanVien()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => string.IsNullOrEmpty(a.MaNhanVien) && a.TypeUser != null);
+            foreach (var u in users)
+            {
+                u.MaNhanVien = u.Username;
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListUser");
+        }
         public ActionResult UpdateUser(int id)
         {
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index");
             var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
@@ -503,16 +525,6 @@ namespace OceanEduSlide.Controllers
             model.ZoneId = model.Users.FirstOrDefault()?.ZoneId ?? 0;
             model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
             return View(model);
-        }
-        public ActionResult UpdateMaNhanVien()
-        {
-            var users = _unitOfWork.UserRepository.GetQuery(a => string.IsNullOrEmpty(a.MaNhanVien) && a.TypeUser != null);
-            foreach (var u in users)
-            {
-                u.MaNhanVien = u.Username;
-            }
-            _unitOfWork.Save();
-            return RedirectToAction("ListUser");
         }
         [HttpPost]
         public ActionResult UpdateUser(UpdateUserViewModel model)
@@ -541,6 +553,8 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public JsonResult DeleteUser(int userId)
         {
+            if (Role != RoleAdmin.Admin)
+                return Json(new { status = false, msg = "Bạn không có quyền xóa" });
             var user = _unitOfWork.UserRepository.GetById(userId);
             _unitOfWork.UserRepository.Delete(user);
             _unitOfWork.Save();
@@ -549,6 +563,8 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult InsertUserExcel()
         {
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index");
             return View();
         }
         [HttpPost]

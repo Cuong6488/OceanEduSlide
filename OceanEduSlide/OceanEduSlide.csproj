@@ -534,6 +534,10 @@
     <Compile Include="Migrations\202508041018055_debtparent.Designer.cs">
       <DependentUpon>202508041018055_debtparent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508070615589_rolladmin.cs" />
+    <Compile Include="Migrations\202508070615589_rolladmin.Designer.cs">
+      <DependentUpon>202508070615589_rolladmin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\ReportData.cs" />
@@ -1681,6 +1685,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508041018055_debtparent.resx">
       <DependentUpon>202508041018055_debtparent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508070615589_rolladmin.resx">
+      <DependentUpon>202508070615589_rolladmin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -16,9 +16,17 @@ namespace OceanEduSlide.Models
         public string Password { get; set; }
         [Display(Name = "Hoạt động", Description = "Hoạt động")]
         public bool Active { get; set; }
+        public RoleAdmin? RoleAdmin { get; set; }
         public Admin()
         {
             Active = true;
         }
+    }
+    public enum RoleAdmin
+    {
+        [Display(Name = "Quản trị viên")]
+        Admin,
+        [Display(Name = "Thư ký")]
+        CopyWriter,
     }
 }
