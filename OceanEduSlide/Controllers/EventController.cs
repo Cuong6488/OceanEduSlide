@@ -213,15 +213,14 @@ namespace OceanEduSlide.Controllers
             if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
             {
                 //var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
-                var evs = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate));
+                var evs = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek && a.OfficeId == user.OfficeId && (a.TypeEvent == TypeEvent.SKDT || a.TypeEvent == TypeEvent.SKSale), q => q.OrderByDescending(a => a.CreateDate));
                 if (evs.Any())
                 {
                     foreach (var item in evs.Skip(1))
                     {
-                        var rvns = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == item.Id);
+                        var rvns = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == item.Id && a.UserId == userId);
                         rvns.Delete();
                     }
-
                     _unitOfWork.Save();
                 }
                 var ev = evs.FirstOrDefault();
@@ -812,7 +811,7 @@ namespace OceanEduSlide.Controllers
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
-                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year < model.Year || (a.Year == model.Year && a.Month <= model.Month) && a.DebtId == null);
+                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year < model.Year || (a.Year == model.Year && a.Month < model.Month) && a.DebtId == null);
                 if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM)
                     debts = debts.Where(a => a.UserId == User.Id);
                 if (office != null)
