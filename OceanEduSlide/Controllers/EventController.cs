@@ -869,7 +869,7 @@ namespace OceanEduSlide.Controllers
                     model.Debt.DownMoney = 0;
                 else
                     model.Debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
-                if (model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card)
+                if ((model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card) && !string.IsNullOrEmpty(model.DebtMoney2))
                     //model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
                     model.Debt.DebtMoney2 = Convert.ToDecimal(model.DebtMoney2.Replace(",", ""));
                 else
@@ -972,7 +972,7 @@ namespace OceanEduSlide.Controllers
                     model.Debt.DownMoney = 0;
                 else
                     model.Debt.DownMoney = Convert.ToDecimal((model.DownMoney ?? "0").Replace(",", ""));
-                if (model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card)
+                if ((model.Debt.TypePay == TypePay.NoCard || model.Debt.TypePay == TypePay.Card) && !string.IsNullOrEmpty(model.DebtMoney2))
                     //model.Debt.DebtMoney2 = model.Debt.TotalMoney * 20 / 100;
                     model.Debt.DebtMoney2 = Convert.ToDecimal(model.DebtMoney2.Replace(",", ""));
                 else

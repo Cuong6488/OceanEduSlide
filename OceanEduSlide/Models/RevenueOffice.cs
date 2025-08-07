@@ -24,19 +24,6 @@ namespace OceanEduSlide.Models
         public decimal Target_HV { get; set; }
         [Display(Name = "Chỉ tiêu doanh số kế toán"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal Target_SAB { get; set; }
-        //[Display(Name = "Cam kết hoàn thành doanh số"), DisplayFormat(DataFormatString = "{0:N0}đ")]
-        //public decimal? TargetBM_TS { get; set; }
-        ////[Display(Name = "% Cam kết hoàn thành doanh số"), DisplayFormat(DataFormatString = "{0:N0}đ")]
-        //public decimal? TargetBM_TS_Percent { get; set; }
-        //[Display(Name = "Phân bổ doanh số dự kiến theo tái phí"), DisplayFormat(DataFormatString = "{0:N0}đ")]
-        //public decimal? TargetBM_HV { get; set; }
-        //public decimal? TargetBM_HV_Percent { get; set; }
-        //[Display(Name = "Phân bổ doanh số dự kiến theo SAB"), DisplayFormat(DataFormatString = "{0:N0}đ")]
-        //public decimal? TargetBM_SAB { get; set; }
-        //public decimal? TargetBM_SAB_Percent { get; set; }
-        //[Display(Name = "Phân bổ doanh số dự kiến theo ghi danh mới"), DisplayFormat(DataFormatString = "{0:N0}đ")]
-        //public decimal? TargetBM_New { get; set; }
-        //public decimal? TargetBM_New_Percent { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]

@@ -1783,6 +1783,118 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public void ExportTargetUser2()
+        {
+            var month = 8;
+            var year = 2025;
+
+            // Lấy dữ liệu chỉ 1 lần, sau đó xử lý trên bộ nhớ
+            var revenueHOMonths = _unitOfWork.RevenueUser_MonthRepository
+                .GetQuery(a => a.Month == month && a.Year == year)
+                .AsNoTracking()
+                .ToDictionary(a => a.UserId, a => a);
+
+            var revenueBMMonths = _unitOfWork.RevenueUser_Month_BMRepository
+                .GetQuery(a => a.Month == month && a.Year == year)
+                .AsNoTracking()
+                .GroupBy(a => a.UserId)
+                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault())
+                .ToDictionary(a => a.UserId, a => a);
+
+            var revenueBMWeeks = _unitOfWork.RevenueUser_WeekRepository
+                .GetQuery(a => a.Month == month && a.Year == year)
+                .AsNoTracking()
+                .GroupBy(a => new { a.UserId, a.WeekNumber })
+                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault())
+                .ToList()
+                .GroupBy(x => x.UserId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var dt = new DataTable();
+            dt.Columns.Add("Nhân sự");
+            dt.Columns.Add("Mã nhân viên");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Chỉ tiêu DS công ty");
+            dt.Columns.Add("Cam kết HT doanh số");
+
+            for (int i = 1; i <= 6; i++)
+            {
+                dt.Columns.Add($"DS cam kết Tuần {i}");
+            }
+
+            var users = _unitOfWork.UserRepository.GetQuery(
+                    a => a.Active && a.Office != null && a.TypeUser != null
+                         && a.TypeUser != TypeUser.PKT
+                         && a.TypeUser != TypeUser.HO
+                         && a.TypeUser != TypeUser.CV
+                         && a.TypeUser != TypeUser.ASM,
+                    q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId))
+                .AsNoTracking()
+                .ToList();
+
+            foreach (var user in users)
+            {
+                var row = dt.NewRow();
+                row["Nhân sự"] = user.Fullname ?? user.Username;
+                row["Mã nhân viên"] = user.MaNhanVien ?? user.Username;
+                row["Chi nhánh"] = user.Office.ShortName;
+                row["Vùng"] = user.Office.Zone?.Name;
+                row["Tháng"] = month.ToString();
+
+                // Chỉ tiêu công ty
+                if (revenueHOMonths.TryGetValue(user.Id, out var revenueHOMonth))
+                {
+                    row["Chỉ tiêu DS công ty"] = revenueHOMonth.Target.ToString("N0");
+                }
+
+                // Cam kết doanh số BM
+                if (revenueBMMonths.TryGetValue(user.Id, out var revenueBMMonth))
+                {
+                    row["Cam kết HT doanh số"] = revenueBMMonth.TargetBM.ToString("N0");
+                }
+
+                // DS cam kết từng tuần
+                if (revenueBMWeeks.TryGetValue(user.Id, out var weekList))
+                {
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        var revenueBMWeek = weekList.FirstOrDefault(w => (int)w.WeekNumber == i);
+                        if (revenueBMWeek != null)
+                        {
+                            row[$"DS cam kết Tuần {i}"] = revenueBMWeek.TargetBM.ToString("N0");
+                        }
+                    }
+                }
+
+                dt.Rows.Add(row);
+            }
+
+            var filename = $"danh-sach-PBDS-nhan-su.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ doanh số");
+
+                // Load dữ liệu vào Excel
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                // Định dạng tiêu đề
+                using (var rng = ws.Cells[1, 1, 1, dt.Columns.Count])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                // Trả file Excel về client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment; filename=" + filename);
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
         public void ExportEvent()
         {
             var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
@@ -1877,6 +1989,114 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public void ExportEvent2()
+        {
+            var month = 8;
+            var year = 2025;
+
+            // Lấy toàn bộ sự kiện thỏa điều kiện, group theo OfficeId + WeekNumber + DayofWeek
+            var eventsList = _unitOfWork.EventRepository
+                .GetQuery(a => a.Month == month && a.Year == year)
+                .AsNoTracking()
+                .GroupBy(a => new { a.OfficeId, a.WeekNumber, a.DayofWeek })
+                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault())
+                .ToList();
+
+            // Dictionary tra cứu nhanh: OfficeId -> WeekEnum -> DayEnum
+            var eventDict = eventsList
+                .GroupBy(e => e.OfficeId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.GroupBy(e => e.WeekNumber)
+                          .ToDictionary(
+                              wg => wg.Key,
+                              wg => wg.ToDictionary(e => e.DayofWeek, e => e)
+                          )
+                );
+
+            var offices = _unitOfWork.OfficeRepository
+                .GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
+                .AsNoTracking()
+                .ToList();
+
+            var dt = new DataTable();
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Tuần");
+
+            for (int d = 2; d <= 8; d++) // Thứ 2 đến Chủ nhật
+            {
+                dt.Columns.Add(d == 8 ? "Chủ nhật" : $"Thứ {d}");
+            }
+
+            foreach (var office in offices)
+            {
+                for (int i = 1; i <= 6; i++) // Tuần 1–6
+                {
+                    var row = dt.NewRow();
+                    row["Chi nhánh"] = office.ShortName;
+                    row["Vùng"] = office.Zone?.Name;
+                    row["Tháng"] = month.ToString();
+                    row["Tuần"] = i;
+
+                    // Ép kiểu từ int sang enum (WeekEnum và DayEnum là enum thực tế bạn đang dùng)
+                    var weekEnum = (WeekNumber)i;
+
+                    for (int j = 2; j <= 8; j++)
+                    {
+                        var dayEnum = (DayofWeek)j;
+
+                        if (eventDict.TryGetValue(office.Id, out var weekDict) &&
+                            weekDict.TryGetValue(weekEnum, out var dayDict) &&
+                            dayDict.TryGetValue(dayEnum, out var eventDay))
+                        {
+                            var eventInfo = string.Join("\n", new[]
+                            {
+                        $"Loại hoạt động: {GetEnumDisplayName(eventDay.TypeEvent)}",
+                        $"Tên hoạt động: {eventDay.Name}",
+                        $"Đối tượng tham gia: {GetEnumDisplayName(eventDay.TypeJoin)}",
+                        $"Lứa tuổi: {eventDay.Ages}",
+                        $"Thời gian: {eventDay.TimeFrom} - {eventDay.TimeTo}",
+                    });
+
+                            var columnName = j == 8 ? "Chủ nhật" : $"Thứ {j}";
+                            row[columnName] = eventInfo.Trim();
+                        }
+                    }
+
+                    dt.Rows.Add(row);
+                }
+            }
+
+            var filename = $"danh-sach-su-kien.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Danh sách sự kiện");
+
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                using (var rng = ws.Cells[1, 1, 1, dt.Columns.Count])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                if (ws.Dimension != null)
+                {
+                    ws.Cells[ws.Dimension.Address].Style.WrapText = true;
+                    ws.Cells[ws.Dimension.Address].AutoFitColumns();
+                }
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
+
         public static string GetEnumDisplayName(Enum enumValue)
         {
             var displayAttr = enumValue.GetType()
