@@ -384,7 +384,7 @@ namespace OceanEduSlide.Controllers
                             }
                             // Avoid inserting if already exists
                             var existing = _unitOfWork.ReportDataRepository.GetQuery(a =>
-                                a.OfficeId == office.Id &&
+                                a.UserId == user.Id &&
                                 a.Year == DateTime.Now.Year &&
                                 a.Month == monthInt &&
                                 a.ReportCategoryId == category.Id).FirstOrDefault();
