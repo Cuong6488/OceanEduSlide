@@ -263,3 +263,23 @@ $("[data-item=city]").on("change", function (data) {
         $("[data-item=district]").html(items.join(""));
     }
 });
+$("[data-item=zone]").on("change", function (data) {
+    const id = $(this).val();
+    var items = [];
+    items.push("<option value>Tất cả</option>");
+
+    if (id !== "") {
+        $.getJSON("/Base/GetOffice", { zoneId: id }, function (data) {
+            $.each(data, function (key, val) {
+                items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
+            });
+            $("[data-item=office]").html(items.join(""));
+        });
+    } else {
+        $("[data-item=office]").html(items.join(""));
+    }
+});
+$(document).ready(function () {
+    $('select[name="officeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });
+    $('select[name="ZoneId"]').select2({ placeholder: 'Chọn vùng', allowClear: true });
+});

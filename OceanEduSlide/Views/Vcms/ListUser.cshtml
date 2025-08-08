@@ -20,18 +20,42 @@
             @*<div class="col-lg-4">
             <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
         </div>*@
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <label>Trạng thái</label>
                 <select name="active" class="mt-2">
                     <option value="">Tất cả</option>
-                    <option value="1" @(Model.active == 1?"selected":"")>Hoạt động</option>
-                    <option value="2" @(Model.active == 2?"selected":"")>Không hoạt động</option>
+                    <option value="1" @(Model.active == 1 ? "selected" : "")>Hoạt động</option>
+                    <option value="2" @(Model.active == 2 ? "selected" : "")>Không hoạt động</option>
                 </select>
             </div>
-            <div class="col-lg-4 align-self-center">
+            <div class="col-lg-2">
+                <label>Chức danh</label>
+                <select name="UserType" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.TypeUser == 1 ? "selected" : "")>GĐTS</option>
+                    <option value="8" @(Model.TypeUser == 8 ? "selected" : "")>Chuyên viên</option>
+                    <option value="2" @(Model.TypeUser == 2 ? "selected" : "")>ASM</option>
+                    <option value="3" @(Model.TypeUser == 3 ? "selected" : "")>BM</option>
+                    <option value="9" @(Model.TypeUser == 9 ? "selected" : "")>TTL</option>
+                    <option value="7" @(Model.TypeUser == 7 ? "selected" : "")>CM</option>
+                    <option value="5" @(Model.TypeUser == 5 ? "selected" : "")>ATL</option>
+                    <option value="4" @(Model.TypeUser == 4 ? "selected" : "")>EC</option>
+                    <option value="6" @(Model.TypeUser == 6 ? "selected" : "")>SAB</option>
+                    <option value="10" @(Model.TypeUser == 10 ? "selected" : "")>PKT</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <label class="mb-2">Vùng</label>
+                @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Tất cả", new { @class = "mt-2", data_item = "zone" })
+            </div>
+            <div class="col-lg-2">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2", data_item = "office" })
+            </div>
+            <div class="col-lg-2 align-self-center">
                 <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
             </div>
         </div>
@@ -86,7 +110,7 @@
             @if (Model.Users.PageCount > 1)
             {
                 <tr>
-                    <td colspan="7">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username,active = Model.active }))</td>
+                    <td colspan="7">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username, active = Model.active, UserType = Model.TypeUser,zoneId = Model.ZoneId }))</td>
                 </tr>
             }
         </tbody>

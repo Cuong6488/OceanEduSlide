@@ -28,9 +28,9 @@ using System.ComponentModel.DataAnnotations;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
-    public class VcmsController : Controller
+    public class VcmsController : BaseController
     {
-        private readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        //private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
 
@@ -459,16 +459,24 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             }
         }
-        public ActionResult ListUser(int? page, string username, int? officeId, int? trung, int? active, string result = "")
+        public ActionResult ListUser(int? page, string username, int? zoneId, int? officeId, int? UserType, int? trung, int? active, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
             var users = _unitOfWork.UserRepository.GetQuery(orderBy: l => l.OrderByDescending(a => a.Id));
+            if (zoneId.HasValue)
+            {
+                users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId);
+            }
 
             if (officeId.HasValue)
             {
                 users = users.Where(l => l.OfficeId == officeId);
+            }
+            if (UserType.HasValue)
+            {
+                users = users.Where(l => (int)l.TypeUser == UserType);
             }
             if (active == 1)
             {
@@ -501,12 +509,21 @@ namespace OceanEduSlide.Controllers
             var model = new ListUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
+
+                ZoneId = zoneId,
                 Username = username,
                 active = active,
+                TypeUser = UserType,
                 MemberCredentials = _unitOfWork.MemberCredentialRepository.GetQuery(),
             };
+
+            if (model.ZoneId > 0)
+            {
+                model.SelectOffices = OfficeSelectList(model.ZoneId);
+            }
             return View(model);
         }
         public ActionResult ListFaceId(int userId)
@@ -629,12 +646,14 @@ namespace OceanEduSlide.Controllers
 
                     var phanquyen = tbl.Rows[i][9].ToString().Trim();
                     var zones = tbl.Rows[i][10].ToString().Trim();
+                    var salekit = tbl.Rows[i][11].ToString().Trim();
                     if (user != null)
                     {
                         user.Password = password2;
                         user.Active = true;
                         user.OfficeId = office?.Id ?? null;
                         user.Fullname = fullname;
+                        user.SaleKit = (salekit == "1" ? true : false);
                         switch (phanquyen)
                         {
                             case "ASM":
@@ -694,6 +713,7 @@ namespace OceanEduSlide.Controllers
                             OfficeId = office?.Id ?? null,
                             MaNhanVien = maxnhanvien,
                             Fullname = fullname,
+                            SaleKit = (salekit == "1" ? true : false),
                         };
                         switch (phanquyen)
                         {
