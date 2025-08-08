@@ -194,7 +194,9 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
                         if (weekTarget !== "" && targetuser_month_BM > 0) {
                             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
                             $(this).closest("td").next(".week-percent").text(percent_user_week);
-                            if (weekTarget_real !== "") {
+                            if (weekTarget_real !== "" && index < currentWeek - 1) {
+                                //alert(index);
+                                //alert(currentWeek - 1);
                                 //alert(weekTarget_real);
                                 totalWeekTarget += parseFloat(weekTarget_real) || 0;
                             }
@@ -284,13 +286,16 @@ $(".input-RevenueUser_Week").on("change", function () {
             thisElement.val(thisElement.siblings(".revenue-value").text());
         }
         else {
+            var currentWeek = $("input[name='CurrentWeek']").val();
+
             var totalWeekTarget = 0;
             var emptyCount = 0;
 
             var target_Month = parseFloat(target_Month_text);
-            thisElement.closest("tr").find(".revenue-value-week_BM").each(function () {
+            thisElement.closest("tr").find(".revenue-value-week_BM").each(function (index) {
                 var weekTarget = $(this).text().trim().replace(/\,/g, "");
                 var weekTarget_real = $(this).closest("td").nextAll(".week-real").first().text().trim().replace(/\,/g, "");
+
                 var input_Week = $(this).siblings(".input-RevenueUser_Week").val().trim();
                 if (input_Week === "")
                     emptyCount++;
@@ -298,11 +303,10 @@ $(".input-RevenueUser_Week").on("change", function () {
                     weekTarget = targetBM;
                 }
                 if (weekTarget !== "") {
-                    if (weekTarget_real !== "") {
+                    if (weekTarget_real !== "" && index < currentWeek - 1) {
                         totalWeekTarget += parseFloat(weekTarget_real) || 0;
                     }
                     else {
-
                         totalWeekTarget += parseFloat(weekTarget) || 0;
                     }
                 }
