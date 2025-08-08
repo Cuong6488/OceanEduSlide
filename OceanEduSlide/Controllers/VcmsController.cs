@@ -545,13 +545,17 @@ namespace OceanEduSlide.Controllers
         {
             if (Role != RoleAdmin.Admin)
                 return RedirectToAction("Index", new { roll = "NoPermisstion" });
+            var users  = _unitOfWork.UserRepository.Get(z => z.Id == id);
             var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
-                Users = _unitOfWork.UserRepository.Get(z => z.Id == id),
-
+                Users = users,
             };
+            var zId = users.FirstOrDefault()?.ZoneId;
+            if (zId != null)
+                model.SelectOffices = OfficeSelectList(zId);
+
             model.OfficeId = model.Users.FirstOrDefault()?.OfficeId ?? 0;
             model.ZoneId = model.Users.FirstOrDefault()?.ZoneId ?? 0;
             model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
@@ -1460,6 +1464,77 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
+        //public ActionResult InsertDiscountExcel(FormCollection fc)
+        //{
+        //    var file = Request.Files["DiscountFile"];
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+        //        var stream = file.InputStream;
+        //        IExcelDataReader reader;
+        //        if (file.FileName.EndsWith(".xls"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+        //        }
+        //        else if (file.FileName.EndsWith(".xlsx"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("File", @"This file format is not supported");
+        //            return View();
+        //        }
+        //        var result = reader.AsDataSet();
+        //        reader.Close();
+
+        //        //var tbl = result.Tables[0];
+        //        var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+
+        //        foreach (DataTable tbl in result.Tables)
+        //        {
+        //            for (var i = 1; i < tbl.Rows.Count; i++)
+        //            {
+        //                //var username = tbl.Rows[i][3].ToString().Trim();
+        //                //var countUser = members.Count(a => a.Username == username);
+        //                //if (countUser > 0) continue;
+        //                var fullname = tbl.Rows[i][0].ToString().Trim();
+        //                if (fullname == null) continue;
+        //                int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
+        //                double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
+
+        //                var startDateStr = tbl.Rows[i][4].ToString().Trim();
+        //                var endDateStr = tbl.Rows[i][5].ToString().Trim();
+        //                var gift = tbl.Rows[i][7].ToString().Trim();
+        //                var offices = tbl.Rows[i][9].ToString().Trim();
+        //                if (offices == null) continue;
+        //                int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
+        //                int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
+        //                var cth = tbl.Rows[i][12].ToString().Trim();
+        //                //var countDiscount = discounts.Count(a => a.Username == fullname);
+        //                //if (countDiscount > 0) continue;
+        //                var discount = new Discount
+        //                {
+        //                    Username = fullname,
+        //                    MoneyDiscount = moneyDiscount,
+        //                    PercentDiscount = percentDiscount,
+        //                    Gift = gift,
+        //                    Offices = offices,
+        //                    Pathway = pathway,
+        //                    PathwayTo = pathwayTo,
+        //                    Cth = cth,
+        //                    StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
+        //                    EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
+        //                    Active = true
+        //                };
+        //                _unitOfWork.DiscountRepository.Insert(discount);
+
+        //            }
+        //        }
+        //        _unitOfWork.Save();
+
+        //    }
+        //    return RedirectToAction("ListDiscount");
+        //}
         public ActionResult InsertDiscountExcel(FormCollection fc)
         {
             var file = Request.Files["DiscountFile"];
@@ -1484,7 +1559,8 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 //var tbl = result.Tables[0];
-                var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                var listDiscount = new List<Discount>();
                 foreach (DataTable tbl in result.Tables)
                 {
                     for (var i = 1; i < tbl.Rows.Count; i++)
@@ -1521,15 +1597,22 @@ namespace OceanEduSlide.Controllers
                             EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
                             Active = true
                         };
-                        _unitOfWork.DiscountRepository.Insert(discount);
+                        //_unitOfWork.DiscountRepository.Insert(discount);
+                        listDiscount.Add(discount);
 
                     }
                 }
+                if (listDiscount.Any())
+                {
+                    _unitOfWork.DiscountRepository.InsertRange(listDiscount);
+                }
+
                 _unitOfWork.Save();
 
             }
             return RedirectToAction("ListDiscount");
         }
+
         #endregion
 
         #region Tong_hop_loi
@@ -2145,7 +2228,6 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-
 
         public static string GetEnumDisplayName(Enum enumValue)
         {

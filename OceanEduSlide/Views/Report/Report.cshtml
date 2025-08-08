@@ -1,16 +1,15 @@
 ﻿
 @{
-    ViewBag.Title = "Báo cáo kinh doanh "+(ViewBag.Type == 1 ? "chi nhánh" : "nhân viên");
+    ViewBag.Title = "Báo cáo kinh doanh chi nhánh - nhân viên";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <h2 class="mt-0">@ViewBag.Title</h2>
-<a target="_blank" class="btn quick-link" href="@Url.Action("ReportKDCN","ReportHome")"><i class="far fa-list me-1"></i> Danh sách @ViewBag.Title</a>
-<div class="box_content">
+@*<a target="_blank" class="btn quick-link" href="@Url.Action("ReportKDCN","ReportHome")"><i class="far fa-list me-1"></i> Danh sách @ViewBag.Title</a>*@
+<div class="box_content mt-0">
     @using (Html.BeginForm("Report", "Report", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)
 
-        <input type="hidden" name="Type" value="@ViewBag.Type" />
         <table class="form_table">
             <tr>
                 <td class="form_name">Đính kèm File</td>

@@ -1,13 +1,13 @@
 ﻿
 @{
-    ViewBag.Title = "Cập nhật chỉ tiêu chi nhánh";
+    ViewBag.Title = "Chỉ tiêu CN - Chỉ tiêu NV - DS thực tế tuần";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 class="mt-0">Cập nhật chỉ tiêu chi nhánh</h2>
+<h2 class="mt-0">@ViewBag.Title</h2>
 @*<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>*@
-<a class="btn quick-link" href="@Url.Action("ListRevenueOffice")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>
+@*<a class="btn quick-link" href="@Url.Action("ListRevenueOffice")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>*@
 
-<div class="box_content">
+<div class="box_content mt-0">
     @using (Html.BeginForm("TargetOffice", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)

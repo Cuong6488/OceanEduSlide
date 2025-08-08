@@ -48,15 +48,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.OfficeId)</td>
+                    <td class="form_name">@Html.LabelFor(model => model.ZoneId)</td>
                     <td class="form_text">
-                        @Html.DropDownListFor(model => model.Users.FirstOrDefault().OfficeId, Model.SelectOffices, "Chọn chi nhánh")
+                        @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Chọn vùng", new { @class = "mb-2", data_item = "zone" })
                     </td>
                 </tr>
                 <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.ZoneId)</td>
+                    <td class="form_name">@Html.LabelFor(model => model.OfficeId)</td>
                     <td class="form_text">
-                        @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Chọn vùng")
+                        @Html.DropDownListFor(model => model.Users.FirstOrDefault().OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "mb-2", data_item = "office" })
                     </td>
                 </tr>
                 <tr>

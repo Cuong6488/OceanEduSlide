@@ -281,5 +281,6 @@ $("[data-item=zone]").on("change", function (data) {
 });
 $(document).ready(function () {
     $('select[name="officeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });
+    $('select[name="OfficeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });
     $('select[name="ZoneId"]').select2({ placeholder: 'Chọn vùng', allowClear: true });
 });
