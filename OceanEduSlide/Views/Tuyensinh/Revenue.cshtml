@@ -217,7 +217,7 @@
                                     {
 
                                         <div class="btnhistory-input">
-                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.HistoryUser.User.Id})"
+                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,historyUserId = revenueOffice.HistoryUser.Id})"
                                                data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                         </div>
                                         <div class="revenue-value revenue-value-month_BM">
@@ -253,50 +253,50 @@
                                 for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
                                 {
                                     var revenueUser_Week = revenueOffice.RevenueUser_Weeks.FirstOrDefault(a => (int)a.WeekNumber == i);
-                        <td class="week-target week-@i">
-                            <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
-                            @if (revenueUser_Week != null)
-                            {
-                                <div class="btnhistory-input">
-                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.HistoryUser.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
-                                       data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                </div>
-                                <div class="revenue-value revenue-value-week_BM">
-                                    @(revenueUser_Week.TargetBM.ToString("N0"))
-                                </div>
-                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month)
-                                {
-                                    <div class="btnedit-input btn-edit-week">
-                                        <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
-                                    </div>
+                                    <td class="week-target week-@i">
+                                        <input class="input-weekNumber" type="hidden" name="weekNumber" value="@i" />
+                                        @if (revenueUser_Week != null)
+                                        {
+                                            <div class="btnhistory-input">
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.HistoryUser.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                            </div>
+                                            <div class="revenue-value revenue-value-week_BM">
+                                                @(revenueUser_Week.TargetBM.ToString("N0"))
+                                            </div>
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month)
+                                            {
+                                                <div class="btnedit-input btn-edit-week">
+                                                    <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                </div>
 
-                                }
-                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
+                                            }
+                                            <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week hidden" value=" @(revenueUser_Week.TargetBM.ToString("N0"))" />
 
-                            }
-                            else
-                            {
-                                if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
-                                {
-                                    <div class="revenue-value hidden revenue-value-week_BM">
+                                        }
+                                        else
+                                        {
+                                            if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= i && Model.Month >= DateTime.Now.Month && Model.Year >= DateTime.Now.Year)
+                                            {
+                                                <div class="revenue-value hidden revenue-value-week_BM">
 
-                                    </div>
-                                    <div class="btnedit-input hidden">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </div>
-                                    <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
-                                }
-                                else if (ViewBag.CurrentWeek > i)
-                                {
-                                    <input type="hidden" class="m-0 input-number input-noborder input-RevenueUser_Week" value="0" />
-                                    <div class="revenue-value revenue-value-week_BM">
-                                        0
-                                    </div>
+                                                </div>
+                                                <div class="btnedit-input hidden">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </div>
+                                                <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Week" />
+                                            }
+                                            else if (ViewBag.CurrentWeek > i)
+                                            {
+                                                <input type="hidden" class="m-0 input-number input-noborder input-RevenueUser_Week" value="0" />
+                                                <div class="revenue-value revenue-value-week_BM">
+                                                    0
+                                                </div>
 
-                                }
+                                            }
 
-                            }
-                        </td>
+                                        }
+                                    </td>
                                     <td class="week-percent">
                                     </td>
 
