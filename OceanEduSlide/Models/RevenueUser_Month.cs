@@ -18,8 +18,6 @@ namespace OceanEduSlide.Models
         public int Year { get; set; }
         [Display(Name = "Nhân sự"), Required(ErrorMessage = "Hãy chọn nhân sự")]
         public int UserId { get; set; }
-        [Display(Name = "Nhân sự theo tháng")]
-        public int? HistoryUserId { get; set; }
         [Display(Name = "Chỉ tiêu doanh số"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal Target { get; set; }
         //[Display(Name = "Chỉ tiêu doanh số dự kiến hoàn thành"), DisplayFormat(DataFormatString = "{0:N0}đ")]
@@ -30,6 +28,8 @@ namespace OceanEduSlide.Models
         [Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
+        [Display(Name = "Nhân sự theo tháng")]
+        public int? HistoryUserId { get; set; }
         public virtual HistoryUser HistoryUser { get; set; }
         public RevenueUser_Month()
         {

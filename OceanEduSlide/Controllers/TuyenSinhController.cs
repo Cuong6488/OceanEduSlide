@@ -158,10 +158,10 @@ namespace OceanEduSlide.Controllers
             ViewBag.CurrentWeek = currentWeek;
             return View(model);
         }
-        public ActionResult ChangeDataRevenueMonth()
+        public ActionResult ChangeDataRevenueMonth(int month)
         {
             var revenues = _unitOfWork.RevenueUser_MonthRepository.GetQuery();
-            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == 8 && a.Year == 2025);
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
             foreach (var r in revenues)
             {
                 var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
@@ -169,7 +169,20 @@ namespace OceanEduSlide.Controllers
                     r.HistoryUserId = history.Id;
             }
             _unitOfWork.Save();
-            return Content("Thành công");
+            return Content("Thành công - ChangeDataRevenueMonth");
+        }
+        public ActionResult ChangeDataRevenueMonth_BM(int month)
+        {
+            var revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery();
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            foreach (var r in revenues)
+            {
+                var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
+                if (history != null)
+                    r.HistoryUserId = history.Id;
+            }
+            _unitOfWork.Save();
+            return Content("Thành công- ChangeDataRevenueMonth_BM");
         }
         public static (int, int) CalculateWeeks(int year, int month)
         {

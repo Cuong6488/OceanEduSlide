@@ -989,10 +989,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListUser");
         }
         #endregion
-        public ActionResult TestTable()
-        {
-            return View("TestTable2");
-        }
+
         #region Category
         public ActionResult Category(int type)
         {

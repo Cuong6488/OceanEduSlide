@@ -1453,8 +1453,6 @@
     <Content Include="Views\Home\Articles.cshtml" />
     <Content Include="Views\Event\CreateDebt.cshtml" />
     <Content Include="Views\Vcms\InsertZoneExcel.cshtml" />
-    <Content Include="Views\Vcms\TestTable.cshtml" />
-    <Content Include="Views\Vcms\TestTable2.cshtml" />
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\ReportHome\ReportKDCN.cshtml" />
     <Content Include="Views\ReportHome\ReportKDNV.cshtml" />

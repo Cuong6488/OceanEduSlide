@@ -24,6 +24,9 @@ namespace OceanEduSlide.Models
         [Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
+        [Display(Name = "Nhân sự theo tháng")]
+        public int? HistoryUserId { get; set; }
+        public virtual HistoryUser HistoryUser { get; set; }
         public RevenueUser_Month_BM_real()
         {
             CreateDate = DateTime.Now;
