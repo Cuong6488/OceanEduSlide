@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -279,6 +280,7 @@ namespace OceanEduSlide.Controllers
 
                 _unitOfWork.Save();
                 var tbl2 = result.Tables[1];
+
                 var newRevenueList2 = new List<RevenueUser_Month>();
 
                 for (var i = 1; i < tbl2.Rows.Count; i++)
@@ -486,6 +488,7 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 var tbl = result.Tables[0];
+
                 var newRevenueList = new List<RevenueUser_Month>();
 
                 for (var i = 1; i < tbl.Rows.Count; i++)

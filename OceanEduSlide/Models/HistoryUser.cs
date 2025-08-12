@@ -33,7 +33,7 @@ namespace OceanEduSlide.Models
         Active,
         [Display(Name = "Điều chuyển")]
         Transfer,
-        [Display(Name = "Nghỉ việc")]
+        [Display(Name = "Nghỉ việc/ Nghỉ thai sản")]
         InActive
     }
 }

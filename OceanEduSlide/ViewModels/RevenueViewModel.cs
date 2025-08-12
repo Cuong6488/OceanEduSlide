@@ -25,7 +25,8 @@ namespace OceanEduSlide.ViewModels
         public User User { get; set; }
         public class UserItem
         {
-            public User User { get; set; }
+            //public User User { get; set; }
+            public HistoryUser HistoryUser { get; set; }
             public RevenueUser_Month RevenueUser_Month { get; set; }
             public IEnumerable<RevenueUser_Month_BM> RevenueUser_Month_BMs { get; set; }
             public RevenueUser_Month_BM_real RevenueUser_Month_BM_real { get; set; }

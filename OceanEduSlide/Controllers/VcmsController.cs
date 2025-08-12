@@ -545,7 +545,7 @@ namespace OceanEduSlide.Controllers
         {
             if (Role != RoleAdmin.Admin)
                 return RedirectToAction("Index", new { roll = "NoPermisstion" });
-            var users  = _unitOfWork.UserRepository.Get(z => z.Id == id);
+            var users = _unitOfWork.UserRepository.Get(z => z.Id == id);
             var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
@@ -766,6 +766,173 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListUser");
         }
+
+        public ActionResult InsertHistoryUser()
+        {
+            if (Role != RoleAdmin.Admin)
+                return RedirectToAction("Index", new { roll = "NoPermisstion" });
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertHistoryUser(FormCollection fc)
+        {
+            var file = Request.Files["UserFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                var tbl2 = result.Tables[0];
+                var historyUserList = new List<HistoryUser>();
+                for (var i = 1; i < tbl2.Rows.Count; i++)
+                {
+                    var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+                    var user = _unitOfWork.UserRepository
+                        .GetQuery(a => a.MaNhanVien == manhanvien)
+                        .FirstOrDefault();
+                    if (user == null)
+                        continue;
+
+                    var officeShortName = tbl2.Rows[i][1].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository
+                        .GetQuery(a => a.ShortName == officeShortName)
+                        .FirstOrDefault();
+                    if (office == null)
+                        continue;
+
+                    var typeUser = tbl2.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(typeUser))
+                        continue;
+                    TypeUser type = new TypeUser();
+                    switch (typeUser)
+                    {
+                        case "EC":
+                            type = TypeUser.EC;
+                            break;
+                        case "BM":
+                            type = TypeUser.BM;
+                            break;
+                        case "BSA":
+                            type = TypeUser.SAB;
+                            break;
+                        case "SAB":
+                            type = TypeUser.SAB;
+                            break;
+                        case "ATL":
+                            type = TypeUser.ALT;
+                            break;
+                        case "CM":
+                            type = TypeUser.CM;
+                            break;
+                        case "TTL":
+                            type = TypeUser.TTL;
+                            break;
+                        default:
+                            break;
+                    }
+                    var status = tbl2.Rows[i][5].ToString().Trim();
+                    if (string.IsNullOrEmpty(status))
+                        continue;
+                    StatusUser statusUser = new StatusUser();
+                    switch (status)
+                    {
+                        case "Đang làm việc":
+                            statusUser = StatusUser.Active;
+                            break;
+                        case "Nghỉ thai sản":
+                            statusUser = StatusUser.InActive;
+                            break;
+                        case "Đã nghỉ":
+                            statusUser = StatusUser.InActive;
+                            break;
+                        case "Điều chuyển":
+                            statusUser = StatusUser.Transfer;
+                            break;
+                        default:
+                            break;
+                    }
+                    var dayStart = tbl2.Rows[i][6].ToString().Trim();
+                    if (string.IsNullOrEmpty(dayStart))
+                        continue;
+                    var dayEnd = tbl2.Rows[i][7].ToString().Trim();
+                    var startDate = new DateTime();
+                    var endDate = new DateTime();
+                    if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                    {
+                        startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    if (!string.IsNullOrEmpty(dayEnd))
+                        if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
+                        {
+                            endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
+                        }
+
+                    var monthStr = tbl2.Rows[i][20].ToString().Trim();
+                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
+
+                    var yearStr = tbl2.Rows[i][21].ToString().Trim();
+                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
+
+
+                    var historyUser = _unitOfWork.HistoryUserRepository
+                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && a.OfficeId == office.Id).FirstOrDefault();
+
+                    if (historyUser != null)
+                    {
+                        historyUser.Status = statusUser;
+                        historyUser.DayStart = startDate;
+                        if (!string.IsNullOrEmpty(dayEnd))
+                            historyUser.DayEnd = endDate;
+                    }
+                    else
+                    {
+                        var newhistoryUser = new HistoryUser
+                        {
+                            UserId = user.Id,
+                            Month = monthInt,
+                            Year = yearInt,
+                            TypeUser = type,
+                            OfficeId = office.Id,
+                            Status = statusUser,
+                            DayStart = startDate,
+                            Active = true
+                        };
+
+                        if (!string.IsNullOrEmpty(dayEnd))
+                            newhistoryUser.DayEnd = endDate;
+                        historyUserList.Add(newhistoryUser);
+                    }
+                }
+
+                if (historyUserList.Any())
+                    _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
+                _unitOfWork.Save();
+                return RedirectToAction("InsertHistoryUser", "Vcms");
+            }
+
+            return RedirectToAction("Index", "Vcms");
+        }
+
         public ActionResult UnActiveUserExcel()
         {
             return View();

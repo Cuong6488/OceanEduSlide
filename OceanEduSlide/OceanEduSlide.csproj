@@ -544,6 +544,10 @@
     <Compile Include="Migrations\202508120450203_historyuser.Designer.cs">
       <DependentUpon>202508120450203_historyuser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508120659520_rvnm_history.cs" />
+    <Compile Include="Migrations\202508120659520_rvnm_history.Designer.cs">
+      <DependentUpon>202508120659520_rvnm_history.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\HistoryUser.cs" />
@@ -1471,6 +1475,7 @@
     <Content Include="Views\Event\LoadHistoryDedt.cshtml" />
     <Content Include="Views\Event\LoadHistoryEvent.cshtml" />
     <Content Include="Views\Home\BackToSchool.cshtml" />
+    <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1698,6 +1703,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508120450203_historyuser.resx">
       <DependentUpon>202508120450203_historyuser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508120659520_rvnm_history.resx">
+      <DependentUpon>202508120659520_rvnm_history.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
