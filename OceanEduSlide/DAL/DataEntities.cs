@@ -25,6 +25,7 @@ namespace OceanEduSlide.DAL
         public DbSet<ReportCategory> ReportCategories { get; set; }
         public DbSet<ReportData> ReportDatas { get; set; }
         public DbSet<CallLog> CallLogs { get; set; }
+        public DbSet<HistoryUser> HistoryUsers { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Proposal>()

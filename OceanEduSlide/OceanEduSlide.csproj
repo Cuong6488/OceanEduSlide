@@ -540,8 +540,13 @@
     <Compile Include="Migrations\202508070615589_rolladmin.Designer.cs">
       <DependentUpon>202508070615589_rolladmin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508120450203_historyuser.cs" />
+    <Compile Include="Migrations\202508120450203_historyuser.Designer.cs">
+      <DependentUpon>202508120450203_historyuser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
+    <Compile Include="Models\HistoryUser.cs" />
     <Compile Include="Models\ReportData.cs" />
     <Compile Include="Models\ReportCategory.cs" />
     <Compile Include="Models\Category.cs" />
@@ -1690,6 +1695,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508070615589_rolladmin.resx">
       <DependentUpon>202508070615589_rolladmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508120450203_historyuser.resx">
+      <DependentUpon>202508120450203_historyuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

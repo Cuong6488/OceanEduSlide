@@ -33,8 +33,11 @@ namespace OceanEduSlide.DAL
         private GenericRepository<ReportData> _reportDataRepository;
         private GenericRepository<CallLog> _callLogRepository;
         private GenericRepository<ProposalType> _proposalTypeRepository;
+        private GenericRepository<HistoryUser> _historyUserRepository;
         public GenericRepository<CallLog> CallLogRepository =>
            _callLogRepository ?? (_callLogRepository = new GenericRepository<CallLog>(_context));
+        public GenericRepository<HistoryUser> HistoryUserRepository =>
+           _historyUserRepository ?? (_historyUserRepository = new GenericRepository<HistoryUser>(_context));
         public GenericRepository<ProposalType> ProposalTypeRepository =>
            _proposalTypeRepository ?? (_proposalTypeRepository = new GenericRepository<ProposalType>(_context));
         public GenericRepository<ReportCategory> ReportCategoryRepository =>
