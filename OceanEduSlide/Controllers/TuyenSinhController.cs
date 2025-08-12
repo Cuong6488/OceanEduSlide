@@ -126,7 +126,7 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
-                    //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
                     var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month);
                     if (UserType != null)
                     {
@@ -134,20 +134,24 @@ namespace OceanEduSlide.Controllers
                         historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
                     }
                     else
+                    {
                         //users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
 
                         historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+                    }    
+                       
 
                     var userItems = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,
+                        //User = a.User,
                         RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
-                        RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
-                        RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
+                        RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         //Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
-                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id).Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
+                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id).Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
                     });
                     model.UserItems = userItems;
                 }
@@ -160,7 +164,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ChangeDataRevenueMonth(int month)
         {
-            var revenues = _unitOfWork.RevenueUser_MonthRepository.GetQuery();
+            var revenues = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.Month == month && a.Year == 2025);
             var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
             foreach (var r in revenues)
             {
@@ -173,7 +177,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ChangeDataRevenueMonth_BM(int month)
         {
-            var revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery();
+            var revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Month == month && a.Year == 2025);
             var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
             foreach (var r in revenues)
             {
@@ -183,6 +187,19 @@ namespace OceanEduSlide.Controllers
             }
             _unitOfWork.Save();
             return Content("Thành công- ChangeDataRevenueMonth_BM");
+        }
+        public ActionResult ChangeDataRevenueWeek(int month)
+        {
+            var revenues = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            foreach (var r in revenues)
+            {
+                var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
+                if (history != null)
+                    r.HistoryUserId = history.Id;
+            }
+            _unitOfWork.Save();
+            return Content("Thành công- ChangeDataRevenueWeek");
         }
         public static (int, int) CalculateWeeks(int year, int month)
         {
@@ -293,16 +310,20 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueMonth(int year, int month, int userId, decimal targetBM)
+        public JsonResult AddOrUpdateRevenueMonth(int year, int month, int historyUserId, decimal targetBM)
         {
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
+            if(historyUser == null)
+                return Json(new { status = false });
+
             var revenue = new RevenueUser_Month_BM
             {
                 Year = year,
                 Month = month,
-                UserId = userId,
+                UserId = historyUser.UserId,
+                HistoryUserId = historyUserId,
                 TargetBM = targetBM,
                 Active = true,
-
             };
             _unitOfWork.RevenueUser_Month_BMRepository.Insert(revenue);
             _unitOfWork.Save();
@@ -325,13 +346,17 @@ namespace OceanEduSlide.Controllers
             return Json(new { status = true });
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueWeek(int year, int month, int userId, decimal? targetBM, int weekNumber)
+        public JsonResult AddOrUpdateRevenueWeek(int year, int month, int historyUserId, decimal? targetBM, int weekNumber)
         {
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
+            if (historyUser == null)
+                return Json(new { status = false });
             var revenue = new RevenueUser_Week
             {
                 Year = year,
                 Month = month,
-                UserId = userId,
+                UserId = historyUser.UserId,
+                HistoryUserId = historyUserId,
                 TargetBM = targetBM ?? 0,
                 Active = true,
             };
@@ -362,14 +387,16 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return Json(new { status = true });
         }
-        public PartialViewResult LoadHistoryRevenueUser_Month(int year, int month, int userId)
+        public PartialViewResult LoadHistoryRevenueUser_Month(int year, int month, int historyUserId)
         {
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
             var model = new LoadHistoryRevenueUser_MonthViewModel
             {
                 Year = year,
                 Month = month,
-                User = _unitOfWork.UserRepository.GetById(userId),
-                Revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId, q => q.OrderBy(a => a.CreateDate)),
+                User = historyUser.User,
+                HistoryUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId),
+                Revenues = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Year == year && a.Month == month && a.HistoryUserId == historyUserId, q => q.OrderBy(a => a.CreateDate)),
             };
             return PartialView(model);
         }

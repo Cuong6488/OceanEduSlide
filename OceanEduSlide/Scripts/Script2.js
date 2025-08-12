@@ -157,11 +157,11 @@ $(".targetuser_month_HO").each(function () {
 $(".input-RevenueUser_Month_BMs").on("change", function () {
     var thisElement = $(this);
     if ($('.form-filter form').valid()) {
-        var userId = $(this).closest("tr").data("id");
+        var historyUserId = $(this).closest("tr").data("id");
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
         month = $(".month-select").val();
-        $.post("/TuyenSinh/AddOrUpdateRevenueMonth", { year: year, month: month, targetBM: targetBM, userId: userId }, function (data) {
+        $.post("/TuyenSinh/AddOrUpdateRevenueMonth", { year: year, month: month, targetBM: targetBM, historyUserId: historyUserId }, function (data) {
             if (data.status) {
                 $.toast({
                     heading: 'Cập nhật thành công',
@@ -272,7 +272,7 @@ $(".input-RevenueUser_Month_BM_real").on("change", function () {
 $(".input-RevenueUser_Week").on("change", function () {
     var thisElement = $(this);
     if ($('.form-filter form').valid()) {
-        var userId = $(this).closest("tr").data("id");
+        var historyUserId = $(this).closest("tr").data("id");
         var targetBM = $(this).val().replace(/\,/g, "");
         year = $("select[name='Year']").val();
         month = $(".month-select").val();
@@ -329,7 +329,7 @@ $(".input-RevenueUser_Week").on("change", function () {
             }
             else {
 
-                $.post("/TuyenSinh/AddOrUpdateRevenueWeek", { year: year, month: month, targetBM: targetBM, userId: userId, weekNumber: weekNumber }, function (data) {
+                $.post("/TuyenSinh/AddOrUpdateRevenueWeek", { year: year, month: month, targetBM: targetBM, historyUserId: historyUserId, weekNumber: weekNumber }, function (data) {
                     if (data.status) {
                         $.toast({
                             heading: 'Cập nhật thành công',
@@ -346,7 +346,7 @@ $(".input-RevenueUser_Week").on("change", function () {
                             thisElement.closest("tr").find(".difference-target").text("");
 
                         }
-                        thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
+                        //thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
                         thisElement.siblings(".btnedit-input").css("display", "block");
                         thisElement.siblings(".revenue-value").css("display", "block");
                         thisElement.css("display", "none");
