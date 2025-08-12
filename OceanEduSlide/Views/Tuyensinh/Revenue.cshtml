@@ -199,12 +199,12 @@
 
                     foreach (var revenueOffice in Model.UserItems)
                     {
-                        <tr data-id="@revenueOffice.User.Id">
+                        <tr data-id="@revenueOffice.HistoryUser.Id">
                             <td class="col-w90">
-                                @revenueOffice.User.Fullname <br /> @revenueOffice.User.MaNhanVien
+                                @revenueOffice.HistoryUser.User.Fullname <br /> @revenueOffice.HistoryUser.User.MaNhanVien
                             </td>
                             <td>
-                                @Html.DisplayFor(a => revenueOffice.User.TypeUser)
+                                @Html.DisplayFor(a => revenueOffice.HistoryUser.User.TypeUser)
                             </td>
                             @if (revenueOffice.RevenueUser_Month != null)
                             {
@@ -217,7 +217,7 @@
                                     {
 
                                         <div class="btnhistory-input">
-                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id})"
+                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Month",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.HistoryUser.User.Id})"
                                                data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                         </div>
                                         <div class="revenue-value revenue-value-month_BM">
@@ -258,7 +258,7 @@
                             @if (revenueUser_Week != null)
                             {
                                 <div class="btnhistory-input">
-                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
+                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Week",  new{month = Model.Month,year = Model.Year,userId = revenueOffice.HistoryUser.User.Id,weekNumber = (int)revenueUser_Week.WeekNumber})"
                                        data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                 </div>
                                 <div class="revenue-value revenue-value-week_BM">
