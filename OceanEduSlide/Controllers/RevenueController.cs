@@ -282,15 +282,52 @@ namespace OceanEduSlide.Controllers
                 var tbl2 = result.Tables[1];
 
                 var newRevenueList2 = new List<RevenueUser_Month>();
-
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 for (var i = 1; i < tbl2.Rows.Count; i++)
                 {
                     var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+                    if(manhanvien == "10183255")
+                    {
+
+                    }
                     var user = _unitOfWork.UserRepository
                         .GetQuery(a => a.MaNhanVien == manhanvien)
                         .FirstOrDefault();
                     if (user == null) continue;
 
+                    var officeSortName = tbl2.Rows[i][1].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
+                    if (office == null) continue;
+                    var typeUser = tbl2.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(typeUser))
+                        continue;
+                    TypeUser type = new TypeUser();
+                    switch (typeUser)
+                    {
+                        case "EC":
+                            type = TypeUser.EC;
+                            break;
+                        case "BM":
+                            type = TypeUser.BM;
+                            break;
+                        case "BSA":
+                            type = TypeUser.SAB;
+                            break;
+                        case "SAB":
+                            type = TypeUser.SAB;
+                            break;
+                        case "ATL":
+                            type = TypeUser.ALT;
+                            break;
+                        case "CM":
+                            type = TypeUser.CM;
+                            break;
+                        case "TTL":
+                            type = TypeUser.TTL;
+                            break;
+                        default:
+                            break;
+                    }
                     var monthStr = tbl2.Rows[i][20].ToString().Trim();
                     if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
 
@@ -299,9 +336,10 @@ namespace OceanEduSlide.Controllers
 
                     var targetStr = tbl2.Rows[i][12].ToString().Trim();
                     if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
-
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+                    if (historyUser == null) continue;
                     var revenue = _unitOfWork.RevenueUser_MonthRepository
-                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt)
+                        .GetQuery(a => a.UserId == user.Id && a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt)
                         .FirstOrDefault();
 
                     if (revenue != null)
@@ -313,6 +351,7 @@ namespace OceanEduSlide.Controllers
                         var newRevenue = new RevenueUser_Month
                         {
                             UserId = user.Id,
+                            HistoryUserId = historyUser.Id,
                             Month = monthInt,
                             Year = yearInt,
                             Target = targetDec,
@@ -334,6 +373,39 @@ namespace OceanEduSlide.Controllers
                     var manhanvien = tbl3.Rows[i][2].ToString().Trim();
                     var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
                     if (user == null) continue;
+                    var officeSortName = tbl3.Rows[i][1].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
+                    if (office == null) continue;
+                    var typeUser = tbl3.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(typeUser))
+                        continue;
+                    TypeUser type = new TypeUser();
+                    switch (typeUser)
+                    {
+                        case "EC":
+                            type = TypeUser.EC;
+                            break;
+                        case "BM":
+                            type = TypeUser.BM;
+                            break;
+                        case "BSA":
+                            type = TypeUser.SAB;
+                            break;
+                        case "SAB":
+                            type = TypeUser.SAB;
+                            break;
+                        case "ATL":
+                            type = TypeUser.ALT;
+                            break;
+                        case "CM":
+                            type = TypeUser.CM;
+                            break;
+                        case "TTL":
+                            type = TypeUser.TTL;
+                            break;
+                        default:
+                            break;
+                    }
                     var month = tbl3.Rows[i][6].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     var monthInt = int.Parse(month);
@@ -343,9 +415,11 @@ namespace OceanEduSlide.Controllers
                     var week = tbl3.Rows[i][5].ToString().Trim();
                     if (string.IsNullOrEmpty(week)) continue;
                     var weekInt = int.Parse(week);
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+                    if (historyUser == null) continue;
                     var ds = tbl3.Rows[i][8].ToString().Trim();
                     decimal dsDec = string.IsNullOrEmpty(ds) ? 0 : decimal.Parse(ds);
-                    var revenue = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && (int)a.WeekNumber == weekInt).FirstOrDefault();
+                    var revenue = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && (int)a.WeekNumber == weekInt).FirstOrDefault();
                     if (revenue != null)
                     {
                         revenue.TargetBM = dsDec;
@@ -355,6 +429,7 @@ namespace OceanEduSlide.Controllers
                         var newRevenue = new RevenueUser_Week_Real
                         {
                             UserId = user.Id,
+                            HistoryUserId = historyUser.Id,
                             Month = monthInt,
                             Year = yearInt,
                             TargetBM = dsDec,
