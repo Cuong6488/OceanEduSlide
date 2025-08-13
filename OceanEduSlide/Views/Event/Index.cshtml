@@ -93,7 +93,7 @@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
                     <tr>
-                        <th style="min-width:150px;">Loại hoạt động</th>
+                        <th style="min-width:180px;">Loại hoạt động</th>
                         @if (ViewBag.WorkingWeeks != Model.Week)
                         {
                             for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
@@ -232,7 +232,6 @@
                                             }
                                         </td>
                                     }
-
                                 }
                             </tr>
                         }
@@ -264,7 +263,7 @@
                             {
                                 <tr>
                                     <td class="text-start px-2">
-                                        @(item.User.Fullname ?? item.User.Username) @(item.User.MaNhanVien != null? " - "+  @item.User.MaNhanVien:"")
+                                        @item.HistoryUser.User.Fullname - @Html.DisplayFor(a => item.HistoryUser.TypeUser)  <br /> @item.HistoryUser.User.MaNhanVien (@Html.DisplayFor(a => item.HistoryUser.Status))
                                     </td>
                                     @if (ViewBag.WorkingWeeks != Model.Week)
                                     {
@@ -432,7 +431,7 @@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
                     <tr>
-                        <th rowspan="2" class="col-w90">Họ tên nhân sự</th>
+                        <th rowspan="2" class="col-w150">Họ tên nhân sự</th>
                         <th rowspan="2" style="width: 70px">Chức vụ</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
 
@@ -466,15 +465,15 @@
 
                         foreach (var item in Model.UserItems)
                         {
-                            <tr data-id="@item.User.Id">
-                                <td>
-                                    @(item.User.Fullname ?? item.User.Username)
+                            <tr data-id="@item.HistoryUser.Id">
+                                <td class="text-start px-2">
+                                    @item.HistoryUser.User.Fullname <br />(@Html.DisplayFor(a => item.HistoryUser.Status))
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(a => item.User.TypeUser)
+                                    @Html.DisplayFor(a => item.HistoryUser.User.TypeUser)
                                 </td>
                                 <td>
-                                    @item.User.MaNhanVien
+                                    @item.HistoryUser.User.MaNhanVien
                                 </td>
                                 <td class="col-w90 target-week">
                                     @if (item.RevenueUser_Week != null)
@@ -493,7 +492,7 @@
                                             <td class="day-target col-w90">
                                                 <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
                                                 <div class="btnhistory-input">
-                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayOfWeek = i})"
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,historyUserId = item.HistoryUser.Id,weekNumber = Model.Week,dayOfWeek = i})"
                                                        data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                                 </div>
                                                 <div class="revenue-value">
@@ -505,7 +504,6 @@
                                                     <div class="btnedit-input btn-edit-day">
                                                         <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
                                                     </div>
-
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />
                                             </td>
@@ -578,7 +576,7 @@
                                             <td class="day-target col-w90">
                                                 <input class="input-DayOfWeek" type="hidden" name="DayOfWeek" value="@i" />
                                                 <div class="btnhistory-input">
-                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,userId = item.User.Id,weekNumber = Model.Week,dayofWeek = i})"
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryRevenueUser_Day",  new{month = Model.Month,year = Model.Year,historyUserId = item.HistoryUser.Id,weekNumber = Model.Week,dayofWeek = i})"
                                                        data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                                 </div>
                                                 <div class="revenue-value">
@@ -586,13 +584,9 @@
                                                 </div>
                                                 @if (Model.User.TypeUser == TypeUser.BM && ViewBag.CurrentWeek <= Model.Week && Model.Month >= DateTime.Now.Month)
                                                 {
-
-
                                                     <div class="btnedit-input btn-edit-day">
                                                         <a title="Chỉnh sửa" href="javascript:;"><i class="fa-regular fa-pen-to-square"></i></a>
                                                     </div>
-
-
                                                 }
                                                 <input type="text" class="m-0 input-number input-noborder input-RevenueUser_Day hidden" value=" @(revenueUser_Day.TargetBM?.ToString("N0"))" />
                                             </td>
@@ -666,7 +660,7 @@
             <table class="list_table tablecenter table-striped">
                 <tbody>
                     <tr>
-                        <th rowspan="2" class="col-w90">Họ tên nhân sự</th>
+                        <th rowspan="2" class="col-w90 px-2">Họ tên nhân sự</th>
                         <th rowspan="2" style="width: 70px">Chức vụ</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
                         <th colspan="6" class="text-center">Tỉ lệ chuyển đổi</th>
@@ -688,7 +682,7 @@
                         foreach (var item in Model.Users)
                         {
                             <tr data-id="@item.Id">
-                                <td>
+                                <td class="px-2 text-start">
                                     @(item.Fullname??item.Username)
                                 </td>
                                 <td>

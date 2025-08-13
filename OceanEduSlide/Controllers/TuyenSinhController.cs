@@ -126,8 +126,8 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year).FirstOrDefault();
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
-                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month,q => q.OrderBy(a => a.TypeUser).ThenByDescending(a => a.UserId));
+                    //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
+                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month,q => q.OrderBy(a => a.TypeUser));
                     if (UserType != null)
                     {
                         //users = users.Where(a => (int)a.TypeUser == UserType);
@@ -136,11 +136,8 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         //users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-
                         historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-                    }    
-                       
-
+                    }
                     var userItems = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,
@@ -186,7 +183,7 @@ namespace OceanEduSlide.Controllers
                     r.HistoryUserId = history.Id;
             }
             _unitOfWork.Save();
-            return Content("Thành công- ChangeDataRevenueMonth_BM");
+            return Content("Thành công - ChangeDataRevenueMonth_BM");
         }
         public ActionResult ChangeDataRevenueWeek(int month)
         {
@@ -199,7 +196,20 @@ namespace OceanEduSlide.Controllers
                     r.HistoryUserId = history.Id;
             }
             _unitOfWork.Save();
-            return Content("Thành công- ChangeDataRevenueWeek");
+            return Content("Thành công - ChangeDataRevenueWeek");
+        }
+        public ActionResult ChangeDataRevenueDay(int month)
+        {
+            var revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            foreach (var r in revenues)
+            {
+                var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
+                if (history != null)
+                    r.HistoryUserId = history.Id;
+            }
+            _unitOfWork.Save();
+            return Content("Thành công - ChangeDataRevenueDay");
         }
         public static (int, int) CalculateWeeks(int year, int month)
         {
@@ -315,7 +325,8 @@ namespace OceanEduSlide.Controllers
             var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
             if(historyUser == null)
                 return Json(new { status = false });
-
+            if (historyUser.Status != StatusUser.Active)
+                return Json(new { status = false, msg = "Người dùng này đã được điều chuyển/ nghỉ việc" });
             var revenue = new RevenueUser_Month_BM
             {
                 Year = year,
@@ -351,6 +362,8 @@ namespace OceanEduSlide.Controllers
             var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
             if (historyUser == null)
                 return Json(new { status = false });
+            if(historyUser.Status != StatusUser.Active)
+                return Json(new { status = false,msg = "Người dùng này đã được điều chuyển/ nghỉ việc" });
             var revenue = new RevenueUser_Week
             {
                 Year = year,

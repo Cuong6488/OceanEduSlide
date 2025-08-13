@@ -28,7 +28,8 @@ namespace OceanEduSlide.ViewModels
         public User User { get; set; }
         public class UserItem
         {
-            public User User { get; set; }
+            //public User User { get; set; }
+            public HistoryUser HistoryUser { get; set; }
             public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
             public RevenueUser_Week RevenueUser_Week { get; set; }
 

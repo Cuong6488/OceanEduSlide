@@ -234,9 +234,10 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
             } else {
                 $.toast({
                     heading: 'Cập nhật thất bại',
+                    text: data.msg,
                     icon: 'error'
                 })
-                location.reload();
+                //location.reload();
             }
         });
     }
@@ -362,9 +363,10 @@ $(".input-RevenueUser_Week").on("change", function () {
                     } else {
                         $.toast({
                             heading: 'Cập nhật thất bại',
+                            text:data.msg,
                             icon: 'error'
                         })
-                        location.reload();
+                        //location.reload();
                     }
                 });
             }
@@ -400,7 +402,7 @@ $(function eventFunction() {
     $(".input-RevenueUser_Day").on("change", function () {
         var thisElement = $(this);
         if ($('.form-filter').valid()) {
-            var userId = $(this).closest("tr").data("id");
+            var historyUserId = $(this).closest("tr").data("id");
             var targetBM = $(this).val().replace(/\,/g, "");
             //var targetBM_DT = $(this).closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").val();
             var target_Week_text = thisElement.closest("tr").find(".target-week").text().trim().replace(/\,/g, "");
@@ -455,7 +457,7 @@ $(function eventFunction() {
                     month = $(".month-select").val();
                     week = $("select[name='Week']").val();
                     dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
-                    $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+                    $.post("/Event/AddOrUpdateRevenueDay", { year: year, month: month, targetBM: targetBM, historyUserId: historyUserId, week: week, dayOfWeek: dayOfWeek }, function (data) {
                         if (data.status) {
                             $.toast({
                                 heading: 'Cập nhật thành công',
@@ -516,7 +518,7 @@ $(function eventFunction() {
 $(".input-RevenueUser_Day_DT").on("change", function () {
     var thisElement = $(this);
     if ($('.form-filter').valid()) {
-        var userId = $(this).closest("tr").data("id");
+        var historyUserId = $(this).closest("tr").data("id");
         var targetBM_DT = $(this).val();
         if (targetBM_DT === "")
             $.toast({
@@ -536,7 +538,7 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
             month = $(".month-select").val();
             week = $("select[name='Week']").val();
             dayOfWeek = thisElement.siblings(".input-DayOfWeek").val();
-            $.post("/Event/AddOrUpdateRevenueDay2", { year: year, month: month, targetBM_DT: targetBM_DT, userId: userId, week: week, dayOfWeek: dayOfWeek }, function (data) {
+            $.post("/Event/AddOrUpdateRevenueDay2", { year: year, month: month, targetBM_DT: targetBM_DT, historyUserId: historyUserId, week: week, dayOfWeek: dayOfWeek }, function (data) {
                 if (data.status) {
                     $.toast({
                         heading: 'Cập nhật thành công',

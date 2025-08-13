@@ -19,7 +19,7 @@ namespace OceanEduSlide.Models
         public WeekNumber WeekNumber { get; set; }
         [Display(Name = "Thứ")]
         public DayofWeek DayofWeek { get; set; }
-        [Display(Name = "Chỉ tiêu doanh số dự kiến hoàn thành"),DisplayFormat(DataFormatString = "{0:N0}đ"),RegularExpression(@"^\d+$", ErrorMessage = "Giá trị phải là số nguyên không âm.")]
+        [Display(Name = "Chỉ tiêu doanh số dự kiến hoàn thành"),DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal? TargetBM { get; set; }
         [DisplayName("Số lượng data khai thác"), DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal? DataQuantity { get; set; }

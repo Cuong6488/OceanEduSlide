@@ -75,18 +75,24 @@ namespace OceanEduSlide.Controllers
                 if (office != null)
                 {
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
+                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month, q => q.OrderBy(a => a.TypeUser));
+
                     if (UserType != null)
                     {
                         users = users.Where(a => (int)a.TypeUser == UserType);
+                        historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
                     }
                     else
-                        users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-
-                    var userItems = users.ToList().Select(a => new EventViewModel.UserItem
                     {
-                        User = a,
-                        Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)),
-                        RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.UserId == a.Id && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
+                        users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+                        historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+                    }
+
+                    var userItems = historyUsers.ToList().Select(a => new EventViewModel.UserItem
+                    {
+                        HistoryUser = a,
+                        Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                     });
                     model.Users = users;
                     model.UserItems = userItems;
@@ -129,13 +135,13 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int userId, decimal? targetBM, int dayOfWeek)
+        public JsonResult AddOrUpdateRevenueDay(int year, int month, int week, int historyUserId, decimal? targetBM, int dayOfWeek)
         {
-            var user = _unitOfWork.UserRepository.GetById(userId);
-            if (user == null)
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
+            if (historyUser == null)
                 return Json(new { status = false, msg = "Cập nhật thất bại" });
 
-            if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
+            if (historyUser.User.DT > 0 && historyUser.User.CI > 0 && historyUser.User.Confirm2 > 0 && historyUser.User.Confirm1 > 0 && historyUser.User.RevenueAverage > 0)
             {
                 var newRevenue = new RevenueUser_DayOfWeek
                 {
@@ -143,7 +149,8 @@ namespace OceanEduSlide.Controllers
                     Active = true,
                     Year = year,
                     Month = month,
-                    UserId = userId,
+                    UserId = historyUser.UserId,
+                    HistoryUserId = historyUserId
                 };
                 switch (week)
                 {
@@ -203,39 +210,38 @@ namespace OceanEduSlide.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddOrUpdateRevenueDay2(int year, int month, int week, int userId, int dayOfWeek, decimal? targetBM_DT)
-
+        public JsonResult AddOrUpdateRevenueDay2(int year, int month, int week, int historyUserId, int dayOfWeek, decimal? targetBM_DT)
         {
-            var user = _unitOfWork.UserRepository.GetById(userId);
-            if (user == null)
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
+            if (historyUser == null)
                 return Json(new { status = false, msg = "Cập nhật thất bại" });
-
-            if (user.DT > 0 && user.CI > 0 && user.Confirm2 > 0 && user.Confirm1 > 0 && user.RevenueAverage > 0)
+            var user = historyUser.User;
+            if (historyUser.User.DT > 0 && historyUser.User.CI > 0 && historyUser.User.Confirm2 > 0 && historyUser.User.Confirm1 > 0 && historyUser.User.RevenueAverage > 0)
             {
                 //var ev = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
-                var evs = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek && a.OfficeId == user.OfficeId && (a.TypeEvent == TypeEvent.SKDT || a.TypeEvent == TypeEvent.SKSale), q => q.OrderByDescending(a => a.CreateDate));
+                var evs = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && (int)a.WeekNumber == week && (int)a.DayofWeek == dayOfWeek && a.OfficeId == historyUser.OfficeId && (a.TypeEvent == TypeEvent.SKDT || a.TypeEvent == TypeEvent.SKSale), q => q.OrderByDescending(a => a.CreateDate));
                 if (evs.Any())
                 {
                     foreach (var item in evs.Skip(1))
                     {
-                        var rvns = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == item.Id && a.UserId == userId);
+                        var rvns = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == item.Id && a.HistoryUserId == historyUserId);
                         rvns.Delete();
                     }
                     _unitOfWork.Save();
                 }
                 var ev = evs.FirstOrDefault();
-                if (ev != null && ev.UserIds.Contains("," + userId.ToString() + ","))
+                if (ev != null && ev.UserIds.Contains("," + historyUser.UserId.ToString() + ","))
                 {
                     List<int> days = ev.Days.Split(',').Select(int.Parse).OrderBy(x => x).ToList();
 
                     var dt = targetBM_DT ?? 0;
-                    var ci = Math.Round(dt / user.DT * 100);
-                    var cf3 = Math.Round(ci / user.CI * 100);
+                    var ci = Math.Round(dt / historyUser.User.DT * 100);
+                    var cf3 = Math.Round(ci / historyUser.User.CI * 100);
                     var cf2 = cf3;
-                    if (user.Confirm3 > 0)
-                        cf2 = Math.Round(cf3 / user.Confirm3 * 100);
-                    var cf1 = Math.Round(cf2 / user.Confirm2 * 100);
-                    var dataQuantity = Math.Round(cf1 / user.Confirm1 * 100);
+                    if (historyUser.User.Confirm3 > 0)
+                        cf2 = Math.Round(cf3 / historyUser.User.Confirm3 * 100);
+                    var cf1 = Math.Round(cf2 / historyUser.User.Confirm2 * 100);
+                    var dataQuantity = Math.Round(cf1 / historyUser.User.Confirm1 * 100);
                     decimal dataDay = 0, cf1Day = 0, cf2Day = 0;
                     if (days.Count > 1)
                     {
@@ -247,14 +253,15 @@ namespace OceanEduSlide.Controllers
                     int i = 1;
                     foreach (var day in days)
                     {
-                        var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.UserId == userId).FirstOrDefault();
+                        var revenue = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.EventId == ev.Id && (int)a.DayofWeek == day && a.HistoryUserId == historyUserId).FirstOrDefault();
                         if (revenue == null)
                         {
                             revenue = new RevenueUser_DayOfWeek
                             {
                                 Year = year,
                                 Month = month,
-                                UserId = userId,
+                                UserId = historyUser.UserId,
+                                HistoryUserId = historyUserId,
                                 EventId = ev.Id,
                                 Event = ev,
                                 //TargetBM = targetBM,

@@ -20,7 +20,8 @@
                 <tr>
                     <td class="form_name w-25">@Html.LabelFor(model => model.Event.TypeEvent)</td>
                     <td class="form_text">
-                        @Html.EnumDropDownListFor(model => model.Event.TypeEvent, "Chọn loại hoạt động", new { @class = "form_control" })
+                        <strong>@Html.DisplayFor(model => model.Event.TypeEvent)</strong> 
+                        @Html.HiddenFor(a => a.Event.TypeEvent)
                         @Html.ValidationMessageFor(model => model.Event.TypeEvent)
                     </td>
                 </tr>
