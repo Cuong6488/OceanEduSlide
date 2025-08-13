@@ -647,7 +647,7 @@ namespace OceanEduSlide.Controllers
 
 
                 }).ToList();
-                var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.Active && a.OfficeId == model.OfficeId);
+                var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
                 var userItems = users.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);

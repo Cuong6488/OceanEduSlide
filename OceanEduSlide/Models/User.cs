@@ -75,7 +75,7 @@ namespace OceanEduSlide.Models
         EC,
         [Display(Name = "ATL")]
         ALT,
-        [Display(Name = "SAB")]
+        [Display(Name = "BSA")]
         SAB,
         [Display(Name = "CM")]
         CM,
