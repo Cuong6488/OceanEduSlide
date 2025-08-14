@@ -813,7 +813,7 @@ namespace OceanEduSlide.Controllers
                     //if (office == null)
                     //    continue;
 
-                    var typeUser = tbl2.Rows[i][4].ToString().Trim();
+                    var typeUser = tbl2.Rows[i][10].ToString().Trim();
                     if (string.IsNullOrEmpty(typeUser))
                         continue;
                     TypeUser type = new TypeUser();
@@ -861,6 +861,12 @@ namespace OceanEduSlide.Controllers
                         case "Đã nghỉ":
                             statusUser = StatusUser.InActive;
                             break;
+                        case "Nghỉ việc":
+                            statusUser = StatusUser.InActive;
+                            break;
+                        case "Miễn nhiệm":
+                            statusUser = StatusUser.InActive;
+                            break;
                         case "Điều chuyển":
                             statusUser = StatusUser.Transfer;
                             break;
@@ -869,7 +875,8 @@ namespace OceanEduSlide.Controllers
                     }
                     var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
-                    var zones = tbl2.Rows[i][11].ToString().Trim();
+                    var zones = tbl2.Rows[i][12].ToString().Trim();
+                    var sort = tbl2.Rows[i][11].ToString().Trim();
                     if (user == null && statusUser == StatusUser.Active)
                     {
 
@@ -912,6 +919,14 @@ namespace OceanEduSlide.Controllers
                     else if (user != null && statusUser == StatusUser.InActive)
                     {
                         user.Active = false;
+                        try
+                        {
+                            _unitOfWork.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            continue;
+                        }
                     }
                     var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
@@ -919,24 +934,20 @@ namespace OceanEduSlide.Controllers
                     var dayEnd = tbl2.Rows[i][7].ToString().Trim().Replace("'", "");
                     var startDate = new DateTime();
                     var endDate = new DateTime();
+
                     if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                    {
                         startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                    }
                     else
-                    {
                         continue;
-                    }
                     if (!string.IsNullOrEmpty(dayEnd))
                         if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
-                        {
                             endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
-                        }
+                        else continue;
 
-                    var monthStr = tbl2.Rows[i][20].ToString().Trim();
+                    var monthStr = tbl2.Rows[i][8].ToString().Trim();
                     if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
 
-                    var yearStr = tbl2.Rows[i][21].ToString().Trim();
+                    var yearStr = tbl2.Rows[i][9].ToString().Trim();
                     if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
 
 
@@ -949,6 +960,8 @@ namespace OceanEduSlide.Controllers
                         historyUser.DayStart = startDate;
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
+                        if (!string.IsNullOrEmpty(sort))
+                            historyUser.Sort = int.Parse(sort);
                     }
                     else
                     {
