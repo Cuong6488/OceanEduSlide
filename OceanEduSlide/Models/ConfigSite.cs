@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace OceanEduSlide.Models
 {
@@ -60,5 +61,7 @@ namespace OceanEduSlide.Models
         [StringLength(50, ErrorMessage = "Tối đa 50 ký tự"), Required(ErrorMessage = "Hãy nhập Email"), Display(Name = "Email"),
          EmailAddress(ErrorMessage = "Email không chính xác"), UIHint("TextBox")]
         public string Email { get; set; }
+        [DisplayName("Mật khẩu mặc định"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự")]
+        public string Password { get; set; }
     }
 }

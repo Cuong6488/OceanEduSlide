@@ -493,7 +493,7 @@ namespace OceanEduSlide.Controllers
             //        a.OfficeId != null,
             //    q => q.OrderBy(a => a.OfficeId)).ToList();
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-                               a.Active && a.Month == selectedMonth && a.Year == selectedYear &&
+                               a.Active && a.Month == selectedMonth && a.Year == selectedYear && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
                                a.TypeUser != TypeUser.HO &&
                                a.TypeUser != TypeUser.CV &&
                                a.TypeUser != TypeUser.PKT &&

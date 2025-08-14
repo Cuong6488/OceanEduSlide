@@ -1,0 +1,221 @@
+﻿@model OceanEduSlide.ViewModels.ListHistoryUserViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách tài khoản";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Danh sách tài khoản</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("CreateUser")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Nhân sự theo tháng</a>
+<div class="box_content">
+    <form action="@Url.Action("ListHistoryUser")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+                </div>*@
+            <div class="col-lg">
+                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Năm</label>
+                <select name="year" class="mt-2">
+                    @for (int i = 2025; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Tháng</label>
+                <select name="month" class="mt-2">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.month == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Trạng thái</label>
+                <select name="active" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.active == 1 ? "selected" : "")>Đang làm việc</option>
+                    <option value="2" @(Model.active == 2 ? "selected" : "")>Điều chuyển</option>
+                    <option value="2" @(Model.active == 3 ? "selected" : "")>Đã nghỉ/ Thai sản</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Chức danh</label>
+                <select name="UserType" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.TypeUser == 1 ? "selected" : "")>GĐTS</option>
+                    <option value="8" @(Model.TypeUser == 8 ? "selected" : "")>Chuyên viên</option>
+                    <option value="2" @(Model.TypeUser == 2 ? "selected" : "")>ASM</option>
+                    <option value="3" @(Model.TypeUser == 3 ? "selected" : "")>BM</option>
+                    <option value="9" @(Model.TypeUser == 9 ? "selected" : "")>TTL</option>
+                    <option value="7" @(Model.TypeUser == 7 ? "selected" : "")>CM</option>
+                    <option value="5" @(Model.TypeUser == 5 ? "selected" : "")>ATL</option>
+                    <option value="4" @(Model.TypeUser == 4 ? "selected" : "")>EC</option>
+                    <option value="6" @(Model.TypeUser == 6 ? "selected" : "")>SAB</option>
+                    <option value="10" @(Model.TypeUser == 10 ? "selected" : "")>PKT</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Vùng</label>
+                @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Tất cả", new { @class = "mt-2", data_item = "zone" })
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2", data_item = "office" })
+            </div>
+            <div class="col-lg align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.HistoryUsers.TotalItemCount</strong> nhân sự</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 80px">Thứ tự</th>
+                <th>Họ và tên</th>
+                <th>Mã nhân viên</th>
+                <th>Trạng thái</th>
+                <th>Ngày vào làm</th>
+                <th>Ngày nghỉ/ điều chuyển</th>
+                <th>Chi nhánh</th>
+                <th>Phân quyền</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var user in Model.HistoryUsers)
+            {
+                <tr data-id="@user.Id">
+                    <td>@Html.DisplayFor(model => user.Sort)</td>
+                    <td>@user.User.Fullname</td>
+                    <td>@user.User.MaNhanVien</td>
+                    <td>@Html.DisplayFor(model => user.Status)</td>
+                    <td>@Html.DisplayFor(model => user.DayStart)</td>
+                    <td>@Html.DisplayFor(model => user.DayEnd)</td>
+                    <td>
+                        @(user.Office?.Name)
+                    </td>
+                    <td>@Html.DisplayFor(model => user.TypeUser)</td>
+                    <td>
+                        @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
+                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+                        <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a>
+                    </td>
+                </tr>
+            }
+            @if (Model.HistoryUsers.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="9">@Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ListHistoryUser", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, active = Model.active, UserType = Model.TypeUser, zoneId = Model.ZoneId }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteUser(id) {
+            if (confirm("Bạn có chắc chắn xóa nhân sự này không?")) {
+                $.post("/Vcms/DeleteHistoryUser",
+                    { userId: id },
+                    function (data) {
+                        if (data.status) {
+                            $.toast({
+                                text: 'Xóa nhân sự thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+
+        function updateInfo(id) {
+            const elm = $('tr[data-id="' + id + '"]');
+            const sort = elm.find("#user_Sort").val();
+            const active = elm.find("input#user_Active").prop("checked");
+            $.post("/Vcms/QuickUpdateUser",
+                { userId: id, sort, active },
+                function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error'
+                        });
+                        window.location.reload();
+                    };
+                });
+        }
+
+        async function checkBeforeRegister(userId, username) {
+            const supported = await isPlatformAuthenticatorAvailable();
+
+            if (!supported) {
+                alert("Thiết bị của bạn không hỗ trợ FaceID / TouchID / Passkey. Vui lòng sử dụng mật khẩu đăng nhập.");
+                return;
+            }
+
+            // Nếu có hỗ trợ ➔ tiến hành đăng ký FaceID
+            registerFaceId(userId, username);
+        }
+
+        async function registerFaceId(userId, username) {
+            const resp = await fetch(`/FaceId/BeginRegistration?userId=${userId}&username=${username}`);
+            const data = await resp.json();
+            const publicKey = preformatMakeCredReq(data);
+            //debugPublicKeyOptions(publicKey);
+            const cred = await navigator.credentials.create({ publicKey });
+            const response = formatMakeCredResp(cred);
+            //console.log(JSON.stringify(response));
+            const rs = await fetch(`/FaceId/CompleteRegistration?userId=${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response)
+            });
+            const rsData = await rs.json();
+            if (rsData.status === "ok") {
+                alert("Đăng ký FaceID thành công!");
+                window.location.reload();
+            } else {
+                alert("Đăng ký FaceID thất bại!");
+            }
+        }
+
+        function removeFaceId(credentialId) {
+            if (confirm("Bạn có chắc chắn xóa FaceId này?")) {
+                $.post("/FaceId/RemoveFaceId", { credentialId: credentialId }, function (data) {
+                    if (data.status === "ok") {
+                        alert("Xóa FaceId thành công!");
+                        window.location.reload();
+                    } else {
+                        alert("Xóa FaceId thất bại!");
+                    }
+                });
+            }
+        }
+    </script>
+}

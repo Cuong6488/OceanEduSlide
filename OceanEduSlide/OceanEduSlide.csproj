@@ -556,6 +556,10 @@
     <Compile Include="Migrations\202508140154352_reporthistory.Designer.cs">
       <DependentUpon>202508140154352_reporthistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508140828177_passdefault.cs" />
+    <Compile Include="Migrations\202508140828177_passdefault.Designer.cs">
+      <DependentUpon>202508140828177_passdefault.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\HistoryUser.cs" />
@@ -1482,6 +1486,7 @@
     <Content Include="Views\Event\LoadHistoryEvent.cshtml" />
     <Content Include="Views\Home\BackToSchool.cshtml" />
     <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
+    <Content Include="Views\Vcms\ListHistoryUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1718,6 +1723,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508140154352_reporthistory.resx">
       <DependentUpon>202508140154352_reporthistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508140828177_passdefault.resx">
+      <DependentUpon>202508140828177_passdefault.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

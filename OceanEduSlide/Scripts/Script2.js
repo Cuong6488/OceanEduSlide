@@ -313,16 +313,16 @@ $(".input-RevenueUser_Week").on("change", function () {
                 }
                 //alert(totalWeekTarget);
             });
-            if (totalWeekTarget > target_Month) {
+            //if (totalWeekTarget > target_Month) {
 
-                alert("Tổng chỉ tiêu các tuần không được vượt quá chỉ tiêu của tháng");
-                thisElement.siblings(".btnedit-input").css("display", "block");
-                thisElement.siblings(".revenue-value").css("display", "block");
-                thisElement.css("display", "none");
-                thisElement.val(thisElement.siblings(".revenue-value").text());
-            }
-            else if (emptyCount < 1 && totalWeekTarget !== target_Month) {
-                alert("Tổng chỉ tiêu các tuần phải bằng chỉ tiêu của tháng");
+            //    alert("Tổng chỉ tiêu các tuần không được vượt quá chỉ tiêu của tháng");
+            //    thisElement.siblings(".btnedit-input").css("display", "block");
+            //    thisElement.siblings(".revenue-value").css("display", "block");
+            //    thisElement.css("display", "none");
+            //    thisElement.val(thisElement.siblings(".revenue-value").text());
+            //}
+            if (emptyCount < 1 && totalWeekTarget < target_Month) {
+                alert("Tổng chỉ tiêu các tuần không được nhỏ hơn chỉ tiêu của tháng");
                 thisElement.siblings(".btnedit-input").css("display", "block");
                 thisElement.siblings(".revenue-value").css("display", "block");
                 thisElement.css("display", "none");
@@ -336,17 +336,16 @@ $(".input-RevenueUser_Week").on("change", function () {
                             heading: 'Cập nhật thành công',
                             icon: 'success'
                         })
+                        var diffirent = totalWeekTarget - target_Month;
                         if (totalWeekTarget < target_Month) {
-                            var diffirent = totalWeekTarget - target_Month;
                             diffirent = diffirent * -1;
                             thisElement.closest("tr").find(".difference-target").css("color", "red");
-                            thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
 
                         }
                         else {
-                            thisElement.closest("tr").find(".difference-target").text("");
-
+                            thisElement.closest("tr").find(".difference-target").css("color", "black");
                         }
+                        thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
                         //thisElement.closest("tr").find(".difference-target").text(diffirent.toLocaleString("en-US"));
                         thisElement.siblings(".btnedit-input").css("display", "block");
                         thisElement.siblings(".revenue-value").css("display", "block");
@@ -363,7 +362,7 @@ $(".input-RevenueUser_Week").on("change", function () {
                     } else {
                         $.toast({
                             heading: 'Cập nhật thất bại',
-                            text:data.msg,
+                            text: data.msg,
                             icon: 'error'
                         })
                         //location.reload();

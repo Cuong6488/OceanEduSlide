@@ -33,6 +33,8 @@ namespace OceanEduSlide.Controllers
         //private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
+        public ConfigSite Config => (ConfigSite)HttpContext.Application["ConfigSite"];
+
 
 
         #region Admin
@@ -115,6 +117,7 @@ namespace OceanEduSlide.Controllers
                         model.Favicon = imgFile;
                     }
                     model.Title = config.Title;
+                    model.Password = config.Password;
                     model.Slogan = config.Slogan;
                     model.Description = config.Description;
                     model.Place = config.Place;
@@ -127,12 +130,8 @@ namespace OceanEduSlide.Controllers
                     model.TikTok = config.TikTok;
                     model.LiveChat = config.LiveChat;
                     model.GoogleMap = config.GoogleMap;
-                    model.AboutText = config.AboutText;
-                    model.AboutBody = config.AboutBody;
                     model.AboutFooter = config.AboutFooter;
-                    model.Customers = config.Customers;
                     //model.Agencies = config.Agencies;
-                    model.Years = config.Years;
                     _unitOfWork.Save();
 
                     HttpContext.Application["ConfigSite"] = model;
@@ -806,15 +805,13 @@ namespace OceanEduSlide.Controllers
                     var user = _unitOfWork.UserRepository
                         .GetQuery(a => a.MaNhanVien == manhanvien)
                         .FirstOrDefault();
-                    if (user == null)
-                        continue;
 
                     var officeShortName = tbl2.Rows[i][1].ToString().Trim();
                     var office = _unitOfWork.OfficeRepository
                         .GetQuery(a => a.ShortName == officeShortName)
                         .FirstOrDefault();
-                    if (office == null)
-                        continue;
+                    //if (office == null)
+                    //    continue;
 
                     var typeUser = tbl2.Rows[i][4].ToString().Trim();
                     if (string.IsNullOrEmpty(typeUser))
@@ -846,9 +843,12 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
+
+
                     var status = tbl2.Rows[i][5].ToString().Trim();
                     if (string.IsNullOrEmpty(status))
                         continue;
+
                     StatusUser statusUser = new StatusUser();
                     switch (status)
                     {
@@ -867,10 +867,56 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var dayStart = tbl2.Rows[i][6].ToString().Trim();
+                    var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
+                    var fullname = tbl2.Rows[i][3].ToString().Trim();
+                    var zones = tbl2.Rows[i][11].ToString().Trim();
+                    if (user == null && statusUser == StatusUser.Active)
+                    {
+
+                        var newUser = new User
+                        {
+                            Username = manhanvien,
+                            MaNhanVien = manhanvien,
+                            Password = password,
+                            Active = true,
+                            OfficeId = office?.Id,
+                            Fullname = fullname,
+                            SaleKit = true,
+                            TypeUser = type,
+                            ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
+                        };
+                        try
+                        {
+                            _unitOfWork.UserRepository.Insert(newUser);
+                            _unitOfWork.Save();
+                            user = newUser;
+                        }
+                        catch (Exception e)
+                        {
+                            continue;
+                        }
+                    }
+                    else if (user != null && statusUser == StatusUser.Active && (user.OfficeId != office?.Id || user.TypeUser != type))
+                    {
+                        user.OfficeId = office?.Id;
+                        user.TypeUser = type;
+                        try
+                        {
+                            _unitOfWork.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            continue;
+                        }
+                    }
+                    else if (user != null && statusUser == StatusUser.InActive)
+                    {
+                        user.Active = false;
+                    }
+                    var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
                         continue;
-                    var dayEnd = tbl2.Rows[i][7].ToString().Trim();
+                    var dayEnd = tbl2.Rows[i][7].ToString().Trim().Replace("'", "");
                     var startDate = new DateTime();
                     var endDate = new DateTime();
                     if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
@@ -895,7 +941,7 @@ namespace OceanEduSlide.Controllers
 
 
                     var historyUser = _unitOfWork.HistoryUserRepository
-                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && a.OfficeId == office.Id).FirstOrDefault();
+                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (a.OfficeId == null && office == null))).FirstOrDefault();
 
                     if (historyUser != null)
                     {
@@ -912,7 +958,7 @@ namespace OceanEduSlide.Controllers
                             Month = monthInt,
                             Year = yearInt,
                             TypeUser = type,
-                            OfficeId = office.Id,
+                            OfficeId = office?.Id,
                             Status = statusUser,
                             DayStart = startDate,
                             Active = true
@@ -927,12 +973,91 @@ namespace OceanEduSlide.Controllers
                 if (historyUserList.Any())
                     _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
                 _unitOfWork.Save();
-                return RedirectToAction("InsertHistoryUser", "Vcms");
+                return RedirectToAction("ListHistoryUser", "Vcms", new { result = "update" });
             }
 
             return RedirectToAction("Index", "Vcms");
         }
+        public ActionResult ListHistoryUser(int? page, string username, int? zoneId, int? officeId, int? month, int? year, int? UserType, int? trung, int? active, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderByDescending(a => a.Id));
+            if (zoneId.HasValue)
+            {
+                users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId);
+            }
 
+            if (officeId.HasValue)
+            {
+                users = users.Where(l => l.OfficeId == officeId);
+            }
+            if (month == null)
+                month = DateTime.Now.Month;
+            users = users.Where(l => l.Month == month);
+
+            if (year == null)
+                year = DateTime.Now.Year;
+            users = users.Where(l => l.Year == year);
+
+            if (UserType.HasValue)
+            {
+                users = users.Where(l => (int)l.TypeUser == UserType);
+            }
+            if (active == 1)
+            {
+                users = users.Where(l => l.Status == StatusUser.Active);
+            }
+            if (active == 2)
+            {
+                users = users.Where(l => l.Status == StatusUser.Transfer);
+            }
+            if (active == 3)
+            {
+                users = users.Where(l => l.Status == StatusUser.InActive);
+            }
+            if (username != null)
+            {
+                var newkey = username.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    users = users.Where(l => l.User.Username.Contains(newkey) || l.User.Fullname.Contains(newkey) || l.User.MaNhanVien.Contains(newkey));
+                }
+            }
+
+
+            var model = new ListHistoryUserViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
+                HistoryUsers = users.ToPagedList(pageNumber, pageSize),
+                officeId = officeId,
+                ZoneId = zoneId,
+                Username = username,
+                active = active,
+                year = year,
+                month = month,
+                TypeUser = UserType,
+            };
+
+            if (model.ZoneId > 0)
+            {
+                model.SelectOffices = OfficeSelectList(model.ZoneId);
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteHistoryUser(int userId)
+        {
+            if (Role != RoleAdmin.Admin)
+                return Json(new { status = false, msg = "Bạn không có quyền xóa" });
+            var user = _unitOfWork.HistoryUserRepository.GetById(userId);
+            user.Active = false;
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Xóa thành công" });
+        }
         public ActionResult UnActiveUserExcel()
         {
             return View();

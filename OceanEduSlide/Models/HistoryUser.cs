@@ -15,10 +15,10 @@ namespace OceanEduSlide.Models
         public int Month { get; set; }
         public TypeUser TypeUser { get; set; }
         public StatusUser Status { get; set; }
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [Display(Name = "Ngày vào làm")]
         public DateTime DayStart { get; set; }
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [Display(Name = "Ngày nghỉ/ điều chuyển")]
         public DateTime? DayEnd { get; set; }
         public WeekNumber? WeekNumber { get; set; }

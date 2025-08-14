@@ -126,7 +126,7 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month,q => q.OrderBy(a => a.TypeUser));
+                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)), q => q.OrderBy(a => a.Sort));
                     if (UserType != null)
                     {
                         //users = users.Where(a => (int)a.TypeUser == UserType);
@@ -349,7 +349,7 @@ namespace OceanEduSlide.Controllers
         public JsonResult AddOrUpdateRevenueMonth(int year, int month, int historyUserId, decimal targetBM)
         {
             var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
-            if(historyUser == null)
+            if (historyUser == null)
                 return Json(new { status = false });
             if (historyUser.Status != StatusUser.Active)
                 return Json(new { status = false, msg = "Người dùng này đã được điều chuyển/ nghỉ việc" });
@@ -388,8 +388,8 @@ namespace OceanEduSlide.Controllers
             var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
             if (historyUser == null)
                 return Json(new { status = false });
-            if(historyUser.Status != StatusUser.Active)
-                return Json(new { status = false,msg = "Người dùng này đã được điều chuyển/ nghỉ việc" });
+            if (historyUser.Status != StatusUser.Active)
+                return Json(new { status = false, msg = "Người dùng này đã được điều chuyển/ nghỉ việc" });
             var revenue = new RevenueUser_Week
             {
                 Year = year,

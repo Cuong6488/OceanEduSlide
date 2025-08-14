@@ -45,24 +45,12 @@
         <td class="form_text">@Html.EditorFor(model => model.Title)</td>
     </tr>
     <tr>
+        <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+        <td class="form_text">@Html.EditorFor(model => model.Password)</td>
+    </tr>
+    <tr>
         <td class="form_name">@Html.LabelFor(model => model.Slogan)</td>
         <td class="form_text">@Html.EditorFor(model => model.Slogan)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Description)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Description)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Years)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Years)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Customers)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Customers)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Offices)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Offices)</td>
     </tr>
     <tr>
         <td class="form_name">@Html.LabelFor(model => model.Place)</td>
@@ -91,18 +79,6 @@
     <tr>
         <td class="form_name">@Html.LabelFor(model => model.GoogleMap)</td>
         <td class="form_text">@Html.EditorFor(model => model.GoogleMap)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.AboutText)</td>
-        <td class="form_text">@Html.EditorFor(model => model.AboutText)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.AboutBody)</td>
-        <td class="form_text">@Html.EditorFor(model => model.AboutBody)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.AboutFooter)</td>
-        <td class="form_text">@Html.EditorFor(model => model.AboutFooter)</td>
     </tr>
     @*<tr>
             <td class="form_name">@Html.LabelFor(model => model.UrlMessenger)</td>

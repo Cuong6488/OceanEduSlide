@@ -143,6 +143,19 @@ namespace OceanEduSlide.ViewModels
         public string Username { get; set; }
         public IEnumerable<MemberCredential> MemberCredentials { get; set; }
     }
+    public class ListHistoryUserViewModel
+    {
+        public PagedList.IPagedList<HistoryUser> HistoryUsers { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public SelectList SelectZones { get; set; }
+        public int? officeId { get; set; }
+        public int? TypeUser { get; set; }
+        public int? ZoneId { get; set; }
+        public int? active { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
+        public string Username { get; set; }
+    }
 
     public class CreateDiscountViewModel
     {
