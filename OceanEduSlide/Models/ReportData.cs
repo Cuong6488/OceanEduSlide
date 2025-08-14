@@ -42,5 +42,8 @@ namespace OceanEduSlide.Models
         public virtual ReportCategory ReportCategory { get; set; }
         public virtual Office Office { get; set; }
         public virtual User User { get; set; }
+        [Display(Name = "Nhân sự theo tháng")]
+        public int? HistoryUserId { get; set; }
+        public virtual HistoryUser HistoryUser { get; set; }
     }
 }

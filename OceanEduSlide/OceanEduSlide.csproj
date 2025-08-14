@@ -552,6 +552,10 @@
     <Compile Include="Migrations\202508121511354_history_all.Designer.cs">
       <DependentUpon>202508121511354_history_all.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508140154352_reporthistory.cs" />
+    <Compile Include="Migrations\202508140154352_reporthistory.Designer.cs">
+      <DependentUpon>202508140154352_reporthistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\HistoryUser.cs" />
@@ -1711,6 +1715,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508121511354_history_all.resx">
       <DependentUpon>202508121511354_history_all.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508140154352_reporthistory.resx">
+      <DependentUpon>202508140154352_reporthistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

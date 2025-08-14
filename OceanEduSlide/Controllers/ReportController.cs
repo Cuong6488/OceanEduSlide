@@ -431,6 +431,7 @@ namespace OceanEduSlide.Controllers
                     .Include(a => a.CategoryParent) // include parent if needed
                     .ToList();
 
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 for (int i = 2; i < tbl2.Rows.Count; i++)
                 {
                     var month = tbl2.Rows[i][0].ToString().Trim();
@@ -445,7 +446,38 @@ namespace OceanEduSlide.Controllers
                     var maNhanVien = tbl2.Rows[i][3].ToString().Trim();
                     var user = allUsers.FirstOrDefault(a => a.MaNhanVien == maNhanVien);
                     if (user == null) continue;
-
+                    var typeUser = tbl2.Rows[i][6].ToString().Trim();
+                    if (string.IsNullOrEmpty(typeUser))
+                        continue;
+                    TypeUser type = new TypeUser();
+                    switch (typeUser)
+                    {
+                        case "EC":
+                            type = TypeUser.EC;
+                            break;
+                        case "BM":
+                            type = TypeUser.BM;
+                            break;
+                        case "BSA":
+                            type = TypeUser.SAB;
+                            break;
+                        case "SAB":
+                            type = TypeUser.SAB;
+                            break;
+                        case "ATL":
+                            type = TypeUser.ALT;
+                            break;
+                        case "CM":
+                            type = TypeUser.CM;
+                            break;
+                        case "TTL":
+                            type = TypeUser.TTL;
+                            break;
+                        default:
+                            break;
+                    }
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == DateTime.Now.Year);
+                    if (historyUser == null) continue;
                     int cChildSort = 1;
                     int group = 1;
 
@@ -495,7 +527,7 @@ namespace OceanEduSlide.Controllers
                         }
                         // Avoid inserting if already exists
                         var existing = _unitOfWork.ReportDataRepository.GetQuery(a =>
-                            a.UserId == user.Id &&
+                            a.UserId == user.Id && a.HistoryUserId == historyUser.Id &&
                             a.Year == DateTime.Now.Year &&
                             a.Month == monthInt &&
                             a.ReportCategoryId == category.Id).FirstOrDefault();
@@ -512,6 +544,7 @@ namespace OceanEduSlide.Controllers
                                 Year = DateTime.Now.Year,
                                 OfficeId = office.Id,
                                 UserId = user.Id,
+                                HistoryUserId = historyUser.Id,
                                 ReportCategoryId = category.Id,
                                 Data = valueReal,
                                 Sort = j

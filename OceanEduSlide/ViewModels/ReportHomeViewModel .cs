@@ -26,7 +26,8 @@ namespace OceanEduSlide.ViewModels
     public class ListReportNVHomeViewModel
     {
         public IEnumerable<Office> Offices { get; set; }
-        public IPagedList<User> Users { get; set; }
+        //public IPagedList<User> Users { get; set; }
+        public IPagedList<HistoryUser> HistoryUsers { get; set; }
         public IEnumerable<ReportCategory> ReportCategories { get; set; }
         public IEnumerable<ReportData> ReportDatas { get; set; }
         public IEnumerable<Zone> Zones { get; set; }

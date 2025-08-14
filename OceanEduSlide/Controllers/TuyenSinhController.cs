@@ -27,7 +27,6 @@ namespace OceanEduSlide.Controllers
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
 
         #region Kinh_Doanh
-
         public PartialViewResult Header()
         {
             var model = new HeaderViewModel
@@ -224,6 +223,20 @@ namespace OceanEduSlide.Controllers
         //    _unitOfWork.Save();
         //    return Content("Thành công - ChangeDataRevenueDay");
         //}
+
+        public ActionResult ChangeDataRevenueReportData(int month)
+        {
+            var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == month && a.Year == 2025 && a.UserId != null);
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            foreach (var r in reportDatas)
+            {
+                var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
+                if (history != null)
+                    r.HistoryUserId = history.Id;
+            }
+            _unitOfWork.Save();
+            return Content("Thành công - ChangeDataRevenueReportData");
+        }
         public static (int, int) CalculateWeeks(int year, int month)
         {
             DateTime firstDay = new DateTime(year, month, 1);

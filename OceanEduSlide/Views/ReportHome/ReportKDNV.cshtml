@@ -1,238 +1,4 @@
-﻿@*@{
-        ViewBag.Title = "Báo cáo KDNV";
-        string maNhanViens = ViewBag.MaNhanViens;
-    }
-    @using OceanEduSlide.ViewModels
-    @using OceanEduSlide.Models
-    @using PagedList.Mvc
-    @model ListReportNVHomeViewModel
-
-    <style>
-        td, th {
-            height: 45px !important;
-        }
-
-        .h-90 {
-            height: 90px !important;
-        }
-
-        #OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
-            display: none !important;
-        }
-
-        #groupWrapper {
-            display: flex !important;
-            gap: 0;
-            /*border: 1px solid #ccc;*/
-            /*border-radius: 6px;*/
-            overflow: auto;
-            border-right: 1px solid #ccc;
-        }
-
-        .columnGroup {
-            flex-grow: 1;
-            margin-right: -1px; /* để border không bị dày lên */
-        }
-
-            .columnGroup table {
-                width: 100%;
-                border-collapse: collapse;
-                border-spacing: 0;
-                font-family: "Segoe UI", sans-serif;
-                border: none;
-            }
-
-            .columnGroup th,
-            .columnGroup td {
-                border: 1px solid #ccc;
-                padding: 6px;
-                text-align: center;
-            }
-
-            .columnGroup thead th {
-                background-color: #f0f4ff;
-                font-weight: bold;
-            }
-
-            .columnGroup:hover {
-                box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
-            }
-    </style>
-    <div class="container py-3">
-        <form action="@Url.Action("ReportKDNV")" method="get" class="d-flex form-filter mb-5">
-            <select name="Year" class="form-select me-3 w-25" required">
-                <option value="">Chọn năm</option>
-                @for (int i = 2024; i <= DateTime.Now.Year; i++)
-                {
-                    <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
-                }
-            </select>
-            <select name="Month" class="form-select me-3 w-25" required>
-                <option value="">Chọn tháng</option>
-                @for (int i = 1; i <= 12; i++)
-                {
-                    <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
-                }
-            </select>
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
-            {
-                <select name="ZoneId" class="form-select me-3 w-25">
-                    <option value="">Chọn vùng</option>
-                    @foreach (var item in Model.Zones)
-                    {
-                        <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>
-            }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
-            {
-                <select name="OfficeId" class="form-select w-25">
-                    <option value="">Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>
-            }
-            else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
-            {
-                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-            }
-        </form>
-        <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
-        <a class="btn quick-link" href="@Url.Action("Report", "Report", new {type = 2})">Cập nhật báo cáo KDNV</a>
-            <div class="box_content d-flex">
-                <div class="columnGroup" data-group-id="group-0">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <th class="h-90" rowspan="2">Tháng</th>
-                                <th rowspan="2" class="col-w90 h-90">Vùng</th>
-                                <th rowspan="2" class="col-w200 h-90">Chi nhánh</th>
-                                <th rowspan="2" class="h-90">Mã NV</th>
-                                <th rowspan="2" class="col-w150 h-90">Họ tên nhân sự</th>
-                                <th rowspan="2" class="col-w65 h-90">Vị trí</th>
-                            </tr>
-                            <tr>
-                            </tr>
-                            @foreach (var user in Model.Users.Where(a => maNhanViens.Contains("," + a.MaNhanVien + ",")))
-                            {
-                                <tr class="tr-1">
-                                    <td>@Model.Month</td>
-                                    <td class="text-start">@(user.Office.Zone?.Name)</td>
-                                    <td class="text-start">@user.Office.ShortName</td>
-                                    <td class="text-start">@user.MaNhanVien</td>
-                                    <td class="text-start">@user.Fullname</td>
-                                    <td class="text-start">@Html.DisplayFor(a => user.TypeUser)</td>
-                                </tr>
-                            }
-                            @foreach (var user in Model.Users.Where(a => !maNhanViens.Contains("," + a.MaNhanVien + ",")))
-                            {
-                                <tr class="tr-2">
-                                    <td>@Model.Month</td>
-                                    <td class="text-start">@(user.Office.Zone?.Name)</td>
-                                    <td class="text-start">@user.Office.ShortName</td>
-                                    <td class="text-start">@user.MaNhanVien</td>
-                                    <td class="text-start">@user.Fullname</td>
-                                    <td class="text-start">@Html.DisplayFor(a => user.TypeUser)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                </div>
-                <div id="groupWrapper">
-                    @foreach (var group in Model.ReportCategories.Where(c => c.ReportCategoryId == null).GroupBy(c => c.Group))
-                    {
-                        var groupId = group.Key;
-                        int total = group.Count();
-                        int i = 1;
-
-                        <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
-
-                            @foreach (var category in group)
-                            {
-                                var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
-
-                                <table class="@tableClass">
-                                    <thead>
-                                        <tr>
-                                            <th class="col-w100" colspan="@category.Count">@category.Name</th>
-                                        </tr>
-                                        <tr>
-                                            @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == category.Id))
-                                            {
-                                                <th class="col-w65">@child.Name</th>
-                                            }
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var user in Model.Users.Where(a => maNhanViens.Contains("," + a.MaNhanVien + ",")))
-                                        {
-                                            <tr class="tr-1">
-                                                @foreach (var data in Model.ReportDatas.Where(a => a.UserId == user.Id && a.ReportCategory.ReportCategoryId == category.Id).Take(category.Count ?? 1))
-                                                {
-                                                    <td>@data.Data</td>
-                                                }
-                                            </tr>
-                                        }
-
-                                        @foreach (var office in Model.Users.Where(a => !maNhanViens.Contains("," + a.MaNhanVien + ",")))
-                                        {
-                                            <tr class="tr-2">
-                                                @for (var j = 1; j <= category.Count; j++)
-                                                {
-                                                    <td></td>
-                                                }
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                                i++;
-
-                            }
-                        </div>
-                    }
-                </div>
-
-            </div>
-
-        @if (Model.Users.PageCount > 1)
-        {
-            <div class="text-center">
-                @Html.PagedListPager(Model.Users, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }))
-
-            </div>
-        }
-    </div>
-    @section scripts
-    {
-        <script>
-            $(function () {
-                const wrapper = $("#groupWrapper");
-
-                wrapper.sortable({
-                    axis: "x",
-                    items: ".columnGroup",
-                    update: function () {
-                        const order = wrapper.children().map(function () {
-                            return $(this).attr("data-group-id");
-                        }).get();
-                        localStorage.setItem("groupOrder", JSON.stringify(order));
-                    }
-                });
-
-                const savedOrder = JSON.parse(localStorage.getItem("groupOrder") || "[]");
-                if (savedOrder.length) {
-                    savedOrder.forEach(id => {
-                        const group = wrapper.find(`[data-group-id="${id}"]`);
-                        wrapper.append(group);
-                    });
-                }
-            });
-        </script>
-
-    }*@
+﻿
 @{
     ViewBag.Title = "Báo cáo KDNV";
     string maNhanViens = ViewBag.MaNhanViens ?? ",";
@@ -242,18 +8,35 @@
         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
         .ToHashSet();
 
+    //// Phân nhóm user có/không dữ liệu theo mã NV
+    //var usersHasData = Model.Users
+    //    .Where(u => maNhanVienList.Contains(u.MaNhanVien))
+    //    .ToList();
+
+    //var usersNoData = Model.Users
+    //    .Where(u => !maNhanVienList.Contains(u.MaNhanVien))
+    //    .ToList();
+
+    //// Gom dữ liệu báo cáo theo UserId + CategoryId
+    //var reportDataDict = Model.ReportDatas
+    //    .GroupBy(d => new { d.UserId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
+    //    .ToDictionary(
+    //        g => g.Key,
+    //        g => g.OrderBy(d => d.Sort).ToList()
+    //    );
+
     // Phân nhóm user có/không dữ liệu theo mã NV
-    var usersHasData = Model.Users
-        .Where(u => maNhanVienList.Contains(u.MaNhanVien))
+    var usersHasData = Model.HistoryUsers
+        .Where(u => maNhanVienList.Contains(u.User?.MaNhanVien))
         .ToList();
 
-    var usersNoData = Model.Users
-        .Where(u => !maNhanVienList.Contains(u.MaNhanVien))
+    var usersNoData = Model.HistoryUsers
+        .Where(u => !maNhanVienList.Contains(u.User?.MaNhanVien))
         .ToList();
 
     // Gom dữ liệu báo cáo theo UserId + CategoryId
     var reportDataDict = Model.ReportDatas
-        .GroupBy(d => new { d.UserId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
+        .GroupBy(d => new { d.HistoryUserId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
         .ToDictionary(
             g => g.Key,
             g => g.OrderBy(d => d.Sort).ToList()
@@ -313,31 +96,6 @@
             box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
         }
 
-    .col-w65 {
-        width: 65px;
-    }
-
-    .col-w90 {
-        width: 90px;
-    }
-
-    .col-w100 {
-        width: 100px;
-    }
-
-    .col-w150 {
-        width: 150px;
-    }
-
-    .col-w200 {
-        width: 200px;
-    }
-
-    .tr-1 { /* style dòng có dữ liệu */
-    }
-
-    .tr-2 { /* style dòng không có dữ liệu */
-    }
 </style>
 
 <div class="container py-3">
@@ -407,8 +165,8 @@
                             <td>@Model.Month</td>
                             <td class="text-start">@(u.Office?.Zone.Name)</td>
                             <td class="text-start">@(u.Office?.ShortName)</td>
-                            <td class="text-start">@u.MaNhanVien</td>
-                            <td class="text-start">@u.Fullname</td>
+                            <td class="text-start">@(u.User?.MaNhanVien)</td>
+                            <td class="text-start">@(u.User?.Fullname)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
                         </tr>
                     }
@@ -418,8 +176,8 @@
                             <td>@Model.Month</td>
                             <td class="text-start">@(u.Office?.Zone.Name)</td>
                             <td class="text-start">@(u.Office?.ShortName)</td>
-                            <td class="text-start">@u.MaNhanVien</td>
-                            <td class="text-start">@u.Fullname</td>
+                            <td class="text-start">@(u.User?.MaNhanVien)</td>
+                            <td class="text-start">@(u.User?.Fullname)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
                         </tr>
                     }
@@ -455,7 +213,7 @@
                                 {
                                     <tr class="tr-1">
                                         @{
-                                            var key = new { UserId = (int?)u.Id, CategoryId = cat.Id };
+                                            var key = new { HistoryUserId = (int?)u.Id, CategoryId = cat.Id };
                                             var list = reportDataDict.ContainsKey(key) ? reportDataDict[key] : new List<ReportData>();
                                         }
                                         @foreach (var d in list.Take(cat.Count ?? 1))
@@ -486,10 +244,10 @@
         </div>
     </div>
 
-    @if (Model.Users.PageCount > 1)
+    @if (Model.HistoryUsers.PageCount > 1)
     {
         <div class="text-center">
-            @Html.PagedListPager(Model.Users,
+            @Html.PagedListPager(Model.HistoryUsers,
               page => Url.Action("ReportKDNV",
                 new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }
               )
