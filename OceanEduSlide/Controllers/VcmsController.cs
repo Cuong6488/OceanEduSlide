@@ -24,6 +24,7 @@ using static System.Data.Entity.Infrastructure.Design.Executor;
 using System.Data.Entity;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace OceanEduSlide.Controllers
 {
@@ -819,6 +820,12 @@ namespace OceanEduSlide.Controllers
                     TypeUser type = new TypeUser();
                     switch (typeUser)
                     {
+                        case "ASM":
+                            type = TypeUser.ASM;
+                            break;
+                        case "GĐTS":
+                            type = TypeUser.HO;
+                            break;
                         case "EC":
                             type = TypeUser.EC;
                             break;
@@ -839,6 +846,9 @@ namespace OceanEduSlide.Controllers
                             break;
                         case "TTL":
                             type = TypeUser.TTL;
+                            break;
+                        case "Chuyên viên":
+                            user.TypeUser = TypeUser.CV;
                             break;
                         default:
                             break;
@@ -877,57 +887,67 @@ namespace OceanEduSlide.Controllers
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
                     var zones = tbl2.Rows[i][12].ToString().Trim();
                     var sort = tbl2.Rows[i][11].ToString().Trim();
-                    if (user == null && statusUser == StatusUser.Active)
+                    if (user == null)
                     {
+                        if (statusUser == StatusUser.Active)
+                        {
+                            var newUser = new User
+                            {
+                                Username = manhanvien,
+                                MaNhanVien = manhanvien,
+                                Password = password,
+                                Active = true,
+                                OfficeId = office?.Id,
+                                Fullname = fullname,
+                                SaleKit = true,
+                                TypeUser = type,
+                                ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
+                            };
+                            try
+                            {
+                                _unitOfWork.UserRepository.Insert(newUser);
+                                _unitOfWork.Save();
+                                user = newUser;
+                            }
+                            catch (Exception e)
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (statusUser == StatusUser.Active && (user.OfficeId != office?.Id || user.TypeUser != type))
+                        {
+                            user.OfficeId = office?.Id;
+                            user.TypeUser = type;
+                            try
+                            {
+                                _unitOfWork.Save();
+                            }
+                            catch (Exception e)
+                            {
+                                continue;
+                            }
+                        }
+                        else if (statusUser == StatusUser.InActive)
+                        {
+                            user.Active = false;
+                            try
+                            {
+                                _unitOfWork.Save();
+                            }
+                            catch (Exception e)
+                            {
+                                continue;
+                            }
+                        }
+                    }
 
-                        var newUser = new User
-                        {
-                            Username = manhanvien,
-                            MaNhanVien = manhanvien,
-                            Password = password,
-                            Active = true,
-                            OfficeId = office?.Id,
-                            Fullname = fullname,
-                            SaleKit = true,
-                            TypeUser = type,
-                            ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
-                        };
-                        try
-                        {
-                            _unitOfWork.UserRepository.Insert(newUser);
-                            _unitOfWork.Save();
-                            user = newUser;
-                        }
-                        catch (Exception e)
-                        {
-                            continue;
-                        }
-                    }
-                    else if (user != null && statusUser == StatusUser.Active && (user.OfficeId != office?.Id || user.TypeUser != type))
-                    {
-                        user.OfficeId = office?.Id;
-                        user.TypeUser = type;
-                        try
-                        {
-                            _unitOfWork.Save();
-                        }
-                        catch (Exception e)
-                        {
-                            continue;
-                        }
-                    }
-                    else if (user != null && statusUser == StatusUser.InActive)
-                    {
-                        user.Active = false;
-                        try
-                        {
-                            _unitOfWork.Save();
-                        }
-                        catch (Exception e)
-                        {
-                            continue;
-                        }
-                    }
                     var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
                         continue;
@@ -942,17 +962,31 @@ namespace OceanEduSlide.Controllers
                     if (!string.IsNullOrEmpty(dayEnd))
                         if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
                             endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
-                        else continue;
+                        else
+                            continue;
 
                     var monthStr = tbl2.Rows[i][8].ToString().Trim();
-                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
+                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt))
+                        continue;
 
                     var yearStr = tbl2.Rows[i][9].ToString().Trim();
-                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
+                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt))
+                        continue;
 
+                    //HistoryUser historyUser = null;
+                    //var historyUser = _unitOfWork.HistoryUserRepository
+                    //    .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (a.OfficeId == null && office == null))).FirstOrDefault();
+                    var query = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type);
+                    if (office != null)
+                    {
+                        query = query.Where(a => a.OfficeId == office.Id);
+                    }
+                    else
+                    {
+                        query = query.Where(a => a.OfficeId == null);
+                    }
+                    var historyUser = query.FirstOrDefault();
 
-                    var historyUser = _unitOfWork.HistoryUserRepository
-                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (a.OfficeId == null && office == null))).FirstOrDefault();
 
                     if (historyUser != null)
                     {
@@ -979,6 +1013,8 @@ namespace OceanEduSlide.Controllers
 
                         if (!string.IsNullOrEmpty(dayEnd))
                             newhistoryUser.DayEnd = endDate;
+                        if (!string.IsNullOrEmpty(sort))
+                            historyUser.Sort = int.Parse(sort);
                         historyUserList.Add(newhistoryUser);
                     }
                 }

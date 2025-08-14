@@ -441,14 +441,16 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-        public PartialViewResult LoadHistoryRevenueUser_Day(int year, int month, int userId, int weekNumber, int dayOfWeek)
+        public PartialViewResult LoadHistoryRevenueUser_Day(int year, int month, int historyUserId, int weekNumber, int dayOfWeek)
         {
+            var historyUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId);
             var model = new LoadHistoryRevenueUser_DayViewModel
             {
                 Year = year,
                 Month = month,
-                User = _unitOfWork.UserRepository.GetById(userId),
-                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.UserId == userId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && a.TargetBM != null, q => q.OrderBy(a => a.CreateDate)),
+                User = historyUser.User,
+                HistoryUser = _unitOfWork.HistoryUserRepository.GetById(historyUserId),
+                Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Year == year && a.Month == month && a.HistoryUserId == historyUserId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && a.TargetBM != null, q => q.OrderBy(a => a.CreateDate)),
             };
             switch (weekNumber)
             {

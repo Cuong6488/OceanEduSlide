@@ -1,10 +1,10 @@
 ﻿@model OceanEduSlide.ViewModels.ListHistoryUserViewModel
 @using PagedList.Mvc
 @{
-    ViewBag.Title = "Danh sách tài khoản";
+    ViewBag.Title = "Danh sách nhân sự tháng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 class="mt-0">Danh sách tài khoản</h2>
+<h2 class="mt-0">@ViewBag.Title</h2>
 @if (ViewBag.Result == "success")
 {
     <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
@@ -13,7 +13,7 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
 }
-<a class="btn quick-link" href="@Url.Action("CreateUser")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Nhân sự theo tháng</a>
+<a class="btn quick-link" href="@Url.Action("InsertHistoryUser")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Nhân sự theo tháng</a>
 <div class="box_content">
     <form action="@Url.Action("ListHistoryUser")" method="get">
         <div class="row">

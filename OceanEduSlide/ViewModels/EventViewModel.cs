@@ -115,6 +115,7 @@ namespace OceanEduSlide.ViewModels
     public class LoadHistoryRevenueUser_DayViewModel
     {
         public User User { get; set; }
+        public HistoryUser HistoryUser { get; set; }
         public IEnumerable<RevenueUser_DayOfWeek> Revenues { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }

@@ -197,6 +197,19 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return Content("Thành công - ChangeDataRevenueWeek");
         }
+        public ActionResult ChangeDataRevenueWeekReal(int month)
+        {
+            var revenues = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            var histories = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == 2025);
+            foreach (var r in revenues)
+            {
+                var history = histories.FirstOrDefault(a => a.UserId == r.UserId && a.TypeUser == r.User.TypeUser && a.OfficeId == r.User.OfficeId);
+                if (history != null)
+                    r.HistoryUserId = history.Id;
+            }
+            _unitOfWork.Save();
+            return Content("Thành công - ChangeDataRevenueWeek");
+        }
         public ActionResult ChangeDataRevenueDay(int month)
         {
             var revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.Month == month && a.Year == 2025);
