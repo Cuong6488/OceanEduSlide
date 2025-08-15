@@ -55,7 +55,7 @@
         @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
         {
             <select name="OfficeId" class="form-select w-25 me-3">
-                <option value="">Chọn chi nhánh</option>
+                <option>Chọn chi nhánh</option>
                 @foreach (var item in Model.Offices)
                 {
                     <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
