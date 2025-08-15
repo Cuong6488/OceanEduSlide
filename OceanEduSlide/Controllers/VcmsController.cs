@@ -1014,7 +1014,7 @@ namespace OceanEduSlide.Controllers
                         if (!string.IsNullOrEmpty(dayEnd))
                             newhistoryUser.DayEnd = endDate;
                         if (!string.IsNullOrEmpty(sort))
-                            historyUser.Sort = int.Parse(sort);
+                            newhistoryUser.Sort = int.Parse(sort);
                         historyUserList.Add(newhistoryUser);
                     }
                 }
