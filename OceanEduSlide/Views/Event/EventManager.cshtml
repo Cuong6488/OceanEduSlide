@@ -1,0 +1,293 @@
+﻿@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model EventViewModel
+@{
+    ViewBag.Title = "Sự kiện";
+    //var evs1 = Model.Events.Where(a => a.TypeEvent == TypeEvent.HDDT);
+    //var evs2 = Model.Events.Where(a => a.TypeEvent == TypeEvent.SKDT);
+    //var evs3 = Model.Events.Where(a => a.TypeEvent == TypeEvent.HDSale);
+    //var evs4 = Model.Events.Where(a => a.TypeEvent == TypeEvent.SKSale);
+    var colspan = ViewBag.DayOfWeeks + 2;
+}
+
+<style>
+    #OfficeId-error, #Month-error, #OfficeId-error, #Week-error, #ZoneId-error {
+        display: none !important;
+    }
+
+    .box-overview td {
+        vertical-align: top;
+    }
+</style>
+@*@Html.Action("Header", "TuyenSinh", new { name = "Sự kiện" })*@
+<div class="container py-3">
+    @if (ViewBag.Result == "add")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+    }
+    <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5">
+        <select name="Year" class="form-select me-3 w-25" required">
+            <option value="">Chọn năm</option>
+            @for (int i = 2025; i <= ViewBag.Year + 1; i++)
+            {
+                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+            }
+        </select>
+        <select name="Month" class="form-select me-3 w-25 month-select" required>
+            <option value="">Chọn tháng</option>
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+            }
+        </select>
+        <select name="Week" class="form-select me-3 w-25" required>
+            <option value="">Chọn tuần</option>
+            @for (int i = 1; i <= ViewBag.WorkingWeeks; i++)
+            {
+                <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
+            }
+        </select>
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        {
+            <select name="ZoneId" class="form-select me-3 w-25">
+                <option value="">Chọn vùng</option>
+                @foreach (var item in Model.Zones)
+                {
+                    <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+        {
+            <select name="OfficeId" class="form-select w-25 me-3">
+                <option>Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+        {
+            @*<select name="" class="form-select w-25" disabled>
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>*@
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+
+        }
+        <select name="UserType" class="form-select w-25 ms-3">
+            <option value="">Tất cả chức danh</option>
+            <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+            <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+            <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+            <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+            <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+            <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+        </select>
+    </form>
+    <h2>DANH SÁCH SỰ KIỆN</h2>
+    <div class="box_content box-overview mt-0 mb-5 no-scroll">
+
+        <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
+        <table class="list_table tablecenter table-striped text-center">
+            <thead class="thead-sticky">
+                <tr>
+                    <th class="col-w65">Vùng</th>
+                    <th class="col-w100">Chi nhánh</th>
+                    @*<th style="min-width:180px;">Loại hoạt động</th>*@
+                    @if (ViewBag.WorkingWeeks != Model.Week)
+                    {
+                        for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                        {
+                            <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                        {
+                            <th>@(i == 8? "Chủ nhật": "Thứ " + i)</th>
+                        }
+
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int l = 1; l <= 4; l++)
+                {
+                    <tr>
+                        <td class="text-center" style="background:#eee;vertical-align:middle;font-size:18px;text-transform:uppercase;" colspan="@colspan">
+                            @switch (l)
+                            {
+                                case 1:
+                                    @: Hoạt động của đào tạo
+                                    break;
+                                case 2:
+                                    @: Sự kiện của Đào tạo
+                                    break;
+                                case 3:
+                                    @: Hoạt động của sale
+                                    break;
+                                case 4:
+                                    @: Sự kiện của sale
+                                    break;
+                                default:
+                                    break;
+                            }
+                        </td>
+                    </tr>
+
+                    foreach (var office in Model.Offices)
+                    {
+                        <tr>
+                            <td class="text-start px-2">
+                                @(office.Zone?.Name)
+                            </td>
+                            <td class="text-start px-2">
+                                @office.ShortName
+                            </td>
+                            @if (ViewBag.WorkingWeeks != Model.Week)
+                            {
+                                for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                                {
+                                    //var ev = Model.Events.FirstOrDefault(a => (int)a.DayofWeek == i && a.OfficeId == office.Id && (int)a.TypeEvent == l);
+                                    var dict = ViewBag.EventDict as Dictionary<string, Event>;
+                                    var key = $"{office.Id}_{i}_{l}";
+                                    var ev = dict.ContainsKey(key) ? dict[key] : null;
+
+                                    <td class="text-start" style="padding:10px 15px !important">
+                                        @if (ev != null)
+                                        {
+                                            <div class="btnhistory-input">
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                            </div>
+                                            @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
+                                            @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
+                                            @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
+                                            if (ev.Range > 0)
+                                            {
+                                                @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                @: @Html.LabelFor(a => ev.RangeStudent): @ev.RangeStudent <br />
+                                                @: @Html.LabelFor(a => ev.RangeNewCustomer): @ev.RangeNewCustomer <br />
+                                            }
+                                            else
+                                            {
+                                                @: @Html.LabelFor(a => ev.Range): Chưa cập nhật <br />
+                                            }
+                                            @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
+                                            if (ev.LinkUrl != null)
+                                            {
+                                                <a style="color:blue" class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a> <br />
+                                            }
+                                            if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                                            {
+                                                <div class="d-flex justify-content-between">
+                                                    <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                    <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
+                                                </div>
+
+                                            }
+                                        }
+
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                                {
+                                    var ev = Model.Events.FirstOrDefault(a => (int)a.DayofWeek == i && a.OfficeId == office.Id && (int)a.TypeEvent == l);
+                                    <td class="text-start" style="padding:10px 15px !important">
+                                        @if (ev != null)
+                                        {
+
+                                            <div class="btnhistory-input">
+                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i})"
+                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                            </div>
+                                            @: @Html.LabelFor(a => ev.Name): @ev.Name <br />
+                                            @: @Html.LabelFor(a => ev.TypeJoin): @Html.DisplayFor(a => ev.TypeJoin) <br />
+                                            @: @Html.LabelFor(a => ev.Ages): @ev.Ages <br />
+                                            if (ev.Range > 0)
+                                            {
+                                                @: @Html.LabelFor(a => ev.Range): @ev.Range <br />
+                                                @: @Html.LabelFor(a => ev.RangeStudent): @ev.RangeStudent <br />
+                                                @: @Html.LabelFor(a => ev.RangeNewCustomer): @ev.RangeNewCustomer <br />
+                                            }
+                                            else
+                                            {
+                                                @: @Html.LabelFor(a => ev.Range): Chưa cập nhật <br />
+                                            }
+                                            @: Thời gian tổ chức: @ev.TimeFrom - @ev.TimeTo <br />
+                                            if (ev.LinkUrl != null)
+                                            {
+                                                <a style="color:blue" class="mt-1 d-inline-block" href="@ev.LinkUrl" target="_blank">@(ev.LinkName??"Link")</a> <br />
+                                            }
+                                            if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                                            {
+                                                <div class="d-flex justify-content-between">
+                                                    <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
+                                                    <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            }
+
+                        </tr>
+                    }
+                }
+
+                <tr>
+                    <td class="text-center" style="background:#eee;vertical-align:middle;font-size:18px;text-transform:uppercase;" colspan="@colspan">
+                        Doanh số tuyển sinh
+                    </td>
+                </tr>
+                @foreach (var office in Model.Offices)
+                {
+                    <tr>
+                        <td class="text-start px-2">
+                            @(office.Zone?.Name)
+                        </td>
+                        <td class="text-start px-2">
+                            @office.ShortName
+                        </td>
+                        @if (ViewBag.WorkingWeeks != Model.Week)
+                        {
+                            for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
+                            {
+                                var ds = Model.SumRevenue2(i, Model.Week ?? 0, Model.Month ?? 0, Model.Year ?? 0, office.Id);
+                                <td class="text-start" style="padding:10px 15px !important">
+                                    @((ds ?? 0).ToString("N0"))đ
+                                </td>
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 2; i <= 1 + ViewBag.DayOfWeeks; i++)
+                            {
+                                var ds = Model.SumRevenue2(i, Model.Week ?? 0, Model.Month ?? 0, Model.Year ?? 0, office.Id);
+                                <td class="text-start" style="padding:10px 15px !important">
+                                    @((ds ?? 0).ToString("N0"))đ
+                                </td>
+                            }
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        eventFunction();
+    </script>
+}

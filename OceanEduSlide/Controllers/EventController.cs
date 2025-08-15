@@ -50,20 +50,27 @@ namespace OceanEduSlide.Controllers
                 ZoneId = ZoneId,
                 UserType = UserType,
                 User = User,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
             };
+            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week);
+
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
             }
             else
             {
                 model.ZoneId = User.ZoneId;
                 if (User.TypeUser == TypeUser.ASM)
+                {
                     model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                }
+
                 else
                     model.OfficeId = User.OfficeId;
             }
@@ -96,11 +103,29 @@ namespace OceanEduSlide.Controllers
                     });
                     model.Users = users;
                     model.UserItems = userItems;
-                    model.Events = _unitOfWork.EventRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate));
+                    model.Events = events.OrderByDescending(p => p.CreateDate).Where(a => a.OfficeId == model.OfficeId);
                     model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.TargetBM != 0 && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
                 }
+                return View(model);
             }
-            return View(model);
+            //var latestEventsPerGroup = events.GroupBy(e => new { e.Month, e.Year, e.WeekNumber, e.OfficeId, e.DayofWeek })
+            //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
+            //model.Events = latestEventsPerGroup;
+            // Chọn bản ghi mới nhất cho mỗi nhóm
+            var latestEventsPerGroup = events
+                .GroupBy(e => new { e.OfficeId, e.DayofWeek, e.TypeEvent }) // Group theo key phù hợp
+                .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault()) // Lấy bản ghi mới nhất
+                .ToList();
+
+            model.Events = latestEventsPerGroup;
+            var eventDict = model.Events
+    .GroupBy(e => $"{e.OfficeId}_{(int)e.DayofWeek}_{(int)e.TypeEvent}")
+    .ToDictionary(g => g.Key, g => g.First());
+
+            ViewBag.EventDict = eventDict;
+
+
+            return View("EventManager", model);
         }
         public ActionResult UpdatePercent(int userId)
         {

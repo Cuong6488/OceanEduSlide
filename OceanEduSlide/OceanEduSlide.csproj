@@ -1488,6 +1488,7 @@
     <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
     <Content Include="Views\Vcms\ListHistoryUser.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
+    <Content Include="Views\Event\EventManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
