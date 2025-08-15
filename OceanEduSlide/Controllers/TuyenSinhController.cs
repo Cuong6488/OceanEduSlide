@@ -208,7 +208,7 @@ namespace OceanEduSlide.Controllers
                     r.HistoryUserId = history.Id;
             }
             _unitOfWork.Save();
-            return Content("Thành công - ChangeDataRevenueWeek");
+            return Content("Thành công - ChangeDataRevenueWeekReal");
         }
         public ActionResult ChangeDataRevenueDay(int month)
         {

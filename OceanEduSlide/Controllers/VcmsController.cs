@@ -925,6 +925,7 @@ namespace OceanEduSlide.Controllers
                         {
                             user.OfficeId = office?.Id;
                             user.TypeUser = type;
+                            user.Active = true;
                             try
                             {
                                 _unitOfWork.Save();
