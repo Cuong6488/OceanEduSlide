@@ -156,6 +156,9 @@
                         <th rowspan="2" class="h-90 col-w90">Mã NV</th>
                         <th rowspan="2" class="col-w150 h-150">Họ tên nhân sự</th>
                         <th rowspan="2" class="col-w65 h-90">Vị trí</th>
+                        <th rowspan="2" class="col-w90 h-90">Trạng thái</th>
+                        <th rowspan="2" class="col-w90 h-90">Ngày vào làm</th>
+                        <th rowspan="2" class="col-w90 h-90">Ngày nghỉ/ <br /> điều chuyển</th>
                     </tr>
                     <tr></tr>
 
@@ -168,6 +171,9 @@
                             <td class="text-start">@(u.User?.MaNhanVien)</td>
                             <td class="text-start">@(u.User?.Fullname)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.Status)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.DayStart)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.DayEnd)</td>
                         </tr>
                     }
                     @foreach (var u in usersNoData)
@@ -179,6 +185,9 @@
                             <td class="text-start">@(u.User?.MaNhanVien)</td>
                             <td class="text-start">@(u.User?.Fullname)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.Status)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.DayStart)</td>
+                            <td class="text-start">@Html.DisplayFor(m => u.DayEnd)</td>
                         </tr>
                     }
                 </tbody>
