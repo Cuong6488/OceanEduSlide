@@ -46,7 +46,7 @@
             @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
             {
                 <select name="OfficeId" class="form-select w-25 me-3">
-                    <option value="">Chọn chi nhánh</option>
+                    <option>Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
                         <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
@@ -151,7 +151,6 @@
                             }
                         }
                     </tr>
-
                 </tbody>
             </table>
         </div>
@@ -196,7 +195,6 @@
                 </tr>
                 @if (Model.UserItems != null)
                 {
-
                     foreach (var revenueOffice in Model.UserItems)
                     {
                         <tr data-id="@revenueOffice.HistoryUser.Id">
@@ -316,8 +314,8 @@
                                 <td>
                                     Chưa cập nhật
                                 </td>
-                                @*<td>
-                                    </td>*@
+                                <td>
+                                </td>
                                 <td>
                                 </td>
                                 <td>

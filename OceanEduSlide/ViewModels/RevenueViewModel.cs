@@ -1,4 +1,5 @@
 ﻿using OceanEduSlide.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,11 +17,14 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public int? UserType { get; set; }
+        public int? TypeView { get; set; }
         public SelectList SelectOffices { get; set; }
-        public IEnumerable<UserItem> UserItems { get; set; }
+        public IPagedList<UserItem> UserItems { get; set; }
+        public IEnumerable<OfficeItem> OfficeItems { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public RevenueOffice RevenueOffice { get; set; }
+        //public IEnumerable<RevenueOffice> RevenueOffices { get; set; }
         public IEnumerable<RevenueOffice_BM> RevenueOffice_BMs { get; set; }
         public User User { get; set; }
         public class UserItem
@@ -35,7 +39,12 @@ namespace OceanEduSlide.ViewModels
             public decimal Debt { get; set; }
 
         }
-
+        public class OfficeItem
+        {
+            public Office Office { get; set; }
+            public RevenueOffice RevenueOffice { get; set; }
+            public IEnumerable<RevenueOffice_BM> RevenueOffice_BMs { get; set; }
+        }
     }
     public class RevenueOfficeViewModel
     {

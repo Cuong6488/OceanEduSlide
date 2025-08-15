@@ -751,7 +751,6 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {
-
             if (User.TypeUser == null)
                 return HttpNotFound();
             var pageNumber = page ?? 1;
@@ -823,7 +822,7 @@ namespace OceanEduSlide.Controllers
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
                 var users = _unitOfWork.UserRepository.GetQuery().Where(a => historyUsers.Any(h => h.UserId == a.Id &&
-                                      h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd < startDate))).ToList();
+                                      h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate))).ToList();
                 var userItems = users.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);

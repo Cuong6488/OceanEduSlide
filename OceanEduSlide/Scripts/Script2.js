@@ -589,3 +589,25 @@ $(function () {
 //    thousands: ","
 //});
 
+
+$(window).scroll(function () {
+    var e = $(window).scrollTop();
+    if (e > 90) {
+        $("#back-to-top").css("box-shadow", "4px 4px 10px rgba(0, 0, 0, 0.3), -4px -4px 10px rgba(0, 0, 0, 0.3)");
+        $("#back-to-top").css("background-color", "#079AA6");
+        $("#back-to-top").css("color", "white");
+        $("#back-to-top").css("pointer-events", "auto");
+
+    } else {
+        $("#back-to-top").css("box-shadow", "none");
+        $("#back-to-top").css("background-color", "transparent");
+        $("#back-to-top").css("color", "transparent");
+        $("#back-to-top").css("pointer-events", "none");
+    }
+});
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}

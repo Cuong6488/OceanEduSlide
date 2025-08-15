@@ -7,6 +7,7 @@ using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
@@ -82,10 +83,11 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-        public ActionResult Revenue(int? ZoneId, int? Month, int? OfficeId, int? Year, int? UserType, string Result = "")
+        public ActionResult Revenue(int? page, int? ZoneId, int? Month, int? OfficeId, int? Year, int? UserType, int? TypeView, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
+            var pageNumber = page ?? 1;
             var model = new RevenueViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
@@ -95,7 +97,7 @@ namespace OceanEduSlide.Controllers
                 ZoneId = ZoneId,
                 User = User,
                 UserType = UserType,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
             };
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -111,12 +113,36 @@ namespace OceanEduSlide.Controllers
                     model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
                 else
                     model.OfficeId = User.OfficeId;
-
             }
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
+            //var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year);
+            //var revenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year)
+            //    .GroupBy(a => a.OfficeId).Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)), q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
+
+            if (UserType != null)
+            {
+                //users = users.Where(a => (int)a.TypeUser == UserType);
+                historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
+            }
+            else
+            {
+                //users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+                historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+            }
             if (model.ZoneId != null)
+            {
+                //revenueOffices = revenueOffices.Where(a => a.Office.ZoneId == model.ZoneId);
+                //revenueOffice_BMs = revenueOffice_BMs.Where(a => a.Office.ZoneId == model.ZoneId);
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                historyUsers = historyUsers.Where(a => a.OfficeId != null && a.Office.ZoneId == model.ZoneId);
+            }
+            var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
+
+            ViewBag.WorkingWeeks = workingWeeks;
+            ViewBag.CurrentWeek = currentWeek;
+
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
@@ -126,17 +152,7 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)), q => q.OrderBy(a => a.Sort));
-                    if (UserType != null)
-                    {
-                        //users = users.Where(a => (int)a.TypeUser == UserType);
-                        historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
-                    }
-                    else
-                    {
-                        //users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-                        historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-                    }
+                    historyUsers = historyUsers.Where(a => a.Active && a.OfficeId == model.OfficeId);
                     var userItems = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,
@@ -149,14 +165,131 @@ namespace OceanEduSlide.Controllers
                         //Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
                         Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id).Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
                     });
-                    model.UserItems = userItems;
+                    model.UserItems = userItems.ToPagedList(pageNumber, 20);
                 }
+                return View(model);
             }
-            var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
+            if (TypeView == null)
+                TypeView = 1;
+            model.TypeView = TypeView;
+            //model.RevenueOffices = revenueOffices;
+            var officeItems = model.Offices.ToList().Select(a => new RevenueViewModel.OfficeItem
+            {
+                Office = a,
+                RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
+                RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+            });
 
-            ViewBag.WorkingWeeks = workingWeeks;
-            ViewBag.CurrentWeek = currentWeek;
-            return View(model);
+            //var userItems2 = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
+            //{
+            //    HistoryUser = a,
+            //    //User = a.User,
+            //    RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
+            //    RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+            //    RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
+            //    RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+            //    RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
+            //    //Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
+            //    Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id).Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
+            //});
+            if (TypeView == 2)
+            {
+                // Bước 1: Xác định phân trang
+                int pageSize = 20;
+
+                // Bước 2: Truy vấn danh sách người dùng đầy đủ
+                var listHistoryUsers = historyUsers
+                    .ToList();
+
+                // Bước 3: Phân trang danh sách người dùng
+                var pagedHistoryUsers = historyUsers
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                // Bước 4: Lấy danh sách userId cần xử lý
+                var userIds = pagedHistoryUsers.Select(u => u.Id).ToList();
+
+                // Bước 5: Truy vấn dữ liệu liên quan theo userIds
+                var revenueMonthsList = _unitOfWork.RevenueUser_MonthRepository
+                    .GetQuery(p => userIds.Contains(p.HistoryUserId ?? 0) && p.Month == model.Month && p.Year == model.Year)
+                    .AsNoTracking()
+                    .ToList();
+
+                var revenueMonthDict = revenueMonthsList
+                    .Where(p => p.HistoryUserId.HasValue)
+                    .GroupBy(p => p.HistoryUserId.Value)
+                    .ToDictionary(g => g.Key, g => g.FirstOrDefault());
+
+                var revenueMonthBMsDict = _unitOfWork.RevenueUser_Month_BMRepository
+                    .GetQuery(p => userIds.Contains(p.HistoryUserId ?? 0) && p.Month == model.Month && p.Year == model.Year)
+                    .AsNoTracking()
+                    .GroupBy(p => p.HistoryUserId)
+                    .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).ToList());
+
+                var revenueMonthBMRealsDict = _unitOfWork.RevenueUser_Month_BM_realRepository
+                    .GetQuery(p => userIds.Contains(p.HistoryUserId ?? 0) && p.Month == model.Month && p.Year == model.Year)
+                    .AsNoTracking()
+                    .GroupBy(p => p.HistoryUserId)
+                    .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).FirstOrDefault());
+
+                var revenueWeeksDict = _unitOfWork.RevenueUser_WeekRepository
+                    .GetQuery(p => userIds.Contains(p.HistoryUserId ?? 0) && p.Month == model.Month && p.Year == model.Year)
+                    .AsNoTracking()
+                    .GroupBy(p => p.HistoryUserId)
+                    .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).ToList());
+
+                var revenueWeekRealsDict = _unitOfWork.RevenueUser_Week_RealRepository
+                    .GetQuery(p => userIds.Contains(p.HistoryUserId ?? 0) && p.Month == model.Month && p.Year == model.Year)
+                    .AsNoTracking()
+                    .GroupBy(p => p.HistoryUserId)
+                    .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).ToList());
+
+                var debtsList = _unitOfWork.DebtRepository
+                    .GetQuery(q => q.Active && userIds.Contains(q.UserId) &&
+                        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
+                        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+                    .AsNoTracking()
+                    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
+                    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
+                    .ToList();
+
+                var debtDict = debtsList
+                    .GroupBy(q => q.UserId)
+                    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0);
+
+                // Bước 6: Tạo danh sách kết quả
+                var userItems = new List<RevenueViewModel.UserItem>();
+
+                foreach (var a in pagedHistoryUsers)
+                {
+                    revenueMonthDict.TryGetValue(a.Id, out var month);
+                    revenueMonthBMsDict.TryGetValue(a.Id, out var bmList);
+                    revenueMonthBMRealsDict.TryGetValue(a.Id, out var bmReal);
+                    revenueWeeksDict.TryGetValue(a.Id, out var weekList);
+                    revenueWeekRealsDict.TryGetValue(a.Id, out var weekRealList);
+                    debtDict.TryGetValue(a.UserId, out var debt);
+
+                    userItems.Add(new RevenueViewModel.UserItem
+                    {
+                        HistoryUser = a,
+                        RevenueUser_Month = month,
+                        RevenueUser_Month_BMs = bmList ?? new List<RevenueUser_Month_BM>(),
+                        RevenueUser_Month_BM_real = bmReal,
+                        RevenueUser_Weeks = weekList ?? new List<RevenueUser_Week>(),
+                        RevenueUser_Week_Reals = weekRealList ?? new List<RevenueUser_Week_Real>(),
+                        Debt = debt
+                    });
+                }
+
+                // Bước 7: Gán vào model với phân trang
+                model.UserItems = new StaticPagedList<RevenueViewModel.UserItem>(
+                    userItems, pageNumber, pageSize, listHistoryUsers.Count
+                );
+            }
+
+            model.OfficeItems = officeItems;
+            return View("RevenueManager", model);
         }
         public ActionResult ChangeDataRevenueMonth(int month)
         {

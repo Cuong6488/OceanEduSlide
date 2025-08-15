@@ -1487,6 +1487,7 @@
     <Content Include="Views\Home\BackToSchool.cshtml" />
     <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
     <Content Include="Views\Vcms\ListHistoryUser.cshtml" />
+    <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
