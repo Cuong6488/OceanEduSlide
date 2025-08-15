@@ -557,7 +557,7 @@ namespace OceanEduSlide.Controllers
             if (model.OfficeId != null)
             {
                 //filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
-                filteredHistoryUsers.Where(a => a.OfficeId == model.OfficeId);
+                filteredHistoryUsers = filteredHistoryUsers.Where(a => a.OfficeId == model.OfficeId);
             }
 
             // LẤY ReportData CHỈ CHO CategoryId == 88 (dùng để sort user)

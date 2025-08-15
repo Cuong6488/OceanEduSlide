@@ -921,18 +921,22 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        if (statusUser == StatusUser.Active && (user.OfficeId != office?.Id || user.TypeUser != type))
+                        if (statusUser == StatusUser.Active)
                         {
-                            user.OfficeId = office?.Id;
-                            user.TypeUser = type;
                             user.Active = true;
-                            try
+                            user.SaleKit = true;
+                            if (user.OfficeId != office?.Id || user.TypeUser != type)
                             {
-                                _unitOfWork.Save();
-                            }
-                            catch (Exception e)
-                            {
-                                continue;
+                                user.OfficeId = office?.Id;
+                                user.TypeUser = type;
+                                try
+                                {
+                                    _unitOfWork.Save();
+                                }
+                                catch (Exception e)
+                                {
+                                    continue;
+                                }
                             }
                         }
                         else if (statusUser == StatusUser.InActive)
