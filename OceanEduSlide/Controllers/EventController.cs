@@ -30,7 +30,7 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, string Result = "")
+        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, int? TypeEvent, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -52,6 +52,8 @@ namespace OceanEduSlide.Controllers
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
             };
+            //var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate));
+
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
@@ -100,7 +102,8 @@ namespace OceanEduSlide.Controllers
                     model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.TargetBM != 0 && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
                 }
             }
-            return View(model);
+
+                return View(model);
         }
         public ActionResult UpdatePercent(int userId)
         {
