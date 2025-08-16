@@ -21,10 +21,11 @@ using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
 {
-    [Authorize]
+    [Authorize,AdminRoleFilters]
     public class ReportController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private string Fullname => RouteData.Values["Fullname"].ToString();
 
         public ActionResult Report()
         {
@@ -302,6 +303,21 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("File", @"This file format is not supported");
                     return View();
                 }
+                var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var logImport = new Models.LogImport
+                {
+                    Admin = Fullname,
+                    Name = Path.GetFileName(file.FileName),
+                    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                    TypeImport = TypeImport.Type1,
+                };
+                _unitOfWork.LogImportRepository.Insert(logImport);
+                _unitOfWork.Save();
+                // Lưu tệp tài liệu
+                var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                file.SaveAs(filePath);
                 var result = reader.AsDataSet();
                 reader.Close();
 

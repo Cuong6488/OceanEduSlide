@@ -22,11 +22,11 @@ using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
 {
-    [Authorize]
-    [ForcePasswordChangeFilter]
+    [Authorize, AdminRoleFilters]
     public class RevenueController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private string Fullname => RouteData.Values["Fullname"].ToString();
 
         public ActionResult RankOffice()
         {
@@ -110,6 +110,7 @@ namespace OceanEduSlide.Controllers
             var file = Request.Files["TargetOfficeFile"];
             if (file != null && file.ContentLength > 0)
             {
+                
                 var stream = file.InputStream;
                 IExcelDataReader reader;
                 if (file.FileName.EndsWith(".xls"))
@@ -125,7 +126,21 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("File", @"This file format is not supported");
                     return View();
                 }
-
+                var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var logImport = new Models.LogImport
+                {
+                    Admin = Fullname,
+                    Name = Path.GetFileName(file.FileName),
+                    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                    TypeImport = TypeImport.Type2,
+                };
+                _unitOfWork.LogImportRepository.Insert(logImport);
+                _unitOfWork.Save();
+                // Lưu tệp tài liệu
+                var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                file.SaveAs(filePath);
                 var result = reader.AsDataSet();
                 reader.Close();
 
@@ -385,15 +400,64 @@ namespace OceanEduSlide.Controllers
                 if (listRevenue.Any())
                     _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
                 _unitOfWork.Save();
+                //var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                //HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                //var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                //var logImport = new Models.LogImport
+                //{
+                //    Admin = Fullname,
+                //    Name = Path.GetFileName(file.FileName),
+                //    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                //    TypeImport = TypeImport.Type2,
+                //};
+                //_unitOfWork.LogImportRepository.Insert(logImport);
+                //_unitOfWork.Save();
+                //// Lưu tệp tài liệu
+                //var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                //file.SaveAs(filePath);
             }
 
             return RedirectToAction("Index", "Vcms");
         }
 
-        public ActionResult TargetUser()
+        public PartialViewResult ListFile(int type)
         {
-            return View();
+            var typeName = "";
+
+            switch (type)
+            {
+                case 0:
+                    typeName = "Báo cáo TH CN - NV";
+                    break;
+                case 1:
+                    typeName = "Bhỉ tiêu CN - NV - DS hoàn thành thực tế tuần";
+                    break;
+                case 2:
+                    typeName = "Vùng";
+                    break;
+                case 3:
+                    typeName = "Chi nhánh";
+                    break;
+                case 4:
+                    typeName = "Tài khoản nhân sự";
+                    break;
+                case 5:
+                    typeName = "Nhân sự theo tháng";
+                    break;
+                case 6:
+                    typeName = "QĐ ưu đãi";
+                    break;
+                default:
+                    break;
+            }
+            ViewBag.TypeName = typeName;
+            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type);
+            return PartialView(logImport);
         }
+        //public ActionResult TargetUser()
+        //{
+        //    return View();
+        //}
         [HttpPost]
        
         public ActionResult TargetUser(FormCollection fc)
@@ -474,11 +538,10 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("Index", "Vcms");
         }
 
-
-        public ActionResult RevenueUserWeek_Real()
-        {
-            return View();
-        }
+        //public ActionResult RevenueUserWeek_Real()
+        //{
+        //    return View();
+        //}
         [HttpPost]
         public ActionResult RevenueUserWeek_Real(FormCollection fc)
         {

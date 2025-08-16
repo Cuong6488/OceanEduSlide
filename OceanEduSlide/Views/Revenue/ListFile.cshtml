@@ -1,0 +1,39 @@
+﻿@model IEnumerable<OceanEduSlide.Models.LogImport>
+@{
+//Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link href="~/Content/adminSite.css" rel="stylesheet" />
+<div class="box_content" style="margin-top:50px">
+    <h2>Lịch sử cập nhật @ViewBag.TypeName </h2>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="text-align:center">Thời gian cập nhật</th>
+                <th style="text-align:center">Loại file</th>
+                <th style="text-align: center">Tên file gốc</th>
+                <th style="text-align: center">Người cập nhật</th>
+                <th style="width:130px"></th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(a => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.TypeImport)
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Admin
+                    </td>
+                    <td>
+                        <a href="@Path.Combine("/documents/logimport/",item.File)" download>Download</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

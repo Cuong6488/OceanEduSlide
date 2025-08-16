@@ -34,6 +34,9 @@ namespace OceanEduSlide.DAL
         private GenericRepository<CallLog> _callLogRepository;
         private GenericRepository<ProposalType> _proposalTypeRepository;
         private GenericRepository<HistoryUser> _historyUserRepository;
+        private GenericRepository<LogImport> _logImportRepository;
+        public GenericRepository<LogImport> LogImportRepository =>
+           _logImportRepository ?? (_logImportRepository = new GenericRepository<LogImport>(_context));
         public GenericRepository<CallLog> CallLogRepository =>
            _callLogRepository ?? (_callLogRepository = new GenericRepository<CallLog>(_context));
         public GenericRepository<HistoryUser> HistoryUserRepository =>
