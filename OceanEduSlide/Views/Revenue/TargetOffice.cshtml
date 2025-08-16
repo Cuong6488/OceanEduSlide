@@ -6,7 +6,7 @@
 <h2 class="mt-0">@ViewBag.Title</h2>
 @*<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>*@
 <a class="btn quick-link"data-fancybox data-type="iframe" data-src="@Url.Action("ListFile", new {type = 1})" href="javascript:;">
-<i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>
+<i class="far fa-list me-1"></i> Lịch sử cập nhật</a>
 
 <div class="box_content">
     @using (Html.BeginForm("TargetOffice", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -27,6 +27,3 @@
         </table>
     }
 </div>
-@*<a href="@Url.Content("~/documents/logimport/2025/08/16/133997913537990474.xlsx")" download>
-    Tải file
-</a>*@

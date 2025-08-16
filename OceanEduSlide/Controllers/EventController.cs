@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Windows.Media;
 using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
@@ -30,7 +31,7 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, string Result = "")
+        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, int? TypeView, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -112,21 +113,54 @@ namespace OceanEduSlide.Controllers
             //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
             //model.Events = latestEventsPerGroup;
             // Chọn bản ghi mới nhất cho mỗi nhóm
-            var latestEventsPerGroup = events
-                .GroupBy(e => new { e.OfficeId, e.DayofWeek, e.TypeEvent }) // Group theo key phù hợp
-                .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault()) // Lấy bản ghi mới nhất
-                .ToList();
+            if (TypeView >= 1 && TypeView <= 4)
+            {
+                events = events.Where(a => (int)a.TypeEvent == TypeView);
+            }
+            if (TypeView != 5)
+            {
+                var latestEventsPerGroup = events
+                    .GroupBy(e => new { e.OfficeId, e.DayofWeek, e.TypeEvent }) // Group theo key phù hợp
+                    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault()) // Lấy bản ghi mới nhất
+                    .ToList();
 
-            model.Events = latestEventsPerGroup;
-            var eventDict = model.Events
-    .GroupBy(e => $"{e.OfficeId}_{(int)e.DayofWeek}_{(int)e.TypeEvent}")
-    .ToDictionary(g => g.Key, g => g.First());
+                model.Events = latestEventsPerGroup;
+                var eventDict = model.Events
+        .GroupBy(e => $"{e.OfficeId}_{(int)e.DayofWeek}_{(int)e.TypeEvent}")
+        .ToDictionary(g => g.Key, g => g.First());
 
-            ViewBag.EventDict = eventDict;
-
-
+                ViewBag.EventDict = eventDict;
+            }
+            model.TypeView = TypeView;
+            var allRevenues = GetAllRevenues(model.Week ?? 0, model.Month ?? 0, model.Year ?? 0);
+            ViewBag.AllRevenues = allRevenues;
             return View("EventManager", model);
         }
+        public List<RevenueUser_DayOfWeek> GetAllRevenues(int week, int month, int year)
+        {
+            var query = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a =>
+                a.HistoryUserId != null && a.TargetBM != null &&
+                a.Month == month &&
+                a.Year == year &&
+                (int)a.WeekNumber == week);
+
+            // Lấy bản ghi mới nhất theo CreateDate cho từng HistoryUserId, DayOfWeek
+            var grouped = query
+                .GroupBy(a => new
+                {
+                    a.Year,
+                    a.Month,
+                    a.HistoryUserId,
+                    a.WeekNumber,
+                    a.DayofWeek
+                })
+                .Select(g => g.OrderByDescending(x => x.CreateDate).FirstOrDefault())
+                .ToList();
+
+            return grouped;
+
+        }
+
         public ActionResult UpdatePercent(int userId)
         {
 

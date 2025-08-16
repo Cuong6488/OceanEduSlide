@@ -5,6 +5,9 @@
 }
 <h2 class="mt-0">Thêm mới chi nhánh</h2>
 <a class="btn quick-link" href="@Url.Action("ListOffice")"><i class="far fa-list me-1"></i> Danh sách chi nhánh</a>
+<a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile","Revenue", new {type = 3})" href="javascript:;">
+    <i class="far fa-list me-1"></i> Lịch sử cập nhật
+</a>
 <div class="box_content">
     @using (Html.BeginForm("InsertOfficeExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {

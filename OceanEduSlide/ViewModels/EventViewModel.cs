@@ -20,6 +20,7 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public int? UserType { get; set; }
+        public int? TypeView { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
@@ -52,18 +53,6 @@ namespace OceanEduSlide.ViewModels
         {
             using (var _unitOfWork = new UnitOfWork())
             {
-                //var query = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a =>
-                //    a.HistoryUserId != null &&
-                //    a.HistoryUser.User.OfficeId == officeId &&
-                //    a.Month == month &&
-                //    a.Year == year &&
-                //    (int)a.WeekNumber == week &&
-                //    (int)a.DayofWeek == dayOfWeek);
-
-                //// Dùng nullable decimal để tránh lỗi ép kiểu
-                //decimal? total = query.Sum(a => a.TargetBM);
-
-                //return total ?? 0; // Trả về 0 nếu null
                 var query = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a =>
     a.HistoryUserId != null && a.TargetBM != null &&
     a.HistoryUser.User.OfficeId == officeId &&
@@ -83,12 +72,6 @@ namespace OceanEduSlide.ViewModels
                         a.DayofWeek
                     })
                     .Select(g => g.OrderByDescending(x => x.CreateDate).FirstOrDefault()); // Lấy bản ghi đầu tiên theo CreateDate
-                var g2 = grouped.ToList();
-                    // Tính tổng TargetBM từ các bản ghi đã chọn
-                    if(officeId == 1148)
-                {
-
-                }
                     decimal? total = grouped.Sum(a => a.TargetBM);
 
                 return total ?? 0;

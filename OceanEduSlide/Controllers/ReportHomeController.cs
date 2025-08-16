@@ -492,17 +492,26 @@ namespace OceanEduSlide.Controllers
             //        a.TypeUser != TypeUser.ASM &&
             //        a.OfficeId != null,
             //    q => q.OrderBy(a => a.OfficeId)).ToList();
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-                               a.Active && a.Month == selectedMonth && a.Year == selectedYear && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
-                               a.TypeUser != TypeUser.HO &&
-                               a.TypeUser != TypeUser.CV &&
-                               a.TypeUser != TypeUser.PKT &&
-                               a.TypeUser != TypeUser.ASM &&
-                               a.OfficeId != null,
-                           q => q.OrderBy(a => a.OfficeId)).ToList();
-
+            //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
+            //                   a.Active && a.Month == selectedMonth && a.Year == selectedYear && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
+            //                   a.TypeUser != TypeUser.HO &&
+            //                   a.TypeUser != TypeUser.CV &&
+            //                   a.TypeUser != TypeUser.PKT &&
+            //                   a.TypeUser != TypeUser.ASM &&
+            //                   a.OfficeId != null,
+            //               q => q.OrderBy(a => a.OfficeId));
+            var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a =>
+    a.Active &&
+    a.Month == selectedMonth &&
+    a.Year == selectedYear &&
+    (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
+    a.TypeUser != TypeUser.HO &&
+    a.TypeUser != TypeUser.CV &&
+    a.TypeUser != TypeUser.PKT &&
+    a.TypeUser != TypeUser.ASM &&
+    a.OfficeId != null);
             //IEnumerable<User> filteredUsers = users;
-            IEnumerable<HistoryUser> filteredHistoryUsers = historyUsers;
+            //IEnumerable<HistoryUser> filteredHistoryUsers = historyUsers;
 
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
             var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -527,7 +536,7 @@ namespace OceanEduSlide.Controllers
                 model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
                 //filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
+                historyQuery = historyQuery.Where(a => a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
             }
             else
             {
@@ -537,13 +546,13 @@ namespace OceanEduSlide.Controllers
                 {
                     model.Offices = offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
                     //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
-                    filteredHistoryUsers = filteredHistoryUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                    historyQuery = historyQuery.Where(a => a.OfficeId != null && User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
                 }
                 else
                 {
                     model.OfficeId = User.OfficeId;
                     //filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
-                    filteredHistoryUsers = filteredHistoryUsers.Where(a => a.OfficeId == User.OfficeId);
+                    historyQuery = historyQuery.Where(a => a.OfficeId == User.OfficeId);
                 }
             }
 
@@ -551,14 +560,15 @@ namespace OceanEduSlide.Controllers
             {
                 model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
                 //filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => a.Office.ZoneId == model.ZoneId);
+                historyQuery = historyQuery.Where(a => a.Office.ZoneId == model.ZoneId);
             }
 
             if (model.OfficeId != null)
             {
                 //filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => a.OfficeId == model.OfficeId);
+                historyQuery = historyQuery.Where(a => a.OfficeId == model.OfficeId);
             }
+            IEnumerable<HistoryUser> filteredHistoryUsers = historyQuery.OrderBy(a => a.OfficeId).ToList();
 
             // LẤY ReportData CHỈ CHO CategoryId == 88 (dùng để sort user)
             //var userIds = filteredUsers.Select(u => u.Id).ToList();

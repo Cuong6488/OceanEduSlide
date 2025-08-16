@@ -93,7 +93,7 @@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
                     <tr>
-                        <th style="min-width:180px;">Loại hoạt động</th>
+                        <th class="sticky-left" style="min-width:180px;">Loại hoạt động</th>
                         @if (ViewBag.WorkingWeeks != Model.Week)
                         {
                             for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
@@ -115,7 +115,7 @@
                         for (int j = 1; j <= 4; j++)
                         {
                             <tr data-event="@j">
-                                <td class="text-start px-2">
+                                <td class="text-start px-2 sticky-left">
                                     @switch (j)
                                     {
                                         case 1:
@@ -236,7 +236,7 @@
                             </tr>
                         }
                         <tr>
-                            <td class="text-start px-2">Doanh số tuyển sinh</td>
+                            <td class="text-start px-2 sticky-left">Doanh số tuyển sinh</td>
                             @if (ViewBag.WorkingWeeks != Model.Week)
                             {
                                 for (int i = 9 - ViewBag.DayOfWeeks; i <= 8; i++)
@@ -262,7 +262,7 @@
                             foreach (var item in Model.UserItems)
                             {
                                 <tr>
-                                    <td class="text-start px-2">
+                                    <td class="text-start px-2 sticky-left">
                                         @item.HistoryUser.User.Fullname - @Html.DisplayFor(a => item.HistoryUser.TypeUser)  <br /> @item.HistoryUser.User.MaNhanVien (@Html.DisplayFor(a => item.HistoryUser.Status))
                                     </td>
                                     @if (ViewBag.WorkingWeeks != Model.Week)
@@ -431,7 +431,7 @@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
                     <tr>
-                        <th rowspan="2" class="col-w150">Họ tên nhân sự</th>
+                        <th rowspan="2" class="col-w150 sticky-left">Họ tên nhân sự</th>
                         <th rowspan="2" style="width: 70px">Chức vụ</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
 
@@ -466,7 +466,7 @@
                         foreach (var item in Model.UserItems)
                         {
                             <tr data-id="@item.HistoryUser.Id">
-                                <td class="text-start px-2">
+                                <td class="text-start px-2 sticky-left">
                                     @item.HistoryUser.User.Fullname <br />(@Html.DisplayFor(a => item.HistoryUser.Status))
                                 </td>
                                 <td>
