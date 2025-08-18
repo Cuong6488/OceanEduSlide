@@ -787,8 +787,6 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult InsertHistoryUser()
         {
-            if (Role != RoleAdmin.Admin)
-                return RedirectToAction("Index", new { roll = "NoPermisstion" });
             return View();
         }
         [HttpPost]

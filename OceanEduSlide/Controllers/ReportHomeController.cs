@@ -831,8 +831,8 @@ namespace OceanEduSlide.Controllers
                 }).ToList();
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
-                var users = _unitOfWork.UserRepository.GetQuery().Where(a => historyUsers.Any(h => h.UserId == a.Id &&
-                                      h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate))).ToList();
+                var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
+                    q => q.OrderBy(a => a.TypeUser)).ToList();
                 var userItems = users.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);

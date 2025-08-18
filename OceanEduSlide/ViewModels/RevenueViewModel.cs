@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -105,5 +106,27 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<RevenueOffice_BM> Revenues { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+    }
+
+    public class ListFileAllViewModel
+    {
+        public PagedList.IPagedList<LogImport> LogImports { get; set; }
+        public int? TypeFile { get; set; }
+        public SelectList SelectGroup { get; set; }
+        public ListFileAllViewModel()
+        {
+            var listgroup = new Dictionary<int, string>
+            {
+                { 0, "Báo cáo TH CN - NV" },
+                { 1, "Chỉ tiêu CN - NV - DS hoàn thành thực tế tuần" },
+                { 2, "Vùng" },
+                { 3, "Chi nhánh" },
+                { 4, "Tài khoản nhân sự" },
+                { 5, "Nhân sự theo tháng" },
+                { 6, "QĐ ưu đãi" },
+                { 7, "Quy định chung/ QĐ PTS" },
+            };
+            SelectGroup = new SelectList(listgroup, "Key", "Value");
+        }
     }
 }

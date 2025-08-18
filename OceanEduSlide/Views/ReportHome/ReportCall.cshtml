@@ -4,6 +4,11 @@
 @model ListCallViewModel
 @{
     ViewBag.Title = "Thống kê cuộc gọi";
+    Office office = null;
+    if (Model.OfficeId != null)
+    {
+        office = Model.Offices.FirstOrDefault(a => a.Id == Model.OfficeId);
+    }
 }
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
@@ -57,6 +62,7 @@
                     <th rowspan="2" class="col-w150 text-start px-2">Chi nhánh</th>
                     <th rowspan="2" class="text-start px-2">Mã nhân sự</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Họ tên nhân sự</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">Vị trí</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Trạng thái</th>
                     <th>Trên 2 phút</th>
                     <th>Trên 1,5 phút</th>
@@ -86,9 +92,12 @@
                 @foreach (var item in Model.UserItems)
                 {
                     <tr>
-                        <td class="text-start px-2">@item.User.Office.ShortName</td>
+                        @*
+                            <td class="text-start px-2">@(item.User.Office?.ShortName)</td>*@
+                        <td class="text-start px-2">@(office == null? item.User.Office?.ShortName:office.ShortName)</td>
                         <td class="text-start px-2">@item.User.MaNhanVien</td>
                         <td class="text-start px-2">@item.User.Fullname</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.User.TypeUser)</td>
                         <td class="text-start px-2">
                             @if (item.User.OfficeId != Model.OfficeId || item.User.Active == false)
                             {

@@ -1495,6 +1495,7 @@
     <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
     <Content Include="Views\Event\EventManager.cshtml" />
     <Content Include="Views\Revenue\ListFile.cshtml" />
+    <Content Include="Views\Revenue\ListFileALl.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

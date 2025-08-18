@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -76,10 +77,10 @@ namespace OceanEduSlide.Controllers
                     if (string.IsNullOrEmpty(ptht)) continue;
                     var dsht = tbl.Rows[i][5].ToString().Trim();
                     if (string.IsNullOrEmpty(dsht)) continue;
-                    var ptdt = tbl.Rows[i][6].ToString().Trim().Replace("%", "");
-                    if (string.IsNullOrEmpty(ptdt)) continue;
-                    var dsdt = tbl.Rows[i][7].ToString().Trim();
-                    if (string.IsNullOrEmpty(dsdt)) continue;
+                    //var ptdt = tbl.Rows[i][6].ToString().Trim().Replace("%", "");
+                    //if (string.IsNullOrEmpty(ptdt)) continue;
+                    //var dsdt = tbl.Rows[i][7].ToString().Trim();
+                    //if (string.IsNullOrEmpty(dsdt)) continue;
                     var rank = new RankOffice
                     {
                         OfficeId = office.Id,
@@ -88,9 +89,9 @@ namespace OceanEduSlide.Controllers
                         TopDT = topdt,
                         TopHT = topht,
                         DSHT = dsht,
-                        DSDT = dsdt,
+                        //DSDT = dsdt,
                         PTHT = ptht,
-                        PTHTDT = ptdt,
+                        //PTHTDT = ptdt,
                         Active = true,
                     };
                     _unitOfWork.RankOfficeRepository.Insert(rank);
@@ -451,8 +452,24 @@ namespace OceanEduSlide.Controllers
                     break;
             }
             ViewBag.TypeName = typeName;
-            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type);
+            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month);
             return PartialView(logImport);
+        }
+        public ActionResult ListFileAll(int? page,int? type)
+        {
+            var pageNumber = page ?? 1;
+            const int pageSize = 20;
+            var files = _unitOfWork.LogImportRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate).ThenBy(a => a.TypeImport));
+            if (type != null)
+            {
+                files = files.Where(a => (int)a.TypeImport == type);
+            }
+            var model = new ListFileAllViewModel
+            {
+                LogImports = files.ToPagedList(pageNumber, pageSize),
+                TypeFile = type
+            };
+            return View(model);
         }
         //public ActionResult TargetUser()
         //{
