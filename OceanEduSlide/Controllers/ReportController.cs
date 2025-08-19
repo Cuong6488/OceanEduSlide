@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -492,7 +493,16 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == DateTime.Now.Year);
+                    var dayStart = tbl2.Rows[i][4].ToString().Trim().Replace("'", "");
+                    if (string.IsNullOrEmpty(dayStart))
+                        continue;
+                    var startDate = new DateTime();
+
+                    if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                        startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                    else
+                        continue;
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == DateTime.Now.Year && a.DayStart == startDate);
                     if (historyUser == null) continue;
                     int cChildSort = 1;
                     int group = 1;

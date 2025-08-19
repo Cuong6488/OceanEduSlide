@@ -1011,7 +1011,7 @@ namespace OceanEduSlide.Controllers
                     //HistoryUser historyUser = null;
                     //var historyUser = _unitOfWork.HistoryUserRepository
                     //    .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (a.OfficeId == null && office == null))).FirstOrDefault();
-                    var query = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type);
+                    var query = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && a.DayStart == startDate);
                     if (office != null)
                     {
                         query = query.Where(a => a.OfficeId == office.Id);
@@ -1026,7 +1026,7 @@ namespace OceanEduSlide.Controllers
                     if (historyUser != null)
                     {
                         historyUser.Status = statusUser;
-                        historyUser.DayStart = startDate;
+                        //historyUser.DayStart = startDate;
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
                         if (!string.IsNullOrEmpty(sort))

@@ -221,10 +221,6 @@ namespace OceanEduSlide.Controllers
                 for (var i = 1; i < tbl2.Rows.Count; i++)
                 {
                     var manhanvien = tbl2.Rows[i][2].ToString().Trim();
-                    if(manhanvien == "10183255")
-                    {
-
-                    }
                     var user = _unitOfWork.UserRepository
                         .GetQuery(a => a.MaNhanVien == manhanvien)
                         .FirstOrDefault();
@@ -263,6 +259,15 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
+                    var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
+                    if (string.IsNullOrEmpty(dayStart))
+                        continue;
+                    var startDate = new DateTime();
+
+                    if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                        startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                    else
+                        continue;
                     var monthStr = tbl2.Rows[i][20].ToString().Trim();
                     if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
 
@@ -271,7 +276,7 @@ namespace OceanEduSlide.Controllers
 
                     var targetStr = tbl2.Rows[i][12].ToString().Trim();
                     if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
-                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt && a.DayStart == startDate);
                     if (historyUser == null) continue;
                     var revenue = _unitOfWork.RevenueUser_MonthRepository
                         .GetQuery(a => a.UserId == user.Id && a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt)
