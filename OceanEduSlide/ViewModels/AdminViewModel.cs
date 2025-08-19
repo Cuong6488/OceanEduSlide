@@ -79,12 +79,18 @@ namespace OceanEduSlide.ViewModels
         public bool SaleKit { get; set; }
         [Display(Name = "Chi nhánh")]
         public int? OfficeId { get; set; }
+        [Display(Name = "Các chi nhánh")]
+        public string OfficeIds { get; set; }
+        [Display(Name = "Các chi nhánh")]
+        public string OfficeNames { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
         [Display(Name = "Phân quyền")]
         public TypeUser? TypeUser { get; set; }
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
+        public IEnumerable<Office> Offices { get; set; }
+        public List<int> CatIds { get; set; }
         public CreateUserViewModel()
         {
             Active = true;
@@ -118,6 +124,12 @@ namespace OceanEduSlide.ViewModels
         public TypeUser? TypeUser { get; set; }
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
+        public List<int> CatIds { get; set; }
+        [Display(Name = "Các chi nhánh")]
+        public string OfficeIds { get; set; }
+        [Display(Name = "Các chi nhánh")]
+        public string OfficeNames { get; set; }
+        public IEnumerable<Office> Offices { get; set; }
         public UpdateUserViewModel()
         {
             Active = true;

@@ -37,8 +37,6 @@ namespace OceanEduSlide.Controllers
         private string Fullname => RouteData.Values["Fullname"].ToString();
         public ConfigSite Config => (ConfigSite)HttpContext.Application["ConfigSite"];
 
-
-
         #region Admin
         public ActionResult Index(string roll = "")
         {
@@ -411,12 +409,13 @@ namespace OceanEduSlide.Controllers
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
                 //Users = Users,
             };
             return View(model);
         }
         [HttpPost]
-        public ActionResult CreateUser(CreateUserViewModel model)
+        public ActionResult CreateUser(CreateUserViewModel model, FormCollection fc)
         {
             if (ModelState.IsValid)
             {
@@ -438,6 +437,21 @@ namespace OceanEduSlide.Controllers
                 }
                 else
                 {
+                    var catIds = fc.GetValues("CatIDs");
+                    if (catIds != null)
+                    {
+                        foreach (var item in catIds)
+                        {
+                            model.OfficeIds += (item + ",");
+                            var office = _unitOfWork.OfficeRepository.GetById(int.Parse(item));
+                            if (office != null)
+                                model.OfficeNames += office.ShortCode + ",";
+                        }
+                        model.OfficeIds = "," + model.OfficeIds;
+                        model.OfficeNames = model.OfficeNames.Trim(',');
+
+                    }
+                    _unitOfWork.Save();
                     var m = new User
                     {
                         Password = HtmlHelpers.ComputeHash(model.Password, "SHA256", null),
@@ -449,6 +463,8 @@ namespace OceanEduSlide.Controllers
                         Active = model.Active,
                         SaleKit = model.SaleKit,
                         TypeUser = model.TypeUser,
+                        OfficeIds = model.OfficeIds,
+                        OfficeNames = model.OfficeNames,
                     };
                     _unitOfWork.UserRepository.Insert(m);
                     _unitOfWork.Save();
@@ -549,26 +565,57 @@ namespace OceanEduSlide.Controllers
             if (Role != RoleAdmin.Admin)
                 return RedirectToAction("Index", new { roll = "NoPermisstion" });
             var users = _unitOfWork.UserRepository.Get(z => z.Id == id);
+            var user = users.FirstOrDefault();
+            if (user == null)
+                return RedirectToAction("ListUser");
             var model = new UpdateUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = users,
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
             };
-            var zId = users.FirstOrDefault()?.ZoneId;
+
+            if (!string.IsNullOrEmpty(user.OfficeIds))
+            {
+                model.CatIds = user.OfficeIds
+                                        .Split(',')
+                                        .Select(x =>
+                                        {
+                                            int.TryParse(x, out int value);
+                                            return value;
+                                        })
+                                        .ToList();
+            }
+            model.OfficeIds = user.OfficeIds;
+            var zId = user.ZoneId;
             if (zId != null)
                 model.SelectOffices = OfficeSelectList(zId);
 
-            model.OfficeId = model.Users.FirstOrDefault()?.OfficeId ?? 0;
-            model.ZoneId = model.Users.FirstOrDefault()?.ZoneId ?? 0;
-            model.TypeUser = model.Users.FirstOrDefault()?.TypeUser ?? null;
+            model.OfficeId = user.OfficeId ?? 0;
+            model.ZoneId = user.ZoneId ?? 0;
+            model.TypeUser = user.TypeUser ?? null;
             return View(model);
         }
         [HttpPost]
-        public ActionResult UpdateUser(UpdateUserViewModel model)
+        public ActionResult UpdateUser(UpdateUserViewModel model, FormCollection fc)
         {
             if (ModelState.IsValid)
             {
+                var catIds = fc.GetValues("CatIDs");
+                if (catIds != null)
+                {
+                    foreach (var item in catIds)
+                    {
+                        model.OfficeIds += (item + ",");
+                        var office = _unitOfWork.OfficeRepository.GetById(int.Parse(item));
+                        if (office != null)
+                            model.OfficeNames += office.ShortCode + ",";
+                    }
+                    model.OfficeIds = "," + model.OfficeIds;
+                    model.OfficeNames = model.OfficeNames.Trim(',');
+
+                }
                 var user = _unitOfWork.UserRepository.GetQuery(z => z.Username == model.Username).FirstOrDefault();
                 if (user != null)
                 {
@@ -581,6 +628,8 @@ namespace OceanEduSlide.Controllers
                     user.TypeUser = model.TypeUser;
                     user.Fullname = model.Fullname;
                     user.MaNhanVien = model.MaNhanVien;
+                    user.OfficeIds = model.OfficeIds;
+                    user.OfficeNames = model.OfficeNames;
                     _unitOfWork.Save();
                     return RedirectToAction("ListUser", new { result = "update" });
                 }
@@ -598,6 +647,41 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
+        }
+        public ActionResult ChangeZoneIdsASM()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.ASM && a.ZoneId != null);
+            var zones = _unitOfWork.ZoneRepository.GetQuery();
+            foreach (var item in users)
+            {
+                var zone = zones.FirstOrDefault(a => a.Id == item.ZoneId);
+                if (!string.IsNullOrEmpty(zone?.ShortCode))
+                    item.ZoneIds = "," + zone.ShortCode + ",";
+            }
+            _unitOfWork.Save();
+            return Content("Chuyển ZoneIds thành công");
+        }
+        public ActionResult ChangeOfficeIdsUser()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => !string.IsNullOrEmpty(a.OfficeIds));
+            foreach (var item in users)
+            {
+                item.OfficeIds = null;
+            }
+            _unitOfWork.Save();
+            return Content("ChangeOfficeIdsUser null thành công");
+        }
+        public ActionResult ChangeOfficeIdsBM()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.BM && a.OfficeId != null);
+            var offices = _unitOfWork.OfficeRepository.GetQuery();
+            foreach (var item in users)
+            {
+                var office = offices.FirstOrDefault(a => a.Id == item.OfficeId);
+                item.OfficeIds = "," + office.Id + ",";
+            }
+            _unitOfWork.Save();
+            return Content("Chuyển OfficeIds thành công");
         }
         public ActionResult InsertUserExcel()
         {
@@ -659,19 +743,17 @@ namespace OceanEduSlide.Controllers
                     var username = tbl.Rows[i][4].ToString().Trim();
                     if (username == "") continue;
                     var user = users.Where(a => a.Username == username).FirstOrDefault();
-                    var password = tbl.Rows[i][5].ToString().Trim();
-                    if (password == "") continue;
-                    var password2 = HtmlHelpers.ComputeHash(password, "SHA256", null);
-
+                    //var password = tbl.Rows[i][5].ToString().Trim();
+                    //if (password == "") continue;
+                    var password2 = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
                     var fullname = tbl.Rows[i][6].ToString().Trim();
                     var maxnhanvien = tbl.Rows[i][7].ToString().Trim();
-
                     var phanquyen = tbl.Rows[i][9].ToString().Trim();
                     var zones = tbl.Rows[i][10].ToString().Trim();
                     var salekit = tbl.Rows[i][11].ToString().Trim();
                     if (user != null)
                     {
-                        user.Password = password2;
+                        //user.Password = password2;
                         user.Active = true;
                         user.OfficeId = office?.Id ?? null;
                         user.Fullname = fullname;
@@ -680,13 +762,14 @@ namespace OceanEduSlide.Controllers
                         {
                             case "ASM":
                                 user.TypeUser = TypeUser.ASM;
-                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zones).FirstOrDefault();
+                                user.ZoneIds = "," + zones + ",";
+                                var zonef = zones.Split(',')[0];
+                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
                                 if (z != null)
                                 {
                                     user.ZoneId = z.Id;
                                     user.Zone = z;
                                 }
-
                                 break;
                             case "GĐTS":
                                 user.TypeUser = TypeUser.HO;
@@ -695,6 +778,22 @@ namespace OceanEduSlide.Controllers
                                 user.TypeUser = TypeUser.EC;
                                 break;
                             case "BM":
+                                if (!string.IsNullOrEmpty(zones))
+                                {
+                                    user.OfficeIds = ",";
+                                    user.OfficeNames = "";
+                                    foreach (var item in zones.Split(','))
+                                    {
+                                        var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                        if (o != null)
+                                        {
+                                            user.OfficeIds += o.Id + ",";
+                                            user.OfficeNames += o.ShortCode + ",";
+                                        }
+                                    }
+                                    user.OfficeNames = user.OfficeNames.Trim(',');
+                                }
+
                                 user.TypeUser = TypeUser.BM;
                                 break;
                             case "BSA":
@@ -741,7 +840,9 @@ namespace OceanEduSlide.Controllers
                         {
                             case "ASM":
                                 user.TypeUser = TypeUser.ASM;
-                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zones).FirstOrDefault();
+                                user.ZoneIds = "," + zones + ",";
+                                var zonef = zones.Split(',')[0];
+                                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
                                 if (z != null)
                                 {
                                     user.ZoneId = z.Id;
@@ -756,6 +857,21 @@ namespace OceanEduSlide.Controllers
                                 user.TypeUser = TypeUser.EC;
                                 break;
                             case "BM":
+                                if (!string.IsNullOrEmpty(zones))
+                                {
+                                    user.OfficeIds = ",";
+                                    user.OfficeNames = "";
+                                    foreach (var item in zones.Split(','))
+                                    {
+                                        var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                        if (o != null)
+                                        {
+                                            user.OfficeIds += o.Id + ",";
+                                            user.OfficeNames += o.ShortCode + ",";
+                                        }
+                                    }
+                                    user.OfficeNames = user.OfficeNames.Trim(',');
+                                }
                                 user.TypeUser = TypeUser.BM;
                                 break;
                             case "BSA":
@@ -1661,7 +1777,7 @@ namespace OceanEduSlide.Controllers
             var model = new CreateZoneViewModel
             {
                 Zone = new Zone(),
-                Offices = _unitOfWork.OfficeRepository.Get()
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
                 //SelectOffice = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name")
             };
             return View(model);
@@ -1686,6 +1802,7 @@ namespace OceanEduSlide.Controllers
                 if (zone?.OfficeIds != null)
                 {
                     string[] a = zone.OfficeIds.Trim(',').Split(',');
+                    zone.ShortName = "";
                     foreach (var item in a)
                     {
                         int officeId = int.Parse(item.ToString());
@@ -1693,7 +1810,9 @@ namespace OceanEduSlide.Controllers
                         if (office != null)
                         {
                             office.ZoneId = zone.Id;
+                            zone.ShortName += "," + office.ShortCode;
                         }
+                        zone.ShortName = zone.ShortName.Trim(',');
                     }
                     _unitOfWork.Save();
                 }
@@ -1751,6 +1870,7 @@ namespace OceanEduSlide.Controllers
                         zone.OfficeIds = "," + zone.OfficeIds;
                     }
                     zone.Name = model.Zone.Name;
+                    zone.ShortCode = model.Zone.ShortCode;
                     zone.Active = model.Zone.Active;
                     _unitOfWork.Save();
                     string[] a = zone.OfficeIds.Trim(',').Split(',');
@@ -1768,7 +1888,7 @@ namespace OceanEduSlide.Controllers
                     zone.ShortName = zone.ShortName.Trim(',');
                     _unitOfWork.Save();
 
-                    return RedirectToAction("CreateZone", new { result = "add" });
+                    return RedirectToAction("CreateZone", new { result = "update" });
                 }
             }
             return HttpNotFound();

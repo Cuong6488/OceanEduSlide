@@ -22,15 +22,23 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Zone.ShortCode)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.EditorFor(model => model.Zone.ShortCode, new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.Zone.ShortCode)
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Zone.OfficeIds)</td>
                     <td class="form_text">
                         @*<select name="CatIDs" id="categorySelect" class="form_control" multiple="" style=" height: 200px;">
-                                @foreach (var item in Model.Offices)
-                                {
-                                    <option value="@item.Id">@item.Name</option>
-                                }
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
 
-                            </select>*@
+                </select>*@
                         <select name="CatIDs" id="categorySelect" class="form_control" multiple style="height: 200px;">
                             @foreach (var item in Model.Offices)
                             {

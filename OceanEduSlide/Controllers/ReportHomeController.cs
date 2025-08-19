@@ -829,7 +829,7 @@ namespace OceanEduSlide.Controllers
                     TotalOver30s = g.Count(x => x.BillSec >= 30),
                     Total = g.Count(),
                 }).ToList();
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active);
                 //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
                 var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
                     q => q.OrderBy(a => a.TypeUser)).ToList();

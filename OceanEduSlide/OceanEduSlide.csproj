@@ -564,6 +564,10 @@
     <Compile Include="Migrations\202508160314530_LogImport.Designer.cs">
       <DependentUpon>202508160314530_LogImport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508190901229_officeidsuser.cs" />
+    <Compile Include="Migrations\202508190901229_officeidsuser.Designer.cs">
+      <DependentUpon>202508190901229_officeidsuser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\HistoryUser.cs" />
@@ -1738,6 +1742,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508160314530_LogImport.resx">
       <DependentUpon>202508160314530_LogImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508190901229_officeidsuser.resx">
+      <DependentUpon>202508190901229_officeidsuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -3,6 +3,7 @@
     ViewBag.Title = "CreateUser";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+<link href="~/Content/select2.min.css" rel="stylesheet" />
 @if (ViewBag.Result == "add")
 {
     <div id="AlertBox" class="alert alert-success"><strong>Thêm mới user thành công</strong></div>}
@@ -65,6 +66,17 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.OfficeIds)</td>
+                    <td class="form_text">
+                        <select name="CatIDs" id="categorySelect" class="form_control" multiple="" style=" height: 200px;">
+                            @foreach (var item in Model.Offices)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.TypeUser)</td>
                     <td class="form_text">
                         @Html.EnumDropDownListFor(model => model.TypeUser, "Chọn phân quyền")
@@ -91,4 +103,17 @@
     }
 </div>
 @*<h2 class="mb-5">Danh sách User</h2>
-@Html.Action("ListUser", "Vcms")*@
+    @Html.Action("ListUser", "Vcms")*@
+@section Scripts {
+    <script src="~/Scripts/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#categorySelect').select2({
+                placeholder: 'Chọn các chi nhánh',
+                allowClear: true,
+                multiple: true
+            }).val(null).trigger('change');
+
+        });
+    </script>
+}

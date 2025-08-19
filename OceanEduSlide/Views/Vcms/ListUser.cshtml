@@ -69,6 +69,8 @@
                 <th>Họ và tên</th>
                 <th>Mã nhân viên</th>
                 <th>Chi nhánh</th>
+                <th>Các CN phụ trách</th>
+                <th>Các vùng quản lý (CV - ASM)</th>
                 <th>Phân quyền</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
                 @*<th>Face-Id</th>*@
@@ -93,10 +95,8 @@
 
                         }
                     </td>
-                    @*<td>
-                                <button type="button" class="btn btn-success" style="font-size:13px" onclick="checkBeforeRegister('@user.Id.ToString()', '@user.Username')">Đăng ký Face-Id</button>
-
-                        </td>*@
+                    <td>@user.OfficeNames</td>
+                    <td>@((user.ZoneIds??"").Trim(','))</td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
                     <td>@Html.CheckBoxFor(model => user.Active)</td>
                     <td>
