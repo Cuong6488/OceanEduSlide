@@ -24,6 +24,7 @@ namespace OceanEduSlide.Models
         public WeekNumber? WeekNumber { get; set; }
         public int Sort { get; set; } = 1;
         public bool Active { get; set; } = true;
+        public bool NewUser { get; set; }
         public virtual User User { get; set; }
         public virtual Office Office { get; set; }
     }

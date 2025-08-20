@@ -107,7 +107,6 @@ namespace OceanEduSlide.ViewModels
         public int Month { get; set; }
         public int Year { get; set; }
     }
-
     public class ListFileAllViewModel
     {
         public PagedList.IPagedList<LogImport> LogImports { get; set; }
@@ -128,5 +127,22 @@ namespace OceanEduSlide.ViewModels
             };
             SelectGroup = new SelectList(listgroup, "Key", "Value");
         }
+    }
+
+    public class InsertTargetGroupViewModel
+    {
+        [Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
+        public int Month { get; set; }
+        [Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
+        public int Year { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm A"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_A { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm B"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_B { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm C"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_C { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm D"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_D { get; set; }
+
     }
 }

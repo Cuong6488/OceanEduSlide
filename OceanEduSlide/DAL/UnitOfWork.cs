@@ -35,6 +35,15 @@ namespace OceanEduSlide.DAL
         private GenericRepository<ProposalType> _proposalTypeRepository;
         private GenericRepository<HistoryUser> _historyUserRepository;
         private GenericRepository<LogImport> _logImportRepository;
+        private GenericRepository<HistoryOffice> _historyOfficeRepository;
+        private GenericRepository<TargetGroup> _targetGroupRepository;
+        private GenericRepository<WorkingDay> _workingDayRepository;
+        public GenericRepository<WorkingDay> WorkingDayRepository =>
+           _workingDayRepository ?? (_workingDayRepository = new GenericRepository<WorkingDay>(_context));
+        public GenericRepository<TargetGroup> TargetGroupRepository =>
+           _targetGroupRepository ?? (_targetGroupRepository = new GenericRepository<TargetGroup>(_context));
+        public GenericRepository<HistoryOffice> HistoryOfficeRepository =>
+           _historyOfficeRepository ?? (_historyOfficeRepository = new GenericRepository<HistoryOffice>(_context));
         public GenericRepository<LogImport> LogImportRepository =>
            _logImportRepository ?? (_logImportRepository = new GenericRepository<LogImport>(_context));
         public GenericRepository<CallLog> CallLogRepository =>

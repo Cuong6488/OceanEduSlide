@@ -1,0 +1,73 @@
+﻿@model OceanEduSlide.ViewModels.InsertTargetGroupViewModel
+@{
+    ViewBag.Title = "Thêm chỉ tiêu NVĐT theo tháng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="m-0 mb-3">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("ListTargetGroup")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu NVĐT</a>
+<div class="box_content">
+    @using (Html.BeginForm("CreateTargetGroup", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tr>
+                <td class="form_name">Năm</td>
+                <td class="form_text">
+                    <select name="Year">
+                        @for (int i = 2025; i <= DateTime.Now.Year + 1; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">Tháng</td>
+                <td class="form_text">
+                    <select name="Month">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_A) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_A, new { htmlAttributes = new { @class = "input-number w300" } })</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_B) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_B)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_C) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_C)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_D) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_D)</td>
+            </tr>
+
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Thêm mới" />
+                </td>
+            </tr>
+
+        </table>
+    }
+</div>
+<script src="~/Scripts/jquery.maskMoney.min.js"></script>
+<script>
+    $(function () {
+        $(".input-number").maskMoney({
+            precision: 0,
+            thousands: ','
+        });
+    });
+</script>

@@ -30,6 +30,9 @@ namespace OceanEduSlide.Models
         [Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual Office Office { get; set; }
+        //[Display(Name = "Chi nhánh theo tháng")]
+        //public int? HistoryOfficeId { get; set; }
+        //public virtual HistoryOffice HistoryOffice { get; set; }
         public RevenueOffice()
         {
             CreateDate = DateTime.Now;

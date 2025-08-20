@@ -24,7 +24,6 @@ using static System.Data.Entity.Infrastructure.Design.Executor;
 using System.Data.Entity;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace OceanEduSlide.Controllers
 {
@@ -775,6 +774,21 @@ namespace OceanEduSlide.Controllers
                                 user.TypeUser = TypeUser.HO;
                                 break;
                             case "EC":
+                                if (!string.IsNullOrEmpty(zones))
+                                {
+                                    user.OfficeIds = ",";
+                                    user.OfficeNames = "";
+                                    foreach (var item in zones.Split(','))
+                                    {
+                                        var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                        if (o != null)
+                                        {
+                                            user.OfficeIds += o.Id + ",";
+                                            user.OfficeNames += o.ShortCode + ",";
+                                        }
+                                    }
+                                    user.OfficeNames = user.OfficeNames.Trim(',');
+                                }
                                 user.TypeUser = TypeUser.EC;
                                 break;
                             case "BM":
@@ -854,6 +868,21 @@ namespace OceanEduSlide.Controllers
                                 user.TypeUser = TypeUser.HO;
                                 break;
                             case "EC":
+                                if (!string.IsNullOrEmpty(zones))
+                                {
+                                    user.OfficeIds = ",";
+                                    user.OfficeNames = "";
+                                    foreach (var item in zones.Split(','))
+                                    {
+                                        var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                        if (o != null)
+                                        {
+                                            user.OfficeIds += o.Id + ",";
+                                            user.OfficeNames += o.ShortCode + ",";
+                                        }
+                                    }
+                                    user.OfficeNames = user.OfficeNames.Trim(',');
+                                }
                                 user.TypeUser = TypeUser.EC;
                                 break;
                             case "BM":

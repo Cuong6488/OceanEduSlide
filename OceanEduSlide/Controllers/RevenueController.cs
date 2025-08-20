@@ -694,6 +694,12 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
+
+        public ActionResult CreateTargetGroup(string result = "")
+        {
+            ViewBag.Result = result;
+            return View();
+        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();
