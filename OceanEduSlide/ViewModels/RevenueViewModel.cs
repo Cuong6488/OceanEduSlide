@@ -120,6 +120,7 @@ namespace OceanEduSlide.ViewModels
                 { 1, "Chỉ tiêu CN - NV - DS hoàn thành thực tế tuần" },
                 { 2, "Vùng" },
                 { 3, "Chi nhánh" },
+                { 8, "Chi nhánh theo tháng" },
                 { 4, "Tài khoản nhân sự" },
                 { 5, "Nhân sự theo tháng" },
                 { 6, "QĐ ưu đãi" },
@@ -131,6 +132,7 @@ namespace OceanEduSlide.ViewModels
 
     public class InsertTargetGroupViewModel
     {
+        public int? TargetGroupId { get; set; }
         [Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
         public int Month { get; set; }
         [Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
@@ -144,5 +146,12 @@ namespace OceanEduSlide.ViewModels
         [Display(Name = "Chỉ tiêu NVĐT nhóm D"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public string Target_D { get; set; }
 
+    }
+
+    public class ListTargetGroupViewModel
+    {
+        public PagedList.IPagedList<TargetGroup> TargetGroups { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
     }
 }

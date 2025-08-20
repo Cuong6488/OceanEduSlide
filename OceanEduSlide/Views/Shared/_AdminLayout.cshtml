@@ -71,7 +71,7 @@
                         </div>
                     </li>
                     <li data-id="2">
-                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Tài khoản chi nhánh</span><i class="fas fa-caret-down"></i></a>
+                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Tài khoản người dùng</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Thêm mới user", "CreateUser", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Danh sách user", "ListUser", "Vcms", null, new { @class = "text_link" })</div>
@@ -80,7 +80,7 @@
                             @*<div>@Html.ActionLink("Thêm mới chỉ tiêu", "CreateTarget", "Vcms", null, new { @class = "text_link" })</div>*@
                         </div>
                     </li>
-                    <li data-id="2">
+                    <li data-id="3">
                         <a class="root"><i class="fal fa-user-crown icon"></i><span>Quyết định ưu đãi</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Danh sách QĐ ưu đãi", "ListDiscount", "Vcms", null, new { @class = "text_link" })</div>
@@ -102,6 +102,7 @@
                             <div>@Html.ActionLink("Danh sách chi nhánh", "ListOffice", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới chi nhánh", "Office", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới CN - Excel", "InsertOfficeExcel", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Cập nhật chi nhánh theo tháng", "InsertHistoryOfficeExcel", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới - Cập nhật Vùng - Excel", "InsertZoneExcel", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Quản lý Vùng", "CreateZone", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
@@ -112,6 +113,7 @@
                             <div>@Html.ActionLink("Cập nhật xếp hạng chi nhánh", "RankOffice", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Chỉ tiêu CN - Chỉ tiêu NV - DS thực tế tuần", "TargetOffice", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Chỉ tiêu NVĐT theo tháng", "CreateTargetGroup", "Revenue", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Số ngày công các tháng trong năm ", "CreateWorkingDay", "Revenue", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                     <li data-id="8">

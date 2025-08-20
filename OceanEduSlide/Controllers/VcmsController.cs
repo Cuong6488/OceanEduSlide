@@ -24,6 +24,8 @@ using static System.Data.Entity.Infrastructure.Design.Executor;
 using System.Data.Entity;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
+using ImageResizer.ExtensionMethods;
+using Microsoft.IdentityModel.Tokens;
 
 namespace OceanEduSlide.Controllers
 {
@@ -1280,8 +1282,6 @@ namespace OceanEduSlide.Controllers
         [HttpPost]
         public JsonResult DeleteHistoryUser(int userId)
         {
-            if (Role != RoleAdmin.Admin)
-                return Json(new { status = false, msg = "Bạn không có quyền xóa" });
             var user = _unitOfWork.HistoryUserRepository.GetById(userId);
             user.Active = false;
             _unitOfWork.Save();
@@ -1680,9 +1680,189 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListOffice");
         }
+        public ActionResult InsertHistoryOfficeExcel()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertHistoryOfficeExcel(FormCollection fc)
+        {
+            var file = Request.Files["OfficeFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var logImport = new Models.LogImport
+                {
+                    Admin = Fullname,
+                    Name = Path.GetFileName(file.FileName),
+                    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                    TypeImport = TypeImport.Type9,
+                };
+                _unitOfWork.LogImportRepository.Insert(logImport);
+                _unitOfWork.Save();
+                // Lưu tệp tài liệu
+                var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                file.SaveAs(filePath);
+                var result = reader.AsDataSet();
+                reader.Close();
 
+                var tbl = result.Tables[0];
+                var historyOfficeList = new List<HistoryOffice>();
+                var offices = _unitOfWork.OfficeRepository.GetQuery();
+                var zones = _unitOfWork.ZoneRepository.GetQuery();
+                for (var i = 1; i < tbl.Rows.Count; i++)
+                {
+                    var shortname = tbl.Rows[i][0].ToString().Trim();
+                    if (string.IsNullOrEmpty(shortname))
+                        continue;
+                    var office = offices.FirstOrDefault(a => a.ShortName == shortname);
+                    if (office == null)
+                        continue;
+                    var zonename = tbl.Rows[i][1].ToString().Trim();
+                    if (string.IsNullOrEmpty(zonename))
+                        continue;
+                    var zone = zones.FirstOrDefault(a => a.Name == zonename);
+                    if (zone == null)
+                        continue;
+                    var monthStr = tbl.Rows[i][2].ToString().Trim();
+                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt))
+                        continue;
+                    var yearStr = tbl.Rows[i][3].ToString().Trim();
+                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt))
+                        continue;
+
+
+                    var dbECStr = tbl.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
+                        continue;
+                    var dbATLStr = tbl.Rows[i][5].ToString().Trim();
+                    if (string.IsNullOrEmpty(dbATLStr) || !int.TryParse(dbATLStr, out var dbATLInt))
+                        continue;
+                    var group = tbl.Rows[i][6].ToString().Trim();
+                    if (string.IsNullOrEmpty(group))
+                        continue;
+                    GroupOffice groupOffice = new GroupOffice();
+
+                    switch (group)
+                    {
+                        case "A":
+                            groupOffice = GroupOffice.A;
+                            break;
+                        case "B":
+                            groupOffice = GroupOffice.B;
+                            break;
+                        case "C":
+                            groupOffice = GroupOffice.C;
+                            break;
+                        case "D":
+                            groupOffice = GroupOffice.D;
+                            break;
+                        default:
+                            continue;
+                    }
+                    var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
+
+
+                    if (historyOffice != null)
+                    {
+                        historyOffice.GroupOffice = groupOffice;
+                        historyOffice.ZoneId = zone.Id;
+                        historyOffice.DBATL = dbATLInt;
+                        historyOffice.DBEC = dbECInt;
+                    }
+                    else
+                    {
+                        var newhistoryOffice = new HistoryOffice
+                        {
+                            Month = monthInt,
+                            Year = yearInt,
+                            OfficeId = office.Id,
+                            GroupOffice = groupOffice,
+                            ZoneId = zone.Id,
+                            DBATL = dbATLInt,
+                            DBEC = dbECInt
+                        };
+                        historyOfficeList.Add(newhistoryOffice);
+                    }
+                }
+
+                if (historyOfficeList.Any())
+                    _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
+                _unitOfWork.Save();
+            }
+            return RedirectToAction("ListHistoryOffice", new {result = "add"});
+        }
+        public ActionResult ListHistoryOffice(int? page, string name, int? zoneId, int? month, int? year, int? Group, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var offices = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Active, q => q.OrderByDescending(a => a.ZoneId));
+            if (zoneId.HasValue)
+            {
+                offices = offices.Where(l => l.ZoneId == zoneId);
+            }
+            if (month == null)
+                month = DateTime.Now.Month;
+            offices = offices.Where(l => l.Month == month);
+
+            if (year == null)
+                year = DateTime.Now.Year;
+            offices = offices.Where(l => l.Year == year);
+
+            if (Group.HasValue)
+            {
+                offices = offices.Where(l => (int)l.GroupOffice == Group);
+            }
+           
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    offices = offices.Where(l => l.Office.Name.Contains(newkey) || l.Office.ShortName.Contains(newkey) || l.Office.ShortCode.Contains(newkey));
+                }
+            }
+
+            var model = new ListHistoryOfficeViewModel
+            {
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
+                HistoryOffices = offices.ToPagedList(pageNumber, pageSize),
+                ZoneId = zoneId,
+                Name = name,
+                year = year,
+                month = month,
+                Group = Group,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteHistoryOffice(int officeId)
+        {
+            var office = _unitOfWork.HistoryOfficeRepository.GetById(officeId);
+            office.Active = false;
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Xóa thành công" });
+        }
         #endregion
-
         #region Zone
         public ActionResult InsertZoneExcel()
         {

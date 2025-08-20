@@ -168,6 +168,16 @@ namespace OceanEduSlide.ViewModels
         public int? year { get; set; }
         public string Username { get; set; }
     }
+    public class ListHistoryOfficeViewModel
+    {
+        public PagedList.IPagedList<HistoryOffice> HistoryOffices { get; set; }
+        public SelectList SelectZones { get; set; }
+        public int? Group { get; set; }
+        public int? ZoneId { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
+        public string Name { get; set; }
+    }
 
     public class CreateDiscountViewModel
     {

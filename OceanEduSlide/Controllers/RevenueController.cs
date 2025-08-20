@@ -1,6 +1,7 @@
 ﻿using Antlr.Runtime.Misc;
 using ExcelDataReader;
 using Helpers;
+using Microsoft.Ajax.Utilities;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
@@ -111,7 +112,7 @@ namespace OceanEduSlide.Controllers
             var file = Request.Files["TargetOfficeFile"];
             if (file != null && file.ContentLength > 0)
             {
-                
+
                 var stream = file.InputStream;
                 IExcelDataReader reader;
                 if (file.FileName.EndsWith(".xls"))
@@ -453,6 +454,12 @@ namespace OceanEduSlide.Controllers
                 case 6:
                     typeName = "QĐ ưu đãi";
                     break;
+                case 7:
+                    typeName = "Quy định chung/ QĐ PTS";
+                    break;
+                case 8:
+                    typeName = "Chi nhánh theo tháng";
+                    break;
                 default:
                     break;
             }
@@ -460,7 +467,7 @@ namespace OceanEduSlide.Controllers
             var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month);
             return PartialView(logImport);
         }
-        public ActionResult ListFileAll(int? page,int? type)
+        public ActionResult ListFileAll(int? page, int? type)
         {
             var pageNumber = page ?? 1;
             const int pageSize = 20;
@@ -481,7 +488,7 @@ namespace OceanEduSlide.Controllers
         //    return View();
         //}
         [HttpPost]
-       
+
         public ActionResult TargetUser(FormCollection fc)
         {
             var file = Request.Files["TargetUserFile"];
@@ -694,12 +701,167 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
+        public ActionResult CreateWorkingDay(string result = "")
+        {
+            ViewBag.Result = result;
+            return View(new WorkingDay { Year = DateTime.Now.Year});
+        }
+        [HttpPost]
+        public ActionResult CreateWorkingDay(WorkingDay model)
+        {
+            if (ModelState.IsValid)
+            {
+                var workingDayOld = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Year == model.Year);
+                if (workingDayOld.Any())
+                {
+                    ModelState.AddModelError("", @"Đã tồn tại bản ghi của năm " + model.Year);
+                    return View(model);
+                }
+                _unitOfWork.WorkingDayRepository.Insert(model);
+                _unitOfWork.Save();
+                return RedirectToAction("ListWorkingDay", new { result = "success" });
+            }
+            return View(model);
+        }
+        public ActionResult UpdateWorkingDay(int workingDayId)
+        {
+            var workingDay = _unitOfWork.WorkingDayRepository.GetById(workingDayId);
+            if (workingDay == null)
+                return RedirectToAction("ListWorkingDay");
+            return View(workingDay);
+        }
+        [HttpPost]
+        public ActionResult UpdateWorkingDay(WorkingDay model)
+        {
+            if (ModelState.IsValid)
+            {
+                //var workingDay = _unitOfWork.WorkingDayRepository.GetById(model.Id);
+                //if (workingDay == null)
+                //    return RedirectToAction("ListWorkingDay");
+                _unitOfWork.WorkingDayRepository.Update(model);
+                _unitOfWork.Save();
+                return RedirectToAction("ListWorkingDay", new { result = "update" });
+            }
+            return View(model);
+        }
+        public ActionResult ListWorkingDay(string result = "")
+        {
+            ViewBag.Result = result;
+            var workingDays = _unitOfWork.WorkingDayRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year));
 
+            return View(workingDays);
+        }
+        //[HttpPost]
+        //public JsonResult DeleteWorkingDay(int workingDayId)
+        //{
+        //    var workingDay = _unitOfWork.WorkingDayRepository.GetById(workingDayId);
+        //    _unitOfWork.WorkingDayRepository.Delete(workingDay);
+        //    _unitOfWork.Save();
+        //    return Json(new { status = true, msg = "Xóa thành công" });
+
+        //}
         public ActionResult CreateTargetGroup(string result = "")
         {
             ViewBag.Result = result;
-            return View();
+            var model = new InsertTargetGroupViewModel
+            {
+                Month = DateTime.Now.Month,
+                Year = DateTime.Now.Year,
+            };
+            return View(model);
         }
+        [HttpPost]
+        public ActionResult CreateTargetGroup(InsertTargetGroupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var targetOld = _unitOfWork.TargetGroupRepository.GetQuery(a => a.Year == model.Year && a.Month == model.Month);
+                if (targetOld.Any())
+                {
+                    ModelState.AddModelError("", @"Đã tồn tại bản ghi của tháng " + model.Month + " - " + model.Year);
+                    return View(model);
+                }    
+                var targetGroup = new TargetGroup()
+                {
+                    Month = model.Month,
+                    Year = model.Year,
+                    Target_A = Convert.ToDecimal(model.Target_A.Replace(",", "")),
+                    Target_B = Convert.ToDecimal(model.Target_B.Replace(",", "")),
+                    Target_C = Convert.ToDecimal(model.Target_C.Replace(",", "")),
+                    Target_D = Convert.ToDecimal(model.Target_D.Replace(",", "")),
+
+                };
+                _unitOfWork.TargetGroupRepository.Insert(targetGroup);
+                _unitOfWork.Save();
+                return RedirectToAction("ListTargetGroup", new {result="success"});
+            }
+            return View(model);
+        }
+
+        public ActionResult UpdateTargetGroup(int targetId)
+        {
+            var target = _unitOfWork.TargetGroupRepository.GetById(targetId);
+            if (target == null)
+                return RedirectToAction("ListTargetGroup");
+            var model = new InsertTargetGroupViewModel
+            {
+                Target_A = target.Target_A.ToString("N0"),
+                Target_B = target.Target_B.ToString("N0"),
+                Target_C = target.Target_C.ToString("N0"),
+                Target_D = target.Target_D.ToString("N0"),
+                Month = target.Month,
+                Year = target.Year,
+                TargetGroupId = target.Id,
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult UpdateTargetGroup(InsertTargetGroupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var targetGroup = _unitOfWork.TargetGroupRepository.GetById(model.TargetGroupId);
+                if(targetGroup == null)
+                    return RedirectToAction("ListTargetGroup");
+                targetGroup.Target_A = Convert.ToDecimal(model.Target_A.Replace(",", ""));
+                targetGroup.Target_B = Convert.ToDecimal(model.Target_B.Replace(",", ""));
+                targetGroup.Target_C = Convert.ToDecimal(model.Target_C.Replace(",", ""));
+                targetGroup.Target_D = Convert.ToDecimal(model.Target_D.Replace(",", ""));
+                _unitOfWork.Save();
+                return RedirectToAction("ListTargetGroup", new {result = "update"});
+            }
+            return View(model);
+        }
+        public ActionResult ListTargetGroup(int? page, int? month, int? year, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 12;
+            var targetgroups = _unitOfWork.TargetGroupRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month));
+            if (month != null)
+                targetgroups = targetgroups.Where(l => l.Month == month);
+
+            if (year != null)
+                targetgroups = targetgroups.Where(l => l.Year == year);
+
+            var model = new ListTargetGroupViewModel
+            {
+                TargetGroups = targetgroups.ToPagedList(pageNumber, pageSize),
+                month = month,
+                year = year,
+            };
+            return View(model);
+        }
+
+        //[HttpPost]
+        //public JsonResult DeleteTargetGroup(int targetId)
+        //{
+        //    var target = _unitOfWork.TargetGroupRepository.GetById(targetId);
+        //    _unitOfWork.TargetGroupRepository.Delete(target);
+        //    _unitOfWork.Save();
+        //    return Json(new { status = true, msg = "Xóa thành công" });
+
+        //}
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

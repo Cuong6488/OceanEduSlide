@@ -1,40 +1,30 @@
 ﻿@model OceanEduSlide.ViewModels.InsertTargetGroupViewModel
 @{
-    ViewBag.Title = "Thêm chỉ tiêu NVĐT theo tháng";
+    ViewBag.Title = "Cập nhật chỉ tiêu NVĐT theo tháng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <h2 class="m-0 mb-3">@ViewBag.Title</h2>
 <a class="btn quick-link" href="@Url.Action("ListTargetGroup")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu NVĐT</a>
 <div class="box_content">
-    @using (Html.BeginForm("CreateTargetGroup", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("UpdateTargetGroup", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)
         <table class="form_table">
             <tr>
                 <td class="form_name w-25">Năm</td>
                 <td class="form_text">
-                    <select name="Year" class="w100" required>
-                        <option value="">Chọn năm</option>
-                        @for (int i = 2025; i <= DateTime.Now.Year + 1; i++)
-                        {
-                            <option @(Model.Year == i?"selected":"") value="@i">@i</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(a => a.Year)
+                    <div class="mb-2"><strong>@Html.DisplayFor(a => a.Year)</strong></div>
+                    
+                    @Html.HiddenFor(a => a.Year)
+                    @Html.HiddenFor(a => a.TargetGroupId)
                 </td>
             </tr>
             <tr>
                 <td class="form_name">Tháng</td>
                 <td class="form_text">
-                    <select name="Month" class="w100" required>
-                        <option value="">Chọn tháng</option>
-                        @for (int i = 1; i <= 12; i++)
-                        {
-                            <option @(Model.Month == i?"selected":"") value="@i">@i</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(a => a.Month)
+                    <div class="mb-2"><strong>@Html.DisplayFor(a => a.Month)</strong></div>
+                    @Html.HiddenFor(a => a.Month)
                 </td>
             </tr>
             <tr>
@@ -58,7 +48,7 @@
             <tr>
                 <td class="form_name"></td>
                 <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Thêm mới" />
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
                 </td>
             </tr>
 

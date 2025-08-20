@@ -1506,8 +1506,15 @@
     <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
     <Content Include="Views\Event\EventManager.cshtml" />
     <Content Include="Views\Revenue\ListFile.cshtml" />
-    <Content Include="Views\Revenue\ListFileALl.cshtml" />
+    <Content Include="Views\Revenue\ListFileAll.cshtml" />
     <Content Include="Views\Revenue\CreateTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\ListTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\UpdateTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\CreateWorkingDay.cshtml" />
+    <Content Include="Views\Revenue\ListWorkingDay.cshtml" />
+    <Content Include="Views\Revenue\UpdateWorkingDay.cshtml" />
+    <Content Include="Views\Vcms\InsertHistoryOfficeExcel.cshtml" />
+    <Content Include="Views\Vcms\ListHistoryOffice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -36,6 +36,8 @@ namespace OceanEduSlide.Models
         Type7,
         [Display(Name = "Quy định chung/ QĐ PTS")]
         Type8,
+        [Display(Name = "File Chi nhánh theo tháng")]
+        Type9,
 
     }
 }
