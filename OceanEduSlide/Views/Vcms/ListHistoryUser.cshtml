@@ -91,6 +91,7 @@
                 <th>Ngày nghỉ/ điều chuyển</th>
                 <th>Chi nhánh</th>
                 <th>Phân quyền</th>
+                <th>NS mới</th>
                 <th style="width: 130px"></th>
             </tr>
             @foreach (var user in Model.HistoryUsers)
@@ -106,9 +107,10 @@
                         @(user.Office?.Name)
                     </td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
+                    <td>@Html.DisplayFor(model => user.NewUser)</td>
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
-                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
                         <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>

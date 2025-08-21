@@ -1064,6 +1064,7 @@ namespace OceanEduSlide.Controllers
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
                     var zones = tbl2.Rows[i][12].ToString().Trim();
                     var sort = tbl2.Rows[i][11].ToString().Trim();
+
                     if (user == null)
                     {
                         if (statusUser == StatusUser.Active)
@@ -1078,8 +1079,62 @@ namespace OceanEduSlide.Controllers
                                 Fullname = fullname,
                                 SaleKit = true,
                                 TypeUser = type,
-                                ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
+                                //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
                             };
+                            switch (type)
+                            {
+                                case TypeUser.ASM:
+                                    newUser.ZoneIds = "," + zones + ",";
+                                    var zonef = zones.Split(',')[0];
+                                    var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
+                                    if (z != null)
+                                    {
+                                        newUser.ZoneId = z.Id;
+                                        newUser.Zone = z;
+                                    }
+                                    break;
+                                case TypeUser.EC:
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        newUser.OfficeIds = ",";
+                                        newUser.OfficeNames = "";
+                                        foreach (var item in zones.Split(','))
+                                        {
+                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                            if (o != null)
+                                            {
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
+                                            }
+                                        }
+                                        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                    }
+                                    break;
+                                case TypeUser.BM:
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        newUser.OfficeIds = ",";
+                                        newUser.OfficeNames = "";
+                                        foreach (var item in zones.Split(','))
+                                        {
+                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                            if (o != null)
+                                            {
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
+                                            }
+                                        }
+                                        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                    }
+
+                                    break;
+                                case TypeUser.CV:
+                                    user.ZoneIds = "," + zones + ",";
+                                    break;
+                                default:
+                                    break;
+                            }
+
                             try
                             {
                                 _unitOfWork.UserRepository.Insert(newUser);
@@ -1115,6 +1170,60 @@ namespace OceanEduSlide.Controllers
                                     continue;
                                 }
                             }
+
+                            switch (type)
+                            {
+                                case TypeUser.ASM:
+                                    user.ZoneIds = "," + zones + ",";
+                                    var zonef = zones.Split(',')[0];
+                                    var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
+                                    if (z != null)
+                                    {
+                                        user.ZoneId = z.Id;
+                                        user.Zone = z;
+                                    }
+                                    break;
+                                case TypeUser.EC:
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        user.OfficeIds = ",";
+                                        user.OfficeNames = "";
+                                        foreach (var item in zones.Split(','))
+                                        {
+                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                            if (o != null)
+                                            {
+                                                user.OfficeIds += o.Id + ",";
+                                                user.OfficeNames += o.ShortCode + ",";
+                                            }
+                                        }
+                                        user.OfficeNames = user.OfficeNames.Trim(',');
+                                    }
+                                    break;
+                                case TypeUser.BM:
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        user.OfficeIds = ",";
+                                        user.OfficeNames = "";
+                                        foreach (var item in zones.Split(','))
+                                        {
+                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                            if (o != null)
+                                            {
+                                                user.OfficeIds += o.Id + ",";
+                                                user.OfficeNames += o.ShortCode + ",";
+                                            }
+                                        }
+                                        user.OfficeNames = user.OfficeNames.Trim(',');
+                                    }
+
+                                    break;
+                                case TypeUser.CV:
+                                    user.ZoneIds = "," + zones + ",";
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                         else if (statusUser == StatusUser.InActive)
                         {
@@ -1130,6 +1239,7 @@ namespace OceanEduSlide.Controllers
                         }
                     }
 
+                    var newU = tbl2.Rows[i][13].ToString().Trim();
                     var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
                         continue;
@@ -1169,10 +1279,10 @@ namespace OceanEduSlide.Controllers
                     }
                     var historyUser = query.FirstOrDefault();
 
-
                     if (historyUser != null)
                     {
                         historyUser.Status = statusUser;
+                        historyUser.NewUser = string.IsNullOrEmpty(newU) ? false : true;
                         //historyUser.DayStart = startDate;
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
@@ -1190,6 +1300,7 @@ namespace OceanEduSlide.Controllers
                             OfficeId = office?.Id,
                             Status = statusUser,
                             DayStart = startDate,
+                            NewUser = string.IsNullOrEmpty(newU) ? false : true,
                             Active = true
                         };
 
@@ -1214,12 +1325,11 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
-            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderByDescending(a => a.Id));
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.TypeUser));
             if (zoneId.HasValue)
             {
                 users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId);
             }
-
             if (officeId.HasValue)
             {
                 users = users.Where(l => l.OfficeId == officeId);
@@ -1807,7 +1917,7 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
                 _unitOfWork.Save();
             }
-            return RedirectToAction("ListHistoryOffice", new {result = "add"});
+            return RedirectToAction("ListHistoryOffice", new { result = "add" });
         }
         public ActionResult ListHistoryOffice(int? page, string name, int? zoneId, int? month, int? year, int? Group, string result = "")
         {
@@ -1831,7 +1941,7 @@ namespace OceanEduSlide.Controllers
             {
                 offices = offices.Where(l => (int)l.GroupOffice == Group);
             }
-           
+
             if (name != null)
             {
                 var newkey = name.Trim();

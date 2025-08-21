@@ -457,32 +457,59 @@ namespace OceanEduSlide.Controllers
                 //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery();
                 //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 var offices = _unitOfWork.OfficeRepository.GetQuery();
-                var workingDays = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Active);
+                var workingDays = _unitOfWork.WorkingDayRepository.GetQuery();
                 var targetGroups = _unitOfWork.TargetGroupRepository.GetQuery(a => a.Active);
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
-                    ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
+                    if (office == null)
+                    {
+                        ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
+                        return View();
+                    }
 
                     var monthStr = tbl.Rows[i][4].ToString().Trim();
-                    if (string.IsNullOrEmpty(monthStr))/* continue;*/
+                    if (string.IsNullOrEmpty(monthStr))
                     {
                         ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột tháng");
                         return View();
-                    }    
-                    if (!int.TryParse(monthStr, out var monthInt)) /*continue;*/
+                    }
+                    if (!int.TryParse(monthStr, out var monthInt))
+                    {
                         ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột tháng, chi nhánh " + officeshortname);
+                        return View();
+                    }
                     var yearStr = tbl.Rows[i][5].ToString().Trim();
-                    if (string.IsNullOrEmpty(yearStr)) /*continue;*/
+                    if (string.IsNullOrEmpty(yearStr))
+                    {
                         ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột năm");
-                    if (!int.TryParse(yearStr, out var yearInt)) /*continue;*/
+                        return View();
+                    }
+                    if (!int.TryParse(yearStr, out var yearInt)) 
+                    {
                         ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột năm, chi nhánh " + officeshortname);
+                        return View();
+                    }
                     var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == yearInt && a.Month == monthInt).FirstOrDefault();
-                    if (historyOffice == null) /*continue;*/
+                    if (historyOffice == null) 
+                    {
                         ModelState.AddModelError("", @"Chưa có dữ liệu chi nhánh theo tháng chi nhánh " + officeshortname);
-                    if (historyOffice.DBEC + historyOffice.DBATL <= 0)
+                        return View();
+                    }
+                    //if (historyOffice.OfficeId == 1158)
+                    //{
+
+                    //}
+                    //if (historyOffice.OfficeId == 1183)
+                    //{
+
+                    //}
+                    if (historyOffice?.DBEC + historyOffice?.DBATL <= 0)
+                    {
                         ModelState.AddModelError("", @"Định biên NVKD chi nhánh " + officeshortname + " không hợp lệ");
+                        return View();
+                    }
                     var workingDay = workingDays.FirstOrDefault(a => a.Year == yearInt);
                     if (workingDay == null)
                     {
@@ -491,14 +518,21 @@ namespace OceanEduSlide.Controllers
                     }
                     var targetGroup = targetGroups.FirstOrDefault(a => a.Year == yearInt && a.Month == monthInt);
                     if (targetGroup == null)
+                    {
                         ModelState.AddModelError("", @"Chưa có dữ liệu bảng chỉ tiêu NVĐT theo tháng - tháng" + monthInt + "/" + yearInt);
+                        return View();
+                    }
                     var targetBase = tbl.Rows[i][9].ToString().Trim();
                     if (string.IsNullOrEmpty(targetBase))
+                    {
                         ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột Chỉ tiêu Doanh số cơ sở");
+                        return View();
+                    }
                     if (!decimal.TryParse(targetBase, out var targetBaseDec))
+                    {
                         ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột Chỉ tiêu Doanh số cơ sở, chi nhánh " + officeshortname);
-                    // EC - ATL:
-                    // tính số ngày công; chỉ tiêu cơ sở CN / định biên * số ngày công TT * số ngày công đủ - tháng
+                        return View();
+                    }
                     int workingDayFull = 1;
                     switch (monthInt)
                     {
@@ -541,7 +575,7 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var historyUserMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id);
+                    var historyUserMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt))));
                     var revenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
                     if (revenueOffice == null)
                     {
@@ -563,27 +597,33 @@ namespace OceanEduSlide.Controllers
                         revenueOffice.Target_SAB = 0;
                         revenueOffice.Target_HV = 0;
                     }
-                    //decimal targetOffice = 0;
+                    var count = historyUserMonths.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT).Count();
                     foreach (var item in historyUserMonths)
                     {
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
                             int workingDayTT = 0;
-                            if (item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt))
+                            if ((item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
                             {
                                 workingDayTT = workingDayFull;
                             }
-                            else if ((item.DayEnd != null && item.DayEnd.Value.Month == monthInt) || item.DayEnd == null)
+                            else 
                             {
-                                DateTime ngayKetThuc = item.DayEnd ?? new DateTime(item.DayStart.Year, item.DayStart.Month, DateTime.DaysInMonth(item.DayStart.Year, item.DayStart.Month));
-                                int soNgayLamViec = (ngayKetThuc - item.DayStart).Days;
+                                DateTime ngayKetThuc = item.DayEnd ?? new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                DateTime ngayBatDau = item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : item.DayStart;
+                                int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days;
                                 if (soNgayLamViec < 0)
+                                {
                                     ModelState.AddModelError("", @"Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
+                                    return View();
+                                }    
                                 int soNgayNghi = soNgayLamViec / 7;
                                 workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
                             }
-                            targetNS = targetBaseDec / (historyOffice.DBEC + historyOffice.DBATL) * (workingDayTT / workingDayFull);
+                            targetNS = targetBaseDec / (historyOffice.DBEC + historyOffice.DBATL) * ((decimal)workingDayTT / workingDayFull);
+                            if (item.NewUser)
+                                targetNS = targetNS / 2;
                             revenueOffice.Target_TS += targetNS;
                         }
                         else if (item.TypeUser == TypeUser.CM || item.TypeUser == TypeUser.TTL)
@@ -630,6 +670,7 @@ namespace OceanEduSlide.Controllers
                             newRevenueList2.Add(rnew);
                         }
                     }
+                    revenueOffice.Target_TS = Math.Max(revenueOffice.Target_TS,targetBaseDec);
                 }
 
                 if (newRevenueList2.Any())
@@ -638,7 +679,7 @@ namespace OceanEduSlide.Controllers
                 }
                 _unitOfWork.Save();
 
-                var tbl3 = result.Tables[2];
+                var tbl3 = result.Tables[1];
                 var listRevenue = new List<RevenueUser_Week_Real>();
                 for (var i = 1; i < tbl3.Rows.Count; i++)
                 {

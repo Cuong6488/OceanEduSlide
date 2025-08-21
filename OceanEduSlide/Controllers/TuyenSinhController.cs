@@ -119,7 +119,7 @@ namespace OceanEduSlide.Controllers
             //var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year);
             //var revenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year)
             //    .GroupBy(a => a.OfficeId).Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)), q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))), q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
 
             if (UserType != null)
             {
