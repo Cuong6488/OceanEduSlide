@@ -106,6 +106,311 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
+        //[HttpPost]
+        //public ActionResult TargetOffice(FormCollection fc)
+        //{
+        //    var file = Request.Files["TargetOfficeFile"];
+        //    if (file != null && file.ContentLength > 0)
+        //    {
+
+        //        var stream = file.InputStream;
+        //        IExcelDataReader reader;
+        //        if (file.FileName.EndsWith(".xls"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+        //        }
+        //        else if (file.FileName.EndsWith(".xlsx"))
+        //        {
+        //            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("File", @"This file format is not supported");
+        //            return View();
+        //        }
+        //        var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+        //        HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+        //        var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+        //        var logImport = new Models.LogImport
+        //        {
+        //            Admin = Fullname,
+        //            Name = Path.GetFileName(file.FileName),
+        //            File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+        //            TypeImport = TypeImport.Type2,
+        //        };
+        //        _unitOfWork.LogImportRepository.Insert(logImport);
+        //        _unitOfWork.Save();
+        //        // Lưu tệp tài liệu
+        //        var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+        //        file.SaveAs(filePath);
+        //        var result = reader.AsDataSet();
+        //        reader.Close();
+
+        //        var tbl = result.Tables[0];
+        //        var newRevenueList = new List<RevenueOffice>();
+
+        //        for (var i = 1; i < tbl.Rows.Count; i++)
+        //        {
+        //            var officeshortname = tbl.Rows[i][0].ToString().Trim();
+        //            var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
+        //            if (office == null) continue;
+
+        //            var countNVHV = _unitOfWork.UserRepository
+        //                .GetQuery(a => (a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL) && a.OfficeId == office.Id)
+        //                .Count();
+
+        //            var countNVKT = _unitOfWork.UserRepository
+        //                .GetQuery(a => a.TypeUser == TypeUser.SAB && a.OfficeId == office.Id)
+        //                .Count();
+
+        //            var monthStr = tbl.Rows[i][4].ToString().Trim();
+        //            if (string.IsNullOrEmpty(monthStr)) continue;
+        //            if (!int.TryParse(monthStr, out var monthInt)) continue;
+
+        //            var yearStr = tbl.Rows[i][5].ToString().Trim();
+        //            if (string.IsNullOrEmpty(yearStr)) continue;
+        //            if (!int.TryParse(yearStr, out var yearInt)) continue;
+
+        //            var targetTS = tbl.Rows[i][10].ToString().Trim();
+        //            if (string.IsNullOrEmpty(targetTS)) continue;
+        //            if (!decimal.TryParse(targetTS, out var targetTSDec)) continue;
+
+        //            //var targetKT = tbl.Rows[i][12].ToString().Trim();
+        //            //if (string.IsNullOrEmpty(targetKT)) continue;
+        //            //if (!decimal.TryParse(targetKT, out var targetKTDec)) continue;
+
+        //            //var targetHV = tbl.Rows[i][13].ToString().Trim();
+        //            //if (string.IsNullOrEmpty(targetHV)) continue;
+        //            //if (!decimal.TryParse(targetHV, out var targetHVDec)) continue;
+
+        //            var revenue = _unitOfWork.RevenueOfficeRepository
+        //                .GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt)
+        //                .FirstOrDefault();
+
+        //            if (revenue != null)
+        //            {
+        //                revenue.Target_TS = targetTSDec;
+        //                //revenue.Target_HV = targetHVDec * countNVHV;
+        //                //revenue.Target_SAB = targetKTDec * countNVKT;
+        //            }
+        //            else
+        //            {
+        //                var newRevenue = new RevenueOffice
+        //                {
+        //                    OfficeId = office.Id,
+        //                    Month = monthInt,
+        //                    Year = yearInt,
+        //                    Target_TS = targetTSDec,
+        //                    //Target_HV = targetHVDec * countNVHV,
+        //                    //Target_SAB = targetKTDec * countNVKT,
+        //                    Active = true,
+        //                };
+        //                newRevenueList.Add(newRevenue);
+        //            }
+        //        }
+
+        //        if (newRevenueList.Any())
+        //        {
+        //            _unitOfWork.RevenueOfficeRepository.InsertRange(newRevenueList);
+        //        }
+
+        //        _unitOfWork.Save();
+        //        var tbl2 = result.Tables[1];
+
+        //        var newRevenueList2 = new List<RevenueUser_Month>();
+        //        var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
+        //        for (var i = 1; i < tbl2.Rows.Count; i++)
+        //        {
+        //            var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+        //            var user = _unitOfWork.UserRepository
+        //                .GetQuery(a => a.MaNhanVien == manhanvien)
+        //                .FirstOrDefault();
+        //            if (user == null) continue;
+
+        //            var officeSortName = tbl2.Rows[i][1].ToString().Trim();
+        //            var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
+        //            if (office == null) continue;
+        //            var typeUser = tbl2.Rows[i][4].ToString().Trim();
+        //            if (string.IsNullOrEmpty(typeUser))
+        //                continue;
+        //            TypeUser type = new TypeUser();
+        //            switch (typeUser)
+        //            {
+        //                case "EC":
+        //                    type = TypeUser.EC;
+        //                    break;
+        //                case "BM":
+        //                    type = TypeUser.BM;
+        //                    break;
+        //                case "BSA":
+        //                    type = TypeUser.SAB;
+        //                    break;
+        //                case "SAB":
+        //                    type = TypeUser.SAB;
+        //                    break;
+        //                case "ATL":
+        //                    type = TypeUser.ALT;
+        //                    break;
+        //                case "CM":
+        //                    type = TypeUser.CM;
+        //                    break;
+        //                case "TTL":
+        //                    type = TypeUser.TTL;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
+        //            if (string.IsNullOrEmpty(dayStart))
+        //                continue;
+        //            var startDate = new DateTime();
+
+        //            if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+        //                startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+        //            else
+        //                continue;
+        //            var monthStr = tbl2.Rows[i][20].ToString().Trim();
+        //            if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
+
+        //            var yearStr = tbl2.Rows[i][21].ToString().Trim();
+        //            if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
+
+        //            var targetStr = tbl2.Rows[i][12].ToString().Trim();
+        //            if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
+        //            var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt && a.DayStart == startDate);
+        //            if (historyUser == null) continue;
+        //            var revenue = _unitOfWork.RevenueUser_MonthRepository
+        //                .GetQuery(a => a.UserId == user.Id && a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt)
+        //                .FirstOrDefault();
+
+        //            if (revenue != null)
+        //            {
+        //                revenue.Target = targetDec;
+        //            }
+        //            else
+        //            {
+        //                var newRevenue = new RevenueUser_Month
+        //                {
+        //                    UserId = user.Id,
+        //                    HistoryUserId = historyUser.Id,
+        //                    Month = monthInt,
+        //                    Year = yearInt,
+        //                    Target = targetDec,
+        //                    Active = true
+        //                };
+        //                newRevenueList2.Add(newRevenue);
+        //            }
+        //        }
+
+        //        if (newRevenueList2.Any())
+        //        {
+        //            _unitOfWork.RevenueUser_MonthRepository.InsertRange(newRevenueList2);
+        //        }
+        //        _unitOfWork.Save();
+        //        var tbl3 = result.Tables[2];
+        //        var listRevenue = new List<RevenueUser_Week_Real>();
+        //        for (var i = 1; i < tbl3.Rows.Count; i++)
+        //        {
+        //            var manhanvien = tbl3.Rows[i][2].ToString().Trim();
+        //            var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
+        //            if (user == null) continue;
+        //            var officeSortName = tbl3.Rows[i][1].ToString().Trim();
+        //            var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
+        //            if (office == null) continue;
+        //            var typeUser = tbl3.Rows[i][4].ToString().Trim();
+        //            if (string.IsNullOrEmpty(typeUser))
+        //                continue;
+        //            TypeUser type = new TypeUser();
+        //            switch (typeUser)
+        //            {
+        //                case "EC":
+        //                    type = TypeUser.EC;
+        //                    break;
+        //                case "BM":
+        //                    type = TypeUser.BM;
+        //                    break;
+        //                case "BSA":
+        //                    type = TypeUser.SAB;
+        //                    break;
+        //                case "SAB":
+        //                    type = TypeUser.SAB;
+        //                    break;
+        //                case "ATL":
+        //                    type = TypeUser.ALT;
+        //                    break;
+        //                case "CM":
+        //                    type = TypeUser.CM;
+        //                    break;
+        //                case "TTL":
+        //                    type = TypeUser.TTL;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            var month = tbl3.Rows[i][6].ToString().Trim();
+        //            if (string.IsNullOrEmpty(month)) continue;
+        //            var monthInt = int.Parse(month);
+        //            var year = tbl3.Rows[i][7].ToString().Trim();
+        //            if (string.IsNullOrEmpty(year)) continue;
+        //            var yearInt = int.Parse(year);
+        //            var week = tbl3.Rows[i][5].ToString().Trim();
+        //            if (string.IsNullOrEmpty(week)) continue;
+        //            var weekInt = int.Parse(week);
+        //            var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+        //            if (historyUser == null) continue;
+        //            var ds = tbl3.Rows[i][8].ToString().Trim();
+        //            decimal dsDec = string.IsNullOrEmpty(ds) ? 0 : decimal.Parse(ds);
+        //            var revenue = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && (int)a.WeekNumber == weekInt).FirstOrDefault();
+        //            if (revenue != null)
+        //            {
+        //                revenue.TargetBM = dsDec;
+        //            }
+        //            else
+        //            {
+        //                var newRevenue = new RevenueUser_Week_Real
+        //                {
+        //                    UserId = user.Id,
+        //                    HistoryUserId = historyUser.Id,
+        //                    Month = monthInt,
+        //                    Year = yearInt,
+        //                    TargetBM = dsDec,
+        //                    Active = true,
+        //                };
+        //                switch (weekInt)
+        //                {
+        //                    case 1:
+        //                        newRevenue.WeekNumber = WeekNumber.Week1;
+        //                        break;
+        //                    case 2:
+        //                        newRevenue.WeekNumber = WeekNumber.Week2;
+        //                        break;
+        //                    case 3:
+        //                        newRevenue.WeekNumber = WeekNumber.Week3;
+        //                        break;
+        //                    case 4:
+        //                        newRevenue.WeekNumber = WeekNumber.Week4;
+        //                        break;
+        //                    case 5:
+        //                        newRevenue.WeekNumber = WeekNumber.Week5;
+        //                        break;
+        //                    case 6:
+        //                        newRevenue.WeekNumber = WeekNumber.Week6;
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //                //_unitOfWork.RevenueUser_Week_RealRepository.Insert(newRevenue);
+        //                listRevenue.Add(newRevenue);
+        //            }
+
+        //        }
+        //        if (listRevenue.Any())
+        //            _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
+        //        _unitOfWork.Save();
+        //    }
+
+        //    return RedirectToAction("Index", "Vcms");
+        //}
         [HttpPost]
         public ActionResult TargetOffice(FormCollection fc)
         {
@@ -148,157 +453,182 @@ namespace OceanEduSlide.Controllers
 
                 var tbl = result.Tables[0];
                 var newRevenueList = new List<RevenueOffice>();
-
+                var newRevenueList2 = new List<RevenueUser_Month>();
+                //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery();
+                //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
+                var offices = _unitOfWork.OfficeRepository.GetQuery();
+                var workingDays = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Active);
+                var targetGroups = _unitOfWork.TargetGroupRepository.GetQuery(a => a.Active);
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
-                    if (office == null) continue;
-
-                    var countNVHV = _unitOfWork.UserRepository
-                        .GetQuery(a => (a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL) && a.OfficeId == office.Id)
-                        .Count();
-
-                    var countNVKT = _unitOfWork.UserRepository
-                        .GetQuery(a => a.TypeUser == TypeUser.SAB && a.OfficeId == office.Id)
-                        .Count();
+                    ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
 
                     var monthStr = tbl.Rows[i][4].ToString().Trim();
-                    if (string.IsNullOrEmpty(monthStr)) continue;
-                    if (!int.TryParse(monthStr, out var monthInt)) continue;
-
+                    if (string.IsNullOrEmpty(monthStr))/* continue;*/
+                    {
+                        ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột tháng");
+                        return View();
+                    }    
+                    if (!int.TryParse(monthStr, out var monthInt)) /*continue;*/
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột tháng, chi nhánh " + officeshortname);
                     var yearStr = tbl.Rows[i][5].ToString().Trim();
-                    if (string.IsNullOrEmpty(yearStr)) continue;
-                    if (!int.TryParse(yearStr, out var yearInt)) continue;
-
-                    var targetTS = tbl.Rows[i][10].ToString().Trim();
-                    if (string.IsNullOrEmpty(targetTS)) continue;
-                    if (!decimal.TryParse(targetTS, out var targetTSDec)) continue;
-
-                    //var targetKT = tbl.Rows[i][12].ToString().Trim();
-                    //if (string.IsNullOrEmpty(targetKT)) continue;
-                    //if (!decimal.TryParse(targetKT, out var targetKTDec)) continue;
-
-                    //var targetHV = tbl.Rows[i][13].ToString().Trim();
-                    //if (string.IsNullOrEmpty(targetHV)) continue;
-                    //if (!decimal.TryParse(targetHV, out var targetHVDec)) continue;
-
-                    var revenue = _unitOfWork.RevenueOfficeRepository
-                        .GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt)
-                        .FirstOrDefault();
-
-                    if (revenue != null)
+                    if (string.IsNullOrEmpty(yearStr)) /*continue;*/
+                        ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột năm");
+                    if (!int.TryParse(yearStr, out var yearInt)) /*continue;*/
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột năm, chi nhánh " + officeshortname);
+                    var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Year == yearInt && a.Month == monthInt).FirstOrDefault();
+                    if (historyOffice == null) /*continue;*/
+                        ModelState.AddModelError("", @"Chưa có dữ liệu chi nhánh theo tháng chi nhánh " + officeshortname);
+                    if (historyOffice.DBEC + historyOffice.DBATL <= 0)
+                        ModelState.AddModelError("", @"Định biên NVKD chi nhánh " + officeshortname + " không hợp lệ");
+                    var workingDay = workingDays.FirstOrDefault(a => a.Year == yearInt);
+                    if (workingDay == null)
                     {
-                        revenue.Target_TS = targetTSDec;
-                        //revenue.Target_HV = targetHVDec * countNVHV;
-                        //revenue.Target_SAB = targetKTDec * countNVKT;
+                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + yearInt);
+                        return View();
                     }
-                    else
+                    var targetGroup = targetGroups.FirstOrDefault(a => a.Year == yearInt && a.Month == monthInt);
+                    if (targetGroup == null)
+                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng chỉ tiêu NVĐT theo tháng - tháng" + monthInt + "/" + yearInt);
+                    var targetBase = tbl.Rows[i][9].ToString().Trim();
+                    if (string.IsNullOrEmpty(targetBase))
+                        ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " không có dữ liệu cột Chỉ tiêu Doanh số cơ sở");
+                    if (!decimal.TryParse(targetBase, out var targetBaseDec))
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột Chỉ tiêu Doanh số cơ sở, chi nhánh " + officeshortname);
+                    // EC - ATL:
+                    // tính số ngày công; chỉ tiêu cơ sở CN / định biên * số ngày công TT * số ngày công đủ - tháng
+                    int workingDayFull = 1;
+                    switch (monthInt)
                     {
-                        var newRevenue = new RevenueOffice
-                        {
-                            OfficeId = office.Id,
-                            Month = monthInt,
-                            Year = yearInt,
-                            Target_TS = targetTSDec,
-                            //Target_HV = targetHVDec * countNVHV,
-                            //Target_SAB = targetKTDec * countNVKT,
-                            Active = true,
-                        };
-                        newRevenueList.Add(newRevenue);
-                    }
-                }
-
-                if (newRevenueList.Any())
-                {
-                    _unitOfWork.RevenueOfficeRepository.InsertRange(newRevenueList);
-                }
-
-                _unitOfWork.Save();
-                var tbl2 = result.Tables[1];
-
-                var newRevenueList2 = new List<RevenueUser_Month>();
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
-                for (var i = 1; i < tbl2.Rows.Count; i++)
-                {
-                    var manhanvien = tbl2.Rows[i][2].ToString().Trim();
-                    var user = _unitOfWork.UserRepository
-                        .GetQuery(a => a.MaNhanVien == manhanvien)
-                        .FirstOrDefault();
-                    if (user == null) continue;
-
-                    var officeSortName = tbl2.Rows[i][1].ToString().Trim();
-                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
-                    if (office == null) continue;
-                    var typeUser = tbl2.Rows[i][4].ToString().Trim();
-                    if (string.IsNullOrEmpty(typeUser))
-                        continue;
-                    TypeUser type = new TypeUser();
-                    switch (typeUser)
-                    {
-                        case "EC":
-                            type = TypeUser.EC;
+                        case 1:
+                            workingDayFull = workingDay.WorkingDayMonth1;
                             break;
-                        case "BM":
-                            type = TypeUser.BM;
+                        case 2:
+                            workingDayFull = workingDay.WorkingDayMonth2;
                             break;
-                        case "BSA":
-                            type = TypeUser.SAB;
+                        case 3:
+                            workingDayFull = workingDay.WorkingDayMonth3;
                             break;
-                        case "SAB":
-                            type = TypeUser.SAB;
+                        case 4:
+                            workingDayFull = workingDay.WorkingDayMonth4;
                             break;
-                        case "ATL":
-                            type = TypeUser.ALT;
+                        case 5:
+                            workingDayFull = workingDay.WorkingDayMonth5;
                             break;
-                        case "CM":
-                            type = TypeUser.CM;
+                        case 6:
+                            workingDayFull = workingDay.WorkingDayMonth6;
                             break;
-                        case "TTL":
-                            type = TypeUser.TTL;
+                        case 7:
+                            workingDayFull = workingDay.WorkingDayMonth7;
+                            break;
+                        case 8:
+                            workingDayFull = workingDay.WorkingDayMonth8;
+                            break;
+                        case 9:
+                            workingDayFull = workingDay.WorkingDayMonth9;
+                            break;
+                        case 10:
+                            workingDayFull = workingDay.WorkingDayMonth10;
+                            break;
+                        case 11:
+                            workingDayFull = workingDay.WorkingDayMonth11;
+                            break;
+                        case 12:
+                            workingDayFull = workingDay.WorkingDayMonth12;
                             break;
                         default:
                             break;
                     }
-                    var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
-                    if (string.IsNullOrEmpty(dayStart))
-                        continue;
-                    var startDate = new DateTime();
-
-                    if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                        startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                    else
-                        continue;
-                    var monthStr = tbl2.Rows[i][20].ToString().Trim();
-                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
-
-                    var yearStr = tbl2.Rows[i][21].ToString().Trim();
-                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
-
-                    var targetStr = tbl2.Rows[i][12].ToString().Trim();
-                    if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
-                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt && a.DayStart == startDate);
-                    if (historyUser == null) continue;
-                    var revenue = _unitOfWork.RevenueUser_MonthRepository
-                        .GetQuery(a => a.UserId == user.Id && a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt)
-                        .FirstOrDefault();
-
-                    if (revenue != null)
+                    var historyUserMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id);
+                    var revenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
+                    if (revenueOffice == null)
                     {
-                        revenue.Target = targetDec;
+                        revenueOffice = new RevenueOffice
+                        {
+                            Target_TS = 0,
+                            Target_HV = 0,
+                            Target_SAB = 0,
+                            Month = monthInt,
+                            Year = yearInt,
+                            OfficeId = office.Id,
+                        };
+                        _unitOfWork.RevenueOfficeRepository.Insert(revenueOffice);
+                        //_unitOfWork.Save();
                     }
                     else
                     {
-                        var newRevenue = new RevenueUser_Month
+                        revenueOffice.Target_TS = 0;
+                        revenueOffice.Target_SAB = 0;
+                        revenueOffice.Target_HV = 0;
+                    }
+                    //decimal targetOffice = 0;
+                    foreach (var item in historyUserMonths)
+                    {
+                        decimal targetNS = 0;
+                        if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
-                            UserId = user.Id,
-                            HistoryUserId = historyUser.Id,
-                            Month = monthInt,
-                            Year = yearInt,
-                            Target = targetDec,
-                            Active = true
-                        };
-                        newRevenueList2.Add(newRevenue);
+                            int workingDayTT = 0;
+                            if (item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt))
+                            {
+                                workingDayTT = workingDayFull;
+                            }
+                            else if ((item.DayEnd != null && item.DayEnd.Value.Month == monthInt) || item.DayEnd == null)
+                            {
+                                DateTime ngayKetThuc = item.DayEnd ?? new DateTime(item.DayStart.Year, item.DayStart.Month, DateTime.DaysInMonth(item.DayStart.Year, item.DayStart.Month));
+                                int soNgayLamViec = (ngayKetThuc - item.DayStart).Days;
+                                if (soNgayLamViec < 0)
+                                    ModelState.AddModelError("", @"Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
+                                int soNgayNghi = soNgayLamViec / 7;
+                                workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                            }
+                            targetNS = targetBaseDec / (historyOffice.DBEC + historyOffice.DBATL) * (workingDayTT / workingDayFull);
+                            revenueOffice.Target_TS += targetNS;
+                        }
+                        else if (item.TypeUser == TypeUser.CM || item.TypeUser == TypeUser.TTL)
+                        {
+                            switch (historyOffice.GroupOffice)
+                            {
+                                case GroupOffice.A:
+                                    targetNS = targetGroup.Target_A;
+                                    break;
+                                case GroupOffice.B:
+                                    targetNS = targetGroup.Target_B;
+                                    break;
+                                case GroupOffice.C:
+                                    targetNS = targetGroup.Target_C;
+                                    break;
+                                case GroupOffice.D:
+                                    targetNS = targetGroup.Target_D;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            revenueOffice.Target_HV += targetNS;
+                        }
+                        else if (item.TypeUser == TypeUser.SAB)
+                        {
+                            targetNS = targetBaseDec / (historyOffice.DBEC + historyOffice.DBATL) * 65 / 100;
+                            revenueOffice.Target_SAB += targetNS;
+                        }
+                        var r = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt).FirstOrDefault();
+                        if (r != null)
+                        {
+                            r.Target = targetNS;
+                        }
+                        else
+                        {
+                            var rnew = new RevenueUser_Month
+                            {
+                                Target = targetNS,
+                                Month = monthInt,
+                                Year = yearInt,
+                                UserId = item.UserId,
+                                HistoryUserId = item.Id,
+                            };
+                            newRevenueList2.Add(rnew);
+                        }
                     }
                 }
 
@@ -307,6 +637,7 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.RevenueUser_MonthRepository.InsertRange(newRevenueList2);
                 }
                 _unitOfWork.Save();
+
                 var tbl3 = result.Tables[2];
                 var listRevenue = new List<RevenueUser_Week_Real>();
                 for (var i = 1; i < tbl3.Rows.Count; i++)
@@ -356,7 +687,7 @@ namespace OceanEduSlide.Controllers
                     var week = tbl3.Rows[i][5].ToString().Trim();
                     if (string.IsNullOrEmpty(week)) continue;
                     var weekInt = int.Parse(week);
-                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+                    var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt).FirstOrDefault();
                     if (historyUser == null) continue;
                     var ds = tbl3.Rows[i][8].ToString().Trim();
                     decimal dsDec = string.IsNullOrEmpty(ds) ? 0 : decimal.Parse(ds);
@@ -407,26 +738,10 @@ namespace OceanEduSlide.Controllers
                 if (listRevenue.Any())
                     _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
                 _unitOfWork.Save();
-                //var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
-                //HtmlHelpers.CreateFolder(Server.MapPath(docPath));
-                //var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
-                //var logImport = new Models.LogImport
-                //{
-                //    Admin = Fullname,
-                //    Name = Path.GetFileName(file.FileName),
-                //    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
-                //    TypeImport = TypeImport.Type2,
-                //};
-                //_unitOfWork.LogImportRepository.Insert(logImport);
-                //_unitOfWork.Save();
-                //// Lưu tệp tài liệu
-                //var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
-                //file.SaveAs(filePath);
             }
 
             return RedirectToAction("Index", "Vcms");
         }
-
         public PartialViewResult ListFile(int type)
         {
             var typeName = "";
@@ -704,7 +1019,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult CreateWorkingDay(string result = "")
         {
             ViewBag.Result = result;
-            return View(new WorkingDay { Year = DateTime.Now.Year});
+            return View(new WorkingDay { Year = DateTime.Now.Year });
         }
         [HttpPost]
         public ActionResult CreateWorkingDay(WorkingDay model)
@@ -780,7 +1095,7 @@ namespace OceanEduSlide.Controllers
                 {
                     ModelState.AddModelError("", @"Đã tồn tại bản ghi của tháng " + model.Month + " - " + model.Year);
                     return View(model);
-                }    
+                }
                 var targetGroup = new TargetGroup()
                 {
                     Month = model.Month,
@@ -793,7 +1108,7 @@ namespace OceanEduSlide.Controllers
                 };
                 _unitOfWork.TargetGroupRepository.Insert(targetGroup);
                 _unitOfWork.Save();
-                return RedirectToAction("ListTargetGroup", new {result="success"});
+                return RedirectToAction("ListTargetGroup", new { result = "success" });
             }
             return View(model);
         }
@@ -821,14 +1136,14 @@ namespace OceanEduSlide.Controllers
             if (ModelState.IsValid)
             {
                 var targetGroup = _unitOfWork.TargetGroupRepository.GetById(model.TargetGroupId);
-                if(targetGroup == null)
+                if (targetGroup == null)
                     return RedirectToAction("ListTargetGroup");
                 targetGroup.Target_A = Convert.ToDecimal(model.Target_A.Replace(",", ""));
                 targetGroup.Target_B = Convert.ToDecimal(model.Target_B.Replace(",", ""));
                 targetGroup.Target_C = Convert.ToDecimal(model.Target_C.Replace(",", ""));
                 targetGroup.Target_D = Convert.ToDecimal(model.Target_D.Replace(",", ""));
                 _unitOfWork.Save();
-                return RedirectToAction("ListTargetGroup", new {result = "update"});
+                return RedirectToAction("ListTargetGroup", new { result = "update" });
             }
             return View(model);
         }
