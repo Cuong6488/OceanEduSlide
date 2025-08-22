@@ -119,7 +119,7 @@ namespace OceanEduSlide.Controllers
                 if (model.ZoneId == null)
                 {
                     model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    if (model.ZoneId == null)
+                    if (model.OfficeId == null)
                         historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                 }
             }
