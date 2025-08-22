@@ -22,7 +22,7 @@
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Password)</td>
                     <td class="form_text">
-                        @Html.PasswordFor(model => model.Password, new { @class = "form_control w300" })
+                        @Html.PasswordFor(model => model.Password, new { @class = "form_control w300", autocomplete = "new-password" })
                         @Html.ValidationMessageFor(model => model.Password)
                     </td>
                 </tr>

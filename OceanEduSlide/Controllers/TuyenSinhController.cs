@@ -99,27 +99,53 @@ namespace OceanEduSlide.Controllers
                 UserType = UserType,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
             };
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))), q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort));
+
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                historyUsers = historyUsers.Where(a => a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
             }
             else
             {
-                model.ZoneId = User.ZoneId;
                 if (User.TypeUser == TypeUser.ASM)
-                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                        historyUsers = historyUsers.Where(a => a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
+                    }
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                        model.ZoneId = User.ZoneId;
+                        historyUsers = historyUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId + ","));
+                    }
+
+                }
+
                 else
-                    model.OfficeId = User.OfficeId;
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                        model.OfficeId = User.OfficeId;
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => User.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                        historyUsers = historyUsers.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
+                    }
+                }
+
+
             }
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
             //var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year);
             //var revenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year)
             //    .GroupBy(a => a.OfficeId).Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))), q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
 
             if (UserType != null)
             {
@@ -179,19 +205,6 @@ namespace OceanEduSlide.Controllers
                 RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
                 RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
             });
-
-            //var userItems2 = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
-            //{
-            //    HistoryUser = a,
-            //    //User = a.User,
-            //    RevenueUser_Month = _unitOfWork.RevenueUser_MonthRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
-            //    RevenueUser_Month_BMs = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-            //    RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
-            //    RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-            //    RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-            //    //Debt = (_unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.Id && q.Year == (model.Month - 1 == 0 ? model.Year - 1 : model.Year) && q.Month == (model.Month - 1 == 0 ? 12 : model.Month - 1) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0)
-            //    Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id).Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
-            //});
             if (TypeView == 2)
             {
                 // Bước 1: Xác định phân trang

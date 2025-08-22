@@ -33,7 +33,7 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
@@ -345,7 +345,7 @@
     @if (Model.User.TypeUser == TypeUser.BM && Model.RevenueOffice != null && (Model.Month != null && Model.Year != null && Model.OfficeId != null))
     {
         <div class="d-flex justify-content-end mt-3">
-            <a class="btn quick-link" href="@Url.Action("RevenueOffice_BM", new {officeId = Model.OfficeId, month = Model.Month,year = Model.Year})">Cập nhật kế hoạch phân bổ doanh số</a>
+            <a class="btn quick-link" href="@Url.Action("RevenueOffice_BM", new {OfficeId = Model.OfficeId, month = Model.Month,year = Model.Year})">Cập nhật kế hoạch phân bổ doanh số</a>
         </div>
     }
 </div>
