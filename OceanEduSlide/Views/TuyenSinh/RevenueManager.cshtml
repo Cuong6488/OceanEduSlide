@@ -391,7 +391,7 @@
         </div>
         if (Model.UserItems.PageCount > 1)
         {
-            @Html.PagedListPager(Model.UserItems, page => Url.Action("Revenue", new { page, OfficeId = Model.OfficeId, ZoneId = Model.ZoneId, Month = Model.Month, Year = Model.Year, UserType = Model.UserType, TypeView = Model.TypeView }))
+                @Html.PagedListPager(Model.UserItems, page => Url.Action("Revenue", new { page, ZoneId = Model.ZoneId, Month = Model.Month, Year = Model.Year, UserType = Model.UserType, TypeView = Model.TypeView }))
         }
     }
 </div>

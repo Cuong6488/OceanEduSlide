@@ -55,13 +55,6 @@
             }
             @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
             {
-                @*<select name="" class="form-select w-25" disabled>
-                        <option value="">Chọn chi nhánh</option>
-                        @foreach (var item in Model.Offices)
-                        {
-                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                        }
-                    </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
 
             }
