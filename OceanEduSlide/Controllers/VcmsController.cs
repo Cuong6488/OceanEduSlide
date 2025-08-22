@@ -1057,6 +1057,9 @@ namespace OceanEduSlide.Controllers
                         case "Điều chuyển":
                             statusUser = StatusUser.Transfer;
                             break;
+                        case "Bổ nhiệm":
+                            statusUser = StatusUser.Transfer;
+                            break;
                         default:
                             break;
                     }
@@ -1064,7 +1067,6 @@ namespace OceanEduSlide.Controllers
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
                     var zones = tbl2.Rows[i][12].ToString().Trim();
                     var sort = tbl2.Rows[i][11].ToString().Trim();
-
                     if (user == null)
                     {
                         if (statusUser == StatusUser.Active)
@@ -1589,7 +1591,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
-            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: l => l.OrderBy(a => a.Sort));
+            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: l => l.OrderBy(a => a.ZoneId).ThenBy(a => a.Sort));
 
             //if (cityId.HasValue)
             //{

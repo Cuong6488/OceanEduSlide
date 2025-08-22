@@ -483,35 +483,10 @@ namespace OceanEduSlide.Controllers
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
 
-            //var users = _unitOfWork.UserRepository.GetQuery(a =>
-            //        a.Active &&
-            //        a.TypeUser != null &&
-            //        a.TypeUser != TypeUser.HO &&
-            //        a.TypeUser != TypeUser.CV &&
-            //        a.TypeUser != TypeUser.PKT &&
-            //        a.TypeUser != TypeUser.ASM &&
-            //        a.OfficeId != null,
-            //    q => q.OrderBy(a => a.OfficeId)).ToList();
-            //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-            //                   a.Active && a.Month == selectedMonth && a.Year == selectedYear && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
-            //                   a.TypeUser != TypeUser.HO &&
-            //                   a.TypeUser != TypeUser.CV &&
-            //                   a.TypeUser != TypeUser.PKT &&
-            //                   a.TypeUser != TypeUser.ASM &&
-            //                   a.OfficeId != null,
-            //               q => q.OrderBy(a => a.OfficeId));
             var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-    a.Active &&
-    a.Month == selectedMonth &&
-    a.Year == selectedYear &&
-    (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth))) &&
-    a.TypeUser != TypeUser.HO &&
-    a.TypeUser != TypeUser.CV &&
-    a.TypeUser != TypeUser.PKT &&
-    a.TypeUser != TypeUser.ASM &&
-    a.OfficeId != null);
-            //IEnumerable<User> filteredUsers = users;
-            //IEnumerable<HistoryUser> filteredHistoryUsers = historyUsers;
+            a.Active && a.Month == selectedMonth && a.Year == selectedYear
+            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
+            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId != null);
 
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
             var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
