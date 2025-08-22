@@ -116,10 +116,11 @@ namespace OceanEduSlide.Controllers
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                if (model.ZoneId == null && model.OfficeId == null)
+                if (model.ZoneId == null)
                 {
                     model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    if (model.ZoneId == null)
+                        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                 }
             }
             else
@@ -130,10 +131,11 @@ namespace OceanEduSlide.Controllers
                     {
                         model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                         //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                        if (model.ZoneId == null && model.OfficeId != null)
+                        if (model.ZoneId == null)
                         {
                             model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            if (model.OfficeId == null)
+                                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                         }
                     }
                     else
@@ -148,9 +150,9 @@ namespace OceanEduSlide.Controllers
                         model.OfficeId = User.OfficeId;
                     else
                     {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
                         if (model.OfficeId == null)
                         {
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")) );
                             historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
                         }
                     }
@@ -158,7 +160,6 @@ namespace OceanEduSlide.Controllers
             }
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
-
             if (UserType != null)
             {
                 historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
@@ -186,7 +187,7 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    historyUsers = historyUsers.Where(a =>  a.OfficeId == model.OfficeId);
+                    historyUsers = historyUsers.Where(a => a.OfficeId == model.OfficeId);
                     var userItems = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,

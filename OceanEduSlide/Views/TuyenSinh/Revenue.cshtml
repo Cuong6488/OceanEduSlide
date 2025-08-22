@@ -43,7 +43,8 @@
                     }
                 </select>
             }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+
             {
                 <select name="OfficeId" class="form-select w-25 me-3">
                     <option>Chọn chi nhánh</option>

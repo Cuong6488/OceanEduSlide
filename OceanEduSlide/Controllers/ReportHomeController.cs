@@ -18,6 +18,7 @@ using System.Web;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using NLog;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace OceanEduSlide.Controllers
 {
@@ -35,7 +36,7 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
+        public ActionResult ReportKDCN(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -43,27 +44,52 @@ namespace OceanEduSlide.Controllers
             int currentMonth = Month ?? DateTime.Now.Month;
             int currentYear = Year ?? DateTime.Now.Year;
             int pageNumber = page ?? 1;
-
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == currentMonth && h.Year == currentYear).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
             // 1. Truy vấn danh sách Office theo quyền truy cập
             var officeQuery = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsQueryable();
 
             if (User.TypeUser == TypeUser.CV)
             {
-                officeQuery = officeQuery.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+                if (!ZoneId.HasValue)
+                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
             }
             else if (User.TypeUser == TypeUser.ASM)
             {
-                officeQuery = officeQuery.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                if (!ZoneId.HasValue)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    }
+                    else
+                    {
+                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.Zone.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                    }
+                }
             }
             else if (User.TypeUser != TypeUser.HO)
             {
-                officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                    officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
+                else
+                {
+                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                }
             }
 
             if (ZoneId.HasValue)
             {
-                officeQuery = officeQuery.Where(a => a.ZoneId == ZoneId.Value);
+                officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
             }
+            //if (OfficeId.HasValue)
+            //{
+            //    officeQuery = officeQuery.Where(a =>  a.Id == OfficeId.Value);
+            //}
 
             var allOffices = officeQuery.AsNoTracking().ToList();
             var officeIds = allOffices.Select(o => o.Id).ToList();
@@ -138,7 +164,20 @@ namespace OceanEduSlide.Controllers
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+
+                }
             }
 
             // 8. OfficeIds cho ViewBag

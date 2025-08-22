@@ -69,7 +69,7 @@
                     <option value="2" @(Model.TypeView == 2 ? "selected" : "")>Chi tiết</option>
                 </select>
             }
-            @if ((Model.User.TypeUser == TypeUser.BM && string.IsNullOrEmpty(Model.User.OfficeIds)) || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
             {
                 @*<select name="" class="form-select w-25" disabled>
                         <option value="">Chọn chi nhánh</option>
@@ -391,7 +391,7 @@
         </div>
         if (Model.UserItems.PageCount > 1)
         {
-                @Html.PagedListPager(Model.UserItems, page => Url.Action("Revenue", new { page, ZoneId = Model.ZoneId, Month = Model.Month, Year = Model.Year, UserType = Model.UserType, TypeView = Model.TypeView }))
+            @Html.PagedListPager(Model.UserItems, page => Url.Action("Revenue", new { page, ZoneId = Model.ZoneId, Month = Model.Month, Year = Model.Year, UserType = Model.UserType, TypeView = Model.TypeView }))
         }
     }
 </div>
