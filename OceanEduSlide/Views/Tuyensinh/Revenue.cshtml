@@ -33,7 +33,8 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))
+            @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM && !string.IsNullOrEmpty(Model.User.ZoneIds) && Model.User.ZoneIds.Length > 2))*@
+            @if (Model.Zones?.Count() > 1)
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
