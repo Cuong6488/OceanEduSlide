@@ -114,7 +114,8 @@
             }
         </select>
 
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
+        @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
@@ -135,7 +136,7 @@
                 }
             </select>
         }
-        else
+        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
         {
             <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
         }

@@ -149,7 +149,7 @@ namespace OceanEduSlide.Controllers
                 var tbl = result.Tables[0];
                 var newRevenueList = new List<RevenueOffice>();
                 var newRevenueList2 = new List<RevenueUser_Month>();
-                var reportDataList = new List<ReportData>();
+                //var reportDataList = new List<ReportData>();
                 //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery();
                 //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 var offices = _unitOfWork.OfficeRepository.GetQuery();
@@ -344,26 +344,26 @@ namespace OceanEduSlide.Controllers
                             revenueOffice.Target_SAB += targetNS;
                         }
                         // Chỉ tiêu báo cáo nhân sự
-                        var reportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87).FirstOrDefault();
-                        if (reportData == null)
-                        {
-                            reportData = new ReportData()
-                            {
-                                Data = targetNS.ToString("N0"),
-                                UserId = item.UserId,
-                                HistoryUserId = item.Id,
-                                Month = monthInt,
-                                Year = yearInt,
-                                ReportCategoryId = 87,
-                                OfficeId = office.Id,
-                                Sort = 10,
-                            };
-                            reportDataList.Add(reportData);
-                        }
-                        else
-                        {
-                            reportData.Data = targetNS.ToString("N0");
-                        }
+                        //var reportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87).FirstOrDefault();
+                        //if (reportData == null)
+                        //{
+                        //    reportData = new ReportData()
+                        //    {
+                        //        Data = targetNS.ToString("N0"),
+                        //        UserId = item.UserId,
+                        //        HistoryUserId = item.Id,
+                        //        Month = monthInt,
+                        //        Year = yearInt,
+                        //        ReportCategoryId = 87,
+                        //        OfficeId = office.Id,
+                        //        Sort = 10,
+                        //    };
+                        //    reportDataList.Add(reportData);
+                        //}
+                        //else
+                        //{
+                        //    reportData.Data = targetNS.ToString("N0");
+                        //}
                         var r = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt).FirstOrDefault();
                         if (r != null)
                         {
@@ -386,25 +386,25 @@ namespace OceanEduSlide.Controllers
                     }
 
                     // Chỉ tiêu báo cáo chi nhánh
-                    revenueOffice.Target_TS = Math.Max(revenueOffice.Target_TS, targetBaseDec);
-                    var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
-                    if (reportDataCN == null)
-                    {
-                        reportDataCN = new ReportData()
-                        {
-                            Data = revenueOffice.Target_TS.ToString("N0"),
-                            Month = monthInt,
-                            Year = yearInt,
-                            ReportCategoryId = 34,
-                            OfficeId = office.Id,
-                            Sort = 13,
-                        };
-                        reportDataList.Add(reportDataCN);
-                    }
-                    else
-                    {
-                        reportDataCN.Data = revenueOffice.Target_TS.ToString("N0");
-                    }
+                    //revenueOffice.Target_TS = Math.Max(revenueOffice.Target_TS, targetBaseDec);
+                    //var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
+                    //if (reportDataCN == null)
+                    //{
+                    //    reportDataCN = new ReportData()
+                    //    {
+                    //        Data = revenueOffice.Target_TS.ToString("N0"),
+                    //        Month = monthInt,
+                    //        Year = yearInt,
+                    //        ReportCategoryId = 34,
+                    //        OfficeId = office.Id,
+                    //        Sort = 13,
+                    //    };
+                    //    reportDataList.Add(reportDataCN);
+                    //}
+                    //else
+                    //{
+                    //    reportDataCN.Data = revenueOffice.Target_TS.ToString("N0");
+                    //}
 
                 }
 
@@ -416,10 +416,10 @@ namespace OceanEduSlide.Controllers
                 {
                     _unitOfWork.RevenueUser_MonthRepository.InsertRange(newRevenueList2);
                 }
-                if (reportDataList.Any())
-                {
-                    _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
-                }
+                //if (reportDataList.Any())
+                //{
+                //    _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
+                //}
                 _unitOfWork.Save();
 
                 var tbl3 = result.Tables[1];

@@ -45,7 +45,8 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))
+            @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM && !string.IsNullOrEmpty(Model.User.ZoneIds) && Model.User.ZoneIds.Length > 2))*@
+            @if(Model.Zones?.Count() > 1)
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
@@ -71,13 +72,6 @@
             }
             @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
             {
-                @*<select name="" class="form-select w-25" disabled>
-                        <option value="">Chọn chi nhánh</option>
-                        @foreach (var item in Model.Offices)
-                        {
-                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                        }
-                    </select>*@
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
             <select name="UserType" class="form-select w-25">

@@ -25,7 +25,9 @@
         <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
 
     </div>
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)*@
+
+    @if (Model.Zones?.Count() > 1)
     {
         <select name="ZoneId" class="form-select me-3 w-25">
             <option value="">Chọn vùng</option>

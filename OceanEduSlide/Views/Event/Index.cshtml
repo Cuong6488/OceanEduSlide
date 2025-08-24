@@ -42,7 +42,8 @@
                 <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)*@
+        @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
