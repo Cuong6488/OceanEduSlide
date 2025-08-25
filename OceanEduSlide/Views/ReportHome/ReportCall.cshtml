@@ -25,7 +25,7 @@
         <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
 
     </div>
-    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)*@
+    @*@if (Model.HistoryUser.TypeUser == TypeUser.HO || Model.HistoryUser.TypeUser == TypeUser.CV)*@
 
     @if (Model.Zones?.Count() > 1)
     {
@@ -63,11 +63,13 @@
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
                 <tr class="text-center">
-                    <th rowspan="2" class="col-w150 text-start px-2">Chi nhánh</th>
+                    <th rowspan="2" class="col-w100 text-start px-2">Chi nhánh</th>
                     <th rowspan="2" class="text-start px-2">Mã nhân sự</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Họ tên nhân sự</th>
                     <th rowspan="2" class="col-w65 text-start px-2">Vị trí</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Trạng thái</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">Ngày <br /> vào làm</th>
+                    <th rowspan="2" class="col-w90 text-start px-2">Ngày nghỉ/ <br /> điều chuyển</th>
                     <th>Trên 2 phút</th>
                     <th>Trên 1,5 phút</th>
                     <th>Từ 1 phút trở lên</th>
@@ -97,25 +99,18 @@
                 {
                     <tr>
                         @*
-                            <td class="text-start px-2">@(item.User.Office?.ShortName)</td>*@
-                        <td class="text-start px-2">@(office == null? item.User.Office?.ShortName:office.ShortName)</td>
-                        <td class="text-start px-2">@item.User.MaNhanVien</td>
-                        <td class="text-start px-2">@item.User.Fullname</td>
-                        <td class="text-start px-2">@Html.DisplayFor(a => item.User.TypeUser)</td>
-                        <td class="text-start px-2">
-                            @if (item.User.OfficeId != Model.OfficeId || item.User.Active == false)
-                            {
-                                @: Đã nghỉ/ điều chuyển
-                            }
-                            else
-                            {
-                                @: Đang làm việc
-                            }
-                        </td>
+        <td class="text-start px-2">@(item.HistoryUser.Office?.ShortName)</td>*@
+                        <td class="text-start px-2">@(office == null? item.HistoryUser.Office?.ShortName:office.ShortName)</td>
+                        <td class="text-start px-2">@item.HistoryUser.User.MaNhanVien</td>
+                        <td class="text-start px-2">@item.HistoryUser.User.Fullname</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.TypeUser)</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.Status)</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.DayStart)</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.DayEnd)</td>
                         <td>
                             @if (item.Over120s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over120s</a>
                             }
                             else
@@ -126,7 +121,7 @@
                         <td>
                             @if (item.Over90s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over90s</a>
                             }
                             else
@@ -137,7 +132,7 @@
                         <td>
                             @if (item.Over60s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over60s</a>
                             }
                             else
@@ -148,7 +143,7 @@
                         <td>
                             @if (item.Under60s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under60s</a>
                             }
                             else
@@ -159,7 +154,7 @@
                         <td>
                             @if (item.Under30s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under30s</a>
                             }
                             else

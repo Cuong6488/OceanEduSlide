@@ -57,7 +57,7 @@ namespace OceanEduSlide.ViewModels
         public int TotalUnder30s { get; set; }
         public class UserItem
         {
-            public User User { get; set; }
+            //public User User { get; set; }
             public HistoryUser HistoryUser { get; set; }
             public int Over120s { get; set; }
             public int Over90s { get; set; }
@@ -77,7 +77,7 @@ namespace OceanEduSlide.ViewModels
 
     public class LoadListCallViewModel
     {
-        public User User { get; set; }
+        public HistoryUser User { get; set; }
         [Display(Name = "Từ ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]
         public string StartDay { get; set; }
         [Display(Name = " Đến ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]

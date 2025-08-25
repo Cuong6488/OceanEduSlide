@@ -441,9 +441,9 @@ namespace OceanEduSlide.Controllers
                 var startDate = StartDate.Date;
                 var endDate = EndDate.Date.AddDays(1);
                 var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.User.OfficeId == model.OfficeId);
-                var aggregated = callData.GroupBy(p => p.UserId).Select(g => new
+                var aggregated = callData.GroupBy(p => p.HistoryUserId).Select(g => new
                 {
-                    UserId = g.Key,
+                    HistoryUserId = g.Key,
                     Over120s = g.Count(x => x.BillSec > 120),
                     Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
                     Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
@@ -456,17 +456,20 @@ namespace OceanEduSlide.Controllers
                     TotalOver30s = g.Count(x => x.BillSec >= 30),
                     Total = g.Count(),
                 }).ToList();
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active);
+                //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active);
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate 
+                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM ,q => q.OrderBy(a => a.Sort)).ToList();
                 //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
-                var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
-                    q => q.OrderBy(a => a.TypeUser)).ToList();
-                var userItems = users.Select(u =>
+                //var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
+                //    q => q.OrderBy(a => a.TypeUser)).ToList();
+                var userItems = historyUsers.Select(u =>
                 {
-                    var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);
+                    var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);
 
                     return new ListCallViewModel.UserItem
                     {
-                        User = u,
+                        //User = u,
+                        HistoryUser = u,
                         Over120s = match?.Over120s ?? 0,
                         Over90s = match?.Over90s ?? 0,
                         Over60s = match?.Over60s ?? 0,
@@ -496,7 +499,7 @@ namespace OceanEduSlide.Controllers
             {
                 StartDay = startDay,
                 EndDay = endDay,
-                User = _unitOfWork.UserRepository.GetById(userId),
+                User = _unitOfWork.HistoryUserRepository.GetById(userId),
             };
 
             DateTime startDate = new DateTime();
@@ -511,23 +514,23 @@ namespace OceanEduSlide.Controllers
             switch (type)
             {
                 case 120:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 120);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 120);
                     ViewBag.Type = "trên 2 phút";
                     break;
                 case 90:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 90 && p.BillSec <= 120);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 90 && p.BillSec <= 120);
                     ViewBag.Type = "trên 1,5 phút";
                     break;
                 case 60:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 60 && p.BillSec <= 90);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 60 && p.BillSec <= 90);
                     ViewBag.Type = "trên 1 phút";
                     break;
                 case 59:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 30 && p.BillSec < 60);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 30 && p.BillSec < 60);
                     ViewBag.Type = "dưới 1 phút";
                     break;
                 case 30:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30 && p.Disposition == "ANSWERED");
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30 && p.Disposition == "ANSWERED");
                     ViewBag.Type = "Dưới 30s";
                     break;
                 default:
