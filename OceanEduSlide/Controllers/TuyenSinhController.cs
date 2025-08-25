@@ -4,6 +4,7 @@ using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
+using OceanEduSlide.OEDongBo;
 using OceanEduSlide.ViewModels;
 using Org.BouncyCastle.Utilities.Collections;
 using PagedList;
@@ -24,6 +25,8 @@ namespace OceanEduSlide.Controllers
     public class TuyenSinhController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private DongBoTuyenSinhEntities db = new DongBoTuyenSinhEntities();
+
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
@@ -143,7 +146,6 @@ namespace OceanEduSlide.Controllers
                         model.ZoneId = User.ZoneId;
                     }
                 }
-
                 else
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
@@ -655,6 +657,13 @@ namespace OceanEduSlide.Controllers
         }
 
         #endregion
+        public ActionResult ListTest()
+        {
+            var danhSachPhieuThu = db.BC_PhieuThu;
+            //var danhSach2 = danhSachPhieuThu.Where(a => a.)
+            return View(danhSachPhieuThu);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

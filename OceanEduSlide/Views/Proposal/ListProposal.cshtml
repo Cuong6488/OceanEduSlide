@@ -38,47 +38,28 @@
                     <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
                 }
             </select>
-            @if (Model.User.TypeUser == TypeUser.ASM)
+            @if (Model.Zones?.Count() > 1)
             {
-                <select name="OfficeId" class="form-select me-3 w-25">
-                    <option value="">Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>
-            }
-            else if (Model.User.TypeUser == TypeUser.BM)
-            {
-                <select name="" class="form-select w-25" disabled>
-                    <option value="">Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>
-                @*<select name="Notice" class="form-select me-3">
-                        <option value="">Tất cả</option>
-                        <option value="2" @(Model.Notice == 2 ? "selected" : "")>BM chưa duyệt</option>
-                    </select>*@
-                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-            }
-            else if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.PKT)
-            {
-                <select name="ZoneId" class="form-select w-25 me-3" @*data-item="zone"*@>
+                <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
                     @foreach (var item in Model.Zones)
                     {
                         <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
                     }
                 </select>
-                <select name="OfficeId" class="form-select ms-3 w-25" @*data-item="office"*@>
-                    <option value="">Chọn chi nhánh</option>
+            }
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+            {
+                <select name="OfficeId" class="form-select w-25 me-3">
+                    <option>Chọn chi nhánh</option>
                     @foreach (var item in Model.Offices)
                     {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")> @item.Name </option>
                     }
                 </select>
+            }
+            @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.PKT)
+            {
                 <select name="Notice" class="form-select ms-3 w-25">
                     <option value="">Tất cả</option>
                     @if (Model.User.TypeUser == TypeUser.CV)

@@ -15,7 +15,7 @@
         display: none !important;
     }
 </style>
-<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter mb-5">
+<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter mb-5" id="form-reportcall">
     <div class="w-25 d-flex align-items-center">
         <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
         <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
@@ -52,11 +52,13 @@
         <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
     }
 </form>
-<p class="text-danger">*Lưu ý: Cần chọn chi nhánh và khoảng thời gian để hiển thị thống kê</p>
+@if (Model.OfficeId == null)
+{
+    <p class="text-danger">* Vui lòng chọn chi nhánh</p>
+}
 <h2>@ViewBag.Title</h2>
 @if (Model.UserItems != null)
 {
-
     <div class="box_content mt-0">
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
@@ -193,6 +195,5 @@
             dateFormat: 'dd/mm/yy',
             maxDate: today,
         }).attr('readonly', 'readonly');
-
     </script>
 }

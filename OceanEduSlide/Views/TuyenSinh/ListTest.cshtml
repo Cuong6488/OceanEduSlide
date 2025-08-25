@@ -1,0 +1,29 @@
+﻿@model IEnumerable<OceanEduSlide.OEDongBo.BC_PhieuThu>
+
+<h2>Danh sách phiếu thu</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã HV</th>
+            <th>Tên HV</th>
+            <th>Chi nhánh</th>
+            <th>Ngày thanh toán</th>
+            <th>Hình thức thanh toán</th>
+            <th>Ghi chú</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaHV</td>
+                <td>@item.TenHV</td>
+                <td>@item.ChiNhanh</td>
+                <td>@(item.NgayThanhToan?.ToString("dd/MM/yyyy"))</td>
+                <td>@item.HinhThucThanhToan</td>
+                <td>@item.Notes</td>
+            </tr>
+        }
+    </tbody>
+</table>

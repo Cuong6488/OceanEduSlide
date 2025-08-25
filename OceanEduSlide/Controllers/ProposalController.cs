@@ -103,7 +103,7 @@ namespace OceanEduSlide.Controllers
             var model = new ProposalViewModel
             {
                 Month = Month,
-                Year = Year,
+                Year = Year ?? DateTime.Now.Year,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
                 User = User,
                 OfficeId = officeId,
@@ -114,6 +114,15 @@ namespace OceanEduSlide.Controllers
                 Type = Type,
                 Page = page ?? 1
             };
+            var historyQuery = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Year == model.Year);
+            if (Month.HasValue)
+                historyQuery = historyQuery.Where(a => a.Month == Month);
+            var historyOffices = historyQuery.Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
             var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
@@ -133,14 +142,17 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
-
+                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
+                }
                 if (Notice == 1)
                     proposals = proposals.Where(a => !a.CVSeen);
                 if (Notice == 2)
                     proposals = proposals.Where(a => a.CVSeen);
                 ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active && !a.CVSeen).Count();
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
             }
             else if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.PKT)
             {
@@ -169,24 +181,50 @@ namespace OceanEduSlide.Controllers
                     //_unitOfWork.Save();
                 }
 
-                if (User.TypeUser != TypeUser.ASM)
-                    model.OfficeId = User.OfficeId;
+                //if (User.TypeUser != TypeUser.ASM)
+                //    model.OfficeId = User.OfficeId;
+                //if (User.TypeUser == TypeUser.ASM)
+                //    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
+                //else if (User.TypeUser == TypeUser.BM)
+                //    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
                 if (User.TypeUser == TypeUser.ASM)
-                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
-                else if (User.TypeUser == TypeUser.BM)
-                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active && a.NSSeen == false).Count();
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        }
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        model.OfficeId = User.OfficeId;
+                        if (User.TypeUser == TypeUser.BM)
+                            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
+                    }
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (User.TypeUser == TypeUser.BM)
+                            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ",") && a.Active && a.NSSeen == false).Count();
+                    }
+                }
             }
 
             if (model.ZoneId != null)
             {
                 proposals = proposals.Where(a => a.ZoneId == model.ZoneId);
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-                //var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
-                //var user = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.CV && a.ZoneIds.Contains("," + zone.ShortCode + ",")).FirstOrDefault();
-                //if (user != null)
-                //{
-                //    ViewBag.CVName = user.Fullname ?? user.Username;
-                //}
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
             }
             if (model.OfficeId != null)
             {

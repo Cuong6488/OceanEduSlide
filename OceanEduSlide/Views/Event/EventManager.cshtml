@@ -47,7 +47,8 @@
                 <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)*@
+        @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
@@ -57,7 +58,9 @@
                 }
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+
         {
             <select name="OfficeId" class="form-select w-25 me-3">
                 <option>Chọn chi nhánh</option>
@@ -75,7 +78,9 @@
                 <option value="5" @(Model.TypeView == 5 ? "selected" : "")>Doanh số tuyển sinh</option>
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+        @*@if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)*@
+        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
+
         {
             @*<select name="" class="form-select w-25" disabled>
                     <option value="">Chọn chi nhánh</option>

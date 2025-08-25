@@ -205,6 +205,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Cng, Version=4.3.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Cng.4.7.0\lib\net47\System.Security.Cryptography.Cng.dll</HintPath>
@@ -605,6 +606,24 @@
     <Compile Include="Models\RevenueOffice.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="OEDongBo\BC_PhieuThu.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
@@ -1179,6 +1198,16 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="OEDongBo\DB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB.edmx</DependentUpon>
+      <LastGenOutput>DB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="OEDongBo\DB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB.edmx</DependentUpon>
+      <LastGenOutput>DB.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -1232,6 +1261,13 @@
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
     <Content Include="Nlog.config" />
+    <EntityDeploy Include="OEDongBo\DB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="OEDongBo\DB.edmx.diagram">
+      <DependentUpon>DB.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
@@ -1515,6 +1551,7 @@
     <Content Include="Views\Revenue\UpdateWorkingDay.cshtml" />
     <Content Include="Views\Vcms\InsertHistoryOfficeExcel.cshtml" />
     <Content Include="Views\Vcms\ListHistoryOffice.cshtml" />
+    <Content Include="Views\TuyenSinh\ListTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1573,6 +1610,7 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202504151335093_first.resx">
