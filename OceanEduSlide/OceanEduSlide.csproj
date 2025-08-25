@@ -84,6 +84,9 @@
     <Reference Include="Fido2.Models, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Fido2.Models.2.0.2\lib\netstandard2.0\Fido2.Models.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.5.1\lib\netstandard2.0\FluentScheduler.dll</HintPath>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.8.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Core.1.8.20\lib\net46\Hangfire.Core.dll</HintPath>
     </Reference>
@@ -572,6 +575,10 @@
     <Compile Include="Migrations\202508200436200_historyoffice.cs" />
     <Compile Include="Migrations\202508200436200_historyoffice.Designer.cs">
       <DependentUpon>202508200436200_historyoffice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508250930191_historyUCallLog.cs" />
+    <Compile Include="Migrations\202508250930191_historyUCallLog.Designer.cs">
+      <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1801,6 +1808,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508200436200_historyoffice.resx">
       <DependentUpon>202508200436200_historyoffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508250930191_historyUCallLog.resx">
+      <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -58,6 +58,7 @@ namespace OceanEduSlide.ViewModels
         public class UserItem
         {
             public User User { get; set; }
+            public HistoryUser HistoryUser { get; set; }
             public int Over120s { get; set; }
             public int Over90s { get; set; }
             public int Over60s { get; set; }

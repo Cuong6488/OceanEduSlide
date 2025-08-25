@@ -14,6 +14,7 @@ namespace OceanEduSlide.Models
         public DateTime CallDate { get; set; }
         public string CallDateString { get; set; }
         public int UserId { get; set; }
+        public int? HistoryUserId { get; set; }
         [StringLength(20)]
         public string Phone { get; set; }
         [StringLength(20)]
@@ -29,6 +30,7 @@ namespace OceanEduSlide.Models
         [StringLength(10)]
         public string Type { get; set; }
         public virtual User User { get; set; }
+        public virtual HistoryUser HistoryUser { get; set; }
 
     }
 }

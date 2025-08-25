@@ -107,6 +107,10 @@ namespace OceanEduSlide.DAL
             _context.SaveChanges();
         }
         private bool _disposed;
+        public void ExecuteSqlCommand(string sql)
+        {
+            _context.Database.ExecuteSqlCommand(sql);
+        }
 
         protected virtual void Dispose(bool disposing)
         {

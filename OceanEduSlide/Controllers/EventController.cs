@@ -71,7 +71,6 @@ namespace OceanEduSlide.Controllers
                     if (model.OfficeId == null)
                         events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
                 }
-
             }
             else
             {
@@ -83,7 +82,7 @@ namespace OceanEduSlide.Controllers
                         model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                         if (model.ZoneId == null)
                         {
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ",")));
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                             if (model.OfficeId == null)
                                 events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
                         }

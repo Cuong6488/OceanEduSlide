@@ -537,6 +537,35 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
+        public ActionResult ChangeCallLogData(int day)
+        {
+            for (int i = 0; i < day; i++) // ví dụ 30 ngày gần đây
+            {
+                var date = DateTime.Today.AddDays(-i);
+                string sql = $@"
+    UPDATE CallLogs
+    SET HistoryUserId = (
+        SELECT TOP 1 h.Id
+        FROM HistoryUsers h
+        WHERE h.UserId = CallLogs.UserId
+          AND h.DayStart <= CallLogs.CallDate
+          AND (h.DayEnd IS NULL OR h.DayEnd >= CallLogs.CallDate)
+        ORDER BY h.DayStart DESC
+    )
+    WHERE HistoryUserId IS NULL AND CAST(CallDate AS DATE) = '{date:yyyy-MM-dd}'";
+
+                _unitOfWork.ExecuteSqlCommand(sql);
+            }
+            return Content("Đã chuyển dữ liệu cuộc gọi");
+
+        }
+        public async Task<ActionResult> TestSync()
+        {
+            var service = new CallLogService();
+            await service.SyncYesterdayAsync2();
+            return Content("Đã đồng bộ thủ công.");
+        }
+
 
         #endregion
     }

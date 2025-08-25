@@ -168,7 +168,7 @@ namespace OceanEduSlide.Controllers
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
                 if (Notice == 2)
                     proposals = proposals.Where(a => a.Active == false);
                 else if (Notice == 3)
