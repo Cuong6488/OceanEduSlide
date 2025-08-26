@@ -457,8 +457,8 @@ namespace OceanEduSlide.Controllers
                     Total = g.Count(),
                 }).ToList();
                 //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active);
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate 
-                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM ,q => q.OrderBy(a => a.Sort)).ToList();
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
+                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort)).ToList();
                 //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
                 //var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
                 //    q => q.OrderBy(a => a.TypeUser)).ToList();
@@ -553,7 +553,9 @@ namespace OceanEduSlide.Controllers
         WHERE h.UserId = CallLogs.UserId
           AND h.DayStart <= CallLogs.CallDate
           AND (h.DayEnd IS NULL OR h.DayEnd >= CallLogs.CallDate)
-        ORDER BY h.DayStart DESC
+        ORDER BY 
+CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
+        h.DayEnd ASC  
     )
     WHERE HistoryUserId IS NULL AND CAST(CallDate AS DATE) = '{date:yyyy-MM-dd}'";
 
@@ -565,7 +567,7 @@ namespace OceanEduSlide.Controllers
         public async Task<ActionResult> TestSync()
         {
             var service = new CallLogService();
-            await service.SyncYesterdayAsync2();
+            await service.SyncYesterdayAsync();
             return Content("Đã đồng bộ thủ công.");
         }
 

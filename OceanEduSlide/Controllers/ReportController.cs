@@ -131,7 +131,7 @@ namespace OceanEduSlide.Controllers
                         var category = allCategories
                             .FirstOrDefault(a => a.Sort == cChildSort && a.CategoryParent?.Sort == group && a.TypeCat == TypeCat.Type1);
                         if (category == null) continue;
-                        //if (category.Id == 34) continue;
+                        if (category.Id == 99 || category.Id == 100 || category.Id == 101) continue;
                         // Xử lý dữ liệu hiển thị
                         if (!string.IsNullOrEmpty(value))
                         {

@@ -193,7 +193,7 @@ namespace OceanEduSlide.Controllers
                         ModelState.AddModelError("", @"Chưa có dữ liệu chi nhánh theo tháng chi nhánh " + officeshortname);
                         return View();
                     }
-                    if (historyOffice?.DBEC + historyOffice?.DBATL <= 0)
+                    if (historyOffice.DBEC + historyOffice.DBATL <= 0)
                     {
                         ModelState.AddModelError("", @"Định biên NVKD chi nhánh " + officeshortname + " không hợp lệ");
                         return View();
@@ -202,6 +202,12 @@ namespace OceanEduSlide.Controllers
                     if (workingDay == null)
                     {
                         ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + yearInt);
+                        return View();
+                    }
+                    var workingDayLastYear = workingDays.FirstOrDefault(a => a.Year == yearInt - 1);
+                    if (workingDayLastYear == null)
+                    {
+                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + (yearInt - 1));
                         return View();
                     }
                     var targetGroup = targetGroups.FirstOrDefault(a => a.Year == yearInt && a.Month == monthInt);
@@ -263,8 +269,8 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var historyUserMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id 
-                    && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB) 
+                    var historyUserMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id
+                    && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB)
                     && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt))));
                     var revenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
                     if (revenueOffice == null)
@@ -288,13 +294,28 @@ namespace OceanEduSlide.Controllers
                         revenueOffice.Target_SAB = 0;
                         revenueOffice.Target_HV = 0;
                     }
-                    var count = historyUserMonths.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT).Count();
+                    var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
+
                             int workingDayTT = 0;
+                            bool nsFullTarget = true;
+                            int lastMonth = 0;
+                            int yearLastMonth = 0;
+                            if(monthInt == 1)
+                            {
+                                lastMonth = 12;
+                                yearLastMonth = yearInt - 1;
+                            }
+                            else
+                            {
+                                lastMonth = monthInt - 1;
+                                yearLastMonth = yearInt;
+                            }
+                            DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
                             if ((item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
                             {
                                 workingDayTT = workingDayFull;
@@ -312,9 +333,113 @@ namespace OceanEduSlide.Controllers
                                 int soNgayNghi = soNgayLamViec / 7;
                                 workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
                             }
-                            targetNS = targetBaseDec / (historyOffice.DBEC + historyOffice.DBATL) * ((decimal)workingDayTT / workingDayFull);
-                            if (item.NewUser)
+                            decimal targetDBCS = targetBaseDec / DBKD;
+                            targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
+                            if (item.DayStart.Month == monthInt && item.DayStart.Year == yearInt)
+                            {
+                                nsFullTarget = false;
                                 targetNS = targetNS / 2;
+                            }
+                            else if (item.DayStart.Month == lastMonth && item.DayStart.Year == yearLastMonth)
+                            {
+                                var dayLastMonth = 0;
+                                var day50Total = 0;
+                                switch (monthInt)
+                                {
+                                    case 1:
+                                        day50Total = workingDayLastYear.WorkingDayMonth12;
+                                        break;
+                                    case 2:
+                                        day50Total = workingDay.WorkingDayMonth1;
+                                        break;
+                                    case 3:
+                                        day50Total = workingDay.WorkingDayMonth2;
+                                        break;
+                                    case 4:
+                                        day50Total = workingDay.WorkingDayMonth3;
+                                        break;
+                                    case 5:
+                                        day50Total = workingDay.WorkingDayMonth4;
+                                        break;
+                                    case 6:
+                                        day50Total = workingDay.WorkingDayMonth5;
+                                        break;
+                                    case 7:
+                                        day50Total = workingDay.WorkingDayMonth6;
+                                        break;
+                                    case 8:
+                                        day50Total = workingDay.WorkingDayMonth7;
+                                        break;
+                                    case 9:
+                                        day50Total = workingDay.WorkingDayMonth8;
+                                        break;
+                                    case 10:
+                                        day50Total = workingDay.WorkingDayMonth9;
+                                        break;
+                                    case 11:
+                                        day50Total = workingDay.WorkingDayMonth10;
+                                        break;
+                                    case 12:
+                                        day50Total = workingDay.WorkingDayMonth11;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                
+                                //Số ngày làm việc tháng trước
+                                dayLastMonth = (endDayLastMonth - item.DayStart).Days;
+                                //Số ngày làm việc tính 50% chỉ tiêu tháng này
+                                var dayThisMonth50 = Math.Min(day50Total - dayLastMonth, workingDayTT);
+                                //Số ngày làm việc tính 100% chỉ tiêu tháng này
+                                var dayThisMonthFull = Math.Max(workingDayTT - dayThisMonth50, 0);
+                                if (dayThisMonthFull < workingDayFull)
+                                    nsFullTarget = false;
+                                decimal targetNS50 = 0;
+                                decimal targetNSFull = 0;
+                                targetNS50 = targetDBCS * dayThisMonth50 / workingDayFull / 2;
+                                targetNSFull = targetDBCS * dayThisMonthFull / workingDayFull;
+                                targetNS = targetNS50 + targetNSFull;
+                            }
+                            if(historyOffice.QD156 && nsFullTarget)
+                            {
+                                var countNVKDLastMonth = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
+                                && a.DayStart < endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).Count();
+                                decimal hesoEC = 1;
+                                decimal hesoATL = 1;
+                                int chenhLech = DBKD - countNVKDLastMonth;
+                                if (chenhLech == 1)
+                                {
+                                    hesoEC = (decimal)1.1;
+                                    hesoATL = (decimal)1.1;
+                                }
+                                else if (chenhLech == 2)
+                                {
+                                    hesoEC = (decimal)1.15;
+                                    hesoATL = (decimal)1.2;
+                                }
+                                else if (chenhLech == 3)
+                                {
+                                    hesoEC = (decimal)1.2;
+                                    hesoATL = (decimal)1.3;
+                                }
+                                else if (chenhLech == 4)
+                                {
+                                    hesoEC = (decimal)1.25;
+                                    hesoATL = (decimal)1.4;
+                                }
+                                else if (chenhLech >= 5)
+                                {
+                                    hesoEC = (decimal)1.3;
+                                    hesoATL = (decimal)1.5;
+                                }
+                                if(hesoEC > 1)
+                                {
+                                    if (item.TypeUser == TypeUser.EC)
+                                        targetNS = targetNS * hesoEC;
+                                    else
+                                        targetNS = targetNS * hesoATL;
+                                }
+                            }
                             revenueOffice.Target_TS += targetNS;
                         }
                         else if (item.TypeUser == TypeUser.CM || item.TypeUser == TypeUser.TTL)
@@ -378,7 +503,7 @@ namespace OceanEduSlide.Controllers
                                 Year = yearInt,
                                 UserId = item.UserId,
                                 HistoryUserId = item.Id,
-                                
+
                             };
                             newRevenueList2.Add(rnew);
                         }

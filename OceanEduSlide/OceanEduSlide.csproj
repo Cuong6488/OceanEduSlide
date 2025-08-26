@@ -580,6 +580,10 @@
     <Compile Include="Migrations\202508250930191_historyUCallLog.Designer.cs">
       <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508261036243_qd156.cs" />
+    <Compile Include="Migrations\202508261036243_qd156.Designer.cs">
+      <DependentUpon>202508261036243_qd156.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\TargetGroup.cs" />
@@ -1811,6 +1815,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508250930191_historyUCallLog.resx">
       <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508261036243_qd156.resx">
+      <DependentUpon>202508261036243_qd156.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

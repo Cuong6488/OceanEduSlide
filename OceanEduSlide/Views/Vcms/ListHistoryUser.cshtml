@@ -47,7 +47,7 @@
                     <option value="">Tất cả</option>
                     <option value="1" @(Model.active == 1 ? "selected" : "")>Đang làm việc</option>
                     <option value="2" @(Model.active == 2 ? "selected" : "")>Điều chuyển</option>
-                    <option value="2" @(Model.active == 3 ? "selected" : "")>Đã nghỉ/ Thai sản</option>
+                    <option value="3" @(Model.active == 3 ? "selected" : "")>Đã nghỉ/ Thai sản</option>
                 </select>
             </div>
             <div class="col-lg">
@@ -91,7 +91,7 @@
                 <th>Ngày nghỉ/ điều chuyển</th>
                 <th>Chi nhánh</th>
                 <th>Phân quyền</th>
-                <th>NS mới</th>
+                @*<th>NS mới</th>*@
                 <th style="width: 130px"></th>
             </tr>
             @foreach (var user in Model.HistoryUsers)
@@ -107,7 +107,7 @@
                         @(user.Office?.Name)
                     </td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
-                    <td>@Html.DisplayFor(model => user.NewUser)</td>
+                    @*<td>@Html.DisplayFor(model => user.NewUser)</td>*@
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
             @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@

@@ -16,7 +16,7 @@
             <td class="form_text">
                 <select name="Year" class="w100" required>
                     <option value="">Chọn năm</option>
-                    @for (int i = 2025; i <= DateTime.Now.Year + 1; i++)
+                    @for (int i = 2024; i <= DateTime.Now.Year + 1; i++)
                     {
                         <option @(Model.Year == i ? "selected" : "") value="@i">@i</option>
                     }

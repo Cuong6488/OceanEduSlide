@@ -19,6 +19,7 @@ namespace OceanEduSlide.Models
         public GroupOffice GroupOffice { get; set; }
         public int Sort { get; set; } = 1;
         public bool Active { get; set; } = true;
+        public bool QD156 { get; set; }
         public virtual Office Office { get; set; }
         public virtual Zone Zone { get; set; }
     }
