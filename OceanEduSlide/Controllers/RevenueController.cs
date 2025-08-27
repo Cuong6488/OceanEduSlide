@@ -422,7 +422,7 @@ namespace OceanEduSlide.Controllers
                             if(historyOffice.QD156 && nsFullTarget)
                             {
                                 var countNVKDLastMonth = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
-                                && a.DayStart < endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).Count();
+                                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).Count();
                                 decimal hesoEC = 1;
                                 decimal hesoATL = 1;
                                 int chenhLech = DBKD - countNVKDLastMonth;
