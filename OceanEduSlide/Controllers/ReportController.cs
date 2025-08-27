@@ -90,7 +90,6 @@ namespace OceanEduSlide.Controllers
                 {
                     var month = tbl.Rows[i][0].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
-
                     if (!int.TryParse(month, out int monthInt)) continue;
 
                     var officeShortName = tbl.Rows[i][3].ToString().Trim();

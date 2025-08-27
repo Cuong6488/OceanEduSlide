@@ -18,8 +18,8 @@
     <form action="@Url.Action("ListHistoryOffice")" method="get">
         <div class="row">
             @*<div class="col-lg-4">
-            <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
-        </div>*@
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+                </div>*@
             <div class="col-lg">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
             </div>
@@ -69,6 +69,7 @@
                 <th>Định biên ATL</th>
                 <th>Định biên EC</th>
                 <th>Nhóm chi nhánh</th>
+                <th style="width:130px">Áp dụng QĐ 156</th>
                 <th style="width: 130px"></th>
             </tr>
             @foreach (var item in Model.HistoryOffices)
@@ -79,9 +80,10 @@
                     <td>@item.DBATL</td>
                     <td>@item.DBEC</td>
                     <td>@Html.DisplayFor(model => item.GroupOffice)</td>
+                    <td>@Html.DisplayFor(model => item.QD156)</td>
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
-            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
                         <a href="javascript:;" onclick="deleteOffice('@item.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>

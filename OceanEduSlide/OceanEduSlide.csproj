@@ -585,6 +585,7 @@
       <DependentUpon>202508261036243_qd156.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\BC_PhieuThu_THDB.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\TargetGroup.cs" />
     <Compile Include="Models\HistoryOffice.cs" />

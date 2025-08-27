@@ -5,24 +5,20 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Mã HV</th>
-            <th>Tên HV</th>
+            <th>Mã NV</th>
             <th>Chi nhánh</th>
             <th>Ngày thanh toán</th>
-            <th>Hình thức thanh toán</th>
-            <th>Ghi chú</th>
+            <th>Số tiền</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.MaHV</td>
-                <td>@item.TenHV</td>
+                <td>@item.MaNVChotSale</td>
                 <td>@item.ChiNhanh</td>
                 <td>@(item.NgayThanhToan?.ToString("dd/MM/yyyy"))</td>
-                <td>@item.HinhThucThanhToan</td>
-                <td>@item.Notes</td>
+                <td>@((item.SUD ?? 0).ToString("N0"))</td>
             </tr>
         }
     </tbody>

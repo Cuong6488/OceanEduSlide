@@ -15,7 +15,7 @@
     </div>*@
 <div class="remind-page">
     <div class="container">
-        @if (Model.User.TypeUser == TypeUser.ASM)
+        @if (Model.Offices != null)
         {
             <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5" style="max-width:400px">
 
