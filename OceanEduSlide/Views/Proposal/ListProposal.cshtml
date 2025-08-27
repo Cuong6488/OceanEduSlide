@@ -247,8 +247,19 @@
         </table>
         @if (Model.Proposals.PageCount > 1)
         {
+
+
             <div class="text-center">
-                @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+                @if (Model.OfficeId != null)
+                {
+                    @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+
+                }
+                else
+                {
+                    @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+
+                }
             </div>
         }
     </div>

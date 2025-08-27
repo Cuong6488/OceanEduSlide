@@ -164,6 +164,8 @@
                 <tr class="text-center">
                     <th rowspan="2" class="col-w150 sticky-left">Họ tên nhân sự</th>
                     <th rowspan="2" style="max-width: 40px;">Chức vụ</th>
+                    <th rowspan="2" class="col-w90">Ngày <br /> vào làm</th>
+                    <th rowspan="2" class="col-w90">Ngày nghỉ/ <br /> điều chuyển</th>
                     <th rowspan="2" style="min-width: 90px !important">Chỉ tiêu <br /> doanh số</th>
                     <th rowspan="2" style="min-width: 100px !important">Cam kết HT <br /> doanh số <br /> (gồm dự thu cũ)</th>
                     <th rowspan="2" style="min-width: 55px !important">% HT <br /> cam kết/ <br />tháng</th>
@@ -198,6 +200,12 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(a => revenueOffice.HistoryUser.TypeUser)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(a => revenueOffice.HistoryUser.DayStart)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(a => revenueOffice.HistoryUser.DayEnd)
                             </td>
                             @if (revenueOffice.RevenueUser_Month != null)
                             {

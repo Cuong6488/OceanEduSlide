@@ -362,7 +362,7 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == User.ZoneId));
+                        model.Offices = _unitOfWork.OfficeRepository.Get(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == User.ZoneId));
                     }
                 }
                 if (model.OfficeId != null)

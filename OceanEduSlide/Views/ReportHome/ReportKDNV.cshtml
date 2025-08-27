@@ -256,11 +256,14 @@
     @if (Model.HistoryUsers.PageCount > 1)
     {
         <div class="text-center">
-            @Html.PagedListPager(Model.HistoryUsers,
-              page => Url.Action("ReportKDNV",
-                new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }
-              )
-            )
+            @if (Model.OfficeId != null)
+            {
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }))
+            }
+            else
+            {
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
+            }
         </div>
     }
 </div>

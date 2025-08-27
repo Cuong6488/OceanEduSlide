@@ -297,6 +297,20 @@ namespace OceanEduSlide.Controllers
                     var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
+                        var startDateReal = item.DayStart;
+                        if(item.Status == StatusUser.Active)
+                        {
+                            var oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == item.UserId && a.Status == StatusUser.Transfer, q=> q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
+                            if(oldPosittion != null)
+                            {
+                                if(oldPosittion.DayEnd == null)
+                                {
+                                    ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
+                                    return View();
+                                }
+                                startDateReal = oldPosittion.DayEnd.Value;
+                            }
+                        }
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
@@ -316,15 +330,16 @@ namespace OceanEduSlide.Controllers
                                 yearLastMonth = yearInt;
                             }
                             DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
-                            if ((item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
+                            if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
                             {
                                 workingDayTT = workingDayFull;
                             }
                             else
                             {
-                                DateTime ngayKetThuc = item.DayEnd ?? new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
-                                DateTime ngayBatDau = item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : item.DayStart;
-                                int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days;
+                                DateTime ngayKetThuc = item.DayEnd != null? item.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                DateTime ngayBatDau = startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : startDateReal;
+                                // Số ngày làm việc + nghỉ
+                                int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                                 if (soNgayLamViec < 0)
                                 {
                                     ModelState.AddModelError("", @"Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
@@ -385,9 +400,13 @@ namespace OceanEduSlide.Controllers
                                     default:
                                         break;
                                 }
-                                
+
+                                //Số ngày từ ngày vào làm tới cuối tháng trước
+                                var dayTotal = (endDayLastMonth - item.DayStart).Days + 1;
+                                //Số ngày nghỉ tháng trước
+                                var dayFree = dayTotal / 7;
                                 //Số ngày làm việc tháng trước
-                                dayLastMonth = (endDayLastMonth - item.DayStart).Days;
+                                dayLastMonth = Math.Min(dayTotal - dayFree, day50Total);
                                 //Số ngày làm việc tính 50% chỉ tiêu tháng này
                                 var dayThisMonth50 = Math.Min(day50Total - dayLastMonth, workingDayTT);
                                 //Số ngày làm việc tính 100% chỉ tiêu tháng này
@@ -441,6 +460,7 @@ namespace OceanEduSlide.Controllers
                                 }
                             }
                             revenueOffice.Target_TS += targetNS;
+
                         }
                         else if (item.TypeUser == TypeUser.CM || item.TypeUser == TypeUser.TTL)
                         {
@@ -509,9 +529,8 @@ namespace OceanEduSlide.Controllers
                         }
 
                     }
-
+                    revenueOffice.Target_TS = Math.Max(targetBaseDec, revenueOffice.Target_TS);
                     // Chỉ tiêu báo cáo chi nhánh
-                    //revenueOffice.Target_TS = Math.Max(revenueOffice.Target_TS, targetBaseDec);
                     //var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
                     //if (reportDataCN == null)
                     //{
@@ -651,6 +670,193 @@ namespace OceanEduSlide.Controllers
 
             return RedirectToAction("Index", "Vcms");
         }
+        public ActionResult TargetOffice2()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult TargetOffice2(FormCollection fc)
+        {
+            var file = Request.Files["TargetOfficeFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var logImport = new Models.LogImport
+                {
+                    Admin = Fullname,
+                    Name = Path.GetFileName(file.FileName),
+                    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                    TypeImport = TypeImport.Type2,
+                };
+                _unitOfWork.LogImportRepository.Insert(logImport);
+                _unitOfWork.Save();
+                // Lưu tệp tài liệu
+                var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                file.SaveAs(filePath);
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                var tbl = result.Tables[0];
+                var newRevenueList = new List<RevenueOffice>();
+
+                for (var i = 1; i < tbl.Rows.Count; i++)
+                {
+                    var officeshortname = tbl.Rows[i][0].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
+                    if (office == null) continue;
+
+                    var countNVHV = _unitOfWork.UserRepository
+                        .GetQuery(a => (a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL) && a.OfficeId == office.Id)
+                        .Count();
+
+                    var countNVKT = _unitOfWork.UserRepository
+                        .GetQuery(a => a.TypeUser == TypeUser.SAB && a.OfficeId == office.Id)
+                        .Count();
+
+                    var monthStr = tbl.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(monthStr)) continue;
+                    if (!int.TryParse(monthStr, out var monthInt)) continue;
+
+                    var yearStr = tbl.Rows[i][5].ToString().Trim();
+                    if (string.IsNullOrEmpty(yearStr)) continue;
+                    if (!int.TryParse(yearStr, out var yearInt)) continue;
+
+                    var targetTS = tbl.Rows[i][10].ToString().Trim();
+                    if (string.IsNullOrEmpty(targetTS)) continue;
+                    if (!decimal.TryParse(targetTS, out var targetTSDec)) continue;
+
+                    var revenue = _unitOfWork.RevenueOfficeRepository
+                        .GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt)
+                        .FirstOrDefault();
+
+                    if (revenue != null)
+                    {
+                        revenue.Target_TS = targetTSDec;
+                    }
+                    else
+                    {
+                        var newRevenue = new RevenueOffice
+                        {
+                            OfficeId = office.Id,
+                            Month = monthInt,
+                            Year = yearInt,
+                            Target_TS = targetTSDec,
+                            Active = true,
+                        };
+                        newRevenueList.Add(newRevenue);
+                    }
+                }
+
+                if (newRevenueList.Any())
+                {
+                    _unitOfWork.RevenueOfficeRepository.InsertRange(newRevenueList);
+                }
+
+                _unitOfWork.Save();
+                var tbl2 = result.Tables[1];
+
+                var newRevenueList2 = new List<RevenueUser_Month>();
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
+                for (var i = 1; i < tbl2.Rows.Count; i++)
+                {
+                    var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+                    var user = _unitOfWork.UserRepository
+                        .GetQuery(a => a.MaNhanVien == manhanvien)
+                        .FirstOrDefault();
+                    if (user == null) continue;
+
+                    var officeSortName = tbl2.Rows[i][1].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
+                    if (office == null) continue;
+                    var typeUser = tbl2.Rows[i][4].ToString().Trim();
+                    if (string.IsNullOrEmpty(typeUser))
+                        continue;
+                    TypeUser type = new TypeUser();
+                    switch (typeUser)
+                    {
+                        case "EC":
+                            type = TypeUser.EC;
+                            break;
+                        case "BM":
+                            type = TypeUser.BM;
+                            break;
+                        case "BSA":
+                            type = TypeUser.SAB;
+                            break;
+                        case "SAB":
+                            type = TypeUser.SAB;
+                            break;
+                        case "ATL":
+                            type = TypeUser.ALT;
+                            break;
+                        case "CM":
+                            type = TypeUser.CM;
+                            break;
+                        case "TTL":
+                            type = TypeUser.TTL;
+                            break;
+                        default:
+                            break;
+                    }
+                    var monthStr = tbl2.Rows[i][20].ToString().Trim();
+                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
+
+                    var yearStr = tbl2.Rows[i][21].ToString().Trim();
+                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
+
+                    var targetStr = tbl2.Rows[i][12].ToString().Trim();
+                    if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt);
+                    if (historyUser == null) continue;
+                    var revenue = _unitOfWork.RevenueUser_MonthRepository
+                        .GetQuery(a => a.UserId == user.Id && a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt)
+                        .FirstOrDefault();
+
+                    if (revenue != null)
+                    {
+                        revenue.Target = targetDec;
+                    }
+                    else
+                    {
+                        var newRevenue = new RevenueUser_Month
+                        {
+                            UserId = user.Id,
+                            HistoryUserId = historyUser.Id,
+                            Month = monthInt,
+                            Year = yearInt,
+                            Target = targetDec,
+                            Active = true
+                        };
+                        newRevenueList2.Add(newRevenue);
+                    }
+                }
+
+                if (newRevenueList2.Any())
+                {
+                    _unitOfWork.RevenueUser_MonthRepository.InsertRange(newRevenueList2);
+                }
+                _unitOfWork.Save();
+            }
+
+            return RedirectToAction("Index", "Vcms");
+        }
         public PartialViewResult ListFile(int type)
         {
             var typeName = "";
@@ -712,7 +918,6 @@ namespace OceanEduSlide.Controllers
         //    return View();
         //}
         [HttpPost]
-
         public ActionResult TargetUser(FormCollection fc)
         {
             var file = Request.Files["TargetUserFile"];

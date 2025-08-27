@@ -1310,27 +1310,31 @@ namespace OceanEduSlide.Controllers
                         {
                             // cuộc gọi thực đạt
                             var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
-                            var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
-                            if (reportDataCallTD == null)
+
+                            if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || countTD > 0)
                             {
-                                reportDataCallTD = new ReportData()
+                                var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
+                                if (reportDataCallTD == null)
                                 {
-                                    Data = countTD.ToString("N0"),
-                                    UserId = historyUser.UserId,
-                                    HistoryUserId = historyUser.Id,
-                                    Month = monthInt,
-                                    Year = yearInt,
-                                    ReportCategoryId = 100,
-                                    OfficeId = office.Id,
-                                    Sort = 19,
-                                };
-                                if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || countTD > 0)
+                                    reportDataCallTD = new ReportData()
+                                    {
+                                        Data = countTD.ToString("N0"),
+                                        UserId = historyUser.UserId,
+                                        HistoryUserId = historyUser.Id,
+                                        Month = monthInt,
+                                        Year = yearInt,
+                                        ReportCategoryId = 100,
+                                        OfficeId = office.Id,
+                                        Sort = 19,
+                                    };
                                     reportDataList.Add(reportDataCallTD);
+                                }
+                                else
+                                {
+                                    reportDataCallTD.Data = countTD.ToString("N0");
+                                }
                             }
-                            else
-                            {
-                                reportDataCallTD.Data = countTD.ToString("N0");
-                            }
+
                             if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT)
                             {
 
@@ -1403,9 +1407,9 @@ namespace OceanEduSlide.Controllers
                                 }
                                 else
                                 {
-                                    DateTime ngayKetThuc = historyUser.DayEnd ?? new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                    DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
                                     DateTime ngayBatDau = historyUser.DayStart.Year < yearInt || (historyUser.DayStart.Year == yearInt && historyUser.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : historyUser.DayStart;
-                                    int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days;
+                                    int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                                     if (soNgayLamViec < 0)
                                     {
                                         ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
@@ -1414,7 +1418,19 @@ namespace OceanEduSlide.Controllers
                                     int soNgayNghi = soNgayLamViec / 7;
                                     workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
                                 }
-                                var callTarget = 12 * workingDayTT;
+                                int callTarget = 0;
+                                if (historyUser.DayStart.Month == monthInt || historyUser.DayStart.Month == lastMonth)
+                                {
+                                    //Số ngày làm việc tháng trước
+                                    var dayFree = (endDayLastMonth - historyUser.DayStart).Days + 1;
+                                    if (dayFree < 0)
+                                        dayFree = 0;
+                                    if (dayFree <= 5)
+                                    {
+                                        workingDayTT = Math.Max(0, workingDayTT - (5 - dayFree));
+                                    }
+                                }
+                                callTarget = 12 * workingDayTT;
                                 // Chỉ tiêu báo cáo nhân sự
                                 var reportDataCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
                                 if (reportDataCall == null)
@@ -1568,7 +1584,7 @@ namespace OceanEduSlide.Controllers
                             return View();
                         }
                         var ht = ((double)callTDInt / callTargetInt * 100).ToString("F2") + "%";
-                        if(callHT != null)
+                        if (callHT != null)
                         {
                             callHT.Data = ht;
                         }
@@ -2121,13 +2137,17 @@ namespace OceanEduSlide.Controllers
                     var shortname = tbl.Rows[i][0].ToString().Trim();
                     if (string.IsNullOrEmpty(shortname))
                         continue;
+                    if (shortname == "OE Phan Văn Trị")
+                    {
+
+                    }
                     var office = offices.FirstOrDefault(a => a.ShortName == shortname);
                     if (office == null)
                         continue;
                     var zonename = tbl.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(zonename))
                         continue;
-                    var zone = zones.FirstOrDefault(a => a.Name == zonename);
+                    var zone = zones.FirstOrDefault(a => a.Name == zonename || a.ShortCode == zonename);
                     if (zone == null)
                         continue;
                     var monthStr = tbl.Rows[i][2].ToString().Trim();
@@ -2196,8 +2216,9 @@ namespace OceanEduSlide.Controllers
                 if (historyOfficeList.Any())
                     _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
                 _unitOfWork.Save();
+                return RedirectToAction("ListHistoryOffice", new { result = "add" });
             }
-            return RedirectToAction("ListHistoryOffice", new { result = "add" });
+            return RedirectToAction("ListHistoryOffice");
         }
         public ActionResult ListHistoryOffice(int? page, string name, int? zoneId, int? month, int? year, int? Group, string result = "")
         {
