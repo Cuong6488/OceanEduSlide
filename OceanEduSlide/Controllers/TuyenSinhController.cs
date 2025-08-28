@@ -13,10 +13,12 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace OceanEduSlide.Controllers
 {
@@ -41,8 +43,8 @@ namespace OceanEduSlide.Controllers
                 Categories2 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2),
                 Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3),
             };
-            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
-                model.Categories3 = model.Categories3.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+            //if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
+            //    model.Categories3 = model.Categories3.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
             return PartialView(model);
         }
         public PartialViewResult GetCatgory(string MucLuc, int? Month)
@@ -54,20 +56,46 @@ namespace OceanEduSlide.Controllers
                 .ToList();
             var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3, q => q.OrderByDescending(a => a.Month));
             if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
-                catgories = catgories.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+            {
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                    catgories = catgories.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+
+                else
+                {
+                    var listCode = User.OfficeNames.Split(',');
+                    catgories = catgories.Where(a => listCode.Any(l => ("," + a.Offices + ",").Contains("," + l + ",")));
+                }
+            }
             else if (User.TypeUser == TypeUser.ASM)
             {
-                var zoneId = User.ZoneId;
+                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                {
+                    var officeShortCodesAll = new List<string>();
+                    var listZoneShortCode = User.ZoneIds.Trim(',').Split(',');
+                    foreach (var shortCode in listZoneShortCode)
+                    {
+                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == shortCode).FirstOrDefault();
+                        if (zone != null)
+                        {
+                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode).ToList();
+                            officeShortCodesAll.AddRange(officeShortCodes);
+                        }
+                    }
+                    catgories = catgories.Where(cat => officeShortCodesAll.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
 
-                var officeShortCodes = _unitOfWork.OfficeRepository
-                    .GetQuery(o => o.ZoneId == zoneId)
-                    .Select(o => o.ShortCode)
-                    .ToList();
+                }
+                else
+                {
+                    var zoneId = User.ZoneId;
+                    var officeShortCodes = _unitOfWork.OfficeRepository
+                        .GetQuery(o => o.ZoneId == zoneId)
+                        .Select(o => o.ShortCode)
+                        .ToList();
 
-                // Lọc các Category có chứa ít nhất một ShortCode trong Offices
-                catgories = catgories.Where(cat =>
-                    officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ","))
-                );
+                    // Lọc các Category có chứa ít nhất một ShortCode trong Offices
+                    catgories = catgories.Where(cat => officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
+                }
+
             }
             if (Month != null)
             {
@@ -199,7 +227,7 @@ namespace OceanEduSlide.Controllers
                         RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) 
+                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId && (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month))
                         && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id)
                         .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
                     });

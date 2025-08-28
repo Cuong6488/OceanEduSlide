@@ -442,7 +442,7 @@ namespace OceanEduSlide.Controllers
 
                 var startDate = StartDate.Date;
                 var endDate = EndDate.Date.AddDays(1);
-                var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.User.OfficeId == model.OfficeId);
+                var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.HistoryUser.OfficeId == model.OfficeId);
                 var aggregated = callData.GroupBy(p => p.HistoryUserId).Select(g => new
                 {
                     HistoryUserId = g.Key,
@@ -458,12 +458,12 @@ namespace OceanEduSlide.Controllers
                     TotalOver30s = g.Count(x => x.BillSec >= 30),
                     Total = g.Count(),
                 }).ToList();
-                //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active);
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
                 && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort)).ToList();
-                //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
-                //var users = _unitOfWork.UserRepository.GetQuery(a => historyUsers.Any(h => h.UserId == a.Id && h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate) && h.DayStart <= endDate),
-                //    q => q.OrderBy(a => a.TypeUser)).ToList();
+                foreach(var item in historyUsers)
+                {
+
+                }
                 var userItems = historyUsers.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);
@@ -542,6 +542,51 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
+        public ActionResult ChangeCallLogDataCN(int officeId)
+        {
+            var o = _unitOfWork.OfficeRepository.GetById(officeId);
+            if (o == null)
+                return Content("không có CN " + officeId);
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == officeId);
+            var count = 0;
+            foreach (var h in historyUsers)
+            {
+                var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+                && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+                foreach (var c in calllogs)
+                {
+                    c.HistoryUserId = h.Id;
+                    count++;
+                }
+            }
+            _unitOfWork.Save();
+            return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name +": "+count +" cuộc gọi");
+
+        }
+        public ActionResult ChangeCallLogDataAll()
+        {
+            var os = _unitOfWork.OfficeRepository.GetQuery();
+            var count = 0;
+            foreach (var o in os)
+            {
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == o.Id);
+                foreach (var h in historyUsers)
+                {
+                    var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+                    && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+                    foreach (var c in calllogs)
+                    {
+                        c.HistoryUserId = h.Id;
+                        count++;
+                    }
+                }
+            }
+
+            _unitOfWork.Save();
+            return Content("Đã chuyển dữ liệu cuộc gọi CN All: " + count + " cuộc gọi");
+
+        }
+
         public ActionResult ChangeCallLogData(int day)
         {
             for (int i = 0; i < day; i++) // ví dụ 30 ngày gần đây

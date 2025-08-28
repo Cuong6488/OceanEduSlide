@@ -931,184 +931,6 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        //public ActionResult TargetUser()
-        //{
-        //    return View();
-        //}
-        [HttpPost]
-        public ActionResult TargetUser(FormCollection fc)
-        {
-            var file = Request.Files["TargetUserFile"];
-            if (file != null && file.ContentLength > 0)
-            {
-                var stream = file.InputStream;
-                IExcelDataReader reader;
-                if (file.FileName.EndsWith(".xls"))
-                {
-                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
-                }
-                else if (file.FileName.EndsWith(".xlsx"))
-                {
-                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                }
-                else
-                {
-                    ModelState.AddModelError("File", @"This file format is not supported");
-                    return View();
-                }
-
-                var result = reader.AsDataSet();
-                reader.Close();
-
-                var tbl = result.Tables[0];
-
-                var newRevenueList = new List<RevenueUser_Month>();
-
-                for (var i = 1; i < tbl.Rows.Count; i++)
-                {
-                    var manhanvien = tbl.Rows[i][2].ToString().Trim();
-                    var user = _unitOfWork.UserRepository
-                        .GetQuery(a => a.MaNhanVien == manhanvien)
-                        .FirstOrDefault();
-                    if (user == null) continue;
-
-                    var monthStr = tbl.Rows[i][20].ToString().Trim();
-                    if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt)) continue;
-
-                    var yearStr = tbl.Rows[i][21].ToString().Trim();
-                    if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt)) continue;
-
-                    var targetStr = tbl.Rows[i][12].ToString().Trim();
-                    if (string.IsNullOrEmpty(targetStr) || !decimal.TryParse(targetStr, out var targetDec)) continue;
-
-                    var revenue = _unitOfWork.RevenueUser_MonthRepository
-                        .GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt)
-                        .FirstOrDefault();
-
-                    if (revenue != null)
-                    {
-                        revenue.Target = targetDec;
-                    }
-                    else
-                    {
-                        var newRevenue = new RevenueUser_Month
-                        {
-                            UserId = user.Id,
-                            Month = monthInt,
-                            Year = yearInt,
-                            Target = targetDec,
-                            Active = true
-                        };
-                        newRevenueList.Add(newRevenue);
-                    }
-                }
-
-                if (newRevenueList.Any())
-                {
-                    _unitOfWork.RevenueUser_MonthRepository.InsertRange(newRevenueList);
-                }
-
-                _unitOfWork.Save();
-            }
-
-            return RedirectToAction("Index", "Vcms");
-        }
-
-        //public ActionResult RevenueUserWeek_Real()
-        //{
-        //    return View();
-        //}
-        [HttpPost]
-        public ActionResult RevenueUserWeek_Real(FormCollection fc)
-        {
-            var file = Request.Files["WeekRealFile"];
-            if (file != null && file.ContentLength > 0)
-            {
-                var stream = file.InputStream;
-                IExcelDataReader reader;
-                if (file.FileName.EndsWith(".xls"))
-                {
-                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
-                }
-                else if (file.FileName.EndsWith(".xlsx"))
-                {
-                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                }
-                else
-                {
-                    ModelState.AddModelError("File", @"This file format is not supported");
-                    return View();
-                }
-                var result = reader.AsDataSet();
-                reader.Close();
-
-                var tbl = result.Tables[0];
-                var listRevenue = new List<RevenueUser_Week_Real>();
-                for (var i = 1; i < tbl.Rows.Count; i++)
-                {
-                    var manhanvien = tbl.Rows[i][2].ToString().Trim();
-                    var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
-                    if (user == null) continue;
-                    var month = tbl.Rows[i][6].ToString().Trim();
-                    if (string.IsNullOrEmpty(month)) continue;
-                    var monthInt = int.Parse(month);
-                    var year = tbl.Rows[i][7].ToString().Trim();
-                    if (string.IsNullOrEmpty(year)) continue;
-                    var yearInt = int.Parse(year);
-                    var week = tbl.Rows[i][5].ToString().Trim();
-                    if (string.IsNullOrEmpty(week)) continue;
-                    var weekInt = int.Parse(week);
-                    var ds = tbl.Rows[i][8].ToString().Trim();
-                    decimal dsDec = string.IsNullOrEmpty(ds) ? 0 : decimal.Parse(ds);
-                    var revenue = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && (int)a.WeekNumber == weekInt).FirstOrDefault();
-                    if (revenue != null)
-                    {
-                        revenue.TargetBM = dsDec;
-                    }
-                    else
-                    {
-                        var newRevenue = new RevenueUser_Week_Real
-                        {
-                            UserId = user.Id,
-                            Month = monthInt,
-                            Year = yearInt,
-                            TargetBM = dsDec,
-                            Active = true,
-                        };
-                        switch (weekInt)
-                        {
-                            case 1:
-                                newRevenue.WeekNumber = WeekNumber.Week1;
-                                break;
-                            case 2:
-                                newRevenue.WeekNumber = WeekNumber.Week2;
-                                break;
-                            case 3:
-                                newRevenue.WeekNumber = WeekNumber.Week3;
-                                break;
-                            case 4:
-                                newRevenue.WeekNumber = WeekNumber.Week4;
-                                break;
-                            case 5:
-                                newRevenue.WeekNumber = WeekNumber.Week5;
-                                break;
-                            case 6:
-                                newRevenue.WeekNumber = WeekNumber.Week6;
-                                break;
-                            default:
-                                break;
-                        }
-                        //_unitOfWork.RevenueUser_Week_RealRepository.Insert(newRevenue);
-                        listRevenue.Add(newRevenue);
-                    }
-
-                }
-                if (listRevenue.Any())
-                    _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
-                _unitOfWork.Save();
-            }
-            return RedirectToAction("Index", "Vcms");
-        }
         public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
         {
             ViewBag.Result = result;
@@ -1198,15 +1020,6 @@ namespace OceanEduSlide.Controllers
 
             return View(workingDays);
         }
-        //[HttpPost]
-        //public JsonResult DeleteWorkingDay(int workingDayId)
-        //{
-        //    var workingDay = _unitOfWork.WorkingDayRepository.GetById(workingDayId);
-        //    _unitOfWork.WorkingDayRepository.Delete(workingDay);
-        //    _unitOfWork.Save();
-        //    return Json(new { status = true, msg = "Xóa thành công" });
-
-        //}
         public ActionResult CreateTargetGroup(string result = "")
         {
             ViewBag.Result = result;
@@ -1299,16 +1112,13 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-
-        //[HttpPost]
-        //public JsonResult DeleteTargetGroup(int targetId)
-        //{
-        //    var target = _unitOfWork.TargetGroupRepository.GetById(targetId);
-        //    _unitOfWork.TargetGroupRepository.Delete(target);
-        //    _unitOfWork.Save();
-        //    return Json(new { status = true, msg = "Xóa thành công" });
-
-        //}
+        
+        public ActionResult SyncAllPhieuThu()
+        {
+            var phieuthuService = new PhieuThuService();
+            phieuthuService.SyncAllPhieuThu();
+            return Content("Đã đồng bộ all phiếu thu");
+        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

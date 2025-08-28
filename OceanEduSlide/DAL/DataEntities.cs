@@ -30,6 +30,7 @@ namespace OceanEduSlide.DAL
         public DbSet<LogImport> LogImports { get; set; }
         public DbSet<WorkingDay> WorkingDays { get; set; }
         public DbSet<TargetGroup> TargetGroups { get; set; }
+        public DbSet<BC_PhieuThu_DB> BC_PhieuThu_DBs { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Proposal>()

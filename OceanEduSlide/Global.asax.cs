@@ -15,6 +15,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using static OceanEduSlide.Controllers.ReportHomeController;
 using System.Timers;
+using FluentScheduler;
 
 namespace OceanEduSlide
 {
@@ -37,44 +38,59 @@ namespace OceanEduSlide
                 Application["ConfigSite"] = unitofWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             }
 
-            _timer = new Timer(21600000);
-            _timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            _timer.Start();
-            Task.Run(() => TriggerCallLogSync());
-            //Task.Run(async () =>
-            //{
-            //    var controller = new ReportHomeController();
-            //    await controller.Sync();
-            //});
+            //_timer = new Timer(21600000);
+            //_timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            //_timer.Start();
+            //Task.Run(() => TriggerCallLogSync());
+            JobManager.Initialize();
+
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var callLogService = new CallLogService();
+                            await callLogService.SyncYesterdayAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(3, 0)
+            );
         }
 
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
-            Task.Run(() => TriggerCallLogSync());
+        //private void OnTimedEvent(object source, ElapsedEventArgs e)
+        //{
+        //    Task.Run(() => TriggerCallLogSync());
 
-        }
+        //}
 
-        private async Task TriggerCallLogSync()
-        {
-            try
-            {
-                var callLogService = new CallLogService();
+        //private async Task TriggerCallLogSync()
+        //{
+        //    try
+        //    {
+        //        var callLogService = new CallLogService();
 
-                // Chỉ đồng bộ ngày hôm trước
-                await callLogService.SyncYesterdayAsync();
-            }
-            catch (Exception ex)
-            {
-                // Ghi log nếu cần
-                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-            }
+        //        // Chỉ đồng bộ ngày hôm trước
+        //        await callLogService.SyncYesterdayAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Ghi log nếu cần
+        //        System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+        //    }
 
-        }
+        //}
 
-        protected void Application_End()
-        {
-            _timer?.Stop();
-            _timer?.Dispose();
-        }
+        //protected void Application_End()
+        //{
+        //    _timer?.Stop();
+        //    _timer?.Dispose();
+        //}
     }
 }

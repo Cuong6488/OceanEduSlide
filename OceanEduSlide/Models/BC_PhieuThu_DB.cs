@@ -6,14 +6,15 @@ using System.Web;
 
 namespace OceanEduSlide.Models
 {
-    public class BC_PhieuThu_THDB
+    public class BC_PhieuThu_DB
     {
-        public long PhieuThuKeToan { get; set; }
+        public int Id { get; set; }
+        public long? PhieuThuKeToan { get; set; }
         public string ChiNhanh { get; set; }
         public string MaNVChotSale { get; set; }
         public Nullable<System.DateTime> NgayThanhToan { get; set; }
-        public Nullable<decimal> TUD { get; set; }
         public Nullable<decimal> SUD { get; set; }
+        public Nullable<decimal> TUD { get; set; }
         public string Loai { get; set; }
         public string ReceiptCode { get; set; }
         public string MaHV { get; set; }
@@ -36,7 +37,9 @@ namespace OceanEduSlide.Models
         public Nullable<long> HDBH { get; set; }
         public string DonHang { get; set; }
         public string UDPhieuThu { get; set; }
-        public Nullable<System.DateTime> ThoiGianCapNhat { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
+        public Nullable<System.DateTime> CreateDate { get; set; } = DateTime.Now;
+        public bool THDB { get; set; }
     }
 
 }
