@@ -425,6 +425,8 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (model.Offices.Count() == 1)
+                            model.OfficeId = model.Offices.First().Id;
                     }
                 }
             }

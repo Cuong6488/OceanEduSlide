@@ -1337,7 +1337,21 @@ namespace OceanEduSlide.Controllers
 
                             if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT)
                             {
-
+                                HistoryUser oldPosittion = null;
+                                var startDateReal = historyUser.DayStart;
+                                if (historyUser.Status == StatusUser.Active)
+                                {
+                                    oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == historyUser.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
+                                    if (oldPosittion != null)
+                                    {
+                                        if (oldPosittion.DayEnd == null)
+                                        {
+                                            ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
+                                            return View();
+                                        }
+                                        startDateReal = oldPosittion.DayEnd.Value;
+                                    }
+                                }
                                 var workingDay = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Year == yearInt).FirstOrDefault();
                                 if (workingDay == null)
                                 {
@@ -1401,22 +1415,32 @@ namespace OceanEduSlide.Controllers
                                     yearLastMonth = yearInt;
                                 }
                                 DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
-                                if ((historyUser.DayStart.Year < yearInt || (historyUser.DayStart.Year == yearInt && historyUser.DayStart.Month < monthInt)) && (historyUser.DayEnd == null || (historyUser.DayEnd != null && historyUser.DayEnd.Value.Month > monthInt)))
+                                if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (historyUser.DayEnd == null || (historyUser.DayEnd != null && historyUser.DayEnd.Value.Month > monthInt)))
                                 {
                                     workingDayTT = workingDayFull;
                                 }
                                 else
                                 {
-                                    DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
                                     DateTime ngayBatDau = historyUser.DayStart.Year < yearInt || (historyUser.DayStart.Year == yearInt && historyUser.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : historyUser.DayStart;
-                                    int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
-                                    if (soNgayLamViec < 0)
+                                    if (oldPosittion != null)
                                     {
-                                        ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
-                                        return View();
+                                        var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
+                                        var oldDayWork = oldDayFull - (oldDayFull / 7);
+                                        workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
                                     }
-                                    int soNgayNghi = soNgayLamViec / 7;
-                                    workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                                    else
+                                    {
+                                        DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                        int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
+                                        if (soNgayLamViec < 0)
+                                        {
+                                            ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
+                                            return View();
+                                        }
+                                        int soNgayNghi = soNgayLamViec / 7;
+                                        workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                                    }
+
                                 }
                                 int callTarget = 0;
                                 if (historyUser.DayStart.Month == monthInt || historyUser.DayStart.Month == lastMonth)
@@ -1478,7 +1502,7 @@ namespace OceanEduSlide.Controllers
                                     reportDataCallHT.Data = ht;
                                 }
 
-                                //Chỉ tiêu - thực đạt chi nhánh
+                                //Chỉ tiêu DS - thực đạt chi nhánh
                                 var reportCallOfficeTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                                 var reportCallOfficeTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
                                 if (reportCallOfficeTarget == null)
@@ -1879,6 +1903,239 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Office
+        public void ExportOffice()
+        {
+
+            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.ZoneId));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tên đầy đủ");
+            dt.Columns.Add("Tên ngắn");
+            dt.Columns.Add("Tên viết tắt");
+
+            var filename = $"danh-sach-chi-nhanh.xlsx";
+            var i = 1;
+            foreach (var item in offices)
+            {
+                dt.Rows.Add(i, item.Name, item.ShortName, item.ShortCode);
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportHistoryOffice()
+        {
+
+            var offices = _unitOfWork.HistoryOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.ZoneId));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Định biên ATL");
+            dt.Columns.Add("Định biên EC");
+            dt.Columns.Add("Nhóm chi nhánh");
+            dt.Columns.Add("Áp dụng QĐ 156");
+
+            var filename = $"danh-sach-chi-nhanh-theo-thang.xlsx";
+            var i = 1;
+            foreach (var item in offices)
+            {
+                var qd156 = item.QD156 ? "x" : "";
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName, item.Zone?.Name, item.DBATL, item.DBEC, item.GroupOffice, qd156);
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh theo tháng");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportHistoryUser()
+        {
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Họ và tên");
+            dt.Columns.Add("Mã nhân viên");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Phân quyền");
+
+            var filename = $"danh-sach-nhan-su-theo-thang.xlsx";
+            var i = 1;
+            foreach (var item in users)
+            {
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.User.Fullname, item.User.MaNhanVien, GetEnumDisplayName(item.Status), item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd == null ? "" : item.DayEnd.Value.ToString("dd/MM/yyyy"), item.Office?.Name, GetEnumDisplayName(item.TypeUser));
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách nhân sự theo tháng");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
+        public void ExportTargetCN_NV()
+        {
+            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Office.ZoneId));
+            var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null, q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.HistoryUser.Office.ZoneId).ThenBy(a => a.HistoryUser.OfficeId).ThenBy(a => a.HistoryUser.Sort));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Chỉ tiêu DS tuyển sinh");
+            dt.Columns.Add("Chỉ tiêu DS học vụ");
+            dt.Columns.Add("Chỉ tiêu DS kế toán");
+
+
+            var filename = $"chi-tieu-CN-NV.xlsx";
+            var i = 1;
+            foreach (var item in revenueOffices)
+            {
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName,item.Office.Zone?.Name, item.Target_TS, item.Target_HV, item.Target_SAB);
+                i++;
+            }
+            var dt2 = new DataTable();
+            dt2.Columns.Add("STT");
+            dt2.Columns.Add("Tháng");
+            dt2.Columns.Add("Vùng");
+            dt2.Columns.Add("Chi nhánh");
+            dt2.Columns.Add("Họ tên NS");
+            dt2.Columns.Add("Chức vụ");
+            dt2.Columns.Add("Ngày vào làm");
+            dt2.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt2.Columns.Add("Trạng thái");
+            dt2.Columns.Add("Chỉ tiêu doanh số");
+            i = 1;
+            foreach (var item in revenueUsers)
+            {
+                dt2.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.HistoryUser.Office?.Zone?.Name, item.HistoryUser.Office?.ShortName, item.HistoryUser.User.Fullname, GetEnumDisplayName(item.HistoryUser.TypeUser), item.HistoryUser.DayStart, item.HistoryUser.DayEnd, GetEnumDisplayName(item.HistoryUser.Status),item.Target);
+
+            }
+
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws1 = pck.Workbook.Worksheets.Add("Chỉ tiêu CN");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws1.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws1.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+                var ws2 = pck.Workbook.Worksheets.Add("Chỉ tiêu NV");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws2.Cells["A1"].LoadFromDataTable(dt2, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws2.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
         public ActionResult ListOffice(int? page, string name, int? trung, string result = "")
         {
             ViewBag.Result = result;

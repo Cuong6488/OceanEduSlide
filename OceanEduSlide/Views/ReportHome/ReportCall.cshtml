@@ -37,15 +37,25 @@
             }
         </select>
     }
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
+    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+
     {
-        <select name="OfficeId" class="form-select w-25">
-            <option value="">Chọn chi nhánh</option>
-            @foreach (var item in Model.Offices)
-            {
-                <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-            }
-        </select>
+        if (Model.Offices.Count() > 1)
+        {
+
+            <select name="OfficeId" class="form-select w-25">
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        else
+        {
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
     }
     else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
     {

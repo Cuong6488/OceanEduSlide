@@ -14,12 +14,13 @@
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật chi nhánh thành công</strong></div>
 }
 <a class="btn quick-link" href="@Url.Action("Office")"><i class="fal fa-plus-circle me-1"></i>Thêm chi nhánh</a>
+<a class="btn quick-link" href="@Url.Action("ExportOffice")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 <div class="box_content">
     <form action="@Url.Action("ListOffice")" method="get">
         <div class="row">
             @*<div class="col-lg-4">
-                <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả chi nhánh", new { @class = "mt-2" })
-            </div>*@
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả chi nhánh", new { @class = "mt-2" })
+                </div>*@
             <div class="col-lg-4">
                 <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
             </div>
@@ -38,8 +39,8 @@
                 <th>Tên ngắn</th>
                 <th>Vùng</th>
                 @*<th>Địa chỉ</th>
-                <th>Số điện thoại</th>
-                <th>Email</th>*@
+                    <th>Số điện thoại</th>
+                    <th>Email</th>*@
                 @*<th style="width:150px">Tỉnh thành</th>*@
 
                 <th style="width:100px">Hoạt động</th>
@@ -57,8 +58,8 @@
                     <td>@office.ShortName</td>
                     <td>@(office.Zone?.Name)</td>
                     @*<td>@office.Place</td>
-                    <td>@office.Hotline</td>
-                    <td>@office.Email</td>*@
+                        <td>@office.Hotline</td>
+                        <td>@office.Email</td>*@
                     <td>@Html.CheckBoxFor(model => office.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@office.Id')">Cập nhật</a> -

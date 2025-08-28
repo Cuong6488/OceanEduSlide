@@ -7,6 +7,8 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -102,8 +104,9 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("Index", "Vcms");
         }
 
-        public ActionResult TargetOffice()
+        public ActionResult TargetOffice(string result = "")
         {
+            ViewBag.Result = result;
             return View();
         }
         [HttpPost]
@@ -297,29 +300,30 @@ namespace OceanEduSlide.Controllers
                     var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
-                        var startDateReal = item.DayStart;
-                        if(item.Status == StatusUser.Active)
-                        {
-                            var oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == item.UserId && a.Status == StatusUser.Transfer, q=> q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
-                            if(oldPosittion != null)
-                            {
-                                if(oldPosittion.DayEnd == null)
-                                {
-                                    ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
-                                    return View();
-                                }
-                                startDateReal = oldPosittion.DayEnd.Value;
-                            }
-                        }
+
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
-
+                            HistoryUser oldPosittion = null;
+                            var startDateReal = item.DayStart;
+                            if (item.Status == StatusUser.Active)
+                            {
+                                oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == item.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
+                                if (oldPosittion != null)
+                                {
+                                    if (oldPosittion.DayEnd == null)
+                                    {
+                                        ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
+                                        return View();
+                                    }
+                                    startDateReal = oldPosittion.DayEnd.Value;
+                                }
+                            }
                             int workingDayTT = 0;
                             bool nsFullTarget = true;
                             int lastMonth = 0;
                             int yearLastMonth = 0;
-                            if(monthInt == 1)
+                            if (monthInt == 1)
                             {
                                 lastMonth = 12;
                                 yearLastMonth = yearInt - 1;
@@ -336,17 +340,28 @@ namespace OceanEduSlide.Controllers
                             }
                             else
                             {
-                                DateTime ngayKetThuc = item.DayEnd != null? item.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
-                                DateTime ngayBatDau = startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : startDateReal;
-                                // Số ngày làm việc + nghỉ
-                                int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
-                                if (soNgayLamViec < 0)
+
+                                DateTime ngayBatDau = item.DayStart.Year < yearInt || (item.DayStart.Year == yearInt && item.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : item.DayStart;
+                                if (oldPosittion != null)
                                 {
-                                    ModelState.AddModelError("", @"Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
-                                    return View();
+                                    var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
+                                    var oldDayWork = oldDayFull - (oldDayFull / 7);
+                                    workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
                                 }
-                                int soNgayNghi = soNgayLamViec / 7;
-                                workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                                else
+                                {
+                                    DateTime ngayKetThuc = item.DayEnd != null ? item.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                    // Số ngày làm việc + nghỉ
+                                    int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
+                                    if (soNgayLamViec < 0)
+                                    {
+                                        ModelState.AddModelError("", @"Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
+                                        return View();
+                                    }
+                                    int soNgayNghi = soNgayLamViec / 7;
+                                    workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                                }
+
                             }
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
@@ -419,7 +434,7 @@ namespace OceanEduSlide.Controllers
                                 targetNSFull = targetDBCS * dayThisMonthFull / workingDayFull;
                                 targetNS = targetNS50 + targetNSFull;
                             }
-                            if(historyOffice.QD156 && nsFullTarget)
+                            if (historyOffice.QD156 && nsFullTarget)
                             {
                                 var countNVKDLastMonth = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt && a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
                                 && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).Count();
@@ -451,7 +466,7 @@ namespace OceanEduSlide.Controllers
                                     hesoEC = (decimal)1.3;
                                     hesoATL = (decimal)1.5;
                                 }
-                                if(hesoEC > 1)
+                                if (hesoEC > 1)
                                 {
                                     if (item.TypeUser == TypeUser.EC)
                                         targetNS = targetNS * hesoEC;
@@ -666,6 +681,9 @@ namespace OceanEduSlide.Controllers
                 if (listRevenue.Any())
                     _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
                 _unitOfWork.Save();
+                ViewBag.Result = "add";
+                return View();
+
             }
 
             return RedirectToAction("Index", "Vcms");

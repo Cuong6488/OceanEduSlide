@@ -9,11 +9,12 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
 }
-@if (ViewBag.Result == "update")
+@if (ViewBag.Result == "add")
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
 }
 <a class="btn quick-link" href="@Url.Action("InsertHistoryOfficeExcel")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Chi nhánh theo tháng</a>
+<a class="btn quick-link" href="@Url.Action("ExportHistoryOffice")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 <div class="box_content">
     <form action="@Url.Action("ListHistoryOffice")" method="get">
         <div class="row">
