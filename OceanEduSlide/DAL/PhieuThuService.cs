@@ -25,26 +25,22 @@ namespace OceanEduSlide.DAL
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
         //Thiếu phần tính doanh thu theo tuần
-        
+
         public void SyncPhieuThu()
         {
             //Or custom day để test
             var day = DateTime.Today.AddDays(-1);
-            var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && DbFunctions.TruncateTime(a.NgayThanhToan) == day);
-            var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && DbFunctions.TruncateTime(a.NgayThanhToan) == day).Select(a => a.PhieuThuKeToan).ToList();
+            var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
+            var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
             var bcList = new List<ReportData>();
+            var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
             foreach (var item in phieuThuTakeList)
             {
                 if (!phieuThuKeToanList.Contains(item.PhieuThuKeToan))
                 {
-                    if (item.NgayThanhToan == null)
-                    {
-                        logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + " khong co ngay thanh toan");
-                        continue;
-                    }
                     var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == day.Month && a.Year == day.Year && a.User.MaNhanVien == item.MaNVChotSale && DbFunctions.TruncateTime(a.DayStart) <= DbFunctions.TruncateTime(item.NgayThanhToan),
-                        q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd)).FirstOrDefault();
+                        q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
                     if (historyUser == null)
                     {
                         logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
@@ -88,73 +84,135 @@ namespace OceanEduSlide.DAL
                         UDPhieuThu = item.UDPhieuThu,
                     };
                     phieuThuAddList.Add(phieuThu);
-                    var bcNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year).FirstOrDefault();
-                    if (bcNV == null)
-                        bcNV = bcList.FirstOrDefault(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year);
-                    if (bcNV == null)
+                    if ((item.TrangThai == "StatusPayment_Complete" || item.TrangThai == "StatusPayment_Confirm") && (item.Loai == "Học phí" || item.Loai == "Phiếu gộp"))
                     {
-                        bcNV = new ReportData()
+                        var bcNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year).FirstOrDefault();
+                        if (bcNV == null)
+                            bcNV = bcList.FirstOrDefault(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year);
+                        if (bcNV == null)
                         {
-                            Sort = 11,
-                            Month = day.Month,
-                            Year = day.Year,
-                            ReportCategoryId = 88,
-                            Data = (item.SUD ?? 0).ToString("N0"),
-                            UserId = historyUser.UserId,
-                            HistoryUserId = historyUser.Id,
-                            OfficeId = office.Id,
-                        };
-                        bcList.Add(bcNV);
-                    }
-                    else
-                    {
-                        decimal DataNV = 0;
-                        var cleanedData = bcNV.Data.Replace(",", "").Replace(".", "");
-
-                        if (decimal.TryParse(cleanedData, out DataNV))
-                        {
+                            bcNV = new ReportData()
+                            {
+                                Sort = 11,
+                                Month = day.Month,
+                                Year = day.Year,
+                                ReportCategoryId = 88,
+                                Data = (item.SUD ?? 0).ToString("N0"),
+                                UserId = historyUser.UserId,
+                                HistoryUserId = historyUser.Id,
+                                OfficeId = office.Id,
+                            };
+                            bcList.Add(bcNV);
                         }
                         else
                         {
-                            // Chuyển đổi thất bại
-                            logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong the chuyen doi thanh so tu nhien ket qua bao cao NV: " + item.MaNVChotSale);
-                            continue;
-                        }
-                        DataNV += item.SUD ?? 0;
-                        bcNV.Data = DataNV.ToString("N0");
-                    }
-                    var bcCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 35 && a.Month == day.Month && a.Year == day.Year).FirstOrDefault();
-                    if (bcCN == null)
-                        bcCN = bcList.FirstOrDefault(a => a.ReportCategoryId == 35 && a.Month == day.Month && a.Year == day.Year);
-                    if (bcCN == null)
-                    {
-                        bcCN = new ReportData()
-                        {
-                            Sort = 14,
-                            Month = day.Month,
-                            Year = day.Year,
-                            ReportCategoryId = 35,
-                            Data = (item.SUD ?? 0).ToString("N0"),
-                            OfficeId = office.Id,
-                        };
-                        bcList.Add(bcCN);
-                    }
-                    else
-                    {
-                        decimal DataCN = 0;
-                        var cleanedData = bcCN.Data.Replace(",", "").Replace(".", "");
+                            decimal DataNV = 0;
+                            var cleanedData = bcNV.Data.Replace(",", "").Replace(".", "");
 
-                        if (decimal.TryParse(cleanedData, out DataCN))
+                            if (decimal.TryParse(cleanedData, out DataNV))
+                            {
+                            }
+                            else
+                            {
+                                // Chuyển đổi thất bại
+                                logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong the chuyen doi thanh so tu nhien ket qua bao cao NV: " + item.MaNVChotSale);
+                                continue;
+                            }
+                            DataNV += item.SUD ?? 0;
+                            bcNV.Data = DataNV.ToString("N0");
+                        }
+                        var bcCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 35 && a.Month == day.Month && a.Year == day.Year).FirstOrDefault();
+                        if (bcCN == null)
+                            bcCN = bcList.FirstOrDefault(a => a.ReportCategoryId == 35 && a.Month == day.Month && a.Year == day.Year);
+                        if (bcCN == null)
                         {
+                            bcCN = new ReportData()
+                            {
+                                Sort = 14,
+                                Month = day.Month,
+                                Year = day.Year,
+                                ReportCategoryId = 35,
+                                Data = (item.SUD ?? 0).ToString("N0"),
+                                OfficeId = office.Id,
+                            };
+                            bcList.Add(bcCN);
                         }
                         else
                         {
-                            // Chuyển đổi thất bại
-                            logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong the chuyen doi thanh so tu nhien ket qua bao cao CN: " + item.ChiNhanh);
-                            continue;
+                            decimal DataCN = 0;
+                            var cleanedData = bcCN.Data.Replace(",", "").Replace(".", "");
+
+                            if (decimal.TryParse(cleanedData, out DataCN))
+                            {
+                            }
+                            else
+                            {
+                                // Chuyển đổi thất bại
+                                logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong the chuyen doi thanh so tu nhien ket qua bao cao CN: " + item.ChiNhanh);
+                                continue;
+                            }
+                            DataCN += item.SUD ?? 0;
+                            bcCN.Data = DataCN.ToString("N0");
                         }
-                        DataCN += item.SUD ?? 0;
-                        bcCN.Data = DataCN.ToString("N0");
+                        (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(day.Year, day.Month, day);
+                        var rUserWeek_Real = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Year == day.Year && a.Month == day.Month && (int)a.WeekNumber == currentWeek).FirstOrDefault();
+                        var weekNumber = new WeekNumber();
+                        switch (currentWeek)
+                        {
+                            case 1:
+                                weekNumber = WeekNumber.Week1;
+                                break;
+                            case 2:
+                                weekNumber = WeekNumber.Week2;
+                                break;
+                            case 3:
+                                weekNumber = WeekNumber.Week3;
+                                break;
+                            case 4:
+                                weekNumber = WeekNumber.Week4;
+                                break;
+                            case 5:
+                                weekNumber = WeekNumber.Week5;
+                                break;
+                            case 6:
+                                weekNumber = WeekNumber.Week6;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (rUserWeek_Real == null)
+                            rUserWeek_Real = rUserWeek_RealList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Year == day.Year && a.Month == day.Month && (int)a.WeekNumber == currentWeek);
+                        if (rUserWeek_Real == null)
+                        {
+                            rUserWeek_Real = new RevenueUser_Week_Real()
+                            {
+                                HistoryUserId = historyUser.Id,
+                                Month = day.Month,
+                                Year = day.Year,
+                                UserId = historyUser.UserId,
+                                WeekNumber = weekNumber,
+                                //TargetBM = 
+                            };
+                            bcList.Add(bcNV);
+                        }
+                        else
+                        {
+                            decimal DataNV = 0;
+                            var cleanedData = bcNV.Data.Replace(",", "").Replace(".", "");
+
+                            if (decimal.TryParse(cleanedData, out DataNV))
+                            {
+                            }
+                            else
+                            {
+                                // Chuyển đổi thất bại
+                                logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong the chuyen doi thanh so tu nhien ket qua bao cao NV: " + item.MaNVChotSale);
+                                continue;
+                            }
+                            DataNV += item.SUD ?? 0;
+                            bcNV.Data = DataNV.ToString("N0");
+                        }
                     }
                 }
             }
@@ -168,6 +226,7 @@ namespace OceanEduSlide.DAL
             var newDataList = _unitOfWork.ReportDataRepository.GetQuery(a => (a.ReportCategoryId == 35 || a.ReportCategoryId == 88) && a.Month == day.Month && a.Year == day.Year);
             foreach (var item in newDataList)
             {
+                //var day = item.CreateDate;
                 if (item.ReportCategoryId == 35)
                 {
                     var datact = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 34 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == item.OfficeId).FirstOrDefault();
@@ -346,10 +405,10 @@ namespace OceanEduSlide.DAL
                         UDPhieuThu = item.UDPhieuThu,
                     };
                     phieuThuAddList.Add(phieuThu);
-                    if (item.ChiNhanh == "OE Thái Hòa")
-                    {
+                    //if (item.ChiNhanh == "OE Thái Hòa")
+                    //{
 
-                    }
+                    //}
                     //var bcNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 88 && a.Month == item.NgayThanhToan.Value.Month && a.Year == item.NgayThanhToan.Value.Year && a.HistoryUserId == historyUser.Id).FirstOrDefault();
                     var bcNV = bcList.FirstOrDefault(a => a.ReportCategoryId == 88 && a.Month == item.NgayThanhToan.Value.Month && a.Year == item.NgayThanhToan.Value.Year && a.HistoryUserId == historyUser.Id);
 

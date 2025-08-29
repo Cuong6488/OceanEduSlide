@@ -39,6 +39,7 @@ namespace OceanEduSlide.Models
         public string UDPhieuThu { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public Nullable<System.DateTime> CreateDate { get; set; } = DateTime.Now;
+        public string TrangThai { get; set; }
         public bool THDB { get; set; }
     }
 

@@ -38,6 +38,7 @@
           <Property Name="DonHang" Type="nvarchar" MaxLength="100" />
           <Property Name="UDPhieuThu" Type="nvarchar" MaxLength="255" />
           <Property Name="ThoiGianCapNhat" Type="datetime" />
+          <Property Name="TrangThai" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityContainer Name="DongBoTuyenSinhModelStoreContainer">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
@@ -79,6 +80,7 @@
           <Property Name="DonHang" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UDPhieuThu" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ThoiGianCapNhat" Type="DateTime" Precision="3" />
+          <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
@@ -92,6 +94,7 @@
           <EntitySetMapping Name="BC_PhieuThu">
             <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
               <MappingFragment StoreEntitySet="BC_PhieuThu">
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
                 <ScalarProperty Name="PhieuThuKeToan" ColumnName="PhieuThuKeToan" />
                 <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
                 <ScalarProperty Name="NgayThanhToan" ColumnName="NgayThanhToan" />

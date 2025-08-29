@@ -43,5 +43,6 @@ namespace OceanEduSlide.OEDongBo
         public string DonHang { get; set; }
         public string UDPhieuThu { get; set; }
         public Nullable<System.DateTime> ThoiGianCapNhat { get; set; }
+        public string TrangThai { get; set; }
     }
 }
