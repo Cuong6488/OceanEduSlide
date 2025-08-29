@@ -589,6 +589,10 @@
     <Compile Include="Migrations\202508280938298_phieuthu.Designer.cs">
       <DependentUpon>202508280938298_phieuthu.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508290656507_trangthai.cs" />
+    <Compile Include="Migrations\202508290656507_trangthai.Designer.cs">
+      <DependentUpon>202508290656507_trangthai.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1828,6 +1832,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202508280938298_phieuthu.resx">
       <DependentUpon>202508280938298_phieuthu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508290656507_trangthai.resx">
+      <DependentUpon>202508290656507_trangthai.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

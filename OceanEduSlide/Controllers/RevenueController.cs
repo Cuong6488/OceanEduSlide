@@ -1112,13 +1112,19 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        
-        public ActionResult SyncAllPhieuThu()
+
+        public ActionResult TestSyncPhieuThu(int date)
         {
             var phieuthuService = new PhieuThuService();
-            phieuthuService.SyncAllPhieuThu();
-            return Content("Đã đồng bộ all phiếu thu");
+            phieuthuService.TestSyncPhieuThu(date);
+            return Content("Đã đồng bộ phiếu thu");
         }
+        //public ActionResult SyncAllPhieuThu()
+        //{
+        //    var phieuthuService = new PhieuThuService();
+        //    phieuthuService.SyncAllPhieuThu();
+        //    return Content("Đã đồng bộ all phiếu thu");
+        //}
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();
