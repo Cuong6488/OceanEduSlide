@@ -38,6 +38,8 @@ namespace OceanEduSlide.Models
         Type8,
         [Display(Name = "File Chi nhánh theo tháng")]
         Type9,
+        [Display(Name = "File Phiếu thu đặc biệt")]
+        Type10,
 
     }
 }

@@ -125,6 +125,7 @@ namespace OceanEduSlide.ViewModels
                 { 5, "Nhân sự theo tháng" },
                 { 6, "QĐ ưu đãi" },
                 { 7, "Quy định chung/ QĐ PTS" },
+                { 9, "Phiếu thu đặc biệt" },
             };
             SelectGroup = new SelectList(listgroup, "Key", "Value");
         }

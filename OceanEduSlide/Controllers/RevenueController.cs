@@ -31,7 +31,7 @@ namespace OceanEduSlide.Controllers
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private string Fullname => RouteData.Values["Fullname"].ToString();
-
+        #region ChiTieuCN_NV
         public ActionResult RankOffice()
         {
             return View();
@@ -875,6 +875,204 @@ namespace OceanEduSlide.Controllers
 
             return RedirectToAction("Index", "Vcms");
         }
+        public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Target_TS)).AsNoTracking();
+
+            if (officeId > 0)
+            {
+                revenueOffices = revenueOffices.Where(a => a.OfficeId == officeId);
+            }
+            var model = new ListRevenueOfficeViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
+                RevenueOffices = revenueOffices.ToPagedList(pageNumber, pageSize),
+                OfficeId = officeId,
+            };
+            return View(model);
+        }
+        public ActionResult PhieuThuTHDB()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult PhieuThuTHDB(FormCollection fc)
+        {
+            var file = Request.Files["PhieuThuFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var logImport = new Models.LogImport
+                {
+                    Admin = Fullname,
+                    Name = Path.GetFileName(file.FileName),
+                    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                    TypeImport = TypeImport.Type10,
+                };
+                _unitOfWork.LogImportRepository.Insert(logImport);
+                _unitOfWork.Save();
+                // Lưu tệp tài liệu
+                var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                file.SaveAs(filePath);
+                var result = reader.AsDataSet();
+                reader.Close();
+
+                var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == DateTime.Now.Month);
+                var tbl = result.Tables[0];
+                for (var i = 1; i < tbl.Rows.Count; i++)
+                {
+                    var officename = tbl.Rows[i][0].ToString().Trim();
+                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officename).FirstOrDefault();
+                    if (office == null)
+                    {
+                        ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
+                        return View();
+                    }
+                    var ngayThanhToanStr = tbl.Rows[i][1].ToString().Trim();
+                    if (string.IsNullOrEmpty(ngayThanhToanStr))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Ngày thanh toán");
+                        return View();
+                    }
+
+                    if (!DateTime.TryParse(ngayThanhToanStr, out var ngayThanhToan))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột ngày thanh toán: " + ngayThanhToanStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+                    var loai = tbl.Rows[i][2].ToString().Trim();
+                    if (string.IsNullOrEmpty(loai))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Loại");
+                        return View();
+                    }
+                    var receiptCode = tbl.Rows[i][3].ToString().Trim();
+                    var maHV = tbl.Rows[i][4].ToString().Trim();
+                    var tenHV = tbl.Rows[i][5].ToString().Trim();
+                    var tUDStr = tbl.Rows[i][6].ToString().Trim();
+                    if (!decimal.TryParse(tUDStr, out var tUD))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột trước ưu đãi: " + tUDStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+
+                    var sUDStr = tbl.Rows[i][7].ToString().Trim();
+                    if (string.IsNullOrEmpty(sUDStr))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Sau ưu đãi");
+                        return View();
+                    }
+                    if (!decimal.TryParse(sUDStr, out var sUD))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột sau ưu đãi: " + sUDStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+                    var phanTramUDStr = tbl.Rows[i][8].ToString().Trim();
+                    if (!double.TryParse(phanTramUDStr, out var phanTramUD))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột % ưu đãi: " + phanTramUDStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+                    var gioiTinh = tbl.Rows[i][9].ToString().Trim();
+                    var hinhThucThanhToan = tbl.Rows[i][10].ToString().Trim();
+                    var notes = tbl.Rows[i][11].ToString().Trim();
+                    var dangKy = tbl.Rows[i][12].ToString().Trim();
+                    var gioTaoStr = tbl.Rows[i][13].ToString().Trim();
+                    if (!DateTime.TryParse(gioTaoStr, out var gioTao))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành giờ ở cột giờ tạo: " + gioTaoStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+
+                    var chotSale = tbl.Rows[i][15].ToString().Trim();
+                    var congTacVien = tbl.Rows[i][16].ToString().Trim();
+                    var thangHocDuKienStr = tbl.Rows[i][17].ToString().Trim();
+                    if (!int.TryParse(thangHocDuKienStr, out var thangHocDuKien))
+                    {
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột tháng học dự kiến: " + thangHocDuKienStr + ", chi nhánh " + officename);
+                        return View();
+                    }
+                    var uD_FINAL = tbl.Rows[i][18].ToString().Trim();
+                    var loaiCTH = tbl.Rows[i][19].ToString().Trim();
+                    var chuongTrinhHoc = tbl.Rows[i][20].ToString().Trim();
+                    var capDo = tbl.Rows[i][21].ToString().Trim();
+                    var modun = tbl.Rows[i][22].ToString().Trim();
+                    var uD_NhomUDFINAL = tbl.Rows[i][23].ToString().Trim();
+                    var maNVChotSale = tbl.Rows[i][14].ToString().Trim();
+                    if (!string.IsNullOrEmpty(maNVChotSale))
+                    {
+                        var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == maNVChotSale).FirstOrDefault();
+                        if (user == null)
+                        {
+                            ModelState.AddModelError("", @"Chưa có tài khoản của nhân sự: " + maNVChotSale);
+                            return View();
+                        }
+                        var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.DayStart <= ngayThanhToan && (a.DayEnd == null || a.DayEnd.Value >= ngayThanhToan)).FirstOrDefault();
+                        if (historyUser == null)
+                        {
+                            ModelState.AddModelError("", @"Chưa có bản ghi nhân sự theo tháng của nhân sự: " + maNVChotSale);
+                            return View();
+                        }
+                    }
+                    var phieuThu = new BC_PhieuThu_DB
+                    {
+                        ChiNhanh = officename,
+                        MaNVChotSale = maNVChotSale,
+                        NgayThanhToan = ngayThanhToan,
+                        SUD = sUD,
+                        TUD = tUD,
+                        Loai = loai,
+                        ReceiptCode = receiptCode,
+                        MaHV = maHV,
+                        TenHV = tenHV,
+                        PhanTramUD = phanTramUD,
+                        GioiTinh = gioiTinh,
+                        HinhThucThanhToan = hinhThucThanhToan,
+                        Notes = notes,
+                        DangKy = dangKy,
+                        GioTao = gioTao,
+                        ChotSale = chotSale,
+                        CongTacVien = congTacVien,
+                        ThangHocDuKien = thangHocDuKien,
+                        UD_FINAL = uD_FINAL,
+                        LoaiCTH = loaiCTH,
+                        ChuongTrinhHoc = chuongTrinhHoc,
+                        CapDo = capDo,
+                        Modun = modun,
+                        UD_NhomUDFINAL = uD_NhomUDFINAL,
+
+                    };
+                    _unitOfWork.PhieuThuRepository.Insert(phieuThu);
+                }
+                _unitOfWork.Save();
+                var phieuThuSerVice = new PhieuThuService();
+                phieuThuSerVice.TestSyncDthu();
+            }
+            return RedirectToAction("Index", "Vcms");
+        }
+        #endregion
+
+        #region LogImport
         public PartialViewResult ListFile(int type)
         {
             var typeName = "";
@@ -908,6 +1106,9 @@ namespace OceanEduSlide.Controllers
                 case 8:
                     typeName = "Chi nhánh theo tháng";
                     break;
+                case 9:
+                    typeName = "Phiếu thu đặc biệt";
+                    break;
                 default:
                     break;
             }
@@ -931,45 +1132,9 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
-        {
-            ViewBag.Result = result;
-            var pageNumber = page ?? 1;
-            const int pageSize = 15;
-            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Target_TS)).AsNoTracking();
+        #endregion
 
-            if (officeId > 0)
-            {
-                revenueOffices = revenueOffices.Where(a => a.OfficeId == officeId);
-            }
-            var model = new ListRevenueOfficeViewModel
-            {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
-                RevenueOffices = revenueOffices.ToPagedList(pageNumber, pageSize),
-                OfficeId = officeId,
-            };
-            return View(model);
-        }
-
-        public ActionResult ListRevenueUser(int? page, int? officeId, string result = "")
-        {
-            ViewBag.Result = result;
-            var pageNumber = page ?? 1;
-            const int pageSize = 15;
-            var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Target)).AsNoTracking();
-
-            if (officeId > 0)
-            {
-                revenueUsers = revenueUsers.Where(a => a.User.OfficeId == officeId);
-            }
-            var model = new ListRevenueUserViewModel
-            {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
-                Revenues = revenueUsers.ToPagedList(pageNumber, pageSize),
-                OfficeId = officeId,
-            };
-            return View(model);
-        }
+        #region WorkingDays
         public ActionResult CreateWorkingDay(string result = "")
         {
             ViewBag.Result = result;
@@ -1020,6 +1185,9 @@ namespace OceanEduSlide.Controllers
 
             return View(workingDays);
         }
+        #endregion
+
+        #region TargetGroup
         public ActionResult CreateTargetGroup(string result = "")
         {
             ViewBag.Result = result;
@@ -1109,6 +1277,28 @@ namespace OceanEduSlide.Controllers
                 TargetGroups = targetgroups.ToPagedList(pageNumber, pageSize),
                 month = month,
                 year = year,
+            };
+            return View(model);
+        }
+        #endregion
+
+
+        public ActionResult ListRevenueUser(int? page, int? officeId, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Target)).AsNoTracking();
+
+            if (officeId > 0)
+            {
+                revenueUsers = revenueUsers.Where(a => a.User.OfficeId == officeId);
+            }
+            var model = new ListRevenueUserViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
+                Revenues = revenueUsers.ToPagedList(pageNumber, pageSize),
+                OfficeId = officeId,
             };
             return View(model);
         }
