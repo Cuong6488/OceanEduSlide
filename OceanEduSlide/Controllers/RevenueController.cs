@@ -23,6 +23,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Z.EntityFramework.Plus;
+using System.Security.Policy;
+using System.Threading.Tasks;
 
 namespace OceanEduSlide.Controllers
 {
@@ -938,6 +940,7 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == DateTime.Now.Month);
+                oldList.Delete();
                 var tbl = result.Tables[0];
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
@@ -945,8 +948,10 @@ namespace OceanEduSlide.Controllers
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officename).FirstOrDefault();
                     if (office == null)
                     {
-                        ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
-                        return View();
+                        continue;
+
+                        //ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
+                        //return View();
                     }
                     var ngayThanhToanStr = tbl.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(ngayThanhToanStr))
@@ -1060,16 +1065,64 @@ namespace OceanEduSlide.Controllers
                         CapDo = capDo,
                         Modun = modun,
                         UD_NhomUDFINAL = uD_NhomUDFINAL,
+                        THDB = true,
 
                     };
                     _unitOfWork.PhieuThuRepository.Insert(phieuThu);
                 }
                 _unitOfWork.Save();
                 var phieuThuSerVice = new PhieuThuService();
-                phieuThuSerVice.TestSyncDthu();
+                phieuThuSerVice.SyncDthu(0);
+                ViewBag.Result = "add";
+                return View();
             }
             return RedirectToAction("Index", "Vcms");
         }
+        public ActionResult ListPhieuThu(int? page, string username, string officeId, int? month, int? year, int? type, string result = "")
+        {
+            var pageNumber = page ?? 1;
+            const int pageSize = 20;
+            var phieuThus = _unitOfWork.PhieuThuRepository.GetQuery(orderBy: q => q.OrderBy(a => a.ChiNhanh).ThenBy(a => a.MaNVChotSale));
+            if (!string.IsNullOrEmpty(officeId))
+            {
+                phieuThus = phieuThus.Where(l => l.ChiNhanh == officeId);
+            }
+            if (month != null)
+                phieuThus = phieuThus.Where(l => l.NgayThanhToan != null && l.NgayThanhToan.Value.Month == month);
+
+            if (year != null)
+                phieuThus = phieuThus.Where(l => l.NgayThanhToan != null && l.NgayThanhToan.Value.Year == year);
+
+            if (type == 0)
+            {
+                phieuThus = phieuThus.Where(l => !l.THDB);
+            }
+            if (type == 1)
+            {
+                phieuThus = phieuThus.Where(l => l.THDB);
+            }
+            if (username != null)
+            {
+                var newkey = username.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.MaNVChotSale.Contains(newkey) || l.MaNVChotSale.Contains(newkey) || l.MaNVChotSale.Contains(newkey));
+                }
+            }
+
+            var model = new ListPhieuThuViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "ShortName", "Name"),
+                PhieuThus = phieuThus.ToPagedList(pageNumber, pageSize),
+                officeId = officeId,
+                Username = username,
+                type = type,
+                year = year,
+                month = month,
+            };
+            return View(model);
+        }
+
         #endregion
 
         #region LogImport
@@ -1113,7 +1166,7 @@ namespace OceanEduSlide.Controllers
                     break;
             }
             ViewBag.TypeName = typeName;
-            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month);
+            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month,q => q.OrderByDescending(a => a.CreateDate));
             return PartialView(logImport);
         }
         public ActionResult ListFileAll(int? page, int? type)
@@ -1302,19 +1355,12 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-
         public ActionResult TestSyncPhieuThu(int date)
         {
             var phieuthuService = new PhieuThuService();
             phieuthuService.TestSyncPhieuThu(date);
             return Content("Đã đồng bộ phiếu thu");
         }
-        //public ActionResult SyncAllPhieuThu()
-        //{
-        //    var phieuthuService = new PhieuThuService();
-        //    phieuthuService.SyncAllPhieuThu();
-        //    return Content("Đã đồng bộ all phiếu thu");
-        //}
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

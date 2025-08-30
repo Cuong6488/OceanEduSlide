@@ -62,6 +62,39 @@ namespace OceanEduSlide
                 },
                 s => s.ToRunEvery(1).Days().At(3, 0)
             );
+            //JobManager.AddJob(
+            //    () =>
+            //    {
+            //        try
+            //        {
+            //            var phieuThuService = new PhieuThuService();
+            //            phieuThuService.SyncPhieuThu();
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
+            //        }
+            //    },
+            //    s => s.ToRunEvery(1).Days().At(3, 30)
+            //);
+            //            JobManager.AddJob(
+            //    () =>
+            //    {
+            //        Task.Run(async () =>
+            //        {
+            //            try
+            //            {
+            //                var phieuThuService = new PhieuThuService();
+            //                await phieuThuService.SyncPhieuThuAsync(); // gọi bản async giả lập
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
+            //            }
+            //        });
+            //    },
+            //    s => s.ToRunEvery(1).Days().At(3, 30)
+            //);
         }
 
         //private void OnTimedEvent(object source, ElapsedEventArgs e)

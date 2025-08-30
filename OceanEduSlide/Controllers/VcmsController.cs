@@ -1903,239 +1903,6 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Office
-        public void ExportOffice()
-        {
-
-            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.ZoneId));
-            var dt = new DataTable();
-            dt.Columns.Add("STT");
-            dt.Columns.Add("Tên đầy đủ");
-            dt.Columns.Add("Tên ngắn");
-            dt.Columns.Add("Tên viết tắt");
-
-            var filename = $"danh-sach-chi-nhanh.xlsx";
-            var i = 1;
-            foreach (var item in offices)
-            {
-                dt.Rows.Add(i, item.Name, item.ShortName, item.ShortCode);
-                i++;
-            }
-            using (var pck = new ExcelPackage())
-            {
-                //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws.Cells["A1"].LoadFromDataTable(dt, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-
-                //Example how to Format Column 7 as numeric
-                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
-                //{
-                //    col.Style.Numberformat.Format = "#,##0";
-                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //Write it back to the client
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
-                Response.BinaryWrite(pck.GetAsByteArray());
-            }
-        }
-        public void ExportHistoryOffice()
-        {
-
-            var offices = _unitOfWork.HistoryOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.ZoneId));
-            var dt = new DataTable();
-            dt.Columns.Add("STT");
-            dt.Columns.Add("Tháng");
-            dt.Columns.Add("Chi nhánh");
-            dt.Columns.Add("Vùng");
-            dt.Columns.Add("Định biên ATL");
-            dt.Columns.Add("Định biên EC");
-            dt.Columns.Add("Nhóm chi nhánh");
-            dt.Columns.Add("Áp dụng QĐ 156");
-
-            var filename = $"danh-sach-chi-nhanh-theo-thang.xlsx";
-            var i = 1;
-            foreach (var item in offices)
-            {
-                var qd156 = item.QD156 ? "x" : "";
-                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName, item.Zone?.Name, item.DBATL, item.DBEC, item.GroupOffice, qd156);
-                i++;
-            }
-            using (var pck = new ExcelPackage())
-            {
-                //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh theo tháng");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws.Cells["A1"].LoadFromDataTable(dt, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-
-                //Example how to Format Column 7 as numeric
-                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
-                //{
-                //    col.Style.Numberformat.Format = "#,##0";
-                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //Write it back to the client
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
-                Response.BinaryWrite(pck.GetAsByteArray());
-            }
-        }
-        public void ExportHistoryUser()
-        {
-            var users = _unitOfWork.HistoryUserRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId));
-            var dt = new DataTable();
-            dt.Columns.Add("STT");
-            dt.Columns.Add("Tháng");
-            dt.Columns.Add("Họ và tên");
-            dt.Columns.Add("Mã nhân viên");
-            dt.Columns.Add("Trạng thái");
-            dt.Columns.Add("Ngày vào làm");
-            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
-            dt.Columns.Add("Chi nhánh");
-            dt.Columns.Add("Phân quyền");
-
-            var filename = $"danh-sach-nhan-su-theo-thang.xlsx";
-            var i = 1;
-            foreach (var item in users)
-            {
-                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.User.Fullname, item.User.MaNhanVien, GetEnumDisplayName(item.Status), item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd == null ? "" : item.DayEnd.Value.ToString("dd/MM/yyyy"), item.Office?.Name, GetEnumDisplayName(item.TypeUser));
-                i++;
-            }
-            using (var pck = new ExcelPackage())
-            {
-                //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách nhân sự theo tháng");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws.Cells["A1"].LoadFromDataTable(dt, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-
-                //Example how to Format Column 7 as numeric
-                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
-                //{
-                //    col.Style.Numberformat.Format = "#,##0";
-                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //Write it back to the client
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
-                Response.BinaryWrite(pck.GetAsByteArray());
-            }
-        }
-
-        public void ExportTargetCN_NV()
-        {
-            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Office.ZoneId));
-            var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null, q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.HistoryUser.Office.ZoneId).ThenBy(a => a.HistoryUser.OfficeId).ThenBy(a => a.HistoryUser.Sort));
-            var dt = new DataTable();
-            dt.Columns.Add("STT");
-            dt.Columns.Add("Tháng");
-            dt.Columns.Add("Chi nhánh");
-            dt.Columns.Add("Vùng");
-            dt.Columns.Add("Chỉ tiêu DS tuyển sinh");
-            dt.Columns.Add("Chỉ tiêu DS học vụ");
-            dt.Columns.Add("Chỉ tiêu DS kế toán");
-
-
-            var filename = $"chi-tieu-CN-NV.xlsx";
-            var i = 1;
-            foreach (var item in revenueOffices)
-            {
-                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName,item.Office.Zone?.Name, item.Target_TS, item.Target_HV, item.Target_SAB);
-                i++;
-            }
-            var dt2 = new DataTable();
-            dt2.Columns.Add("STT");
-            dt2.Columns.Add("Tháng");
-            dt2.Columns.Add("Vùng");
-            dt2.Columns.Add("Chi nhánh");
-            dt2.Columns.Add("Họ tên NS");
-            dt2.Columns.Add("Chức vụ");
-            dt2.Columns.Add("Ngày vào làm");
-            dt2.Columns.Add("Ngày nghỉ/ điều chuyển");
-            dt2.Columns.Add("Trạng thái");
-            dt2.Columns.Add("Chỉ tiêu doanh số");
-            i = 1;
-            foreach (var item in revenueUsers)
-            {
-                dt2.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.HistoryUser.Office?.Zone?.Name, item.HistoryUser.Office?.ShortName, item.HistoryUser.User.Fullname, GetEnumDisplayName(item.HistoryUser.TypeUser), item.HistoryUser.DayStart, item.HistoryUser.DayEnd, GetEnumDisplayName(item.HistoryUser.Status),item.Target);
-
-            }
-
-            using (var pck = new ExcelPackage())
-            {
-                //Create the worksheet
-                var ws1 = pck.Workbook.Worksheets.Add("Chỉ tiêu CN");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws1.Cells["A1"].LoadFromDataTable(dt, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws1.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-                var ws2 = pck.Workbook.Worksheets.Add("Chỉ tiêu NV");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws2.Cells["A1"].LoadFromDataTable(dt2, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws2.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-
-                //Example how to Format Column 7 as numeric
-                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
-                //{
-                //    col.Style.Numberformat.Format = "#,##0";
-                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //Write it back to the client
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
-                Response.BinaryWrite(pck.GetAsByteArray());
-            }
-        }
         public ActionResult ListOffice(int? page, string name, int? trung, string result = "")
         {
             ViewBag.Result = result;
@@ -3202,31 +2969,28 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
-        public void ExportTargetOffice()
+        #region Export
+        public void ExportOffice()
         {
 
-            var revenues = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
-                .GroupBy(a => new { a.OfficeId })
-                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
-            var revenueHOs = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == 8 && a.Year == 2025);
+            var offices = _unitOfWork.OfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.ZoneId));
             var dt = new DataTable();
-            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
-            dt.Columns.Add("Chi nhánh");
-            dt.Columns.Add("Vùng");
-            dt.Columns.Add("Tháng");
-            dt.Columns.Add("Chỉ tiêu DS công ty");
-            dt.Columns.Add("Cam kết HT doanh số");
-            foreach (var office in offices)
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tên đầy đủ");
+            dt.Columns.Add("Tên ngắn");
+            dt.Columns.Add("Tên viết tắt");
+
+            var filename = $"danh-sach-chi-nhanh.xlsx";
+            var i = 1;
+            foreach (var item in offices)
             {
-                var revenueHO = revenueHOs.Where(a => a.OfficeId == office.Id).FirstOrDefault();
-                var revenue = revenues.Where(a => a.OfficeId == office.Id).FirstOrDefault();
-                dt.Rows.Add(office.ShortName, office.Zone?.Name, 8, revenueHO != null ? revenueHO.Target_TS.ToString("N0") : "", revenue != null ? revenue.TargetBM_TS.ToString("N0") : "");
+                dt.Rows.Add(i, item.Name, item.ShortName, item.ShortCode);
+                i++;
             }
-            var filename = $"danh-sach-cam-ket-hoan-thanh-DS-CN.xlsx";
             using (var pck = new ExcelPackage())
             {
                 //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách cam kết hoàn thành DS");
+                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh");
 
                 //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
                 ws.Cells["A1"].LoadFromDataTable(dt, true);
@@ -3253,74 +3017,216 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-        public void ExportTargetUser()
+        public void ExportHistoryOffice()
         {
-            var revenueHOMonths = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.Month == 8 && a.Year == 2025);
-            var revenueBMMonths = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
-                .GroupBy(a => new { a.UserId })
-                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
-            var revenueBMWeeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
-                .GroupBy(a => new { a.UserId, a.WeekNumber })
-                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
+
+            var offices = _unitOfWork.HistoryOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.ZoneId));
             var dt = new DataTable();
-            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.Office != null && a.TypeUser != null && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.ASM,
-                q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId));
-            dt.Columns.Add("Nhân sự");
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Định biên ATL");
+            dt.Columns.Add("Định biên EC");
+            dt.Columns.Add("Nhóm chi nhánh");
+            dt.Columns.Add("Áp dụng QĐ 156");
+
+            var filename = $"danh-sach-chi-nhanh-theo-thang.xlsx";
+            var i = 1;
+            foreach (var item in offices)
+            {
+                var qd156 = item.QD156 ? "x" : "";
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName, item.Zone?.Name, item.DBATL, item.DBEC, item.GroupOffice, qd156);
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách chi nhánh theo tháng");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportHistoryUser()
+        {
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Họ và tên");
             dt.Columns.Add("Mã nhân viên");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Phân quyền");
+
+            var filename = $"danh-sach-nhan-su-theo-thang.xlsx";
+            var i = 1;
+            foreach (var item in users)
+            {
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.User.Fullname, item.User.MaNhanVien, GetEnumDisplayName(item.Status), item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd == null ? "" : item.DayEnd.Value.ToString("dd/MM/yyyy"), item.Office?.Name, GetEnumDisplayName(item.TypeUser));
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách nhân sự theo tháng");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportTargetCN_NV()
+        {
+            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.Office.ZoneId));
+            var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null, q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenByDescending(a => a.HistoryUser.Office.ZoneId).ThenBy(a => a.HistoryUser.OfficeId).ThenBy(a => a.HistoryUser.Sort));
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Chỉ tiêu DS tuyển sinh");
+            dt.Columns.Add("Chỉ tiêu DS học vụ");
+            dt.Columns.Add("Chỉ tiêu DS kế toán");
+
+
+            var filename = $"chi-tieu-CN-NV.xlsx";
+            var i = 1;
+            foreach (var item in revenueOffices)
+            {
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.Office.ShortName, item.Office.Zone?.Name, item.Target_TS, item.Target_HV, item.Target_SAB);
+                i++;
+            }
+            var dt2 = new DataTable();
+            dt2.Columns.Add("STT");
+            dt2.Columns.Add("Tháng");
+            dt2.Columns.Add("Vùng");
+            dt2.Columns.Add("Chi nhánh");
+            dt2.Columns.Add("Họ tên NS");
+            dt2.Columns.Add("Chức vụ");
+            dt2.Columns.Add("Ngày vào làm");
+            dt2.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt2.Columns.Add("Trạng thái");
+            dt2.Columns.Add("Chỉ tiêu doanh số");
+            i = 1;
+            foreach (var item in revenueUsers)
+            {
+                dt2.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.HistoryUser.Office?.Zone?.Name, item.HistoryUser.Office?.ShortName, item.HistoryUser.User.Fullname, GetEnumDisplayName(item.HistoryUser.TypeUser), item.HistoryUser.DayStart, item.HistoryUser.DayEnd, GetEnumDisplayName(item.HistoryUser.Status), item.Target);
+
+            }
+
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws1 = pck.Workbook.Worksheets.Add("Chỉ tiêu CN");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws1.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws1.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+                var ws2 = pck.Workbook.Worksheets.Add("Chỉ tiêu NV");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws2.Cells["A1"].LoadFromDataTable(dt2, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws2.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportTargetOffice()
+        {
+
+            var revenues = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
+                .GroupBy(a => new { a.OfficeId })
+                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
+            var revenueHOs = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == 8 && a.Year == 2025);
+            var dt = new DataTable();
+            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
             dt.Columns.Add("Chi nhánh");
             dt.Columns.Add("Vùng");
             dt.Columns.Add("Tháng");
             dt.Columns.Add("Chỉ tiêu DS công ty");
             dt.Columns.Add("Cam kết HT doanh số");
-            dt.Columns.Add("DS cam kết Tuần 1");
-            dt.Columns.Add("DS cam kết Tuần 2");
-            dt.Columns.Add("DS cam kết Tuần 3");
-            dt.Columns.Add("DS cam kết Tuần 4");
-            dt.Columns.Add("DS cam kết Tuần 5");
-            dt.Columns.Add("DS cam kết Tuần 6");
-            foreach (var user in users)
+            foreach (var office in offices)
             {
-                //var revenueHOMonth = revenueHOMonths.Where(a => a.UserId == user.Id).FirstOrDefault();
-                //var revenueBMMonth = revenueBMMonths.Where(a => a.UserId == user.Id).FirstOrDefault();
-                //dt.Columns.Add(user.Fullname);
-                //dt.Columns.Add(user.Office.ShortName);
-                //dt.Columns.Add(user.Office.Zone?.Name);
-                //dt.Columns.Add("8");
-                //dt.Columns.Add(revenueHOMonth != null ? revenueHOMonth.Target.ToString("N0") : "");
-                //dt.Columns.Add(revenueBMMonth != null ? revenueBMMonth.TargetBM.ToString("N0") : "");
-                //for (int i = 1; i <= 6; i++)
-                //{
-                //    var revenueBMWeek = revenueBMWeeks.Where(a => a.UserId == user.Id && (int)a.WeekNumber == i).FirstOrDefault();
-                //    dt.Columns.Add(revenueBMWeek != null ? revenueBMWeek.TargetBM.ToString("N0") : "");
-
-                //}
-                var revenueHOMonth = revenueHOMonths.FirstOrDefault(a => a.UserId == user.Id);
-                var revenueBMMonth = revenueBMMonths.FirstOrDefault(a => a.UserId == user.Id);
-
-                var row = dt.NewRow();
-                row["Nhân sự"] = user.Fullname ?? user.Username;
-                row["Mã nhân viên"] = user.MaNhanVien ?? user.Username;
-                row["Chi nhánh"] = user.Office.ShortName;
-                row["Vùng"] = user.Office.Zone?.Name;
-                row["Tháng"] = "8"; // hoặc revenueMonth.Month.ToString()
-
-                row["Chỉ tiêu DS công ty"] = revenueHOMonth != null ? revenueHOMonth.Target.ToString("N0") : "";
-                row["Cam kết HT doanh số"] = revenueBMMonth != null ? revenueBMMonth.TargetBM.ToString("N0") : "";
-
-                for (int i = 1; i <= 6; i++)
-                {
-                    var revenueBMWeek = revenueBMWeeks.FirstOrDefault(a => a.UserId == user.Id && (int)a.WeekNumber == i);
-                    row[$"DS cam kết Tuần {i}"] = revenueBMWeek != null ? revenueBMWeek.TargetBM.ToString("N0") : "";
-                }
-
-                dt.Rows.Add(row);
+                var revenueHO = revenueHOs.Where(a => a.OfficeId == office.Id).FirstOrDefault();
+                var revenue = revenues.Where(a => a.OfficeId == office.Id).FirstOrDefault();
+                dt.Rows.Add(office.ShortName, office.Zone?.Name, 8, revenueHO != null ? revenueHO.Target_TS.ToString("N0") : "", revenue != null ? revenue.TargetBM_TS.ToString("N0") : "");
             }
-
-            var filename = $"danh-sach-PBDS-nhan-su.xlsx";
+            var filename = $"danh-sach-cam-ket-hoan-thanh-DS-CN.xlsx";
             using (var pck = new ExcelPackage())
             {
                 //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ doanh số");
+                var ws = pck.Workbook.Worksheets.Add("Danh sách cam kết hoàn thành DS");
 
                 //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
                 ws.Cells["A1"].LoadFromDataTable(dt, true);
@@ -3458,101 +3364,6 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-
-        public void ExportEvent()
-        {
-            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == 8 && a.Year == 2025)
-                .GroupBy(a => new { a.DayofWeek, a.WeekNumber, a.OfficeId })
-                .Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault());
-            var dt = new DataTable();
-            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
-            dt.Columns.Add("Chi nhánh");
-            dt.Columns.Add("Vùng");
-            dt.Columns.Add("Tháng");
-            dt.Columns.Add("Tuần");
-            for (int d = 2; d <= 8; d++) // 2: Monday, ..., 8: Sunday
-            {
-                if (d != 8)
-                    dt.Columns.Add($"Thứ {d}");
-                else
-                    dt.Columns.Add("Chủ nhật");
-            }
-
-            foreach (var office in offices)
-            {
-                for (int i = 1; i <= 6; i++) // i = tuần (1–6)
-                {
-                    var row = dt.NewRow();
-                    row["Chi nhánh"] = office.ShortName;
-                    row["Vùng"] = office.Zone?.Name;
-                    row["Tháng"] = "8";
-                    row["Tuần"] = i;
-
-                    for (int j = 2; j <= 8; j++) // j = thứ trong tuần (2–8)
-                    {
-                        var eventDay = events.FirstOrDefault(a =>
-                            a.OfficeId == office.Id &&
-                            (int)a.WeekNumber == i &&
-                            (int)a.DayofWeek == j);
-                        if (eventDay != null)
-                        {
-                            var eventInfo = string.Join("\n", new[]
-{
-    $"Loại hoạt động: {GetEnumDisplayName(eventDay.TypeEvent)}",
-    $"Tên hoạt động: {eventDay.Name}",
-    $"Đối tượng tham gia: {GetEnumDisplayName(eventDay.TypeJoin)}",
-    $"Lứa tuổi: {eventDay.Ages}",
-    $"Thời gian: {eventDay.TimeFrom} - {eventDay.TimeTo}",
-});
-
-
-                            var columnName = j == 8 ? "Chủ nhật" : $"Thứ {j}";
-                            row[columnName] = eventInfo.Trim(); // loại bỏ dòng trắng đầu
-                        }
-                    }
-
-                    dt.Rows.Add(row); // ✅ Mỗi tuần là 1 dòng
-                }
-            }
-
-            var filename = $"danh-sach-su-kien.xlsx";
-            using (var pck = new ExcelPackage())
-            {
-                //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách sự kiện");
-
-                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
-                ws.Cells["A1"].LoadFromDataTable(dt, true);
-
-                //Format the header for column 1-14
-                using (var rng = ws.Cells["A1:O1"])
-                {
-                    rng.Style.Font.Bold = true;
-                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
-                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
-                    rng.Style.Font.Color.SetColor(Color.White);
-                }
-
-                //Example how to Format Column 7 as numeric
-                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
-                //{
-                //    col.Style.Numberformat.Format = "#,##0";
-                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //Write it back to the client
-                if (ws.Dimension != null) // kiểm tra sheet có dữ liệu
-                {
-                    ws.Cells[ws.Dimension.Address].Style.WrapText = true;
-                }
-
-                // ✅ (Tùy chọn) Tự động giãn cột cho vừa nội dung
-                ws.Cells[ws.Dimension.Address].AutoFitColumns();
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
-                Response.BinaryWrite(pck.GetAsByteArray());
-            }
-        }
         public void ExportEvent2()
         {
             var month = 8;
@@ -3659,6 +3470,68 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+
+        public void ExportPhieuThu()
+        {
+            var phieuthus = _unitOfWork.PhieuThuRepository.GetQuery();
+            var dt = new DataTable();
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Ngày thanh toán");
+            dt.Columns.Add("Đặc biệt");
+            dt.Columns.Add("Loại");
+            dt.Columns.Add("Số phiếu thu");
+            dt.Columns.Add("Mã HV");
+            dt.Columns.Add("Học viên");
+            dt.Columns.Add("Trước ưu đãi");
+            dt.Columns.Add("Sau ưu đãi");
+            dt.Columns.Add("% Ưu đãi");
+            dt.Columns.Add("Giới tính");
+            dt.Columns.Add("Hình thức thanh toán");
+            dt.Columns.Add("Ghi chú");
+            dt.Columns.Add("Đăng ký");
+            dt.Columns.Add("Giờ tạo");
+            dt.Columns.Add("Mã nhân viên chốt sale");
+            dt.Columns.Add("Tên nhân viên chốt sale");
+            dt.Columns.Add("Mã cộng tác viên");
+            dt.Columns.Add("Số tháng học dự kiến");
+            dt.Columns.Add("CT Khuyến Mãi");
+            dt.Columns.Add("Loại chương trình");
+            dt.Columns.Add("Chương trình học");
+            dt.Columns.Add("Cấp độ");
+            dt.Columns.Add("Mô-đun");
+            dt.Columns.Add("Mã nhóm CTUD");
+
+            var filename = $"danh-sach-phieu-thu.xlsx";
+            foreach (var item in phieuthus)
+            {
+                var thdb = item.THDB ? "x" : "";
+                dt.Rows.Add(item.ChiNhanh, item.NgayThanhToan.Value.ToString("dd/MM/yyyy"), thdb, item.Loai, item.ReceiptCode, item.MaHV, item.TenHV, item.TUD, item.SUD, item.PhanTramUD, item.GioiTinh, item.HinhThucThanhToan, item.Notes,
+                    item.DangKy, item.GioTao, item.MaNVChotSale, item.ChotSale, item.CongTacVien, item.ThangHocDuKien, item.UD_FINAL, item.LoaiCTH, item.ChuongTrinhHoc, item.CapDo, item.Modun, item.UD_NhomUDFINAL);
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách phiếu thu");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
+        #endregion
+
 
         public static string GetEnumDisplayName(Enum enumValue)
         {

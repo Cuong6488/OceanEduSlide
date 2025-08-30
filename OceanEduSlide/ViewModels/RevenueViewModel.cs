@@ -155,4 +155,15 @@ namespace OceanEduSlide.ViewModels
         public int? month { get; set; }
         public int? year { get; set; }
     }
+
+    public class ListPhieuThuViewModel
+    {
+        public PagedList.IPagedList<BC_PhieuThu_DB> PhieuThus { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public string officeId { get; set; }
+        public int? type { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
+        public string Username { get; set; }
+    }
 }

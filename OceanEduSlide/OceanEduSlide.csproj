@@ -1575,6 +1575,7 @@
     <Content Include="Views\TuyenSinh\ListTest.cshtml" />
     <Content Include="Views\Revenue\TargetOffice2.cshtml" />
     <Content Include="Views\Revenue\PhieuThuTHDB.cshtml" />
+    <Content Include="Views\Revenue\ListPhieuThu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

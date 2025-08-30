@@ -12,8 +12,11 @@ namespace OceanEduSlide.Models
         public long? PhieuThuKeToan { get; set; }
         public string ChiNhanh { get; set; }
         public string MaNVChotSale { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), Display(Name = "Ngày thanh toán")]
         public Nullable<System.DateTime> NgayThanhToan { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N0}đ")]
         public Nullable<decimal> SUD { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N0}đ")]
         public Nullable<decimal> TUD { get; set; }
         public string Loai { get; set; }
         public string ReceiptCode { get; set; }
