@@ -7,24 +7,6 @@
     var maNhanVienList = maNhanViens
         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
         .ToHashSet();
-
-    //// Phân nhóm user có/không dữ liệu theo mã NV
-    //var usersHasData = Model.Users
-    //    .Where(u => maNhanVienList.Contains(u.MaNhanVien))
-    //    .ToList();
-
-    //var usersNoData = Model.Users
-    //    .Where(u => !maNhanVienList.Contains(u.MaNhanVien))
-    //    .ToList();
-
-    //// Gom dữ liệu báo cáo theo UserId + CategoryId
-    //var reportDataDict = Model.ReportDatas
-    //    .GroupBy(d => new { d.UserId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
-    //    .ToDictionary(
-    //        g => g.Key,
-    //        g => g.OrderBy(d => d.Sort).ToList()
-    //    );
-
     // Phân nhóm user có/không dữ liệu theo mã NV
     var usersHasData = Model.HistoryUsers
         .Where(u => maNhanVienList.Contains(u.User?.MaNhanVien))
@@ -200,7 +182,7 @@
                 var groupId = group.Key;
                 int total = group.Count();
                 int i = 1;
-                <div class="columnGroup d-flex columnGroup-@groupId"
+                <div class="columnGroup columnGroupNV d-flex columnGroup-@groupId"
                      data-group-id="group-@groupId" style="margin-right:-1px;">
                     @foreach (var cat in group)
                     {
@@ -274,15 +256,15 @@
             const wrapper = $("#groupWrapper");
             wrapper.sortable({
                 axis: "x",
-                items: ".columnGroup",
+                items: ".columnGroupNV",
                 update: function () {
                     const order = wrapper.children().map(function () {
                         return $(this).attr("data-group-id");
                     }).get();
-                    localStorage.setItem("groupOrder", JSON.stringify(order));
+                    localStorage.setItem("groupOrderNV", JSON.stringify(order));
                 }
             });
-            const saved = JSON.parse(localStorage.getItem("groupOrder") || "[]");
+            const saved = JSON.parse(localStorage.getItem("groupOrderNV") || "[]");
             if (saved.length) {
                 saved.forEach(id =>
                     wrapper.append(wrapper.find(`[data-group-id="${id}"]`))

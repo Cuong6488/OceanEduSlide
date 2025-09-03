@@ -159,12 +159,13 @@ namespace OceanEduSlide.DAL
                 _unitOfWork.PhieuThuRepository.InsertRange(phieuThuAddList);
 
             _unitOfWork.Save();
-            SyncDthu(-1);
+            SyncDthu(-5);
         }
         public void SyncDthu(int dayAdd)
         {
             var day = DateTime.Now.AddDays(dayAdd);
-            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
+            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") && 
+            (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm"));
             var bcList = new List<ReportData>();
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
             var listMaNV = phieuThuAllList.Select(a => a.MaNVChotSale).Distinct().ToList();

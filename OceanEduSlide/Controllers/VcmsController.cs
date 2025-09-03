@@ -487,7 +487,7 @@ namespace OceanEduSlide.Controllers
             var users = _unitOfWork.UserRepository.GetQuery(orderBy: l => l.OrderByDescending(a => a.Id));
             if (zoneId.HasValue)
             {
-                users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId);
+                users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId || l.ZoneId == zoneId);
             }
 
             if (officeId.HasValue)

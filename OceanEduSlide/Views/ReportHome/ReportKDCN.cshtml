@@ -126,7 +126,7 @@
                 int total = group.Count();
                 int i = 1;
 
-                <div class="columnGroup d-flex columnGroup-@groupId" data-group-id="group-@groupId" style="margin-right:-1px;">
+                <div class="columnGroup columnGroupCN d-flex columnGroup-@groupId" data-group-id="groupCN-@groupId" style="margin-right:-1px;">
                     @foreach (var category in group)
                     {
                         var tableClass = (total > 1 && i < total) ? "no-right-border" : "";
@@ -199,16 +199,16 @@
 
             wrapper.sortable({
                 axis: "x",
-                items: ".columnGroup",
+                items: ".columnGroupCN",
                 update: function () {
                     const order = wrapper.children().map(function () {
                         return $(this).attr("data-group-id");
                     }).get();
-                    localStorage.setItem("groupOrder", JSON.stringify(order));
+                    localStorage.setItem("groupOrderCN", JSON.stringify(order));
                 }
             });
 
-            const savedOrder = JSON.parse(localStorage.getItem("groupOrder") || "[]");
+            const savedOrder = JSON.parse(localStorage.getItem("groupOrderCN") || "[]");
             if (savedOrder.length) {
                 savedOrder.forEach(id => {
                     const group = wrapper.find(`[data-group-id="${id}"]`);

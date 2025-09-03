@@ -21,7 +21,7 @@ namespace OceanEduSlide
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        private static Timer _timer;
+        //private static Timer _timer;
 
         protected void Application_Start()
         {
@@ -42,6 +42,19 @@ namespace OceanEduSlide
             //_timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             //_timer.Start();
             //Task.Run(() => TriggerCallLogSync());
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var callLogService = new CallLogService();
+                    await callLogService.SyncYesterdayAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✗ Startup sync error: {ex.Message}");
+                }
+            });
+
             JobManager.Initialize();
 
             JobManager.AddJob(
@@ -62,21 +75,6 @@ namespace OceanEduSlide
                 },
                 s => s.ToRunEvery(1).Days().At(3, 0)
             );
-            //JobManager.AddJob(
-            //    () =>
-            //    {
-            //        try
-            //        {
-            //            var phieuThuService = new PhieuThuService();
-            //            phieuThuService.SyncPhieuThu();
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
-            //        }
-            //    },
-            //    s => s.ToRunEvery(1).Days().At(3, 30)
-            //);
             //            JobManager.AddJob(
             //    () =>
             //    {
