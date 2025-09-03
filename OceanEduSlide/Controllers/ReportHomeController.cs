@@ -458,12 +458,17 @@ namespace OceanEduSlide.Controllers
                     TotalOver30s = g.Count(x => x.BillSec >= 30),
                     Total = g.Count(),
                 }).ToList();
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
-                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort)).ToList();
-                foreach (var item in historyUsers)
+                var khoang = EndDate.Month - StartDate.Month;
+                List<int> months = new List<int>();
+                if(khoang >= 0)
                 {
-
+                    for(int i = StartDate.Month;i<= EndDate.Month; i++)
+                    {
+                        months.Add(i);
+                    }
                 }
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && months.Contains(a.Month) && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
+                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort).ThenBy(a => a.UserId).ThenBy(a => a.Month)).ToList();
                 var userItems = historyUsers.Select(u =>
                 {
                     var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);

@@ -3530,18 +3530,16 @@ namespace OceanEduSlide.Controllers
         }
         public void ExportCallLogPaged()
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             int pageSize = 100000;
             int pageIndex = 0;
             string filename = "danh-sach-cuoc-goi.xlsx";
-            var callLogs = _unitOfWork.CallLogRepository
-                        .GetQuery(a => a.HistoryUserId != null, q => q.OrderBy(a => a.UniqueId));
             using (var pck = new ExcelPackage())
             {
                 while (true)
                 {
-                    var pageData = callLogs
+                    var pageData = _unitOfWork.CallLogRepository
+                        .GetQuery(a => a.HistoryUserId != null && a.BillSec >= 60, q => q.OrderBy(a => a.UniqueId))
                         .Skip(pageIndex * pageSize)
                         .Take(pageSize)
                         .ToList();
@@ -3594,8 +3592,64 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public void ExportCallLog(int month)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
+            // Lấy toàn bộ cuộc gọi trong tháng 8 có HistoryUserId
+            var allCallLogs = _unitOfWork.CallLogRepository
+                .GetQuery(a => a.CallDate.Month == month && a.HistoryUserId != null && a.Type == "out");
 
+            // Nhóm theo HistoryUserId
+            var groupedData = allCallLogs
+                .GroupBy(a => a.HistoryUserId)
+                .Select(g => new
+                {
+                    HistoryUserId = g.Key,
+                    TotalCalls = g.Count(),
+                    CallsOver60Sec = g.Count(x => x.BillSec >= 60),
+                    User = g.FirstOrDefault().HistoryUser
+                })
+                .ToList();
+
+            var dt = new DataTable();
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Mã NV");
+            dt.Columns.Add("Tên NV");
+            dt.Columns.Add("Vị trí");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt.Columns.Add("Tổng cuộc gọi ra");
+            dt.Columns.Add("Cuộc gọi >= 60s");
+
+            foreach (var item in groupedData)
+            {
+                dt.Rows.Add(
+                    item.User.Office?.Name,
+                    item.User.User.MaNhanVien,
+                    item.User.User.Fullname,
+                    GetEnumDisplayName(item.User.TypeUser),
+                    GetEnumDisplayName(item.User.Status),
+                    item.User.DayStart.ToString("dd/MM/yyyy"),
+                    item.User.DayEnd?.ToString("dd/MM/yyyy") ?? "",
+                    item.TotalCalls,
+                    item.CallsOver60Sec
+                );
+            }
+
+            var filename = "thong-ke-cuoc-goi-thang-"+month+".xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Thống kê cuộc gọi");
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
         #endregion
 
 
