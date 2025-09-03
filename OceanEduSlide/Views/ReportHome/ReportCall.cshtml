@@ -104,12 +104,10 @@
                     <th>Busy</th>
                     <th>Failed</th>
                 </tr>
-
                 @foreach (var item in Model.UserItems)
                 {
                     <tr>
-                        @*
-        <td class="text-start px-2">@(item.HistoryUser.Office?.ShortName)</td>*@
+                        @*<td class="text-start px-2">@(item.HistoryUser.Office?.ShortName)</td>*@
                         <td class="text-start px-2">@(office == null? item.HistoryUser.Office?.ShortName:office.ShortName)</td>
                         <td class="text-start px-2">@item.HistoryUser.User.MaNhanVien</td>
                         <td class="text-start px-2">@item.HistoryUser.User.Fullname</td>

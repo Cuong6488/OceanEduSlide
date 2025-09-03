@@ -3470,7 +3470,6 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-
         public void ExportPhieuThu()
         {
             var phieuthus = _unitOfWork.PhieuThuRepository.GetQuery();
@@ -3529,6 +3528,73 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public void ExportCallLogPaged()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            int pageSize = 100000;
+            int pageIndex = 0;
+            string filename = "danh-sach-cuoc-goi.xlsx";
+            var callLogs = _unitOfWork.CallLogRepository
+                        .GetQuery(a => a.HistoryUserId != null, q => q.OrderBy(a => a.UniqueId));
+            using (var pck = new ExcelPackage())
+            {
+                while (true)
+                {
+                    var pageData = callLogs
+                        .Skip(pageIndex * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    if (!pageData.Any()) break;
+
+                    var sheetName = $"Trang {pageIndex + 1}";
+                    var ws = pck.Workbook.Worksheets.Add(sheetName);
+
+                    // Ghi tiêu đề
+                    string[] headers = {
+                "Chi nhánh", "Mã NV", "Tên NV", "Vị trí", "Trạng thái",
+                "Ngày vào làm", "Ngày nghỉ/ điều chuyển", "Ngày gọi",
+                "Duration", "BillSec", "Disposition", "Type"
+            };
+
+                    for (int col = 0; col < headers.Length; col++)
+                    {
+                        ws.Cells[1, col + 1].Value = headers[col];
+                        ws.Cells[1, col + 1].Style.Font.Bold = true;
+                        ws.Cells[1, col + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        ws.Cells[1, col + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    }
+
+                    // Ghi dữ liệu từng dòng
+                    int row = 2;
+                    foreach (var item in pageData)
+                    {
+                        ws.Cells[row, 1].Value = item.HistoryUser.Office?.Name;
+                        ws.Cells[row, 2].Value = item.Exten;
+                        ws.Cells[row, 3].Value = item.HistoryUser.User.Fullname;
+                        ws.Cells[row, 4].Value = item.HistoryUser.TypeUser;
+                        ws.Cells[row, 5].Value = GetEnumDisplayName(item.HistoryUser.Status);
+                        ws.Cells[row, 6].Value = item.HistoryUser.DayStart;
+                        ws.Cells[row, 7].Value = item.HistoryUser.DayEnd;
+                        ws.Cells[row, 8].Value = item.CallDate;
+                        ws.Cells[row, 9].Value = item.Duration;
+                        ws.Cells[row, 10].Value = item.BillSec;
+                        ws.Cells[row, 11].Value = item.Disposition;
+                        ws.Cells[row, 12].Value = item.Type;
+                        row++;
+                    }
+
+                    pageIndex++;
+                }
+
+                // Trả file về client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
 
         #endregion
 

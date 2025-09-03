@@ -460,7 +460,7 @@ namespace OceanEduSlide.Controllers
                 }).ToList();
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
                 && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort)).ToList();
-                foreach(var item in historyUsers)
+                foreach (var item in historyUsers)
                 {
 
                 }
@@ -560,7 +560,7 @@ namespace OceanEduSlide.Controllers
                 }
             }
             _unitOfWork.Save();
-            return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name +": "+count +" cuộc gọi");
+            return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name + ": " + count + " cuộc gọi");
 
         }
         public ActionResult ChangeCallLogDataAll()
@@ -617,7 +617,12 @@ CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
             await service.SyncYesterdayAsync();
             return Content("Đã đồng bộ thủ công.");
         }
-
+        public async Task<ActionResult> SyncCustom(int month, int day)
+        {
+            var service = new CallLogService();
+            await service.SyncCusTom(month, day);
+            return Content("Đã đồng bộ 7 ngày. " + day+" - " + month);
+        }
 
         #endregion
     }

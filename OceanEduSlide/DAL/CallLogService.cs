@@ -13,6 +13,7 @@ using System.Web.Routing;
 using NLog;
 using System.Data.Entity;
 using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
 namespace OceanEduSlide.DAL
 {
@@ -21,12 +22,26 @@ namespace OceanEduSlide.DAL
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         #region CallLogs
+        public async Task SyncCusTom(int month, int day)
+        {
+            await Sync3DayAsync(month, day);
+        }
+        public async Task Sync3DayAsync(int month, int day)
+        {
+            for (int i = 1; i <= 7; i++)
+            {
+                DateTime daycheck = new DateTime(2025, month, day).AddDays(-i);
+                await FetchAndSaveLogsAsync(daycheck);
+            }
+        }
         public async Task SyncYesterdayAsync()
         {
-            DateTime yesterday = DateTime.Today.AddDays(-1);
-            await FetchAndSaveLogsAsync(yesterday);
+            for (int i = 1; i <= 7; i++)
+            {
+                DateTime yesterday = DateTime.Today.AddDays(-i);
+                await FetchAndSaveLogsAsync(yesterday);
+            }
         }
-
         private async Task FetchAndSaveLogsAsync(DateTime day)
         {
             string user = "lvd";
@@ -92,8 +107,8 @@ namespace OceanEduSlide.DAL
                             if (userDict.TryGetValue(log.Exten, out var userId))
                             {
                                 var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == userId && a.Month == day.Month && a.Year == day.Year && a.DayStart <= day && (a.DayEnd == null
-                                || (a.DayEnd != null && a.DayEnd.Value >= day)), q=> q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
-                                
+                                || (a.DayEnd != null && a.DayEnd.Value >= day)), q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
+
                                 if (historyUser != null)
                                 {
 
@@ -136,7 +151,6 @@ namespace OceanEduSlide.DAL
                 }
             }
         }
-
 
         #endregion
     }

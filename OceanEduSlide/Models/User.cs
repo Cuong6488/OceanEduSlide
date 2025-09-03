@@ -56,6 +56,9 @@ namespace OceanEduSlide.Models
         public virtual ICollection<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
         public virtual ICollection<RevenueUser_DayOfWeek> RevenueUser_DayOfWeeks { get; set; }
         public virtual ICollection<Proposal> Proposals { get; set; }
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        //[Display(Name = "Ngày tạo")]
+        //public DateTime CreateDate { get; set; }
         public User()
         {
             Active = true;
