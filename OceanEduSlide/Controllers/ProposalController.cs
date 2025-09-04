@@ -34,12 +34,47 @@ namespace OceanEduSlide.Controllers
             };
             if (User.TypeUser == TypeUser.ASM)
             {
-                var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
-                if (zone != null)
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "Name");
+                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                {
+                    var zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                    var offices = new List<Office>();
+                    foreach (var zone in zones)
+                    {
+                        var officeAdd = _unitOfWork.OfficeRepository.GetQuery(a => a.ZoneId == zone.Id);
+                        offices.AddRange(officeAdd);
+                    }
+                    model.SelectOffices = new SelectList(offices, "Id", "Name");
+
+                }
+                else
+                {
+                    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
+                    if (zone != null)
+                        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "Name");
+                }
+
             }
             else
-                model.Proposal.OfficeId = (int)User.OfficeId;
+            {
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                {
+                    model.Proposal.OfficeId = (int)User.OfficeId;
+                }
+                else
+                {
+                    var selectOffices = _unitOfWork.OfficeRepository.Get(a => User.OfficeIds.Contains("," + a.Id + ","));
+                    if(selectOffices.Count() == 1)
+                    {
+                        model.Proposal.OfficeId = selectOffices.First().Id;
+
+                    }
+                    else
+                    {
+                        model.SelectOffices = new SelectList(selectOffices, "Id", "Name");
+
+                    }
+                }
+            }
             //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
             return View(model);
         }
@@ -54,14 +89,8 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office != null)
                     model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
-                var z = new Zone();
-                if (User.TypeUser == TypeUser.BM)
-                    z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.Office.ZoneId).FirstOrDefault();
-                else
-                {
-                    z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == office.ZoneId).FirstOrDefault();
-
-                }
+                
+                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + model.Proposal.OfficeId + ",")).FirstOrDefault();
                 if (z != null)
                 {
                     model.Proposal.ZoneId = z.Id;
