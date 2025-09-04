@@ -114,9 +114,9 @@ namespace OceanEduSlide.Controllers
                     g => g.Key,
                     g => g.Sum(r =>
                     {
-                        int val;
+                        decimal val;
                         var cleaned = r.Data?.Replace(".", "").Replace(",", "") ?? "0";
-                        return int.TryParse(cleaned, out val) ? val : 0;
+                        return decimal.TryParse(cleaned, out val) ? val : 0;
                     })
                 );
 

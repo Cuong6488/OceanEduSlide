@@ -14,6 +14,7 @@ namespace OceanEduSlide.Models
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         public virtual User User { get; set; }
+        public int Sort { get; set; }
         public ProposalType()
         {
             Active = true;

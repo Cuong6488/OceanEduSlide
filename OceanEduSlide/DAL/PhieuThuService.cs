@@ -24,7 +24,7 @@ namespace OceanEduSlide.DAL
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
-        //Thiếu phần tính doanh thu theo tuần
+       
 
         public void SyncPhieuThu()
         {
@@ -94,12 +94,12 @@ namespace OceanEduSlide.DAL
 
         //Test Sync
 
-        public void TestSyncPhieuThu(int date)
+        public void TestSyncPhieuThu(int date,int month)
         {
 
             //var day = DateTime.Today.AddDays(-1);
             // custom day để test
-            var day = new DateTime(2025, 8, date).Date;
+            var day = new DateTime(2025, month, date).Date;
             var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
             //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
             var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && !a.THDB);
@@ -151,6 +151,7 @@ namespace OceanEduSlide.DAL
                     HDBH = item.HDBH,
                     DonHang = item.DonHang,
                     UDPhieuThu = item.UDPhieuThu,
+                    TrangThai = item.TrangThai,
                 };
                 phieuThuAddList.Add(phieuThu);
             }
@@ -161,11 +162,13 @@ namespace OceanEduSlide.DAL
             _unitOfWork.Save();
             SyncDthu(-5);
         }
+        // Tự động tính Doanh thu BC CN - NV - thực tế tuấn
         public void SyncDthu(int dayAdd)
         {
             var day = DateTime.Now.AddDays(dayAdd);
             var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") && 
             (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm"));
+            var listnew = phieuThuAllList.ToList();
             var bcList = new List<ReportData>();
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
             var listMaNV = phieuThuAllList.Select(a => a.MaNVChotSale).Distinct().ToList();
@@ -350,6 +353,10 @@ namespace OceanEduSlide.DAL
                 //var day = item.CreateDate;
                 if (item.ReportCategoryId == 35)
                 {
+                    if(item.OfficeId == 1207)
+                    {
+
+                    }
                     var datact = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 34 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == item.OfficeId && a.Data != null && a.Data != "0" && a.Data != "").FirstOrDefault();
                     if (datact == null)
                     {
@@ -463,9 +470,6 @@ namespace OceanEduSlide.DAL
             _unitOfWork.Save();
         }
 
-        //Dùng để load all lần đầu
-        //Thiếu phần tính doanh thu theo tuần - %
-        // Phải đặt các báo cáo về 0 - hoặc xóa đi
         public async Task SyncPhieuThuAsync()
         {
             await Task.Run(() =>

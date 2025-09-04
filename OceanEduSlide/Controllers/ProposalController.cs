@@ -63,7 +63,7 @@ namespace OceanEduSlide.Controllers
                 else
                 {
                     var selectOffices = _unitOfWork.OfficeRepository.Get(a => User.OfficeIds.Contains("," + a.Id + ","));
-                    if(selectOffices.Count() == 1)
+                    if (selectOffices.Count() == 1)
                     {
                         model.Proposal.OfficeId = selectOffices.First().Id;
 
@@ -89,12 +89,12 @@ namespace OceanEduSlide.Controllers
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office != null)
                     model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
-                
+
                 var z = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + model.Proposal.OfficeId + ",")).FirstOrDefault();
                 if (z != null)
                 {
                     model.Proposal.ZoneId = z.Id;
-                    var cvs = _unitOfWork.UserRepository.GetQuery(a => a.ZoneIds.Contains(z.ShortCode));
+                    var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.ZoneIds.Contains(z.ShortCode));
                     model.Proposal.CVName = "";
                     foreach (var item in cvs)
                     {
@@ -225,6 +225,8 @@ namespace OceanEduSlide.Controllers
                         if (model.ZoneId == null)
                         {
                             model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            if (model.OfficeId != null)
+                                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
                         }
                     }
                     else
@@ -244,6 +246,8 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (model.OfficeId == null)
+                            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
                         if (User.TypeUser == TypeUser.BM)
                             ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ",") && a.Active && a.NSSeen == false).Count();
                     }
@@ -312,11 +316,10 @@ namespace OceanEduSlide.Controllers
             proposal.Url = model.Proposal.Url;
             proposal.ProposalTypeId = model.Proposal.ProposalTypeId;
             proposal.Active = true;
-            if (string.IsNullOrEmpty(proposal.CVName))
-            {
-                proposal.CVName = _unitOfWork.UserRepository.GetQuery(a => a.ZoneIds.Contains("," + proposal.Zone.ShortCode + ",")).FirstOrDefault()?.Fullname;
-
-            }
+            //if (string.IsNullOrEmpty(proposal.CVName))
+            //{
+            //    proposal.CVName = _unitOfWork.UserRepository.GetQuery(a => a.ZoneIds.Contains("," + proposal.Zone.ShortCode + ",")).FirstOrDefault()?.Fullname;
+            //}
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }

@@ -1355,10 +1355,10 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        public ActionResult TestSyncPhieuThu(int date)
+        public ActionResult TestSyncPhieuThu(int date, int month)
         {
             var phieuthuService = new PhieuThuService();
-            phieuthuService.TestSyncPhieuThu(date);
+            phieuthuService.TestSyncPhieuThu(date,month);
             return Content("Đã đồng bộ phiếu thu");
         }
         protected override void Dispose(bool disposing)
