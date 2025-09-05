@@ -1315,6 +1315,8 @@ namespace OceanEduSlide.Controllers
                             {
                                 var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
                                 if (reportDataCallTD == null)
+                                    reportDataCallTD = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100);
+                                if (reportDataCallTD == null)
                                 {
                                     reportDataCallTD = new ReportData()
                                     {
@@ -1458,6 +1460,8 @@ namespace OceanEduSlide.Controllers
                                 // Chỉ tiêu báo cáo nhân sự
                                 var reportDataCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
                                 if (reportDataCall == null)
+                                    reportDataCall = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
+                                if (reportDataCall == null)
                                 {
                                     reportDataCall = new ReportData()
                                     {
@@ -1483,6 +1487,8 @@ namespace OceanEduSlide.Controllers
                                 var ht = ((double)countTD / callTarget * 100).ToString("F2") + "%";
                                 var reportDataCallHT = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101).FirstOrDefault();
                                 if (reportDataCallHT == null)
+                                    reportDataCallHT = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101);
+                                if (reportDataCallHT == null)
                                 {
                                     reportDataCallHT = new ReportData()
                                     {
@@ -1491,7 +1497,7 @@ namespace OceanEduSlide.Controllers
                                         HistoryUserId = historyUser.Id,
                                         Month = monthInt,
                                         Year = yearInt,
-                                        ReportCategoryId = 100,
+                                        ReportCategoryId = 101,
                                         OfficeId = office.Id,
                                         Sort = 20,
                                     };
@@ -1504,7 +1510,11 @@ namespace OceanEduSlide.Controllers
 
                                 //Chỉ tiêu DS - thực đạt chi nhánh
                                 var reportCallOfficeTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                                if (reportCallOfficeTarget == null)
+                                    reportCallOfficeTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                                 var reportCallOfficeTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                                if (reportCallOfficeTD == null)
+                                    reportCallOfficeTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
                                 if (reportCallOfficeTarget == null)
                                 {
                                     reportCallOfficeTarget = new ReportData()
@@ -1593,6 +1603,8 @@ namespace OceanEduSlide.Controllers
                     var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                     var callTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
                     var callHT = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28).FirstOrDefault();
+                    if (callHT == null)
+                        callHT = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
                     if (callTarget != null && callTD != null)
                     {
                         int callTargetInt;
@@ -2505,9 +2517,9 @@ namespace OceanEduSlide.Controllers
                 {
 
                     var catIds = fc.GetValues("CatIDs");
+                    zone.OfficeIds = "";
                     if (catIds != null)
                     {
-                        zone.OfficeIds = "";
                         foreach (var item in catIds)
                         {
                             zone.OfficeIds += (item + ",");
@@ -2517,20 +2529,24 @@ namespace OceanEduSlide.Controllers
                     zone.Name = model.Zone.Name;
                     zone.ShortCode = model.Zone.ShortCode;
                     zone.Active = model.Zone.Active;
-                    _unitOfWork.Save();
-                    string[] a = zone.OfficeIds.Trim(',').Split(',');
+                    //_unitOfWork.Save();
                     zone.ShortName = "";
-                    foreach (var item in a)
+                    if (zone.OfficeIds != "")
                     {
-                        int officeId = int.Parse(item);
-                        var office = _unitOfWork.OfficeRepository.GetById(officeId);
-                        if (office != null)
+                        string[] a = zone.OfficeIds.Trim(',').Split(',');
+                        foreach (var item in a)
                         {
-                            office.ZoneId = zone.Id;
-                            zone.ShortName += "," + office.ShortCode;
+                            int officeId = int.Parse(item);
+                            var office = _unitOfWork.OfficeRepository.GetById(officeId);
+                            if (office != null)
+                            {
+                                office.ZoneId = zone.Id;
+                                zone.ShortName += "," + office.ShortCode;
+                            }
                         }
+                        zone.ShortName = zone.ShortName.Trim(',');
                     }
-                    zone.ShortName = zone.ShortName.Trim(',');
+
                     _unitOfWork.Save();
 
                     return RedirectToAction("CreateZone", new { result = "update" });
@@ -3638,7 +3654,7 @@ namespace OceanEduSlide.Controllers
                 );
             }
 
-            var filename = "thong-ke-cuoc-goi-thang-"+month+".xlsx";
+            var filename = "thong-ke-cuoc-goi-thang-" + month + ".xlsx";
             using (var pck = new ExcelPackage())
             {
                 var ws = pck.Workbook.Worksheets.Add("Thống kê cuộc gọi");
