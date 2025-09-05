@@ -343,10 +343,10 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("Report");
         }
 
-        //public ActionResult ReportCN(string result = "")
-        //{
-        //    return View();
-        //}
+        public ActionResult ReportCN(string result = "")
+        {
+            return View();
+        }
         public ActionResult ClearReport()
         {
             var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery();

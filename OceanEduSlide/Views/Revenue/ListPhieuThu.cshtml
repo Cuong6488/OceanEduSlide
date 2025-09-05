@@ -90,7 +90,7 @@
             @if (Model.PhieuThus.PageCount > 1)
             {
                 <tr>
-                    <td colspan="9">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThu", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, type = Model.type }))</td>
+                    <td colspan="10">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThu", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, type = Model.type }))</td>
                 </tr>
             }
         </tbody>

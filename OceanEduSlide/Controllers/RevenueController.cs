@@ -939,19 +939,31 @@ namespace OceanEduSlide.Controllers
                 var result = reader.AsDataSet();
                 reader.Close();
 
-                var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == DateTime.Now.Month);
-                oldList.Delete();
                 var tbl = result.Tables[0];
+                var ngayThanhToanStr1 = tbl.Rows[1][1].ToString().Trim();
+                if (string.IsNullOrEmpty(ngayThanhToanStr1))
+                {
+                    ModelState.AddModelError("", @"Thiếu dữ liệu cột Ngày thanh toán");
+                    return View();
+                }
+
+                if (!DateTime.TryParse(ngayThanhToanStr1, out var ngayThanhToan1))
+                {
+                    ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột ngày thanh toán: Dòng 1 ");
+                    return View();
+                }
+                var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == ngayThanhToan1.Month);
+                oldList.Delete();
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officename = tbl.Rows[i][0].ToString().Trim();
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officename).FirstOrDefault();
                     if (office == null)
                     {
-                        continue;
+                        //continue;
 
-                        //ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
-                        //return View();
+                        ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
+                        return View();
                     }
                     var ngayThanhToanStr = tbl.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(ngayThanhToanStr))
@@ -1012,7 +1024,7 @@ namespace OceanEduSlide.Controllers
                     var chotSale = tbl.Rows[i][15].ToString().Trim();
                     var congTacVien = tbl.Rows[i][16].ToString().Trim();
                     var thangHocDuKienStr = tbl.Rows[i][17].ToString().Trim();
-                    if (!int.TryParse(thangHocDuKienStr, out var thangHocDuKien))
+                    if (!decimal.TryParse(thangHocDuKienStr, out var thangHocDuKien))
                     {
                         ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột tháng học dự kiến: " + thangHocDuKienStr + ", chi nhánh " + officename);
                         return View();
@@ -1058,7 +1070,7 @@ namespace OceanEduSlide.Controllers
                         GioTao = gioTao,
                         ChotSale = chotSale,
                         CongTacVien = congTacVien,
-                        ThangHocDuKien = thangHocDuKien,
+                        ThangHocDuKien = (int)thangHocDuKien,
                         UD_FINAL = uD_FINAL,
                         LoaiCTH = loaiCTH,
                         ChuongTrinhHoc = chuongTrinhHoc,
