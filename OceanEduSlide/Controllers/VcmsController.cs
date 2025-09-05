@@ -931,7 +931,12 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListUser");
         }
-
+        public ActionResult DeleteBCCall()
+        {
+            var listBCCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == 9 && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27 || a.ReportCategoryId == 28 || a.ReportCategoryId == 99 || a.ReportCategoryId == 100 || a.ReportCategoryId == 101));
+            listBCCall.Delete();
+            return View();
+        }
         public ActionResult InsertHistoryUser()
         {
             return View();
@@ -1335,6 +1340,28 @@ namespace OceanEduSlide.Controllers
                                 {
                                     reportDataCallTD.Data = countTD.ToString("N0");
                                 }
+                                if (historyUser.TypeUser != TypeUser.EC && historyUser.TypeUser != TypeUser.ALT)
+                                {
+                                    var targetCallEmpty = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
+                                    if (targetCallEmpty == null)
+                                        targetCallEmpty = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
+                                    if (targetCallEmpty == null)
+                                    {
+                                        targetCallEmpty = new ReportData()
+                                        {
+                                            Data = "",
+                                            UserId = historyUser.UserId,
+                                            HistoryUserId = historyUser.Id,
+                                            Month = monthInt,
+                                            Year = yearInt,
+                                            ReportCategoryId = 99,
+                                            OfficeId = office.Id,
+                                            Sort = 18,
+                                        };
+                                        reportDataList.Add(targetCallEmpty);
+                                    }
+
+                                }
                             }
 
                             if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT)
@@ -1601,7 +1628,11 @@ namespace OceanEduSlide.Controllers
                 foreach (var office in offices)
                 {
                     var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                    if (callTarget == null)
+                        callTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                     var callTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                    if (callTD == null)
+                        callTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
                     var callHT = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28).FirstOrDefault();
                     if (callHT == null)
                         callHT = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
