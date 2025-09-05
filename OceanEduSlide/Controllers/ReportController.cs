@@ -347,12 +347,6 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ClearReport()
-        {
-            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery();
-            reportCategories.Delete();
-            return RedirectToAction("Index", "Vcms");
-        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

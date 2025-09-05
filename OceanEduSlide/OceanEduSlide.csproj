@@ -597,6 +597,10 @@
     <Compile Include="Migrations\202509040739533_dexuatmoi.Designer.cs">
       <DependentUpon>202509040739533_dexuatmoi.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509051452395_dayrevenue.cs" />
+    <Compile Include="Migrations\202509051452395_dayrevenue.Designer.cs">
+      <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1844,6 +1848,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509040739533_dexuatmoi.resx">
       <DependentUpon>202509040739533_dexuatmoi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509051452395_dayrevenue.resx">
+      <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

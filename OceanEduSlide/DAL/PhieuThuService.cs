@@ -81,6 +81,7 @@ namespace OceanEduSlide.DAL
                     HDBH = item.HDBH,
                     DonHang = item.DonHang,
                     UDPhieuThu = item.UDPhieuThu,
+                    ThangTinhDThu = item.NgayThanhToan.Value.Month,
                 };
                 phieuThuAddList.Add(phieuThu);
             }
@@ -89,7 +90,7 @@ namespace OceanEduSlide.DAL
                 _unitOfWork.PhieuThuRepository.InsertRange(phieuThuAddList);
 
             _unitOfWork.Save();
-            SyncDthu(-1);
+            SyncDthu(day.Month, day.Year);
         }
 
         //Test Sync
@@ -152,6 +153,7 @@ namespace OceanEduSlide.DAL
                     DonHang = item.DonHang,
                     UDPhieuThu = item.UDPhieuThu,
                     TrangThai = item.TrangThai,
+                    ThangTinhDThu = item.NgayThanhToan.Value.Month,
                 };
                 phieuThuAddList.Add(phieuThu);
             }
@@ -160,14 +162,14 @@ namespace OceanEduSlide.DAL
                 _unitOfWork.PhieuThuRepository.InsertRange(phieuThuAddList);
 
             _unitOfWork.Save();
-            SyncDthu(-5);
+            SyncDthu(day.Month, day.Year);
         }
         // Tự động tính Doanh thu BC CN - NV - thực tế tuấn
-        public void SyncDthu(int dayAdd)
+        public void SyncDthu(int month, int year)
         {
-            var day = DateTime.Now.AddDays(dayAdd);
-            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") &&
-            (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm"));
+            var day = new DateTime(year, month, 1);
+            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.ThangTinhDThu == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") &&
+            (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm" || a.TrangThai == null || a.TrangThai == ""));
             var listnew = phieuThuAllList.ToList();
             var bcList = new List<ReportData>();
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();

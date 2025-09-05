@@ -7,7 +7,7 @@
     <Schema Namespace="DongBoTuyenSinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BC_PhieuThu">
           <Key>
-            <PropertyRef Name="PhieuThuKeToan" />
+            <PropertyRef Name="ID_StudentDept" />
           </Key>
           <Property Name="PhieuThuKeToan" Type="bigint" Nullable="false" />
           <Property Name="ChiNhanh" Type="nvarchar" MaxLength="255" />
@@ -39,6 +39,7 @@
           <Property Name="UDPhieuThu" Type="nvarchar" MaxLength="255" />
           <Property Name="ThoiGianCapNhat" Type="datetime" />
           <Property Name="TrangThai" Type="nvarchar" MaxLength="100" />
+          <Property Name="ID_StudentDept" Type="int" Nullable="false" />
         </EntityType>
         <EntityContainer Name="DongBoTuyenSinhModelStoreContainer">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
@@ -49,7 +50,7 @@
       <Schema Namespace="DongBoTuyenSinhModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="BC_PhieuThu">
           <Key>
-            <PropertyRef Name="PhieuThuKeToan" />
+            <PropertyRef Name="ID_StudentDept" />
           </Key>
           <Property Name="PhieuThuKeToan" Type="Int64" Nullable="false" />
           <Property Name="ChiNhanh" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -81,6 +82,7 @@
           <Property Name="UDPhieuThu" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ThoiGianCapNhat" Type="DateTime" Precision="3" />
           <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ID_StudentDept" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
@@ -94,6 +96,7 @@
           <EntitySetMapping Name="BC_PhieuThu">
             <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
               <MappingFragment StoreEntitySet="BC_PhieuThu">
+                <ScalarProperty Name="ID_StudentDept" ColumnName="ID_StudentDept" />
                 <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
                 <ScalarProperty Name="PhieuThuKeToan" ColumnName="PhieuThuKeToan" />
                 <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />

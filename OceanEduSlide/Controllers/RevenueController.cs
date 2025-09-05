@@ -901,7 +901,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult PhieuThuTHDB(FormCollection fc)
+        public ActionResult PhieuThuTHDB(FormCollection fc,int Month)
         {
             var file = Request.Files["PhieuThuFile"];
             if (file != null && file.ContentLength > 0)
@@ -949,10 +949,10 @@ namespace OceanEduSlide.Controllers
 
                 if (!DateTime.TryParse(ngayThanhToanStr1, out var ngayThanhToan1))
                 {
-                    ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột ngày thanh toán: Dòng 1 ");
+                    ModelState.AddModelError("", @"Không thể chuyển đổi thành ngày ở cột ngày thanh toán: Dòng 1");
                     return View();
                 }
-                var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == ngayThanhToan1.Month);
+                var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.THDB && a.NgayThanhToan != null && a.NgayThanhToan.Value.Year == ngayThanhToan1.Year && a.ThangTinhDThu == Month);
                 oldList.Delete();
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
@@ -974,7 +974,7 @@ namespace OceanEduSlide.Controllers
 
                     if (!DateTime.TryParse(ngayThanhToanStr, out var ngayThanhToan))
                     {
-                        ModelState.AddModelError("", @"Không thể chuyển đổi thành số ở cột ngày thanh toán: " + ngayThanhToanStr + ", chi nhánh " + officename);
+                        ModelState.AddModelError("", @"Không thể chuyển đổi thành ngày ở cột ngày thanh toán: " + ngayThanhToanStr + ", chi nhánh " + officename);
                         return View();
                     }
                     var loai = tbl.Rows[i][2].ToString().Trim();
@@ -1078,13 +1078,14 @@ namespace OceanEduSlide.Controllers
                         Modun = modun,
                         UD_NhomUDFINAL = uD_NhomUDFINAL,
                         THDB = true,
+                        ThangTinhDThu = Month
 
                     };
                     _unitOfWork.PhieuThuRepository.Insert(phieuThu);
                 }
                 _unitOfWork.Save();
                 var phieuThuSerVice = new PhieuThuService();
-                phieuThuSerVice.SyncDthu(0);
+                phieuThuSerVice.SyncDthu(Month,ngayThanhToan1.Year);
                 ViewBag.Result = "add";
                 return View();
             }

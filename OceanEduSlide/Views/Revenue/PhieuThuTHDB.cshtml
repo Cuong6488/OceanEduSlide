@@ -18,17 +18,29 @@
     {
         @Html.ValidationSummary(true)
 
-        <table class="form_table">
-            <tr>
-                <td class="form_name">Đính kèm File</td>
-                <td class="form_text"><input type="file" name="PhieuThuFile" value="" /></td>
-            </tr>
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Xác nhận" />
-                </td>
-            </tr>
-        </table>
+    <table class="form_table">
+        <tr>
+            <td class="form_name w-25">Tháng tính doanh thu</td>
+            <td class="form_text">
+                <select name="Month" required class="w100">
+                    <option value="">Chọn tháng</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">Đính kèm File</td>
+            <td class="form_text"><input type="file" name="PhieuThuFile" value="" /></td>
+        </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Xác nhận" />
+            </td>
+        </tr>
+    </table>
     }
 </div>

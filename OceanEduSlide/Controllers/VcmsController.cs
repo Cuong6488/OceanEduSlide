@@ -328,40 +328,6 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region User
-        public ActionResult CreateCV()
-        {
-            if (!_unitOfWork.UserRepository.GetQuery(a => a.Username == "testCV").Any())
-            {
-                var zones = _unitOfWork.ZoneRepository.Get();
-                var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Name.Contains("Nguyễn Trãi")).FirstOrDefault();
-
-                if (zones.Any() && office != null)
-                {
-                    var zoneIds = ",";
-                    foreach (var item in zones)
-                    {
-                        zoneIds += item.Id + ",";
-                    }
-
-                    var m = new User
-                    {
-                        Password = HtmlHelpers.ComputeHash("vico@123", "SHA256", null),
-                        Username = "testCV",
-                        TypeUser = TypeUser.CV,
-                        ZoneIds = zoneIds,
-                        OfficeId = office.Id,
-                        Active = true,
-                        SaleKit = false,
-                        Fullname = "Test Chuyên Viên"
-                    };
-                    _unitOfWork.UserRepository.Insert(m);
-                    _unitOfWork.Save();
-                }
-
-            }
-
-            return RedirectToAction("ListUser");
-        }
         //public ActionResult CreateTarget(string result = "")
         //{
         //    ViewBag.Result = result;
@@ -935,7 +901,15 @@ namespace OceanEduSlide.Controllers
         {
             var listBCCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == 9 && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27 || a.ReportCategoryId == 28 || a.ReportCategoryId == 99 || a.ReportCategoryId == 100 || a.ReportCategoryId == 101));
             listBCCall.Delete();
-            return View();
+            return Content("Đã xóa các các báo cáo cuộc gọi sai code");
+        }
+        public ActionResult DeleteUserx2()
+        {
+            var list = _unitOfWork.UserRepository.GetQuery(a => a.Username.Contains("'") || a.MaNhanVien.Contains("'"));
+            var list2 = _unitOfWork.HistoryUserRepository.GetQuery(a => a.User.Username.Contains("'") || a.User.MaNhanVien.Contains("'"));
+            list2.Delete();
+            list.Delete();
+            return Content("Đã xóa các User chứa ký tự '");
         }
         public ActionResult InsertHistoryUser()
         {

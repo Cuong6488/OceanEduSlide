@@ -14,6 +14,8 @@ namespace OceanEduSlide.Models
         public string MaNVChotSale { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), Display(Name = "Ngày thanh toán")]
         public Nullable<System.DateTime> NgayThanhToan { get; set; }
+        [Display(Name = "Tháng ghi nhận Doanh thu")]
+        public int? ThangTinhDThu { get; set; }
         [DisplayFormat(DataFormatString = "{0:N0}đ")]
         public Nullable<decimal> SUD { get; set; }
         [DisplayFormat(DataFormatString = "{0:N0}đ")]
