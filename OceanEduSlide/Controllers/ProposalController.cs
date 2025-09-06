@@ -170,6 +170,7 @@ namespace OceanEduSlide.Controllers
             }
             if (User.TypeUser == TypeUser.CV)
             {
+                var k = User.ZoneIds;
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
                 if (model.ZoneId == null)
