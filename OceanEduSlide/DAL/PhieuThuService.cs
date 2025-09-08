@@ -175,13 +175,15 @@ namespace OceanEduSlide.DAL
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
             var listMaNV = phieuThuAllList.Select(a => a.MaNVChotSale).Distinct().ToList();
             var listCN = phieuThuAllList.Select(a => a.ChiNhanh).Distinct().ToList();
+           
             foreach (var mnv in listMaNV)
             {
-                var bcnv = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null && a.HistoryUser.User.MaNhanVien == mnv).FirstOrDefault();
-                if (bcnv != null)
+                var bcnvs = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 88 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null && a.HistoryUser.User.MaNhanVien == mnv);
+                foreach (var bcnv in bcnvs)
                 {
                     bcnv.Data = "0";
                 }
+
                 var ttWeeks = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null && a.HistoryUser.User.MaNhanVien == mnv);
                 foreach (var ttWeek in ttWeeks)
                 {

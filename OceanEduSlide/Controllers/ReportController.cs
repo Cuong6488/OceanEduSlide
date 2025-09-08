@@ -130,7 +130,7 @@ namespace OceanEduSlide.Controllers
                         var category = allCategories
                             .FirstOrDefault(a => a.Sort == cChildSort && a.CategoryParent?.Sort == group && a.TypeCat == TypeCat.Type1);
                         if (category == null) continue;
-                        if (category.Id == 26 || category.Id == 27 || category.Id == 28) continue;
+                        if (category.Id == 26 || category.Id == 27 || category.Id == 28 || category.Id == 34 || category.Id == 35 || category.Id == 36) continue;
                         // Xử lý dữ liệu hiển thị
                         if (!string.IsNullOrEmpty(value))
                         {
@@ -283,7 +283,7 @@ namespace OceanEduSlide.Controllers
                         var category = allCategories2
                             .FirstOrDefault(a => a.Sort == cChildSort && a.CategoryParent?.Sort == group);
                         if (category == null) continue;
-                        if (/*category.Id == 87 ||*/ category.Id == 99 || category.Id == 100 || category.Id == 101) continue;
+                        if (category.Id == 87 || category.Id == 88 || category.Id == 89 || category.Id == 99 || category.Id == 100 || category.Id == 101) continue;
                         if (!string.IsNullOrEmpty(value))
                         {
                             if (category.Name.Contains("%"))

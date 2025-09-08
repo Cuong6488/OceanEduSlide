@@ -899,7 +899,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult DeleteBCCall()
         {
-            var listBCCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == 9 && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27 || a.ReportCategoryId == 28 || a.ReportCategoryId == 99 || a.ReportCategoryId == 100 || a.ReportCategoryId == 101));
+            var listBCCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == 8 && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27 || a.ReportCategoryId == 28 || a.ReportCategoryId == 99 || a.ReportCategoryId == 100 || a.ReportCategoryId == 101));
             listBCCall.Delete();
             return Content("Đã xóa các các báo cáo cuộc gọi sai code");
         }
@@ -1458,7 +1458,7 @@ namespace OceanEduSlide.Controllers
                                     }
                                 }
                                 callTarget = 12 * workingDayTT;
-                                // Chỉ tiêu báo cáo nhân sự
+                                // Chỉ tiêu báo cáo cuộc gọi nhân sự
                                 var reportDataCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
                                 if (reportDataCall == null)
                                     reportDataCall = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
