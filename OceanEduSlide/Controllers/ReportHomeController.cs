@@ -460,9 +460,9 @@ namespace OceanEduSlide.Controllers
                 }).ToList();
                 var khoang = EndDate.Month - StartDate.Month;
                 List<int> months = new List<int>();
-                if(khoang >= 0)
+                if (khoang >= 0)
                 {
-                    for(int i = StartDate.Month;i<= EndDate.Month; i++)
+                    for (int i = StartDate.Month; i <= EndDate.Month; i++)
                     {
                         months.Add(i);
                     }
@@ -626,8 +626,61 @@ CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
         {
             var service = new CallLogService();
             await service.SyncCusTom(month, day);
-            return Content("Đã đồng bộ 7 ngày. " + day+" - " + month);
+            return Content("Đã đồng bộ 7 ngày. " + day + " - " + month);
         }
+        public async Task<ActionResult> CheckCountCallLog()
+        {
+            string user = "lvd";
+            string pass = "qazplm123`$%^";
+            string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
+
+            using (var http = new HttpClient()) // dùng một lần
+            {
+
+                for (int i = 17; i <= 31; i++)
+                {
+                    DateTime date = new DateTime(2025, 8, i);
+                    string tbegin = date.ToString("yyyy/MM/dd");
+                    string tend = date.AddDays(1).ToString("yyyy/MM/dd");
+
+                    string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
+
+                    try
+                    {
+                        var json = await http.GetStringAsync(url);
+
+                        if (string.IsNullOrWhiteSpace(json))
+                        {
+                            continue;
+                        }
+
+                        var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+
+                        if (allLogs == null || allLogs.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        // Dùng LINQ một lần cho cả hai kết quả
+                        var filteredLogs = allLogs.Where(a => a.Exten == "25050544").ToList();
+                        int totalCount = filteredLogs.Count;
+                        int count60s = filteredLogs.Count(a => a.BillSec >= 60);
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                    }
+                    catch (HttpRequestException httpEx)
+                    {
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+
+            return Content("Checked");
+        }
+
 
         #endregion
     }

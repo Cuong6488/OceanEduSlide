@@ -31,7 +31,7 @@
                 </select>
             </div>
             <div class="col-lg">
-                <label>Tháng</label>
+                <label>Tháng tính doanh thu</label>
                 <select name="month" class="mt-2">
                     <option value="">Tất cả</option>
                     @for (int i = 1; i <= 12; i++)
@@ -65,6 +65,7 @@
                 <th>Mã NV chốt sale</th>
                 <th>Tên NV chốt sale</th>
                 <th>Ngày thanh toán</th>
+                <th>Tháng tính doanh thu</th>
                 <th>Số phiếu</th>
                 <th>Loại</th>
                 <th>Mã học viên</th>
@@ -79,6 +80,7 @@
                     <td>@item.MaNVChotSale</td>
                     <td>@item.ChotSale</td>
                     <td>@Html.DisplayFor(model => item.NgayThanhToan)</td>
+                    <td>@item.ThangTinhDThu</td>
                     <td>@Html.DisplayFor(model => item.ReceiptCode)</td>
                     <td>@item.Loai</td>
                     <td>@Html.DisplayFor(model => item.MaHV)</td>

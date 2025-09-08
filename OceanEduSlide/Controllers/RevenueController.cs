@@ -1101,7 +1101,7 @@ namespace OceanEduSlide.Controllers
                 phieuThus = phieuThus.Where(l => l.ChiNhanh == officeId);
             }
             if (month != null)
-                phieuThus = phieuThus.Where(l => l.NgayThanhToan != null && l.NgayThanhToan.Value.Month == month);
+                phieuThus = phieuThus.Where(l => l.ThangTinhDThu == month);
 
             if (year != null)
                 phieuThus = phieuThus.Where(l => l.NgayThanhToan != null && l.NgayThanhToan.Value.Year == year);
