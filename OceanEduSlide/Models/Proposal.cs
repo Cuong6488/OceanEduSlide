@@ -28,6 +28,8 @@ namespace OceanEduSlide.Models
         public string MaDeXuat { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
         public int? TypeFaultId { get; set; }
+        [Display(Name = "Tổng hợp lỗi")]
+        public string TypeFaults { get; set; }
         [Display(Name = "Phân loại đề xuất")]
         public int? ProposalTypeId { get; set; }
         public int? FaultNumber { get; set; }

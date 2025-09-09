@@ -15,12 +15,13 @@ using Hangfire;
 using Hangfire.SqlServer;
 using static OceanEduSlide.Controllers.ReportHomeController;
 using System.Timers;
+using FluentScheduler;
 
 namespace OceanEduSlide
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        private static Timer _timer;
+        //private static Timer _timer;
 
         protected void Application_Start()
         {
@@ -37,44 +38,90 @@ namespace OceanEduSlide
                 Application["ConfigSite"] = unitofWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             }
 
-            _timer = new Timer(21600000);
-            _timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            _timer.Start();
-            Task.Run(() => TriggerCallLogSync());
-            //Task.Run(async () =>
-            //{
-            //    var controller = new ReportHomeController();
-            //    await controller.Sync();
-            //});
-        }
-
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
-            Task.Run(() => TriggerCallLogSync());
-
-        }
-
-        private async Task TriggerCallLogSync()
-        {
-            try
+            //_timer = new Timer(21600000);
+            //_timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            //_timer.Start();
+            //Task.Run(() => TriggerCallLogSync());
+            Task.Run(async () =>
             {
-                var callLogService = new CallLogService();
+                try
+                {
+                    var callLogService = new CallLogService();
+                    await callLogService.SyncYesterdayAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✗ Startup sync error: {ex.Message}");
+                }
+            });
 
-                // Chỉ đồng bộ ngày hôm trước
-                await callLogService.SyncYesterdayAsync();
-            }
-            catch (Exception ex)
-            {
-                // Ghi log nếu cần
-                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-            }
+            JobManager.Initialize();
 
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var callLogService = new CallLogService();
+                            await callLogService.SyncYesterdayAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(3, 0)
+            );
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var phieuThuService = new PhieuThuService();
+                            await phieuThuService.SyncPhieuThuAsync(); // gọi bản async giả lập
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(3, 30)
+            );
         }
 
-        protected void Application_End()
-        {
-            _timer?.Stop();
-            _timer?.Dispose();
-        }
+        //private void OnTimedEvent(object source, ElapsedEventArgs e)
+        //{
+        //    Task.Run(() => TriggerCallLogSync());
+
+        //}
+
+        //private async Task TriggerCallLogSync()
+        //{
+        //    try
+        //    {
+        //        var callLogService = new CallLogService();
+
+        //        // Chỉ đồng bộ ngày hôm trước
+        //        await callLogService.SyncYesterdayAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Ghi log nếu cần
+        //        System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+        //    }
+
+        //}
+
+        //protected void Application_End()
+        //{
+        //    _timer?.Stop();
+        //    _timer?.Dispose();
+        //}
     }
 }

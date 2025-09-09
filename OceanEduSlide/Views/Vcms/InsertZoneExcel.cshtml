@@ -5,6 +5,9 @@
 }
 <h2 class="mt-0">Thêm mới vùng</h2>
 <a class="btn quick-link" href="@Url.Action("ListZone")"><i class="far fa-list me-1"></i> Danh sách vùng</a>
+<a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile","Revenue", new {type = 2})" href="javascript:;">
+    <i class="far fa-list me-1"></i> Lịch sử cập nhật
+</a>
 <div class="box_content">
     @using (Html.BeginForm("InsertZoneExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {

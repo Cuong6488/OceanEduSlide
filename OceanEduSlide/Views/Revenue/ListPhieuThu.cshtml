@@ -1,0 +1,100 @@
+﻿@model OceanEduSlide.ViewModels.ListPhieuThuViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách phiếu thu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("PhieuThuTHDB")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Phiếu thu đặc biệt</a>
+<a class="btn quick-link" href="@Url.Action("ExportPhieuThu","Vcms")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+<div class="box_content">
+    <form action="@Url.Action("ListPhieuThu")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+                </div>*@
+            <div class="col-lg">
+                <label>Mã NV</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Năm</label>
+                <select name="year" class="mt-2">
+                    <option value="">Tất cả</option>
+                    @for (int i = 2025; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Tháng tính doanh thu</label>
+                <select name="month" class="mt-2">
+                    <option value="">Tất cả</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.month == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Trường hợp</label>
+                <select name="type" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="0" @(Model.type == 0 ? "selected" : "")>Thông thường</option>
+                    <option value="1" @(Model.type == 1 ? "selected" : "")>Đặc biệt</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2" })
+            </div>
+            <div class="col-lg align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.PhieuThus.TotalItemCount</strong> phiếu thu</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Chi nhánh</th>
+                <th>Mã NV chốt sale</th>
+                <th>Tên NV chốt sale</th>
+                <th>Ngày thanh toán</th>
+                <th>Tháng tính doanh thu</th>
+                <th>Số phiếu</th>
+                <th>Loại</th>
+                <th>Mã học viên</th>
+                <th>Trước ưu đãi</th>
+                <th>Sau ưu đãi</th>
+                <th>Phiếu đặc biệt</th>
+            </tr>
+            @foreach (var item in Model.PhieuThus)
+            {
+                <tr data-id="@item.Id">
+                    <td>@item.ChiNhanh</td>
+                    <td>@item.MaNVChotSale</td>
+                    <td>@item.ChotSale</td>
+                    <td>@Html.DisplayFor(model => item.NgayThanhToan)</td>
+                    <td>@item.ThangTinhDThu</td>
+                    <td>@Html.DisplayFor(model => item.ReceiptCode)</td>
+                    <td>@item.Loai</td>
+                    <td>@Html.DisplayFor(model => item.MaHV)</td>
+                    <td>@Html.DisplayFor(model => item.TUD)</td>
+                    <td>@Html.DisplayFor(model => item.SUD)</td>
+                    <td>@Html.DisplayFor(model => item.THDB)</td>
+                </tr>
+            }
+            @if (Model.PhieuThus.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="10">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThu", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, type = Model.type }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

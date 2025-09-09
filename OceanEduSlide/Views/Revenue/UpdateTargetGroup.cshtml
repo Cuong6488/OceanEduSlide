@@ -1,0 +1,68 @@
+﻿@model OceanEduSlide.ViewModels.InsertTargetGroupViewModel
+@{
+    ViewBag.Title = "Cập nhật chỉ tiêu NVĐT theo tháng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="m-0 mb-3">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("ListTargetGroup")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu NVĐT</a>
+<div class="box_content">
+    @using (Html.BeginForm("UpdateTargetGroup", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tr>
+                <td class="form_name w-25">Năm</td>
+                <td class="form_text">
+                    <div class="mb-2"><strong>@Html.DisplayFor(a => a.Year)</strong></div>
+                    
+                    @Html.HiddenFor(a => a.Year)
+                    @Html.HiddenFor(a => a.TargetGroupId)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">Tháng</td>
+                <td class="form_text">
+                    <div class="mb-2"><strong>@Html.DisplayFor(a => a.Month)</strong></div>
+                    @Html.HiddenFor(a => a.Month)
+                </td>
+            </tr>
+            <tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_A) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_A)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_B) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_B)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_C) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_C)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Target_D) (đ)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Target_D)</td>
+            </tr>
+
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+
+        </table>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

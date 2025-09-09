@@ -1,13 +1,20 @@
 ﻿
 @{
-    ViewBag.Title = "Chỉ tiêu CN - Chỉ tiêu NV - DS thực tế tuần";
+    ViewBag.Title = "Chỉ tiêu CN - Chỉ tiêu NV";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
 @*<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>*@
-@*<a class="btn quick-link" href="@Url.Action("ListRevenueOffice")"><i class="far fa-list me-1"></i> Danh sách chỉ tiêu doanh số</a>*@
+<a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile", new {type = 1})" href="javascript:;">
+    <i class="far fa-list me-1"></i> Lịch sử cập nhật
+</a>
+<a class="btn quick-link" href="@Url.Action("ExportTargetCN_NV","Vcms")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 
-<div class="box_content mt-0">
+<div class="box_content">
     @using (Html.BeginForm("TargetOffice", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)

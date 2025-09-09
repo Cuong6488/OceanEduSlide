@@ -45,6 +45,7 @@ namespace OceanEduSlide.Models
         public TypeUser? TypeUser { get; set; }
         [Display(Name = "Các chi nhánh quản lý")]
         public string OfficeIds { get; set; }
+        public string OfficeNames { get; set; }
         [Display(Name = "Các vùng quản lý")]
         public string ZoneIds { get; set; }
         public virtual Office Office { get; set; }
@@ -55,6 +56,8 @@ namespace OceanEduSlide.Models
         public virtual ICollection<RevenueUser_Week_Real> RevenueUser_Week_Reals { get; set; }
         public virtual ICollection<RevenueUser_DayOfWeek> RevenueUser_DayOfWeeks { get; set; }
         public virtual ICollection<Proposal> Proposals { get; set; }
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
+        //public DateTime? CreateDate { get; set; } = DateTime.Now;
         public User()
         {
             Active = true;

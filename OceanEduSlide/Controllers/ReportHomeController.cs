@@ -18,6 +18,7 @@ using System.Web;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using NLog;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace OceanEduSlide.Controllers
 {
@@ -31,7 +32,6 @@ namespace OceanEduSlide.Controllers
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-
         public ActionResult Index()
         {
             return View();
@@ -44,27 +44,52 @@ namespace OceanEduSlide.Controllers
             int currentMonth = Month ?? DateTime.Now.Month;
             int currentYear = Year ?? DateTime.Now.Year;
             int pageNumber = page ?? 1;
-
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == currentMonth && h.Year == currentYear).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
             // 1. Truy vấn danh sách Office theo quyền truy cập
             var officeQuery = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsQueryable();
 
             if (User.TypeUser == TypeUser.CV)
             {
-                officeQuery = officeQuery.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+                if (!ZoneId.HasValue)
+                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
             }
             else if (User.TypeUser == TypeUser.ASM)
             {
-                officeQuery = officeQuery.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                if (!ZoneId.HasValue)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    }
+                    else
+                    {
+                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.Zone.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                    }
+                }
             }
             else if (User.TypeUser != TypeUser.HO)
             {
-                officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                    officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
+                else
+                {
+                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                }
             }
 
             if (ZoneId.HasValue)
             {
-                officeQuery = officeQuery.Where(a => a.ZoneId == ZoneId.Value);
+                officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
             }
+            //if (OfficeId.HasValue)
+            //{
+            //    officeQuery = officeQuery.Where(a =>  a.Id == OfficeId.Value);
+            //}
 
             var allOffices = officeQuery.AsNoTracking().ToList();
             var officeIds = allOffices.Select(o => o.Id).ToList();
@@ -89,9 +114,9 @@ namespace OceanEduSlide.Controllers
                     g => g.Key,
                     g => g.Sum(r =>
                     {
-                        int val;
+                        decimal val;
                         var cleaned = r.Data?.Replace(".", "").Replace(",", "") ?? "0";
-                        return int.TryParse(cleaned, out val) ? val : 0;
+                        return decimal.TryParse(cleaned, out val) ? val : 0;
                     })
                 );
 
@@ -139,7 +164,20 @@ namespace OceanEduSlide.Controllers
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+
+                }
             }
 
             // 8. OfficeIds cho ViewBag
@@ -148,332 +186,6 @@ namespace OceanEduSlide.Controllers
             return View(model);
         }
 
-        //public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
-        //{
-        //    if (User.TypeUser == null)
-        //        return HttpNotFound();
-
-        //    int currentMonth = Month ?? DateTime.Now.Month;
-        //    int currentYear = Year ?? DateTime.Now.Year;
-        //    int pageNumber = page ?? 1;
-
-        //    // Truy vấn ReportData: chỉ lấy các field cần thiết để tính toán
-        //    var reportDataRaw = _unitOfWork.ReportDataRepository
-        //        .GetQuery(a =>
-        //            a.Active &&
-        //            a.Month == currentMonth &&
-        //            a.Year == currentYear &&
-        //            a.ReportCategory.TypeCat == TypeCat.Type1 &&
-        //            a.ReportCategoryId == 35)
-        //        .Select(a => new { a.OfficeId, a.Data }) // giảm payload rất nhiều
-        //        .AsNoTracking()
-        //        .ToList();
-
-        //    // Tính tổng theo OfficeId
-        //    var officeDataDict = reportDataRaw
-        //        .GroupBy(r => r.OfficeId)
-        //        .ToDictionary(
-        //            g => g.Key,
-        //            g => g.Sum(r =>
-        //            {
-        //                int val;
-        //                var cleaned = r.Data?.Replace(".", "").Replace(",", "") ?? "0";
-        //                return int.TryParse(cleaned, out val) ? val : 0;
-        //            })
-        //        );
-
-        //    // Truy vấn Office kèm theo điều kiện lọc
-        //    IQueryable<Office> officeQuery = _unitOfWork.OfficeRepository
-        //        .GetQuery(a => a.Active)
-        //        .AsNoTracking(); // nhẹ hơn
-
-        //    // Lọc theo quyền user
-        //    if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        officeQuery = officeQuery.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
-        //    }
-        //    else if (User.TypeUser == TypeUser.ASM)
-        //    {
-        //        officeQuery = officeQuery.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-        //    }
-        //    else if (User.TypeUser != TypeUser.HO)
-        //    {
-        //        officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
-        //    }
-
-        //    if (ZoneId.HasValue)
-        //    {
-        //        officeQuery = officeQuery.Where(a => a.ZoneId == ZoneId.Value);
-        //    }
-
-        //    // Lấy danh sách offices đã lọc và sắp xếp
-        //    var filteredOffices = officeQuery
-        //        .ToList() // chỉ ToList khi đã có filter
-        //        .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0)
-        //        .ToPagedList(pageNumber, 15);
-
-        //    // Lấy danh sách ReportData (full) cho hiển thị
-        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
-        //        a.Active &&
-        //        a.Month == currentMonth &&
-        //        a.Year == currentYear &&
-        //        a.ReportCategory.TypeCat == TypeCat.Type1);
-
-        //    if (ZoneId.HasValue)
-        //    {
-        //        reportDatas = reportDatas.Where(a => a.Office.ZoneId == ZoneId.Value);
-        //    }
-
-        //    var model = new ListReportHomeViewModel
-        //    {
-        //        Month = currentMonth,
-        //        Year = currentYear,
-        //        User = User,
-        //        ZoneId = ZoneId,
-        //        Offices = filteredOffices,
-        //        ReportCategories = _unitOfWork.ReportCategoryRepository
-        //            .GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1,
-        //                      q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort))
-        //            .AsNoTracking(),
-        //        ReportDatas = reportDatas.AsNoTracking()
-        //    };
-
-        //    // Zones theo quyền
-        //    if (User.TypeUser == TypeUser.HO)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-        //    }
-        //    else if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository
-        //            .Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-        //    }
-        //    else
-        //    {
-        //        model.ZoneId = User.ZoneId;
-        //    }
-
-        //    // Gán danh sách OfficeId cho ViewBag
-        //    ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId).Distinct()) + ",";
-
-        //    return View(model);
-        //}
-        //public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
-        //{
-        //    if (User.TypeUser == null)
-        //        return HttpNotFound();
-
-        //    var pageNumber = page ?? 1;
-        //    var selectedMonth = Month ?? DateTime.Now.Month;
-        //    var selectedYear = Year ?? DateTime.Now.Year;
-
-        //    // Lấy dữ liệu báo cáo theo điều kiện
-        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active
-        //            && a.Month == selectedMonth
-        //            && a.Year == selectedYear
-        //            && a.ReportCategory.TypeCat == TypeCat.Type2
-        //            && a.ReportCategoryId == 88,
-        //        q => q.OrderBy(a => a.Sort))
-        //        .ToList();
-
-        //    // Lấy danh sách user có OfficeId và TypeUser
-        //    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId != null,
-        //            q => q.OrderBy(a => a.OfficeId))
-        //        .ToList();
-
-        //    // Tính tổng giá trị reportData cho từng user (đã parse số liệu)
-        //    var userDataDict = reportDatas
-        //        .GroupBy(r => r.UserId)
-        //        .ToDictionary(
-        //            g => g.Key,
-        //            g => g.Sum(r =>
-        //            {
-        //                int val;
-        //                var cleanedData = r.Data?.Replace(",", "");
-        //                return int.TryParse(cleanedData, out val) ? val : 0;
-        //            })
-        //        );
-
-        //    // Sắp xếp user theo tổng giá trị data giảm dần rồi theo OfficeId
-        //    var sortedUsers = users
-        //        .OrderByDescending(o => userDataDict.ContainsKey(o.Id) ? userDataDict[o.Id] : 0)
-        //        .ThenBy(a => a.OfficeId);
-
-        //    IEnumerable<User> filteredUsers = sortedUsers;
-
-        //    // Tạo model view
-        //    var model = new ListReportNVHomeViewModel
-        //    {
-        //        Month = selectedMonth,
-        //        Year = selectedYear,
-        //        Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
-        //        User = User,
-        //        ZoneId = ZoneId,
-        //        ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
-        //        ReportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Sort)),
-        //        OfficeId = OfficeId,
-        //    };
-
-        //    // Phân quyền theo TypeUser để lọc vùng, chi nhánh, nhân viên
-        //    if (User.TypeUser == TypeUser.HO)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-        //    }
-        //    else if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-        //        model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-        //        filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
-        //    }
-        //    else
-        //    {
-        //        model.ZoneId = User.ZoneId;
-
-        //        if (User.TypeUser == TypeUser.ASM)
-        //        {
-        //            model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-        //            filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
-        //        }
-        //        else
-        //        {
-        //            model.OfficeId = User.OfficeId;
-        //            filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
-        //        }
-        //    }
-
-        //    if (model.ZoneId != null)
-        //    {
-        //        model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-        //        filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
-        //    }
-
-        //    if (model.OfficeId != null)
-        //    {
-        //        model.ReportDatas = model.ReportDatas.Where(a => a.User?.OfficeId == model.OfficeId);
-        //        filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
-        //        ViewBag.OfficeIds = "," + string.Join(",", model.ReportDatas.Select(d => d.OfficeId)) + ",";
-        //    }
-
-        //    // Phân trang cho danh sách user
-        //    model.Users = filteredUsers.ToPagedList(pageNumber, 15);
-
-        //    // Tạo chuỗi MaNhanViens dùng để phân biệt user có dữ liệu báo cáo
-        //    string manhanviens = ",";
-        //    foreach (var item in model.ReportDatas)
-        //    {
-        //        if (!manhanviens.Contains("," + item.User?.MaNhanVien + ","))
-        //            manhanviens += item.User?.MaNhanVien + ",";
-        //    }
-
-        //    ViewBag.MaNhanViens = manhanviens;
-
-        //    return View(model);
-        //}
-        //public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
-        //{
-        //    if (User.TypeUser == null)
-        //        return HttpNotFound();
-
-        //    var pageNumber = page ?? 1;
-        //    var selectedMonth = Month ?? DateTime.Now.Month;
-        //    var selectedYear = Year ?? DateTime.Now.Year;
-
-        //    // Lấy tất cả user theo phân quyền
-        //    var users = _unitOfWork.UserRepository.GetQuery(a =>
-        //            a.Active &&
-        //            a.TypeUser != null &&
-        //            a.TypeUser != TypeUser.HO &&
-        //            a.TypeUser != TypeUser.CV &&
-        //            a.TypeUser != TypeUser.PKT &&
-        //            a.TypeUser != TypeUser.ASM &&
-        //            a.OfficeId != null,
-        //        q => q.OrderBy(a => a.OfficeId)).ToList();
-
-        //    IEnumerable<User> filteredUsers = users;
-
-        //    // Lấy danh sách office và zone cho model
-        //    var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
-        //    var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-
-        //    var model = new ListReportNVHomeViewModel
-        //    {
-        //        Month = selectedMonth,
-        //        Year = selectedYear,
-        //        Offices = offices,
-        //        User = User,
-        //        ZoneId = ZoneId,
-        //        ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
-        //        OfficeId = OfficeId
-        //    };
-
-        //    // Phân quyền
-        //    if (User.TypeUser == TypeUser.HO)
-        //    {
-        //        model.Zones = zones;
-        //    }
-        //    else if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
-        //        model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-
-        //        filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
-        //    }
-        //    else
-        //    {
-        //        model.ZoneId = User.ZoneId;
-
-        //        if (User.TypeUser == TypeUser.ASM)
-        //        {
-        //            model.Offices = offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-        //            filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
-        //        }
-        //        else
-        //        {
-        //            model.OfficeId = User.OfficeId;
-        //            filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
-        //        }
-        //    }
-
-        //    if (model.ZoneId != null)
-        //    {
-        //        model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-        //        filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
-        //    }
-
-        //    if (model.OfficeId != null)
-        //    {
-        //        filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
-        //    }
-
-        //    // Phân trang
-        //    var pagedUsers = filteredUsers.ToPagedList(pageNumber, 15);
-        //    model.Users = pagedUsers;
-
-        //    // Lấy ID của user trong trang hiện tại
-        //    var userIdsInPage = pagedUsers.Select(u => u.Id).ToList();
-
-        //    // Lấy dữ liệu ReportData chỉ cho user trong trang hiện tại
-        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
-        //            a.Active &&
-        //            a.Month == selectedMonth &&
-        //            a.Year == selectedYear &&
-        //            a.ReportCategory.TypeCat == TypeCat.Type2 &&
-        //            userIdsInPage.Contains(a.UserId ?? 0),
-        //        q => q.OrderBy(a => a.Sort)).ToList();
-
-        //    model.ReportDatas = reportDatas;
-
-        //    // Tạo danh sách MaNhanVien để hiển thị user có dữ liệu
-        //    var maNhanViens = "," + string.Join(",", reportDatas.Select(d => d.User?.MaNhanVien).Where(x => !string.IsNullOrEmpty(x)).Distinct()) + ",";
-        //    ViewBag.MaNhanViens = maNhanViens;
-
-        //    if (model.OfficeId != null)
-        //    {
-        //        ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
-        //    }
-
-        //    return View(model);
-        //}
         public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year)
         {
             if (User.TypeUser == null)
@@ -483,26 +195,15 @@ namespace OceanEduSlide.Controllers
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
 
-            //var users = _unitOfWork.UserRepository.GetQuery(a =>
-            //        a.Active &&
-            //        a.TypeUser != null &&
-            //        a.TypeUser != TypeUser.HO &&
-            //        a.TypeUser != TypeUser.CV &&
-            //        a.TypeUser != TypeUser.PKT &&
-            //        a.TypeUser != TypeUser.ASM &&
-            //        a.OfficeId != null,
-            //    q => q.OrderBy(a => a.OfficeId)).ToList();
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-                               a.Active && a.Month == selectedMonth && a.Year == selectedYear && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)) &&
-                               a.TypeUser != TypeUser.HO &&
-                               a.TypeUser != TypeUser.CV &&
-                               a.TypeUser != TypeUser.PKT &&
-                               a.TypeUser != TypeUser.ASM &&
-                               a.OfficeId != null,
-                           q => q.OrderBy(a => a.OfficeId)).ToList();
-
-            //IEnumerable<User> filteredUsers = users;
-            IEnumerable<HistoryUser> filteredHistoryUsers = historyUsers;
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == selectedMonth && h.Year == selectedYear).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear
+            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
+            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId != null);
 
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
             var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -525,40 +226,66 @@ namespace OceanEduSlide.Controllers
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                //filteredUsers = filteredUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => User.ZoneIds.Contains("," + a.Office.Zone?.ShortCode + ","));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    if (model.OfficeId == null)
+                        historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                }
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
 
                 if (User.TypeUser == TypeUser.ASM)
                 {
-                    model.Offices = offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            if (model.OfficeId == null)
+                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        }
+
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+
                     //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
-                    filteredHistoryUsers = filteredHistoryUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
                 }
                 else
                 {
-                    model.OfficeId = User.OfficeId;
-                    //filteredUsers = filteredUsers.Where(a => a.OfficeId == User.OfficeId);
-                    filteredHistoryUsers = filteredHistoryUsers.Where(a => a.OfficeId == User.OfficeId);
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        model.OfficeId = User.OfficeId;
+                    }
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (model.OfficeId == null)
+                        {
+                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                        }
+                    }
                 }
             }
 
             if (model.ZoneId != null)
             {
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
                 //filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => a.Office.ZoneId == model.ZoneId);
+                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
             }
 
             if (model.OfficeId != null)
             {
-                //filteredUsers = filteredUsers.Where(a => a.OfficeId == model.OfficeId);
-                filteredHistoryUsers = filteredHistoryUsers.Where(a => a.OfficeId == model.OfficeId);
+                historyQuery = historyQuery.Where(a => a.OfficeId == model.OfficeId);
             }
+            IEnumerable<HistoryUser> filteredHistoryUsers = historyQuery.OrderBy(a => a.OfficeId).ToList();
 
             // LẤY ReportData CHỈ CHO CategoryId == 88 (dùng để sort user)
             //var userIds = filteredUsers.Select(u => u.Id).ToList();
@@ -621,134 +348,6 @@ namespace OceanEduSlide.Controllers
         }
 
         #region CallLogs
-        public async Task<ActionResult> Sync()
-        {
-            await SyncCallLogsAsync();
-            return Content("Đã đồng bộ xong các cuộc gọi");
-        }
-
-        private async Task SyncCallLogsAsync()
-        {
-            int daysToCheck = 3;
-            DateTime today = DateTime.Today;
-
-            for (int i = 1; i <= daysToCheck; i++)
-            {
-                DateTime day = today.AddDays(-i);
-
-                bool hasData = _unitOfWork.CallLogRepository
-                    .GetQuery(x => DbFunctions.TruncateTime(x.CallDate) == day)
-                    .Any();
-
-                if (!hasData)
-                {
-                    //logger.Info("Ngay " + day.ToString("dd/MM/yyyy") + " khong co du lieu");
-                    await FetchAndSaveLogsAsync(day);
-                }
-                else
-                {
-                    logger.Info("Ngay " + day.ToString("dd/MM/yyyy") + " da co du lieu");
-                }
-            }
-        }
-
-        private async Task FetchAndSaveLogsAsync(DateTime day)
-        {
-            string user = "lvd";
-            string pass = "qazplm123`$%^";
-            string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
-
-            string tbegin = day.ToString("yyyy/MM/dd");
-            string tend = day.AddDays(1).ToString("yyyy/MM/dd");
-
-            string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
-            logger.Info(url);
-            using (var http = new HttpClient())
-            {
-                try
-                {
-                    var json = await http.GetStringAsync(url);
-                    if (string.IsNullOrEmpty(json) || json?.Length < 10)
-                    {
-                        logger.Info(json);
-                    }
-                    var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
-                    if (allLogs == null || allLogs.Count == 0)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"No logs found for {day:yyyy-MM-dd}");
-                        logger.Info("Khong co ban ghi nao ngay " + day.ToString("dd/MM/yyyy"));
-                        return;
-                    }
-
-                    var logs = allLogs.ToList();
-                    var uniqueIds = logs.Select(l => l.UniqueId).Distinct().ToList();
-
-                    // ✅ Chia nhỏ truy vấn để tránh lỗi biểu thức dài
-                    var existingUniqueIds = new HashSet<string>();
-                    int batchSize = 500;
-                    for (int i = 0; i < uniqueIds.Count; i += batchSize)
-                    {
-                        var batch = uniqueIds.Skip(i).Take(batchSize).ToList();
-                        var batchIds = _unitOfWork.CallLogRepository
-                            .GetQuery(c => batch.Contains(c.UniqueId))
-                            .Select(c => c.UniqueId)
-                            .ToList();
-                        foreach (var id in batchIds)
-                            existingUniqueIds.Add(id);
-                    }
-
-                    var newLogs = logs.Where(log => !existingUniqueIds.Contains(log.UniqueId)).ToList();
-
-                    if (!newLogs.Any())
-                    {
-                        System.Diagnostics.Debug.WriteLine($"✓ No new logs to sync for {day:yyyy-MM-dd}");
-                        logger.Info("Khong co ban ghi moi nao ngay " + day.ToString("dd/MM/yyyy"));
-
-                        return;
-                    }
-
-                    // ✅ Tải toàn bộ người dùng 1 lần duy nhất
-                    var userDict = _unitOfWork.UserRepository.GetQuery(u => !string.IsNullOrEmpty(u.MaNhanVien) && u.Active).ToList()
-                                    .GroupBy(u => u.MaNhanVien).Select(g => g.First()).ToDictionary(u => u.MaNhanVien, u => u.Id);
-
-                    // ✅ Lọc các logs không tìm thấy user
-                    newLogs = newLogs
-                        .Where(log =>
-                        {
-                            if (userDict.TryGetValue(log.Exten, out var userId))
-                            {
-                                log.UserId = userId;
-                                //log.CallDateString = log.CallDate.ToString("dd/MM/yyyy"); // nếu cần
-                                return true;
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.WriteLine($"No user found for Exten {log.Exten}. Skipping log.");
-                                return false;
-                            }
-                        })
-                        .ToList();
-
-                    if (newLogs.Any())
-                    {
-                        _unitOfWork.CallLogRepository.InsertRange(newLogs);
-                        _unitOfWork.Save();
-                        System.Diagnostics.Debug.WriteLine($"✓ Synced {newLogs.Count} new call logs for {day:yyyy-MM-dd}");
-                        logger.Info("Cap nhat du lieu thanh cong ngay " + day.ToString("dd/MM/yyyy"));
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine($"✓ No matching users for new logs on {day:yyyy-MM-dd}");
-                        logger.Info("Khong co user nao trung khop - ngay " + day.ToString("dd/MM/yyyy"));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"✗ Error syncing {day:yyyy-MM-dd}: {ex.Message}");
-                    logger.Error("Loi xay ra: " + ex.Message + day.ToString("dd/MM/yyyy"));
-                }
-            }
-        }
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {
             if (User.TypeUser == null)
@@ -759,6 +358,16 @@ namespace OceanEduSlide.Controllers
                 startDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
             if (string.IsNullOrEmpty(endDay))
                 endDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+            DateTime StartDate = new DateTime();
+            DateTime EndDate = new DateTime();
+            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+            {
+                StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+            }
+            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+            {
+                EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+            }
             var model = new ListCallViewModel
             {
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
@@ -768,45 +377,75 @@ namespace OceanEduSlide.Controllers
                 StartDay = startDay,
                 EndDay = endDay
             };
+            // Đã yêu cầu người dùng phải chọn khoảng thời gian trong 1 năm
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                }
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
+                //if (User.TypeUser == TypeUser.ASM)
+                //    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                //else
+                //    model.OfficeId = User.OfficeId;
                 if (User.TypeUser == TypeUser.ASM)
-                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        }
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+                }
                 else
-                    model.OfficeId = User.OfficeId;
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                        model.OfficeId = User.OfficeId;
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (model.Offices.Count() == 1)
+                            model.OfficeId = model.Offices.First().Id;
+                    }
+                }
             }
 
             if (model.ZoneId != null)
             {
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-                //model.ReportDatas = model.ReportDatas.Where(a => a.Office.ZoneId == model.ZoneId);
+                //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
+
             }
             if (model.OfficeId != null && !string.IsNullOrEmpty(startDay) && !string.IsNullOrEmpty(endDay))
             {
-                DateTime StartDate = new DateTime();
-                DateTime EndDate = new DateTime();
-                if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                {
-                    StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                }
-                if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
-                {
-                    EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
-                }
+
                 var startDate = StartDate.Date;
                 var endDate = EndDate.Date.AddDays(1);
-                var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.User.OfficeId == model.OfficeId);
-                var aggregated = callData.GroupBy(p => p.UserId).Select(g => new
+                var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.HistoryUser.OfficeId == model.OfficeId);
+                var aggregated = callData.GroupBy(p => p.HistoryUserId).Select(g => new
                 {
-                    UserId = g.Key,
+                    HistoryUserId = g.Key,
                     Over120s = g.Count(x => x.BillSec > 120),
                     Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
                     Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
@@ -819,17 +458,25 @@ namespace OceanEduSlide.Controllers
                     TotalOver30s = g.Count(x => x.BillSec >= 30),
                     Total = g.Count(),
                 }).ToList();
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
-                //var users = _unitOfWork.UserRepository.Get(a => a.TypeUser != null && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.OfficeId == model.OfficeId);
-                var users = _unitOfWork.UserRepository.GetQuery().Where(a => historyUsers.Any(h => h.UserId == a.Id &&
-                                      h.OfficeId == model.OfficeId && (h.DayEnd == null || h.DayEnd >= startDate))).ToList();
-                var userItems = users.Select(u =>
+                var khoang = EndDate.Month - StartDate.Month;
+                List<int> months = new List<int>();
+                if (khoang >= 0)
                 {
-                    var match = aggregated.FirstOrDefault(x => x.UserId == u.Id);
+                    for (int i = StartDate.Month; i <= EndDate.Month; i++)
+                    {
+                        months.Add(i);
+                    }
+                }
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && months.Contains(a.Month) && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
+                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort).ThenBy(a => a.UserId).ThenBy(a => a.Month)).ToList();
+                var userItems = historyUsers.Select(u =>
+                {
+                    var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);
 
                     return new ListCallViewModel.UserItem
                     {
-                        User = u,
+                        //User = u,
+                        HistoryUser = u,
                         Over120s = match?.Over120s ?? 0,
                         Over90s = match?.Over90s ?? 0,
                         Over60s = match?.Over60s ?? 0,
@@ -859,7 +506,7 @@ namespace OceanEduSlide.Controllers
             {
                 StartDay = startDay,
                 EndDay = endDay,
-                User = _unitOfWork.UserRepository.GetById(userId),
+                User = _unitOfWork.HistoryUserRepository.GetById(userId),
             };
 
             DateTime startDate = new DateTime();
@@ -874,23 +521,23 @@ namespace OceanEduSlide.Controllers
             switch (type)
             {
                 case 120:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 120);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 120);
                     ViewBag.Type = "trên 2 phút";
                     break;
                 case 90:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 90 && p.BillSec <= 120);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec > 90 && p.BillSec <= 120);
                     ViewBag.Type = "trên 1,5 phút";
                     break;
                 case 60:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 60 && p.BillSec <= 90);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 60 && p.BillSec <= 90);
                     ViewBag.Type = "trên 1 phút";
                     break;
                 case 59:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 30 && p.BillSec < 60);
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec >= 30 && p.BillSec < 60);
                     ViewBag.Type = "dưới 1 phút";
                     break;
                 case 30:
-                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.UserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30 && p.Disposition == "ANSWERED");
+                    model.CallLogs = _unitOfWork.CallLogRepository.GetQuery(p => p.HistoryUserId == userId && p.CallDate >= startDate && p.CallDate < endDate && p.BillSec < 30 && p.Disposition == "ANSWERED");
                     ViewBag.Type = "Dưới 30s";
                     break;
                 default:
@@ -900,12 +547,140 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-        public ActionResult ClearCallLogs()
+        public ActionResult ChangeCallLogDataCN(int officeId)
         {
-            var calllogs = _unitOfWork.CallLogRepository.GetQuery();
-            calllogs.Delete();
-            return RedirectToAction("ReportCall");
+            var o = _unitOfWork.OfficeRepository.GetById(officeId);
+            if (o == null)
+                return Content("không có CN " + officeId);
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == officeId);
+            var count = 0;
+            foreach (var h in historyUsers)
+            {
+                var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+                && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+                foreach (var c in calllogs)
+                {
+                    c.HistoryUserId = h.Id;
+                    count++;
+                }
+            }
+            _unitOfWork.Save();
+            return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name + ": " + count + " cuộc gọi");
+
         }
+        public ActionResult ChangeCallLogDataAll()
+        {
+            var os = _unitOfWork.OfficeRepository.GetQuery();
+            var count = 0;
+            foreach (var o in os)
+            {
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == o.Id);
+                foreach (var h in historyUsers)
+                {
+                    var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+                    && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+                    foreach (var c in calllogs)
+                    {
+                        c.HistoryUserId = h.Id;
+                        count++;
+                    }
+                }
+            }
+
+            _unitOfWork.Save();
+            return Content("Đã chuyển dữ liệu cuộc gọi CN All: " + count + " cuộc gọi");
+
+        }
+
+        public ActionResult ChangeCallLogData(int day)
+        {
+            for (int i = 0; i < day; i++) // ví dụ 30 ngày gần đây
+            {
+                var date = DateTime.Today.AddDays(-i);
+                string sql = $@"
+    UPDATE CallLogs
+    SET HistoryUserId = (
+        SELECT TOP 1 h.Id
+        FROM HistoryUsers h
+        WHERE h.UserId = CallLogs.UserId
+          AND h.DayStart <= CallLogs.CallDate
+          AND (h.DayEnd IS NULL OR h.DayEnd >= CallLogs.CallDate)
+        ORDER BY 
+CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
+        h.DayEnd ASC  
+    )
+    WHERE HistoryUserId IS NULL AND CAST(CallDate AS DATE) = '{date:yyyy-MM-dd}'";
+
+                _unitOfWork.ExecuteSqlCommand(sql);
+            }
+            return Content("Đã chuyển dữ liệu cuộc gọi");
+
+        }
+        public async Task<ActionResult> TestSync()
+        {
+            var service = new CallLogService();
+            await service.SyncYesterdayAsync();
+            return Content("Đã đồng bộ thủ công.");
+        }
+        public async Task<ActionResult> SyncCustom(int month, int day)
+        {
+            var service = new CallLogService();
+            await service.SyncCusTom(month, day);
+            return Content("Đã đồng bộ 7 ngày. " + day + " - " + month);
+        }
+        public async Task<ActionResult> CheckCountCallLog()
+        {
+            string user = "lvd";
+            string pass = "qazplm123`$%^";
+            string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
+
+            using (var http = new HttpClient()) // dùng một lần
+            {
+
+                for (int i = 17; i <= 31; i++)
+                {
+                    DateTime date = new DateTime(2025, 8, i);
+                    string tbegin = date.ToString("yyyy/MM/dd");
+                    string tend = date.AddDays(1).ToString("yyyy/MM/dd");
+
+                    string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
+
+                    try
+                    {
+                        var json = await http.GetStringAsync(url);
+
+                        if (string.IsNullOrWhiteSpace(json))
+                        {
+                            continue;
+                        }
+
+                        var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
+
+                        if (allLogs == null || allLogs.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        // Dùng LINQ một lần cho cả hai kết quả
+                        var filteredLogs = allLogs.Where(a => a.Exten == "25050544").ToList();
+                        int totalCount = filteredLogs.Count;
+                        int count60s = filteredLogs.Count(a => a.BillSec >= 60);
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                    }
+                    catch (HttpRequestException httpEx)
+                    {
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+
+            return Content("Checked");
+        }
+
 
         #endregion
     }

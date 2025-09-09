@@ -1,0 +1,85 @@
+﻿@model IEnumerable<OceanEduSlide.Models.WorkingDay>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách số ngày công trong năm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("CreateWorkingDay")"><i class="fal fa-plus-circle me-1"></i>Thêm mới số ngày công trong năm</a>
+<div class="box_content">
+    <p>Có tổng số <strong>@Model.Count()</strong> bản ghi</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th rowspan="2" class="text-center">Năm</th>
+                <th colspan="12" class="text-center">Số ngày công</th>
+                <th rowspan="2" style="width: 130px"></th>
+            </tr>
+            <tr>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <th class="text-center">Tháng @i</th>
+
+                }
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr data-id="@item.Id">
+                    <td class="text-center">@item.Year</td>
+                    <td>@item.WorkingDayMonth1</td>
+                    <td>@item.WorkingDayMonth2</td>
+                    <td>@item.WorkingDayMonth3</td>
+                    <td>@item.WorkingDayMonth4</td>
+                    <td>@item.WorkingDayMonth5</td>
+                    <td>@item.WorkingDayMonth6</td>
+                    <td>@item.WorkingDayMonth7</td>
+                    <td>@item.WorkingDayMonth8</td>
+                    <td>@item.WorkingDayMonth9</td>
+                    <td>@item.WorkingDayMonth10</td>
+                    <td>@item.WorkingDayMonth11</td>
+                    <td>@item.WorkingDayMonth12</td>
+                    <td>
+                        <a href="@Url.Action("UpdateWorkingDay", new {workingDayId = item.Id})">Sửa</a> @*-
+                        <a href="javascript:;" onclick="deleteWorkingDay('@item.Id')" style="color: red;">Xóa</a>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteWorkingDay(id) {
+            if (confirm("Bạn có chắc chắn xóa bản ghi này không?")) {
+                $.post("/Revenue/DeleteWorkingDay",
+                    { workingDayId: id },
+                    function (data) {
+                        if (data.status) {
+                            $.toast({
+                                text: 'Xóa thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+
+
+    </script>
+}

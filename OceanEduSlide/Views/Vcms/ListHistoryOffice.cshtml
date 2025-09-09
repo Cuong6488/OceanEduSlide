@@ -1,0 +1,126 @@
+﻿@model OceanEduSlide.ViewModels.ListHistoryOfficeViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách chi nhánh theo tháng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+}
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("InsertHistoryOfficeExcel")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Chi nhánh theo tháng</a>
+<a class="btn quick-link" href="@Url.Action("ExportHistoryOffice")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+<div class="box_content">
+    <form action="@Url.Action("ListHistoryOffice")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+                </div>*@
+            <div class="col-lg">
+                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Năm</label>
+                <select name="year" class="mt-2">
+                    @for (int i = 2025; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Tháng</label>
+                <select name="month" class="mt-2">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.month == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Vùng</label>
+                @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Tất cả", new { @class = "mt-2", data_item = "zone" })
+            </div>
+            <div class="col-lg">
+                <label>Nhóm chi nhánh</label>
+                <select name="Group" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="0" @(Model.Group == 0 ? "selected" : "")>A</option>
+                    <option value="1" @(Model.Group == 1 ? "selected" : "")>B</option>
+                    <option value="2" @(Model.Group == 2 ? "selected" : "")>C</option>
+                    <option value="3" @(Model.Group == 3 ? "selected" : "")>D</option>
+                </select>
+            </div>
+            <div class="col-lg align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.HistoryOffices.TotalItemCount</strong> chi nhánh</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Chi nhánh</th>
+                <th>Vùng</th>
+                <th>Định biên ATL</th>
+                <th>Định biên EC</th>
+                <th>Nhóm chi nhánh</th>
+                <th style="width:130px">Áp dụng QĐ 156</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var item in Model.HistoryOffices)
+            {
+                <tr data-id="@item.Id">
+                    <td>@item.Office.ShortName</td>
+                    <td>@item.Zone.Name</td>
+                    <td>@item.DBATL</td>
+                    <td>@item.DBEC</td>
+                    <td>@Html.DisplayFor(model => item.GroupOffice)</td>
+                    <td>@Html.DisplayFor(model => item.QD156)</td>
+                    <td>
+                        @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
+                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+                        <a href="javascript:;" onclick="deleteOffice('@item.Id')" style="color: red;">Xóa</a>
+                    </td>
+                </tr>
+            }
+            @if (Model.HistoryOffices.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="9">@Html.PagedListPager(Model.HistoryOffices, page => Url.Action("ListHistoryOffice", new { page, name = Model.Name, month = Model.month, year = Model.year, Group = Model.Group, zoneId = Model.ZoneId }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteOffice(id) {
+            if (confirm("Bạn có chắc chắn xóa bản ghi này không?")) {
+                $.post("/Vcms/DeleteHistoryOffice",
+                    { officeId: id },
+                    function (data) {
+                        if (data.status) {
+                            $.toast({
+                                text: 'Xóa thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+    </script>
+}

@@ -15,15 +15,49 @@ $("#AlertBox").delay(5000).slideUp(500);
 
 $(".form-filter select").on("change", function (data) {
     let form = $(this).closest("form");
-    if (form.valid()) { // Kiểm tra nếu form hợp lệ
-        form.trigger('submit'); // Gọi sự kiện submit
+    if (form.attr("id") == "form-reportcall") {
+        var sDay = $("#StartDay").val();
+        var eDay = $("#EndDay").val();
+        var yearStart = sDay.slice(-4);
+        var yearEnd = eDay.slice(-4);
+        if (yearStart != yearEnd) {
+            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
+        }
+        else {
+            if (form.valid()) {
+                form.trigger('submit');
+            }
+        }
     }
+    else {
+        if (form.valid()) { 
+            form.trigger('submit');
+        }
+    }
+
 });
 $(".form-filter input").on("change", function (data) {
     let form = $(this).closest("form");
-    if (form.valid()) { // Kiểm tra nếu form hợp lệ
-        form.trigger('submit'); // Gọi sự kiện submit
+    if (form.attr("id") == "form-reportcall") {
+        var sDay = $("#StartDay").val();
+        var eDay = $("#EndDay").val();
+        var yearStart = sDay.slice(-4);
+        var yearEnd = eDay.slice(-4);
+        if (yearStart != yearEnd) {
+            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
+        }
+        else {
+            if (form.valid()) {
+                form.trigger('submit');
+            }
+        }
     }
+    else {
+        if (form.valid()) { 
+            form.trigger('submit');
+        }
+    }
+
 });
 $("#form-category3").on("change", function (e) {
 

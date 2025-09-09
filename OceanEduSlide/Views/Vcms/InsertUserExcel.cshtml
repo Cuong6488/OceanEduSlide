@@ -5,6 +5,9 @@
 }
 <h2 class="mt-0">Thêm mới user</h2>
 <a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách user</a>
+<a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile","Revenue", new {type = 4})" href="javascript:;">
+    <i class="far fa-list me-1"></i> Lịch sử cập nhật
+</a>
 <div class="box_content">
     @using (Html.BeginForm("InsertUserExcel", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {

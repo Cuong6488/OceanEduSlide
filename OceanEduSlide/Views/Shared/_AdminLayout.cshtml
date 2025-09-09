@@ -66,20 +66,21 @@
                             <div>@Html.ActionLink("Đổi mật khẩu", "ChangePassword", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Quản lý admin", "CreateAdmin", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thông tin chung", "ConfigSite", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Lịch sử import file", "ListFileAll", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Đăng xuất", "Logout", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                     <li data-id="2">
-                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Tài khoản chi nhánh</span><i class="fas fa-caret-down"></i></a>
+                        <a class="root"><i class="fal fa-user-crown icon"></i><span>Tài khoản người dùng</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Thêm mới user", "CreateUser", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Danh sách user", "ListUser", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới user - Excel", "InsertUserExcel", "Vcms", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Cập nhật User theo tháng", "InsertHistoryUser", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("User theo tháng - BC cuộc gọi", "InsertHistoryUser", "Vcms", null, new { @class = "text_link" })</div>
                             @*<div>@Html.ActionLink("Thêm mới chỉ tiêu", "CreateTarget", "Vcms", null, new { @class = "text_link" })</div>*@
                         </div>
                     </li>
-                    <li data-id="2">
+                    <li data-id="3">
                         <a class="root"><i class="fal fa-user-crown icon"></i><span>Quyết định ưu đãi</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Danh sách QĐ ưu đãi", "ListDiscount", "Vcms", null, new { @class = "text_link" })</div>
@@ -101,6 +102,7 @@
                             <div>@Html.ActionLink("Danh sách chi nhánh", "ListOffice", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới chi nhánh", "Office", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới CN - Excel", "InsertOfficeExcel", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Cập nhật chi nhánh theo tháng", "InsertHistoryOfficeExcel", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới - Cập nhật Vùng - Excel", "InsertZoneExcel", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Quản lý Vùng", "CreateZone", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
@@ -109,9 +111,11 @@
                         <a class="root"><i class="fa-solid fa-money-bill icon"></i><span>Quản lý Doanh thu</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Cập nhật xếp hạng chi nhánh", "RankOffice", "Revenue", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Chỉ tiêu CN - Chỉ tiêu NV - DS thực tế tuần", "TargetOffice", "Revenue", null, new { @class = "text_link" })</div>
-                            @*<div>@Html.ActionLink("Cập nhật chỉ tiêu nhân viên", "TargetUser", "Revenue", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("DS hoàn thành thực tế NV - tuần", "RevenueUserWeek_Real", "Revenue", null, new { @class = "text_link" })</div>*@
+                            <div>@Html.ActionLink("Chỉ tiêu CN - NV", "TargetOffice", "Revenue", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Chỉ tiêu các NV đặc biệt - CN kèm theo", "TargetOffice2", "Revenue", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Phiếu thu đặc biệt", "PhieuThuTHDB", "Revenue", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Chỉ tiêu NVĐT theo tháng", "CreateTargetGroup", "Revenue", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Số ngày công các tháng trong năm ", "CreateWorkingDay", "Revenue", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                     <li data-id="8">
@@ -125,8 +129,8 @@
                     <li data-id="9">
                         <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Báo cáo</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
-
                             <div>@Html.ActionLink("Báo cáo KD CN - NV", "Report", "Report", null, new { @class = "text_link" })</div>
+                            @*<div>@Html.ActionLink("Báo cáo KD CN", "ReportCN", "Report", null, new { @class = "text_link" })</div>*@
                             @*<div>@Html.ActionLink("Báo cáo KD CN", "Report", "Report", new { type = 1 }, new { @class = "text_link" })</div>*@
                             @*<div>@Html.ActionLink("Báo cáo KD NV", "Report", "Report", new { type = 2 }, new { @class = "text_link" })</div>*@
                             @*<div>@Html.ActionLink("QĐ PTS - Hàng tháng", "Report", "Report", new { type = 3 }, new { @class = "text_link" })</div>*@

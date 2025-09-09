@@ -12,6 +12,8 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using NLog;
 using System.Data.Entity;
+using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
 namespace OceanEduSlide.DAL
 {
@@ -20,42 +22,26 @@ namespace OceanEduSlide.DAL
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         #region CallLogs
-        //public async Task<ActionResult> Sync()
-        //{
-        //    await SyncCallLogsAsync();
-        //    return Content("Đã đồng bộ xong các cuộc gọi");
-        //}
-
-        //private async Task SyncCallLogsAsync()
-        //{
-        //    int daysToCheck = 3;
-        //    DateTime today = DateTime.Today;
-
-        //    for (int i = 1; i <= daysToCheck; i++)
-        //    {
-        //        DateTime day = today.AddDays(-i);
-
-        //        bool hasData = _unitOfWork.CallLogRepository
-        //            .GetQuery(x => DbFunctions.TruncateTime(x.CallDate) == day)
-        //            .Any();
-
-        //        if (!hasData)
-        //        {
-        //            //logger.Info("Ngay " + day.ToString("dd/MM/yyyy") + " khong co du lieu");
-        //            await FetchAndSaveLogsAsync(day);
-        //        }
-        //        else
-        //        {
-        //            logger.Info("Ngay " + day.ToString("dd/MM/yyyy") + " da co du lieu");
-        //        }
-        //    }
-        //}
+        public async Task SyncCusTom(int month, int day)
+        {
+            await Sync3DayAsync(month, day);
+        }
+        public async Task Sync3DayAsync(int month, int day)
+        {
+            for (int i = 1; i <= 7; i++)
+            {
+                DateTime daycheck = new DateTime(2025, month, day).AddDays(-i);
+                await FetchAndSaveLogsAsync(daycheck);
+            }
+        }
         public async Task SyncYesterdayAsync()
         {
-            DateTime yesterday = DateTime.Today.AddDays(-1);
-            await FetchAndSaveLogsAsync(yesterday);
+            for (int i = 1; i <= 7; i++)
+            {
+                DateTime yesterday = DateTime.Today.AddDays(-i);
+                await FetchAndSaveLogsAsync(yesterday);
+            }
         }
-
         private async Task FetchAndSaveLogsAsync(DateTime day)
         {
             string user = "lvd";
@@ -107,7 +93,6 @@ namespace OceanEduSlide.DAL
                     {
                         System.Diagnostics.Debug.WriteLine($"✓ No new logs to sync for {day:yyyy-MM-dd}");
                         logger.Info("Khong co ban ghi moi nao ngay " + day.ToString("dd/MM/yyyy"));
-
                         return;
                     }
 
@@ -121,9 +106,22 @@ namespace OceanEduSlide.DAL
                         {
                             if (userDict.TryGetValue(log.Exten, out var userId))
                             {
-                                log.UserId = userId;
-                                //log.CallDateString = log.CallDate.ToString("dd/MM/yyyy"); // nếu cần
-                                return true;
+                                var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == userId && a.Month == day.Month && a.Year == day.Year && a.DayStart <= day && (a.DayEnd == null
+                                || (a.DayEnd != null && a.DayEnd.Value >= day)), q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
+
+                                if (historyUser != null)
+                                {
+
+                                    log.UserId = userId;
+                                    log.HistoryUserId = historyUser.Id;
+                                    //log.CallDateString = log.CallDate.ToString("dd/MM/yyyy"); // nếu cần
+                                    return true;
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"Không có bản ghi user theo tháng nào của nhân sự {log.Exten}");
+                                    return false;
+                                }
                             }
                             else
                             {

@@ -1,0 +1,46 @@
+﻿@model OceanEduSlide.ViewModels.ListFileAllViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Lịch sử import file";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="far fa-undo-alt me-1"></i> Trở lại trang chủ</a>
+<div class="box_content">
+    <p class="w-25 d-flex align-items-center"><span class="d-block pb-2 w-50">Loại file</span> @Html.DropDownListFor(model => model.TypeFile, Model.SelectGroup, "Tất cả loại file", new { @class = "form_control w300", onchange = "window.location.href='/Revenue/ListFileAll?type='+this.value" })</p>
+    <table class="list_table tablecenter table-striped">
+        <tr>
+            <th>Thời gian cập nhật</th>
+            <th>Loại file</th>
+            <th>Tên file gốc</th>
+            <th>Người cập nhật</th>
+            <th style="width:130px"></th>
+        </tr>
+        @foreach (var log in Model.LogImports)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(a => log.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => log.TypeImport)
+                </td>
+                <td>
+                    @log.Name
+                </td>
+                <td>
+                    @log.Admin
+                </td>
+                <td>
+                    <a href="@Path.Combine("/documents/logimport/",log.File)" download>Download</a>
+                </td>
+            </tr>
+        }
+        @if (Model.LogImports.PageCount > 1)
+        {
+            <tr>
+                <td colspan="8">@Html.PagedListPager(Model.LogImports, page => Url.Action("ListFileAll", new { page, type = Model.TypeFile }))</td>
+            </tr>
+        }
+    </table>
+</div>

@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     //int id = ViewBag.id;
 }
+<link href="~/Content/select2.min.css" rel="stylesheet" />
 <div class="box_content px-300 mt-4">
     @using (Html.BeginForm())
     {
@@ -21,7 +22,7 @@
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Password)</td>
                     <td class="form_text">
-                        @Html.PasswordFor(model => model.Password, new { @class = "form_control w300" })
+                        @Html.PasswordFor(model => model.Password, new { @class = "form_control w300", autocomplete = "new-password" })
                         @Html.ValidationMessageFor(model => model.Password)
                     </td>
                 </tr>
@@ -60,6 +61,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.OfficeIds)</td>
+                    <td class="form_text">
+                        <select name="CatIDs" id="categorySelect" class="form_control" multiple style="height: 200px;">
+                            @foreach (var item in Model.Offices)
+                            {
+                                <option value="@item.Id" @(Model.OfficeIds != null && Model.OfficeIds.Split(',').Contains(item.Id.ToString()) ? "selected" : "")>
+                                    @item.Name
+                                </option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.TypeUser)</td>
                     <td class="form_text">
                         @Html.EnumDropDownListFor(model => model.TypeUser, "Chọn phân quyền")
@@ -85,3 +99,17 @@
         </table>
     }
 </div>
+@section Scripts {
+    <script src="~/Scripts/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#categorySelect').select2({
+                placeholder: 'Chọn các chi nhánh',
+                allowClear: true,
+                multiple: true
+            });
+
+
+        });
+    </script>
+}

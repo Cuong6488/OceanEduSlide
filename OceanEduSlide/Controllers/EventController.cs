@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Windows.Media;
 using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
@@ -30,7 +31,7 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, int? TypeEvent, string Result = "")
+        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, int? TypeView, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -50,34 +51,72 @@ namespace OceanEduSlide.Controllers
                 ZoneId = ZoneId,
                 UserType = UserType,
                 User = User,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name))
+                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
             };
-            //var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate));
-
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == model.Month && h.Year == model.Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week);
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    if (model.OfficeId == null)
+                        events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
+                }
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
                 if (User.TypeUser == TypeUser.ASM)
-                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            if (model.OfficeId == null)
+                                events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                        }
+
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+
+                }
                 else
-                    model.OfficeId = User.OfficeId;
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                        model.OfficeId = User.OfficeId;
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        if (model.OfficeId == null)
+                            events = events.Where(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                    }
+                }
+
             }
             if (model.ZoneId != null)
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Day != 1)), q => q.OrderBy(a => a.Sort));
+                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month
+                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))), q => q.OrderBy(a => a.Sort));
 
                     if (UserType != null)
                     {
@@ -98,13 +137,63 @@ namespace OceanEduSlide.Controllers
                     });
                     model.Users = users;
                     model.UserItems = userItems;
-                    model.Events = _unitOfWork.EventRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate));
+                    model.Events = events.OrderByDescending(p => p.CreateDate).Where(a => a.OfficeId == model.OfficeId);
                     model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.TargetBM != 0 && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
                 }
-            }
-
                 return View(model);
+            }
+            //var latestEventsPerGroup = events.GroupBy(e => new { e.Month, e.Year, e.WeekNumber, e.OfficeId, e.DayofWeek })
+            //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
+            //model.Events = latestEventsPerGroup;
+            // Chọn bản ghi mới nhất cho mỗi nhóm
+            if (TypeView >= 1 && TypeView <= 4)
+            {
+                events = events.Where(a => (int)a.TypeEvent == TypeView);
+            }
+            if (TypeView != 5)
+            {
+                var latestEventsPerGroup = events
+                    .GroupBy(e => new { e.OfficeId, e.DayofWeek, e.TypeEvent }) // Group theo key phù hợp
+                    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault()) // Lấy bản ghi mới nhất
+                    .ToList();
+
+                model.Events = latestEventsPerGroup;
+                var eventDict = model.Events
+        .GroupBy(e => $"{e.OfficeId}_{(int)e.DayofWeek}_{(int)e.TypeEvent}")
+        .ToDictionary(g => g.Key, g => g.First());
+
+                ViewBag.EventDict = eventDict;
+            }
+            model.TypeView = TypeView;
+            var allRevenues = GetAllRevenues(model.Week ?? 0, model.Month ?? 0, model.Year ?? 0);
+            ViewBag.AllRevenues = allRevenues;
+            return View("EventManager", model);
         }
+        public List<RevenueUser_DayOfWeek> GetAllRevenues(int week, int month, int year)
+        {
+            var query = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a =>
+                a.HistoryUserId != null && a.TargetBM != null &&
+                a.Month == month &&
+                a.Year == year &&
+                (int)a.WeekNumber == week);
+
+            // Lấy bản ghi mới nhất theo CreateDate cho từng HistoryUserId, DayOfWeek
+            var grouped = query
+                .GroupBy(a => new
+                {
+                    a.Year,
+                    a.Month,
+                    a.HistoryUserId,
+                    a.WeekNumber,
+                    a.DayofWeek
+                })
+                .Select(g => g.OrderByDescending(x => x.CreateDate).FirstOrDefault())
+                .ToList();
+
+            return grouped;
+
+        }
+
         public ActionResult UpdatePercent(int userId)
         {
 
@@ -803,23 +892,60 @@ namespace OceanEduSlide.Controllers
                 UserType = UserType,
                 OfficeId = OfficeId,
             };
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == model.Month && h.Year == model.Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
             if (User.TypeUser == TypeUser.HO)
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                }
             }
             else
             {
-                model.ZoneId = User.ZoneId;
+                //model.ZoneId = User.ZoneId;
+                //if (User.TypeUser == TypeUser.ASM)
+                //    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                //else
+                //    model.OfficeId = User.OfficeId;
                 if (User.TypeUser == TypeUser.ASM)
-                    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        }
+                    }
+                    else
+                    {
+                        model.ZoneId = User.ZoneId;
+                    }
+                }
+
                 else
-                    model.OfficeId = User.OfficeId;
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                        model.OfficeId = User.OfficeId;
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                    }
+                }
             }
             if (model.ZoneId != null)
-                model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
             if (model.OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);

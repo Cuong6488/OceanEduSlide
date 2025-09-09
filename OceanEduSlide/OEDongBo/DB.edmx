@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DongBoTuyenSinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BC_PhieuThu">
+          <Key>
+            <PropertyRef Name="ID_StudentDept" />
+          </Key>
+          <Property Name="PhieuThuKeToan" Type="bigint" Nullable="false" />
+          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="255" />
+          <Property Name="NgayThanhToan" Type="date" />
+          <Property Name="Loai" Type="nvarchar" MaxLength="100" />
+          <Property Name="ReceiptCode" Type="nvarchar" MaxLength="100" />
+          <Property Name="MaHV" Type="varchar" MaxLength="100" />
+          <Property Name="TenHV" Type="nvarchar" MaxLength="255" />
+          <Property Name="TUD" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="SUD" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="PhanTramUD" Type="float" />
+          <Property Name="GioiTinh" Type="nvarchar" MaxLength="50" />
+          <Property Name="HinhThucThanhToan" Type="nvarchar" MaxLength="100" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+          <Property Name="DangKy" Type="nvarchar" MaxLength="100" />
+          <Property Name="GioTao" Type="datetime2" Precision="3" />
+          <Property Name="MaNVChotSale" Type="varchar" MaxLength="100" />
+          <Property Name="ChotSale" Type="nvarchar" MaxLength="255" />
+          <Property Name="CongTacVien" Type="nvarchar" MaxLength="100" />
+          <Property Name="ThangHocDuKien" Type="int" />
+          <Property Name="UD_FINAL" Type="nvarchar" MaxLength="255" />
+          <Property Name="LoaiCTH" Type="nvarchar" MaxLength="255" />
+          <Property Name="ChuongTrinhHoc" Type="nvarchar" MaxLength="255" />
+          <Property Name="CapDo" Type="nvarchar" MaxLength="255" />
+          <Property Name="Modun" Type="nvarchar" MaxLength="255" />
+          <Property Name="UD_NhomUDFINAL" Type="nvarchar" MaxLength="100" />
+          <Property Name="HDBH" Type="bigint" />
+          <Property Name="DonHang" Type="nvarchar" MaxLength="100" />
+          <Property Name="UDPhieuThu" Type="nvarchar" MaxLength="255" />
+          <Property Name="ThoiGianCapNhat" Type="datetime" />
+          <Property Name="TrangThai" Type="nvarchar" MaxLength="100" />
+          <Property Name="ID_StudentDept" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DongBoTuyenSinhModelStoreContainer">
+          <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DongBoTuyenSinhModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BC_PhieuThu">
+          <Key>
+            <PropertyRef Name="ID_StudentDept" />
+          </Key>
+          <Property Name="PhieuThuKeToan" Type="Int64" Nullable="false" />
+          <Property Name="ChiNhanh" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="NgayThanhToan" Type="DateTime" Precision="0" />
+          <Property Name="Loai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ReceiptCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MaHV" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TenHV" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TUD" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="SUD" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PhanTramUD" Type="Double" />
+          <Property Name="GioiTinh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HinhThucThanhToan" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DangKy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="GioTao" Type="DateTime" Precision="3" />
+          <Property Name="MaNVChotSale" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ChotSale" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CongTacVien" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ThangHocDuKien" Type="Int32" />
+          <Property Name="UD_FINAL" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LoaiCTH" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ChuongTrinhHoc" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CapDo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Modun" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UD_NhomUDFINAL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="HDBH" Type="Int64" />
+          <Property Name="DonHang" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UDPhieuThu" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGianCapNhat" Type="DateTime" Precision="3" />
+          <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ID_StudentDept" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="DongBoTuyenSinhEntities">
+          <EntitySetMapping Name="BC_PhieuThu">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
+              <MappingFragment StoreEntitySet="BC_PhieuThu">
+                <ScalarProperty Name="ID_StudentDept" ColumnName="ID_StudentDept" />
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
+                <ScalarProperty Name="PhieuThuKeToan" ColumnName="PhieuThuKeToan" />
+                <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
+                <ScalarProperty Name="NgayThanhToan" ColumnName="NgayThanhToan" />
+                <ScalarProperty Name="Loai" ColumnName="Loai" />
+                <ScalarProperty Name="ReceiptCode" ColumnName="ReceiptCode" />
+                <ScalarProperty Name="MaHV" ColumnName="MaHV" />
+                <ScalarProperty Name="TenHV" ColumnName="TenHV" />
+                <ScalarProperty Name="TUD" ColumnName="TUD" />
+                <ScalarProperty Name="SUD" ColumnName="SUD" />
+                <ScalarProperty Name="PhanTramUD" ColumnName="PhanTramUD" />
+                <ScalarProperty Name="GioiTinh" ColumnName="GioiTinh" />
+                <ScalarProperty Name="HinhThucThanhToan" ColumnName="HinhThucThanhToan" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="DangKy" ColumnName="DangKy" />
+                <ScalarProperty Name="GioTao" ColumnName="GioTao" />
+                <ScalarProperty Name="MaNVChotSale" ColumnName="MaNVChotSale" />
+                <ScalarProperty Name="ChotSale" ColumnName="ChotSale" />
+                <ScalarProperty Name="CongTacVien" ColumnName="CongTacVien" />
+                <ScalarProperty Name="ThangHocDuKien" ColumnName="ThangHocDuKien" />
+                <ScalarProperty Name="UD_FINAL" ColumnName="UD_FINAL" />
+                <ScalarProperty Name="LoaiCTH" ColumnName="LoaiCTH" />
+                <ScalarProperty Name="ChuongTrinhHoc" ColumnName="ChuongTrinhHoc" />
+                <ScalarProperty Name="CapDo" ColumnName="CapDo" />
+                <ScalarProperty Name="Modun" ColumnName="Modun" />
+                <ScalarProperty Name="UD_NhomUDFINAL" ColumnName="UD_NhomUDFINAL" />
+                <ScalarProperty Name="HDBH" ColumnName="HDBH" />
+                <ScalarProperty Name="DonHang" ColumnName="DonHang" />
+                <ScalarProperty Name="UDPhieuThu" ColumnName="UDPhieuThu" />
+                <ScalarProperty Name="ThoiGianCapNhat" ColumnName="ThoiGianCapNhat" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

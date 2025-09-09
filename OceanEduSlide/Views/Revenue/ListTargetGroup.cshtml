@@ -1,0 +1,108 @@
+﻿@model OceanEduSlide.ViewModels.ListTargetGroupViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách chỉ tiêu NVĐT";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("CreateTargetGroup")"><i class="fal fa-plus-circle me-1"></i>Thêm mới chỉ tiêu NVĐT</a>
+<div class="box_content">
+    <form action="@Url.Action("ListTargetGroup")" method="get">
+        <div class="row">
+            <div class="col-lg-3">
+                <label>Năm</label>
+                <select name="year" class="mt-2">
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2025; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label>Tháng</label>
+                <select name="month" class="mt-2">
+                    <option value="">Chọn tháng</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.month == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-3 align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.TargetGroups.TotalItemCount</strong> bản ghi</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Năm</th>
+                <th>Tháng</th>
+                <th>Chỉ tiêu NVĐT nhóm A</th>
+                <th>Chỉ tiêu NVĐT nhóm B</th>
+                <th>Chỉ tiêu NVĐT nhóm C</th>
+                <th>Chỉ tiêu NVĐT nhóm D</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var target in Model.TargetGroups)
+            {
+                <tr data-id="@target.Id">
+                    <td>@Html.DisplayFor(model => target.Year)</td>
+                    <td>@Html.DisplayFor(model => target.Month)</td>
+                    <td>@Html.DisplayFor(model => target.Target_A)</td>
+                    <td>@Html.DisplayFor(model => target.Target_B)</td>
+                    <td>@Html.DisplayFor(model => target.Target_C)</td>
+                    <td>@Html.DisplayFor(model => target.Target_D)</td>
+                    <td>
+                        <a href="@Url.Action("UpdateTargetGroup", new {targetId = target.Id})">Sửa</a> @*- 
+                        <a href="javascript:;" onclick="deleteTarget('@target.Id')" style="color: red;">Xóa</a>*@
+                    </td>
+                </tr>
+            }
+            @if (Model.TargetGroups.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="9">@Html.PagedListPager(Model.TargetGroups, page => Url.Action("ListTargetGroup", new { page,month = Model.month, year = Model.year }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteTarget(id) {
+            if (confirm("Bạn có chắc chắn xóa bản ghi này không?")) {
+                $.post("/Revenue/DeleteTargetGroup",
+                    { targetId: id },
+                    function (data) {
+                        if (data.status) {
+                            $.toast({
+                                text: 'Xóa thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+
+
+    </script>
+}

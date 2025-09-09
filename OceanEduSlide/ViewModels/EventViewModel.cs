@@ -1,4 +1,5 @@
-﻿using OceanEduSlide.Migrations;
+﻿using OceanEduSlide.DAL;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public int? UserType { get; set; }
+        public int? TypeView { get; set; }
         public IEnumerable<UserItem> UserItems { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
@@ -45,6 +47,35 @@ namespace OceanEduSlide.ViewModels
                     .Where(r => (int)r.DayofWeek == dayOfWeek && r.Year == year && r.Month == month && (int)r.WeekNumber == week && r.TargetBM != null)
                     .FirstOrDefault()?.TargetBM)
                 .Sum() ?? null;
+        }
+
+        public decimal? SumRevenue2(int dayOfWeek, int week, int month, int year, int officeId)
+        {
+            using (var _unitOfWork = new UnitOfWork())
+            {
+                var query = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a =>
+    a.HistoryUserId != null && a.TargetBM != null &&
+    a.HistoryUser.User.OfficeId == officeId &&
+    a.Month == month &&
+    a.Year == year &&
+    (int)a.WeekNumber == week &&
+    (int)a.DayofWeek == dayOfWeek);
+
+                // Nhóm theo các trường cần thiết
+                var grouped = query
+                    .GroupBy(a => new
+                    {
+                        a.Year,
+                        a.Month,
+                        a.HistoryUserId,
+                        a.WeekNumber,
+                        a.DayofWeek
+                    })
+                    .Select(g => g.OrderByDescending(x => x.CreateDate).FirstOrDefault()); // Lấy bản ghi đầu tiên theo CreateDate
+                    decimal? total = grouped.Sum(a => a.TargetBM);
+
+                return total ?? 0;
+            }
         }
     }
 

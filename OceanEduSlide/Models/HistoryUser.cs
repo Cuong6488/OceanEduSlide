@@ -24,8 +24,16 @@ namespace OceanEduSlide.Models
         public WeekNumber? WeekNumber { get; set; }
         public int Sort { get; set; } = 1;
         public bool Active { get; set; } = true;
+        public bool NewUser { get; set; }
+        //[Display(Name = "Vùng")]
+        //public int? ZoneId { get; set; }
+        //[Display(Name = "Các vùng quản lý")]
+        //public string ZoneIds { get; set; }
         public virtual User User { get; set; }
         public virtual Office Office { get; set; }
+        //public virtual Zone Zone { get; set; }
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
+        //public DateTime? CreateDate { get; set; } = DateTime.Now;
     }
     public enum StatusUser
     {

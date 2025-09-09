@@ -27,6 +27,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Zone.ShortCode)</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        @Html.EditorFor(model => model.Zone.ShortCode, new { @class = "form_control w300" })
+                        @Html.ValidationMessageFor(model => model.Zone.ShortCode)
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Zone.ShortName)</td>
                     <td class="form_text">
                         <select name="CatIDs" id="categorySelect" class="form_control" multiple="" style=" height: 200px;">
@@ -57,7 +65,7 @@
         </table>
     }
 </div>
-<h2 class="mb-5">Danh sách Zone</h2>
+<h2 class="mb-5">Danh sách Vùng</h2>
 @Html.Action("ListZone", "Vcms")
 @section Scripts {
     <script src="~/Scripts/select2.min.js"></script>

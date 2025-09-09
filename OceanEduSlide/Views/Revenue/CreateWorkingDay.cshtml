@@ -1,0 +1,95 @@
+﻿@model OceanEduSlide.Models.WorkingDay
+@{
+    ViewBag.Title = "Thêm số ngày làm việc các tháng trong năm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="m-0 mb-3">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("ListWorkingDay")"><i class="far fa-list me-1"></i> Danh sách số ngày làm việc các tháng</a>
+<div class="box_content">
+    @using (Html.BeginForm("CreateWorkingDay", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+    <table class="form_table">
+        <tr>
+            <td class="form_name w-25">Năm</td>
+            <td class="form_text">
+                <select name="Year" class="w100" required>
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2024; i <= DateTime.Now.Year + 1; i++)
+                    {
+                        <option @(Model.Year == i ? "selected" : "") value="@i">@i</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(a => a.Year)
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth1)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth1)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth2)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth2)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth3)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth3)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth4)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth4)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth5)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth5)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth6)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth6)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth7)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth7)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth8)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth8)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth9)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth9)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth10)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth10)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth11)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth11)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.WorkingDayMonth12)</td>
+            <td class="form_text">@Html.EditorFor(model => model.WorkingDayMonth12)</td>
+        </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Thêm mới" />
+            </td>
+        </tr>
+
+    </table>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

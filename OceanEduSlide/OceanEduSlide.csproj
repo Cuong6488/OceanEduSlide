@@ -84,6 +84,9 @@
     <Reference Include="Fido2.Models, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Fido2.Models.2.0.2\lib\netstandard2.0\Fido2.Models.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.5.1\lib\netstandard2.0\FluentScheduler.dll</HintPath>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.8.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Core.1.8.20\lib\net46\Hangfire.Core.dll</HintPath>
     </Reference>
@@ -205,6 +208,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Cng, Version=4.3.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Cng.4.7.0\lib\net47\System.Security.Cryptography.Cng.dll</HintPath>
@@ -309,6 +313,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
+    <Compile Include="DAL\PhieuThuService.cs" />
     <Compile Include="DAL\CallLogService.cs" />
     <Compile Include="DAL\DataEntities.cs" />
     <Compile Include="DAL\EmailValidationAttribute.cs" />
@@ -560,9 +565,49 @@
     <Compile Include="Migrations\202508140828177_passdefault.Designer.cs">
       <DependentUpon>202508140828177_passdefault.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508160314530_LogImport.cs" />
+    <Compile Include="Migrations\202508160314530_LogImport.Designer.cs">
+      <DependentUpon>202508160314530_LogImport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508190901229_officeidsuser.cs" />
+    <Compile Include="Migrations\202508190901229_officeidsuser.Designer.cs">
+      <DependentUpon>202508190901229_officeidsuser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508200436200_historyoffice.cs" />
+    <Compile Include="Migrations\202508200436200_historyoffice.Designer.cs">
+      <DependentUpon>202508200436200_historyoffice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508250930191_historyUCallLog.cs" />
+    <Compile Include="Migrations\202508250930191_historyUCallLog.Designer.cs">
+      <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508261036243_qd156.cs" />
+    <Compile Include="Migrations\202508261036243_qd156.Designer.cs">
+      <DependentUpon>202508261036243_qd156.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508280938298_phieuthu.cs" />
+    <Compile Include="Migrations\202508280938298_phieuthu.Designer.cs">
+      <DependentUpon>202508280938298_phieuthu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202508290656507_trangthai.cs" />
+    <Compile Include="Migrations\202508290656507_trangthai.Designer.cs">
+      <DependentUpon>202508290656507_trangthai.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509040739533_dexuatmoi.cs" />
+    <Compile Include="Migrations\202509040739533_dexuatmoi.Designer.cs">
+      <DependentUpon>202509040739533_dexuatmoi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509051452395_dayrevenue.cs" />
+    <Compile Include="Migrations\202509051452395_dayrevenue.Designer.cs">
+      <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
+    <Compile Include="Models\TargetGroup.cs" />
+    <Compile Include="Models\HistoryOffice.cs" />
     <Compile Include="Models\HistoryUser.cs" />
+    <Compile Include="Models\LogImport.cs" />
     <Compile Include="Models\ReportData.cs" />
     <Compile Include="Models\ReportCategory.cs" />
     <Compile Include="Models\Category.cs" />
@@ -578,6 +623,7 @@
     <Compile Include="Models\RevenueUser_Month_BM_real.cs" />
     <Compile Include="Models\ProposalType.cs" />
     <Compile Include="Models\TypeFault.cs" />
+    <Compile Include="Models\WorkingDay.cs" />
     <Compile Include="Models\Zone.cs" />
     <Compile Include="Models\RevenueOffice_BM.cs" />
     <Compile Include="Models\Debt.cs" />
@@ -589,6 +635,24 @@
     <Compile Include="Models\RevenueOffice.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="OEDongBo\BC_PhieuThu.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
@@ -1163,6 +1227,16 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="OEDongBo\DB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB.edmx</DependentUpon>
+      <LastGenOutput>DB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="OEDongBo\DB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB.edmx</DependentUpon>
+      <LastGenOutput>DB.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -1216,6 +1290,13 @@
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
     <Content Include="Nlog.config" />
+    <EntityDeploy Include="OEDongBo\DB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="OEDongBo\DB.edmx.diagram">
+      <DependentUpon>DB.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
@@ -1488,6 +1569,21 @@
     <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
     <Content Include="Views\Vcms\ListHistoryUser.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
+    <Content Include="Views\Event\EventManager.cshtml" />
+    <Content Include="Views\Revenue\ListFile.cshtml" />
+    <Content Include="Views\Revenue\ListFileAll.cshtml" />
+    <Content Include="Views\Revenue\CreateTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\ListTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\UpdateTargetGroup.cshtml" />
+    <Content Include="Views\Revenue\CreateWorkingDay.cshtml" />
+    <Content Include="Views\Revenue\ListWorkingDay.cshtml" />
+    <Content Include="Views\Revenue\UpdateWorkingDay.cshtml" />
+    <Content Include="Views\Vcms\InsertHistoryOfficeExcel.cshtml" />
+    <Content Include="Views\Vcms\ListHistoryOffice.cshtml" />
+    <Content Include="Views\TuyenSinh\ListTest.cshtml" />
+    <Content Include="Views\Revenue\TargetOffice2.cshtml" />
+    <Content Include="Views\Revenue\PhieuThuTHDB.cshtml" />
+    <Content Include="Views\Revenue\ListPhieuThu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1546,6 +1642,7 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202504151335093_first.resx">
@@ -1728,6 +1825,33 @@
     <EmbeddedResource Include="Migrations\202508140828177_passdefault.resx">
       <DependentUpon>202508140828177_passdefault.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508160314530_LogImport.resx">
+      <DependentUpon>202508160314530_LogImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508190901229_officeidsuser.resx">
+      <DependentUpon>202508190901229_officeidsuser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508200436200_historyoffice.resx">
+      <DependentUpon>202508200436200_historyoffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508250930191_historyUCallLog.resx">
+      <DependentUpon>202508250930191_historyUCallLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508261036243_qd156.resx">
+      <DependentUpon>202508261036243_qd156.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508280938298_phieuthu.resx">
+      <DependentUpon>202508280938298_phieuthu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202508290656507_trangthai.resx">
+      <DependentUpon>202508290656507_trangthai.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509040739533_dexuatmoi.resx">
+      <DependentUpon>202509040739533_dexuatmoi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509051452395_dayrevenue.resx">
+      <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1763,12 +1887,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
     <Error Condition="!Exists('..\packages\Fido2.2.0.2\build\fido2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fido2.2.0.2\build\fido2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\Fido2.2.0.2\build\fido2.targets" Condition="Exists('..\packages\Fido2.2.0.2\build\fido2.targets')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

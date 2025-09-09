@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -105,5 +106,64 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<RevenueOffice_BM> Revenues { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+    }
+    public class ListFileAllViewModel
+    {
+        public PagedList.IPagedList<LogImport> LogImports { get; set; }
+        public int? TypeFile { get; set; }
+        public SelectList SelectGroup { get; set; }
+        public ListFileAllViewModel()
+        {
+            var listgroup = new Dictionary<int, string>
+            {
+                { 0, "Báo cáo TH CN - NV" },
+                { 1, "Chỉ tiêu CN - NV - DS hoàn thành thực tế tuần" },
+                { 2, "Vùng" },
+                { 3, "Chi nhánh" },
+                { 8, "Chi nhánh theo tháng" },
+                { 4, "Tài khoản nhân sự" },
+                { 5, "Nhân sự theo tháng" },
+                { 6, "QĐ ưu đãi" },
+                { 7, "Quy định chung/ QĐ PTS" },
+                { 9, "Phiếu thu đặc biệt" },
+            };
+            SelectGroup = new SelectList(listgroup, "Key", "Value");
+        }
+    }
+
+    public class InsertTargetGroupViewModel
+    {
+        public int? TargetGroupId { get; set; }
+        [Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
+        public int Month { get; set; }
+        [Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
+        public int Year { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm A"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_A { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm B"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_B { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm C"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_C { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm D"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_D { get; set; }
+
+    }
+
+    public class ListTargetGroupViewModel
+    {
+        public PagedList.IPagedList<TargetGroup> TargetGroups { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
+    }
+
+    public class ListPhieuThuViewModel
+    {
+        public PagedList.IPagedList<BC_PhieuThu_DB> PhieuThus { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public string officeId { get; set; }
+        public int? type { get; set; }
+        public int? month { get; set; }
+        public int? year { get; set; }
+        public string Username { get; set; }
     }
 }

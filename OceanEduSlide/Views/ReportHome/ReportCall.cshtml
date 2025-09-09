@@ -4,13 +4,18 @@
 @model ListCallViewModel
 @{
     ViewBag.Title = "Thống kê cuộc gọi";
+    Office office = null;
+    if (Model.OfficeId != null)
+    {
+        office = Model.Offices.FirstOrDefault(a => a.Id == Model.OfficeId);
+    }
 }
 <style>
     #OfficeId-error, #Month-error, #OfficeId-error, #ZoneId-error {
         display: none !important;
     }
 </style>
-<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter mb-5">
+<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter mb-5" id="form-reportcall">
     <div class="w-25 d-flex align-items-center">
         <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
         <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
@@ -20,7 +25,9 @@
         <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
 
     </div>
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+    @*@if (Model.HistoryUser.TypeUser == TypeUser.HO || Model.HistoryUser.TypeUser == TypeUser.CV)*@
+
+    @if (Model.Zones?.Count() > 1)
     {
         <select name="ZoneId" class="form-select me-3 w-25">
             <option value="">Chọn vùng</option>
@@ -30,37 +37,53 @@
             }
         </select>
     }
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
+    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+
     {
-        <select name="OfficeId" class="form-select w-25">
-            <option value="">Chọn chi nhánh</option>
-            @foreach (var item in Model.Offices)
-            {
-                <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-            }
-        </select>
+        if (Model.Offices.Count() > 1)
+        {
+
+            <select name="OfficeId" class="form-select w-25">
+                <option value="">Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                }
+            </select>
+        }
+        else
+        {
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
     }
     else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
     {
         <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
     }
 </form>
-<p class="text-danger">*Lưu ý: Cần chọn chi nhánh và khoảng thời gian để hiển thị thống kê</p>
+@if (Model.OfficeId == null)
+{
+    <p class="text-danger">* Vui lòng chọn chi nhánh</p>
+}
 <h2>@ViewBag.Title</h2>
 @if (Model.UserItems != null)
 {
-
     <div class="box_content mt-0">
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>
                 <tr class="text-center">
-                    <th rowspan="2" class="col-w150 text-start px-2">Chi nhánh</th>
+                    <th rowspan="2" class="col-w100 text-start px-2">Chi nhánh</th>
                     <th rowspan="2" class="text-start px-2">Mã nhân sự</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Họ tên nhân sự</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">Vị trí</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">Tháng làm việc</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Trạng thái</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">Ngày <br /> vào làm</th>
+                    <th rowspan="2" class="col-w90 text-start px-2">Ngày nghỉ/ <br /> điều chuyển</th>
                     <th>Trên 2 phút</th>
                     <th>Trên 1,5 phút</th>
-                    <th>Trên 1 phút</th>
+                    <th>Từ 1 phút trở lên</th>
                     <th>Dưới 1 phút</th>
                     <th>Dưới 30s</th>
                     @for (var i = 1; i <= ViewBag.WorkingWeeks; i++)
@@ -82,27 +105,22 @@
                     <th>Busy</th>
                     <th>Failed</th>
                 </tr>
-
                 @foreach (var item in Model.UserItems)
                 {
                     <tr>
-                        <td class="text-start px-2">@item.User.Office.ShortName</td>
-                        <td class="text-start px-2">@item.User.MaNhanVien</td>
-                        <td class="text-start px-2">@item.User.Fullname</td>
-                        <td class="text-start px-2">
-                            @if (item.User.OfficeId != Model.OfficeId || item.User.Active == false)
-                            {
-                                @: Đã nghỉ/ điều chuyển
-                            }
-                            else
-                            {
-                                @: Đang làm việc
-                            }
-                        </td>
+                        @*<td class="text-start px-2">@(item.HistoryUser.Office?.ShortName)</td>*@
+                        <td class="text-start px-2">@(office == null? item.HistoryUser.Office?.ShortName:office.ShortName)</td>
+                        <td class="text-start px-2">@item.HistoryUser.User.MaNhanVien</td>
+                        <td class="text-start px-2">@item.HistoryUser.User.Fullname</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.TypeUser)</td>
+                        <td class="text-start px-2">@item.HistoryUser.Month</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.Status)</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.DayStart)</td>
+                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.DayEnd)</td>
                         <td>
                             @if (item.Over120s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 120,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over120s</a>
                             }
                             else
@@ -113,7 +131,7 @@
                         <td>
                             @if (item.Over90s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 90,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over90s</a>
                             }
                             else
@@ -124,7 +142,7 @@
                         <td>
                             @if (item.Over60s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 60,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Over60s</a>
                             }
                             else
@@ -135,7 +153,7 @@
                         <td>
                             @if (item.Under60s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 59,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under60s</a>
                             }
                             else
@@ -146,7 +164,7 @@
                         <td>
                             @if (item.Under30s > 0)
                             {
-                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.User.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
+                                <a class="text-danger" title="Xem danh sách" href="" data-src="@Url.Action("LoadListCall", new {userId = item.HistoryUser.Id,type = 30,startDay = Model.StartDay,endDay = Model.EndDay})"
                                    data-fancybox data-type="ajax" data-touch="false">@item.Under30s</a>
                             }
                             else
@@ -182,6 +200,5 @@
             dateFormat: 'dd/mm/yy',
             maxDate: today,
         }).attr('readonly', 'readonly');
-
     </script>
 }

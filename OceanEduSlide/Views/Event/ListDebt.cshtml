@@ -35,7 +35,8 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)*@
+        @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
@@ -45,7 +46,9 @@
                 }
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+
         {
             <select name="OfficeId" class="form-select w-25 me-3">
                 <option value="">Chọn chi nhánh</option>
@@ -55,17 +58,10 @@
                 }
             </select>
         }
-        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+        @*@if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)*@
+        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
         {
-            @*<select name="" class="form-select w-25" disabled>
-                    <option value="">Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>*@
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-
         }
         <select name="UserType" class="form-select w-25 ms-3">
             <option value="">Tất cả chức danh</option>
@@ -357,6 +353,12 @@
                     }
                 </tbody>
             </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-danger">
+            * Vui lòng chọn chi nhánh
         </div>
     }
 </div>

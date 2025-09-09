@@ -25,20 +25,22 @@
         <ul class="navbar ul-reset d-flex">
             @if (Model.User.TypeUser != TypeUser.PKT)
             {
-                if (Model.User.Office != null)
+                if (Model.User.Office != null && (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.ALT || Model.User.TypeUser == TypeUser.CM || Model.User.TypeUser == TypeUser.TTL || Model.User.TypeUser == TypeUser.SAB))
                 {
                     <li class="office-name me-0">@(Model.User.Office.Name)</li>
+                }
+                else if (Model.User.Zone != null && Model.User.TypeUser == TypeUser.ASM)
+                {
+                    <li class="office-name me-0">@(Model.User.Zone.Name)</li>
                 }
                 <li>
                     <a href="javascript:;">DANH MỤC QĐ</a>
                     <ul class="ul-reset" style="top:150%">
                         @if (Model.Categories1.Any())
                         {
-
                             <li style="padding:7px 15px">
                                 <a href="javascript:;" data-fancybox data-src="#category1" data-caption="Quy định chung PTS">Quy định chung PTS</a>
-
-                                <div class=" hidden" id="category1">
+                                <div class="hidden" id="category1">
                                     <h2>Quy định chung PTS</h2>
                                     <table class="list_table table-striped box_content table-bordered mt-0">
                                         <tbody>

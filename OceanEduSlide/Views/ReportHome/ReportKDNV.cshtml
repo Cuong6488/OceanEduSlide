@@ -7,24 +7,6 @@
     var maNhanVienList = maNhanViens
         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
         .ToHashSet();
-
-    //// Phân nhóm user có/không dữ liệu theo mã NV
-    //var usersHasData = Model.Users
-    //    .Where(u => maNhanVienList.Contains(u.MaNhanVien))
-    //    .ToList();
-
-    //var usersNoData = Model.Users
-    //    .Where(u => !maNhanVienList.Contains(u.MaNhanVien))
-    //    .ToList();
-
-    //// Gom dữ liệu báo cáo theo UserId + CategoryId
-    //var reportDataDict = Model.ReportDatas
-    //    .GroupBy(d => new { d.UserId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
-    //    .ToDictionary(
-    //        g => g.Key,
-    //        g => g.OrderBy(d => d.Sort).ToList()
-    //    );
-
     // Phân nhóm user có/không dữ liệu theo mã NV
     var usersHasData = Model.HistoryUsers
         .Where(u => maNhanVienList.Contains(u.User?.MaNhanVien))
@@ -95,7 +77,6 @@
         .columnGroup:hover {
             box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
         }
-
 </style>
 
 <div class="container py-3">
@@ -115,7 +96,8 @@
             }
         </select>
 
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV)
+        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
+        @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
                 <option value="">Chọn vùng</option>
@@ -126,17 +108,17 @@
             </select>
         }
 
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
         {
             <select name="OfficeId" class="form-select w-25">
-                <option value="">Chọn chi nhánh</option>
+                <option>Chọn chi nhánh</option>
                 @foreach (var office in Model.Offices)
                 {
                     <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.Name</option>
                 }
             </select>
         }
-        else
+        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
         {
             <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
         }
@@ -200,7 +182,7 @@
                 var groupId = group.Key;
                 int total = group.Count();
                 int i = 1;
-                <div class="columnGroup d-flex columnGroup-@groupId"
+                <div class="columnGroup columnGroupNV d-flex columnGroup-@groupId"
                      data-group-id="group-@groupId" style="margin-right:-1px;">
                     @foreach (var cat in group)
                     {
@@ -256,11 +238,14 @@
     @if (Model.HistoryUsers.PageCount > 1)
     {
         <div class="text-center">
-            @Html.PagedListPager(Model.HistoryUsers,
-              page => Url.Action("ReportKDNV",
-                new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }
-              )
-            )
+            @if (Model.OfficeId != null)
+            {
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year }))
+            }
+            else
+            {
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
+            }
         </div>
     }
 </div>
@@ -271,15 +256,15 @@
             const wrapper = $("#groupWrapper");
             wrapper.sortable({
                 axis: "x",
-                items: ".columnGroup",
+                items: ".columnGroupNV",
                 update: function () {
                     const order = wrapper.children().map(function () {
                         return $(this).attr("data-group-id");
                     }).get();
-                    localStorage.setItem("groupOrder", JSON.stringify(order));
+                    localStorage.setItem("groupOrderNV", JSON.stringify(order));
                 }
             });
-            const saved = JSON.parse(localStorage.getItem("groupOrder") || "[]");
+            const saved = JSON.parse(localStorage.getItem("groupOrderNV") || "[]");
             if (saved.length) {
                 saved.forEach(id =>
                     wrapper.append(wrapper.find(`[data-group-id="${id}"]`))

@@ -4,8 +4,8 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <h2 class="mt-0">Cập nhật xếp hạng</h2>
-<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>
-<div class="box_content">
+@*<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list me-1"></i> Danh sách xếp hạng</a>*@
+<div class="box_content mt-0">
     @using (Html.BeginForm("RankOffice", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)
