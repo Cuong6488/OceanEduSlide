@@ -1289,7 +1289,7 @@ namespace OceanEduSlide.Controllers
                         {
                             // cuộc gọi thực đạt
                             var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
-
+                            // Thêm hoặc update thực đạt CG cho NV
                             if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || countTD > 0)
                             {
                                 var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
@@ -1314,6 +1314,7 @@ namespace OceanEduSlide.Controllers
                                 {
                                     reportDataCallTD.Data = countTD.ToString("N0");
                                 }
+                                // Nếu không phải là NVKD: Chỉ tiêu CG trống
                                 if (historyUser.TypeUser != TypeUser.EC && historyUser.TypeUser != TypeUser.ALT)
                                 {
                                     var targetCallEmpty = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
@@ -1342,8 +1343,10 @@ namespace OceanEduSlide.Controllers
                             {
                                 HistoryUser oldPosittion = null;
                                 var startDateReal = historyUser.DayStart;
+                                // Nếu trạng thái là Đang làm việc
                                 if (historyUser.Status == StatusUser.Active)
                                 {
+                                    //Tìm vị trí cũ
                                     oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == historyUser.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
                                     if (oldPosittion != null)
                                     {
@@ -1352,6 +1355,7 @@ namespace OceanEduSlide.Controllers
                                             ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
                                             return View();
                                         }
+                                        // Gán biến theo ngày điều chuyển để tính ngày bắt đầu làm việc ở vị trí hiện tại
                                         startDateReal = oldPosittion.DayEnd.Value;
                                     }
                                 }
@@ -2542,7 +2546,7 @@ namespace OceanEduSlide.Controllers
             discounts.Delete();
             return RedirectToAction("ListDiscount");
         }
-        public ActionResult ListDiscount(int? page, string name, string result = "")
+        public ActionResult ListDiscount(int? page, string name, string Cth, string officeId, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -2561,10 +2565,20 @@ namespace OceanEduSlide.Controllers
                     discounts = discounts.Where(l => l.Username.Contains(newkey));
                 }
             }
+            if (!string.IsNullOrEmpty(Cth))
+            {
+                discounts = discounts.Where(l => l.Cth.Contains(Cth));
+            }
+            if (!string.IsNullOrEmpty(officeId))
+            {
+                discounts = discounts.Where(a => ("," + a.Offices + ",").Contains("," + officeId + ","));
+            }
             var model = new ListDiscountViewModel
             {
                 Discounts = discounts.ToPagedList(pageNumber, pageSize),
-                Name = name
+                Name = name,
+                Cth = Cth,
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "ShortCode", "Name"),
             };
             return View(model);
         }
@@ -2628,77 +2642,6 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        //public ActionResult InsertDiscountExcel(FormCollection fc)
-        //{
-        //    var file = Request.Files["DiscountFile"];
-        //    if (file != null && file.ContentLength > 0)
-        //    {
-        //        var stream = file.InputStream;
-        //        IExcelDataReader reader;
-        //        if (file.FileName.EndsWith(".xls"))
-        //        {
-        //            reader = ExcelReaderFactory.CreateBinaryReader(stream);
-        //        }
-        //        else if (file.FileName.EndsWith(".xlsx"))
-        //        {
-        //            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("File", @"This file format is not supported");
-        //            return View();
-        //        }
-        //        var result = reader.AsDataSet();
-        //        reader.Close();
-
-        //        //var tbl = result.Tables[0];
-        //        var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
-
-        //        foreach (DataTable tbl in result.Tables)
-        //        {
-        //            for (var i = 1; i < tbl.Rows.Count; i++)
-        //            {
-        //                //var username = tbl.Rows[i][3].ToString().Trim();
-        //                //var countUser = members.Count(a => a.Username == username);
-        //                //if (countUser > 0) continue;
-        //                var fullname = tbl.Rows[i][0].ToString().Trim();
-        //                if (fullname == null) continue;
-        //                int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
-        //                double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
-
-        //                var startDateStr = tbl.Rows[i][4].ToString().Trim();
-        //                var endDateStr = tbl.Rows[i][5].ToString().Trim();
-        //                var gift = tbl.Rows[i][7].ToString().Trim();
-        //                var offices = tbl.Rows[i][9].ToString().Trim();
-        //                if (offices == null) continue;
-        //                int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
-        //                int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
-        //                var cth = tbl.Rows[i][12].ToString().Trim();
-        //                //var countDiscount = discounts.Count(a => a.Username == fullname);
-        //                //if (countDiscount > 0) continue;
-        //                var discount = new Discount
-        //                {
-        //                    Username = fullname,
-        //                    MoneyDiscount = moneyDiscount,
-        //                    PercentDiscount = percentDiscount,
-        //                    Gift = gift,
-        //                    Offices = offices,
-        //                    Pathway = pathway,
-        //                    PathwayTo = pathwayTo,
-        //                    Cth = cth,
-        //                    StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
-        //                    EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
-        //                    Active = true
-        //                };
-        //                _unitOfWork.DiscountRepository.Insert(discount);
-
-        //            }
-        //        }
-        //        _unitOfWork.Save();
-
-        //    }
-        //    return RedirectToAction("ListDiscount");
-        //}
         public ActionResult InsertDiscountExcel(FormCollection fc)
         {
             var file = Request.Files["DiscountFile"];
@@ -2740,15 +2683,22 @@ namespace OceanEduSlide.Controllers
                 //var tbl = result.Tables[0];
                 //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
                 var listDiscount = new List<Discount>();
+                int sheet = 0;
                 foreach (DataTable tbl in result.Tables)
                 {
+                    sheet++;
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
+                        var dong = i + 1;
                         //var username = tbl.Rows[i][3].ToString().Trim();
                         //var countUser = members.Count(a => a.Username == username);
                         //if (countUser > 0) continue;
                         var fullname = tbl.Rows[i][0].ToString().Trim();
-                        if (fullname == null) continue;
+                        if (string.IsNullOrEmpty(fullname))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Tên ưu đãi: Dòng " + dong + ", Sheet " + sheet);
+                            return View();
+                        }
                         int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
                         double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
 
@@ -2756,7 +2706,11 @@ namespace OceanEduSlide.Controllers
                         var endDateStr = tbl.Rows[i][5].ToString().Trim();
                         var gift = tbl.Rows[i][7].ToString().Trim();
                         var offices = tbl.Rows[i][9].ToString().Trim();
-                        if (offices == null) continue;
+                        if (string.IsNullOrEmpty(offices))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh: Dòng " + dong + ", Sheet " + sheet);
+                            return View();
+                        }
                         int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
                         int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
                         var cth = tbl.Rows[i][12].ToString().Trim();

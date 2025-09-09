@@ -6,6 +6,7 @@ using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.Globalization;
@@ -157,11 +158,50 @@ namespace OceanEduSlide.Controllers
         }
         public JsonResult GetDiscount(string cth, double pathway)
         {
-            var discounts = _unitOfWork.DiscountRepository
-                .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
-                (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
-                (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) &&
-                a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+            var discountTypeUsers = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now))
+            && (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) && a.Cth == cth, q => q.OrderBy(a => a.Id));
+            if (User.TypeUser == TypeUser.CV || User.TypeUser == TypeUser.ASM)
+            {
+                if (User.TypeUser == TypeUser.CV || (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2))
+                {
+                    var listZoneShortCode = User.ZoneIds.Trim(',').Split(',');
+                    var officeShortCodesAll = new List<string>();
+                    foreach (var shortCode in listZoneShortCode)
+                    {
+                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == shortCode && a.Active).FirstOrDefault();
+                        if (zone != null)
+                        {
+                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode).ToList();
+                            officeShortCodesAll.AddRange(officeShortCodes);
+                        }
+                    }
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodesAll.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
+                }
+                else
+                {
+                    var zoneId = User.ZoneId;
+                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode).ToList();
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodes.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
+                }
+            }
+            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
+            {
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                {
+                    discountTypeUsers = discountTypeUsers.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+                }   
+                else
+                {
+                    var listCode = User.OfficeNames.Split(',');
+                    discountTypeUsers = discountTypeUsers.Where(a => listCode.Any(l => ("," + a.Offices + ",").Contains("," + l + ",")));
+                }
+            }
+            //var discounts = _unitOfWork.DiscountRepository
+            //    .GetQuery(a => a.Active && ("," + a.Offices + ",").Contains("," + OfficeCode + ",") &&
+            //    (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now)) &&
+            //    (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) &&
+            //    a.Cth == cth /*&& (a.Pathway <= pathway && pathway <= a.PathwayTo)*/, q => q.OrderBy(a => a.Id)).Select(a => new { a.Id, a.Username });
+            var discounts = discountTypeUsers.Select(a => new { a.Id, a.Username }).ToList();
             return Json(discounts, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
@@ -233,7 +273,7 @@ namespace OceanEduSlide.Controllers
             //{
             //    SelectDiscounts = new SelectList(_unitOfWork.DiscountRepository.Get(a => a.Active), "Id", "Username"),
             //};
-            var office = _unitOfWork.OfficeRepository.GetQuery().FirstOrDefault(a => a.Id == User.OfficeId);
+            var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Id == User.OfficeId).FirstOrDefault();
             return View(office);
         }
         [Route("bo-qua-tang-back-to-school")]

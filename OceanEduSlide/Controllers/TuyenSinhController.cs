@@ -87,10 +87,7 @@ namespace OceanEduSlide.Controllers
                 else
                 {
                     var zoneId = User.ZoneId;
-                    var officeShortCodes = _unitOfWork.OfficeRepository
-                        .GetQuery(o => o.ZoneId == zoneId)
-                        .Select(o => o.ShortCode)
-                        .ToList();
+                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode).ToList();
 
                     // Lọc các Category có chứa ít nhất một ShortCode trong Offices
                     catgories = catgories.Where(cat => officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));

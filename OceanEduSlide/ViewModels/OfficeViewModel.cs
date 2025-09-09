@@ -37,5 +37,8 @@ namespace OceanEduSlide.ViewModels
     {
         public PagedList.IPagedList<Discount> Discounts { get; set; }
         public string Name { get; set; }
+        public string Cth { get; set; }
+        public string officeId { get; set; }
+        public SelectList SelectOffices { get; set; }
     }
 }

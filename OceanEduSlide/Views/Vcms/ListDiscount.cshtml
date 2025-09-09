@@ -18,12 +18,27 @@
     <form action="@Url.Action("ListDiscount")" method="get">
         <div class="row">
             @*<div class="col-lg-4">
-                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
-                </div>*@
-            <div class="col-lg-4">
-                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
+            <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
+        </div>*@
+            <div class="col-lg">
+                <label>Tên ưu đãi</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
             </div>
-            <div class="col-lg-4 align-self-center">
+            <div class="col-lg">
+                <label class="mb-2">Chương trình học</label>
+                <select name="Cth">
+                    <option value="">Tất cả</option>
+                    <option value="Anh văn nhi đồng" @(Model.Cth =="Anh văn nhi đồng"?"selected":"")>Anh văn nhi đồng</option>
+                    <option value="Anh văn thiếu nhi" @(Model.Cth =="Anh văn thiếu nhi"?"selected":"")>Anh văn thiếu nhi</option>
+                    <option value="T.A học thuật Trung học" @(Model.Cth =="T.A học thuật Trung học"?"selected":"")>T.A học thuật Trung học</option>
+                    <option value="Luyện thi IELTS" @(Model.Cth =="Luyện thi IELTS"?"selected":"")>Luyện thi IELTS</option>
+                    <option value="T.A giao tiếp quốc tế TOEIC" @(Model.Cth =="T.A giao tiếp quốc tế TOEIC"?"selected":"")>T.A giao tiếp quốc tế TOEIC</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2", data_item = "office" })
+            </div>
+            <div class="col-lg align-self-center">
                 <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
             </div>
         </div>

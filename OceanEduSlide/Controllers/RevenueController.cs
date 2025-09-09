@@ -1354,7 +1354,6 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
-
         public ActionResult ListRevenueUser(int? page, int? officeId, string result = "")
         {
             ViewBag.Result = result;
