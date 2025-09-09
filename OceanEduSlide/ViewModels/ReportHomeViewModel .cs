@@ -36,6 +36,7 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public User User { get; set; }
+        public int? UserType { get; set; }
     }
     public class ListCallViewModel
     {

@@ -88,5 +88,7 @@ namespace OceanEduSlide.Models
         TTL,
         [Display(Name = "Phòng kế toán")]
         PKT,
+        [Display(Name = "AEC")]
+        AEC,
     }
 }

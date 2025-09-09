@@ -601,6 +601,10 @@
     <Compile Include="Migrations\202509051452395_dayrevenue.Designer.cs">
       <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509090851590_aec.cs" />
+    <Compile Include="Migrations\202509090851590_aec.Designer.cs">
+      <DependentUpon>202509090851590_aec.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1851,6 +1855,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509051452395_dayrevenue.resx">
       <DependentUpon>202509051452395_dayrevenue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509090851590_aec.resx">
+      <DependentUpon>202509090851590_aec.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

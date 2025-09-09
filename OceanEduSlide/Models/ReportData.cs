@@ -10,8 +10,10 @@ namespace OceanEduSlide.Models
         public int Month { get; set; }
         [Display(Name = "Năm"), Required]
         public int Year { get; set; }
-        [Display(Name = "Chi nhánh"), Required]
-        public int OfficeId { get; set; }
+        [Display(Name = "Chi nhánh")]
+        public int? OfficeId { get; set; }
+        [Display(Name = "Vùng")]
+        public int? ZoneId { get; set; }
         [Display(Name = "Nhân sự")]
         public int? UserId { get; set; }
         [Display(Name = "Cột"), Required]
