@@ -92,7 +92,10 @@
                 <th>Ngày vào làm</th>
                 <th>Ngày nghỉ/ điều chuyển</th>
                 <th>Chi nhánh</th>
+                <th>Vùng</th>
+                <th>CDCM</th>
                 <th>Phân quyền</th>
+                <th>Ngày tạo</th>
                 @*<th>NS mới</th>*@
                 <th style="width: 130px"></th>
             </tr>
@@ -108,11 +111,15 @@
                     <td>
                         @(user.Office?.Name)
                     </td>
+                    <td>
+                        @(user.Zone?.Name)
+                    </td>
+                    <td>@user.CDCM</td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
-                    @*<td>@Html.DisplayFor(model => user.NewUser)</td>*@
+                    <td>@Html.DisplayFor(model => user.CreateDate)</td>
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
-                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
                         <a href="javascript:;" onclick="deleteUser('@user.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>

@@ -150,7 +150,7 @@
                         <th rowspan="2" class="col-w100 h-90">Chi nhánh</th>
                         <th rowspan="2" class="h-90 col-w65">Mã NV</th>
                         <th rowspan="2" class="col-w150 h-150">Họ tên nhân sự</th>
-                        <th rowspan="2" class="col-w65 h-65">Vị trí</th>
+                        <th rowspan="2" class="col-w65 h-65">CDCM</th>
                         <th rowspan="2" class="col-w90 h-90">Trạng thái</th>
                         <th rowspan="2" class="col-w65 h-90">Ngày <br /> vào làm</th>
                         <th rowspan="2" class="col-w90 h-90">Ngày nghỉ/ <br /> điều chuyển</th>
@@ -162,11 +162,20 @@
                         <tr class="tr-1">
                             <td>@Model.Month</td>
                             @*<td class="text-start">@(u.Office?.Zone.Name)</td>*@
-                            <td class="text-start">@(u.Zone?.Name)</td>
+                            <td class="text-start">
+                                @if (u.ZoneId != null)
+                                {
+                                    @u.Zone.Name
+                                }
+                                else if (u.Office?.ZoneId != null)
+                                {
+                                    @u.Office.Zone.Name
+                                }
+                            </td>
                             <td class="text-start">@(u.Office?.ShortName)</td>
                             <td class="text-start">@(u.User?.MaNhanVien)</td>
                             <td class="text-start">@(u.User?.Fullname)</td>
-                            <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
+                            <td class="text-start">@u.CDCM</td>
                             <td class="text-start">@Html.DisplayFor(m => u.Status)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.DayStart)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.DayEnd)</td>
@@ -177,11 +186,20 @@
                         <tr class="tr-2">
                             <td>@Model.Month</td>
                             @*<td class="text-start">@(u.Office?.Zone.Name)</td>*@
-                            <td class="text-start">@(u.Zone?.Name)</td>
+                            <td class="text-start">
+                                @if (u.ZoneId != null)
+                                {
+                                    @u.Zone.Name
+                                }
+                                else if (u.Office?.ZoneId != null)
+                                {
+                                    @u.Office.Zone.Name
+                                }
+                            </td>
                             <td class="text-start">@(u.Office?.ShortName)</td>
                             <td class="text-start">@(u.User?.MaNhanVien)</td>
                             <td class="text-start">@(u.User?.Fullname)</td>
-                            <td class="text-start">@Html.DisplayFor(m => u.TypeUser)</td>
+                            <td class="text-start">@u.CDCM</td>
                             <td class="text-start">@Html.DisplayFor(m => u.Status)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.DayStart)</td>
                             <td class="text-start">@Html.DisplayFor(m => u.DayEnd)</td>

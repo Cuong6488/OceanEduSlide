@@ -986,11 +986,9 @@ namespace OceanEduSlide.Controllers
                     var zoneName = tbl2.Rows[i][0].ToString().Trim();
                     var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
 
-                    var typeUser = tbl2.Rows[i][10].ToString().Trim();
-                    if (typeUser == "AEC")
-                    {
+                    var cdcm = tbl2.Rows[i][4].ToString().Trim();
 
-                    }
+                    var typeUser = tbl2.Rows[i][10].ToString().Trim();
                     if (string.IsNullOrEmpty(typeUser))
                         continue;
                     TypeUser type = new TypeUser();
@@ -1083,6 +1081,7 @@ namespace OceanEduSlide.Controllers
                                 Fullname = fullname,
                                 SaleKit = true,
                                 TypeUser = type,
+                                CDCM = cdcm,
                                 //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
                             };
                             switch (type)
@@ -1156,6 +1155,8 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
+                        user.CDCM = cdcm;
+                        user.ZoneId = zone?.Id;
                         if (statusUser == StatusUser.Active)
                         {
                             user.Active = true;
@@ -1282,6 +1283,8 @@ namespace OceanEduSlide.Controllers
                     if (historyUser != null)
                     {
                         historyUser.Status = statusUser;
+                        historyUser.ZoneId = zone?.Id;
+                        historyUser.CDCM = cdcm;
                         //historyUser.DayStart = startDate;
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
@@ -1599,6 +1602,7 @@ namespace OceanEduSlide.Controllers
                             ZoneId = zone?.Id,
                             Status = statusUser,
                             DayStart = startDate,
+                            CDCM = cdcm,
                             Active = true
                         };
 
@@ -1770,6 +1774,18 @@ namespace OceanEduSlide.Controllers
             }
             _unitOfWork.Save();
             return RedirectToAction("ListHistoryUser");
+        }
+        public ActionResult ChangePassVico()
+        {
+            var users = _unitOfWork.UserRepository.Get();
+            foreach (var user in users)
+            {
+                //user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
+                //user.OldAcount = true;
+                //user.SaleKit = true;
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListUser");
         }
 
         #endregion
@@ -3659,7 +3675,7 @@ namespace OceanEduSlide.Controllers
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             //var allDthuNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == month && a.ReportCategoryId == );
-            var listOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q=> q.OrderBy(a => a.ZoneId));
+            var listOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
 
             var dt = new DataTable();
             dt.Columns.Add("Vùng");

@@ -171,7 +171,6 @@
                                                         <a class="mt-2 d-inline-block text-danger" href="@Url.Action("UpdateEvent", new{evId = ev.Id})">Cập nhật</a>
                                                         <a class="mt-2 d-inline-block text-danger btn-delete-event" data-ev="@ev.Id" href="javascript:;">Xóa</a>
                                                     </div>
-
                                                 }
                                             }
                                             else
@@ -264,7 +263,7 @@
                             {
                                 <tr>
                                     <td class="text-start px-2 sticky-left">
-                                        @item.HistoryUser.User.Fullname - @Html.DisplayFor(a => item.HistoryUser.TypeUser)  <br /> @item.HistoryUser.User.MaNhanVien (@Html.DisplayFor(a => item.HistoryUser.Status))
+                                        @item.HistoryUser.User.Fullname - @*@Html.DisplayFor(a => item.HistoryUser.TypeUser)*@ @item.HistoryUser.CDCM  <br /> @item.HistoryUser.User.MaNhanVien (@Html.DisplayFor(a => item.HistoryUser.Status))
                                     </td>
                                     @if (ViewBag.WorkingWeeks != Model.Week)
                                     {
@@ -433,7 +432,7 @@
                 <tbody>
                     <tr>
                         <th rowspan="2" class="col-w150 sticky-left">Họ tên nhân sự</th>
-                        <th rowspan="2" style="width: 70px">Chức vụ</th>
+                        <th rowspan="2" style="width: 70px">CDCM</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
 
 
@@ -471,7 +470,7 @@
                                     @item.HistoryUser.User.Fullname <br />(@Html.DisplayFor(a => item.HistoryUser.Status))
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(a => item.HistoryUser.User.TypeUser)
+                                    @item.HistoryUser.CDCM
                                 </td>
                                 <td>
                                     @item.HistoryUser.User.MaNhanVien
@@ -662,7 +661,7 @@
                 <tbody>
                     <tr>
                         <th rowspan="2" class="col-w90 px-2">Họ tên nhân sự</th>
-                        <th rowspan="2" style="width: 70px">Chức vụ</th>
+                        <th rowspan="2" style="width: 70px">CDCM</th>
                         <th rowspan="2" class="col-w90">Mã nhân viên</th>
                         <th colspan="6" class="text-center">Tỉ lệ chuyển đổi</th>
                         @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
@@ -687,7 +686,7 @@
                                     @(item.Fullname??item.Username)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(a => item.TypeUser)
+                                    @item.CDCM
                                 </td>
                                 <td>
                                     @item.MaNhanVien
@@ -719,7 +718,6 @@
                             </tr>
                         }
                     }
-
                 </tbody>
             </table>
         </div>

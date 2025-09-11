@@ -21,7 +21,6 @@ namespace OceanEduSlide
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        //private static Timer _timer;
 
         protected void Application_Start()
         {
@@ -38,10 +37,6 @@ namespace OceanEduSlide
                 Application["ConfigSite"] = unitofWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             }
 
-            //_timer = new Timer(21600000);
-            //_timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            //_timer.Start();
-            //Task.Run(() => TriggerCallLogSync());
             Task.Run(async () =>
             {
                 try
@@ -95,33 +90,5 @@ namespace OceanEduSlide
             );
         }
 
-        //private void OnTimedEvent(object source, ElapsedEventArgs e)
-        //{
-        //    Task.Run(() => TriggerCallLogSync());
-
-        //}
-
-        //private async Task TriggerCallLogSync()
-        //{
-        //    try
-        //    {
-        //        var callLogService = new CallLogService();
-
-        //        // Chỉ đồng bộ ngày hôm trước
-        //        await callLogService.SyncYesterdayAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Ghi log nếu cần
-        //        System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-        //    }
-
-        //}
-
-        //protected void Application_End()
-        //{
-        //    _timer?.Stop();
-        //    _timer?.Dispose();
-        //}
     }
 }

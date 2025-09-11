@@ -198,7 +198,7 @@
                         <th rowspan="2" class="col-w65 sticky-left">Vùng</th>
                         <th rowspan="2" class="col-w150 sticky-left" style="left: calc(-1rem + 65px);">Chi nhánh</th>
                         <th rowspan="2" class="col-w150 sticky-left" style="left: calc(-1rem + 65px + 150px);">Họ tên nhân sự</th>
-                        <th rowspan="2" style="max-width: 40px">Chức vụ</th>
+                        <th rowspan="2" style="max-width: 40px">CDCM</th>
                         <th rowspan="2" class="col-w90">Ngày <br /> vào làm</th>
                         <th rowspan="2" class="col-w90">Ngày nghỉ/ <br /> điều chuyển</th>
                         <th rowspan="2" class="col-w100">Trạng thái</th>
@@ -242,7 +242,7 @@
                                     @revenueOffice.HistoryUser.User.Fullname - @revenueOffice.HistoryUser.User.MaNhanVien
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(a => revenueOffice.HistoryUser.TypeUser)
+                                    @revenueOffice.HistoryUser.CDCM
                                 </td>
                                 <td>
                                     @Html.DisplayFor(a => revenueOffice.HistoryUser.DayStart)

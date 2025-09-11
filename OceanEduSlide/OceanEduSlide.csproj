@@ -605,6 +605,14 @@
     <Compile Include="Migrations\202509090851590_aec.Designer.cs">
       <DependentUpon>202509090851590_aec.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509110840168_CDCM.cs" />
+    <Compile Include="Migrations\202509110840168_CDCM.Designer.cs">
+      <DependentUpon>202509110840168_CDCM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509110843024_CDCMUser.cs" />
+    <Compile Include="Migrations\202509110843024_CDCMUser.Designer.cs">
+      <DependentUpon>202509110843024_CDCMUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1858,6 +1866,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509090851590_aec.resx">
       <DependentUpon>202509090851590_aec.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509110840168_CDCM.resx">
+      <DependentUpon>202509110840168_CDCM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509110843024_CDCMUser.resx">
+      <DependentUpon>202509110843024_CDCMUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -75,7 +75,7 @@
                     <th rowspan="2" class="col-w100 text-start px-2">Chi nhánh</th>
                     <th rowspan="2" class="text-start px-2">Mã nhân sự</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Họ tên nhân sự</th>
-                    <th rowspan="2" class="col-w65 text-start px-2">Vị trí</th>
+                    <th rowspan="2" class="col-w65 text-start px-2">CDCM</th>
                     <th rowspan="2" class="col-w65 text-start px-2">Tháng làm việc</th>
                     <th rowspan="2" class="col-w100 text-start px-2">Trạng thái</th>
                     <th rowspan="2" class="col-w65 text-start px-2">Ngày <br /> vào làm</th>
@@ -111,7 +111,7 @@
                         <td class="text-start px-2">@(office == null? item.HistoryUser.Office?.ShortName:office.ShortName)</td>
                         <td class="text-start px-2">@item.HistoryUser.User.MaNhanVien</td>
                         <td class="text-start px-2">@item.HistoryUser.User.Fullname</td>
-                        <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.TypeUser)</td>
+                        <td class="text-start px-2">@item.HistoryUser.CDCM</td>
                         <td class="text-start px-2">@item.HistoryUser.Month</td>
                         <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.Status)</td>
                         <td class="text-start px-2">@Html.DisplayFor(a => item.HistoryUser.DayStart)</td>

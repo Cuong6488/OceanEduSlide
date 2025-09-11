@@ -43,6 +43,7 @@ namespace OceanEduSlide.Models
         public int? ZoneId { get; set; }
         [Display(Name = "Phân quyền")]
         public TypeUser? TypeUser { get; set; }
+        public string CDCM { get; set; }
         [Display(Name = "Các chi nhánh quản lý")]
         public string OfficeIds { get; set; }
         public string OfficeNames { get; set; }

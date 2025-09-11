@@ -412,7 +412,6 @@ namespace OceanEduSlide.DAL
                         logger.Error("Chua co chi tieu DS NV: " + item.HistoryUser?.User.MaNhanVien + " - thang " + item.Month);
                         continue;
                     }
-
                     decimal ct = 0;
                     var cleanedDatact = datact.Data.Replace(",", "").Replace(".", "");
                     if (decimal.TryParse(cleanedDatact, out ct))
