@@ -432,18 +432,18 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                        if (model.Offices.Count() == 1)
-                            model.OfficeId = model.Offices.First().Id;
+
                     }
                 }
             }
-
             if (model.ZoneId != null)
             {
                 //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
                 model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
 
             }
+            if (model.Offices.Count() == 1)
+                model.OfficeId = model.Offices.First().Id;
             if (model.OfficeId != null && !string.IsNullOrEmpty(startDay) && !string.IsNullOrEmpty(endDay))
             {
 
