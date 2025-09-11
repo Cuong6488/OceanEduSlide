@@ -3595,7 +3595,7 @@ namespace OceanEduSlide.Controllers
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             //var allDthuNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == month && a.ReportCategoryId == );
-            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == 8 && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.ASM,
+            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.ASM,
             q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
 
             var dt = new DataTable();
