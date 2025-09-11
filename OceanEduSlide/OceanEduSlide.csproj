@@ -1301,7 +1301,6 @@
     <Content Include="OEDongBo\DB.edmx.diagram">
       <DependentUpon>DB.edmx</DependentUpon>
     </Content>
-    <Content Include="db.config" />
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />

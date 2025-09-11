@@ -987,7 +987,7 @@ namespace OceanEduSlide.Controllers
                     var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
 
                     var typeUser = tbl2.Rows[i][10].ToString().Trim();
-                    if(typeUser == "AEC")
+                    if (typeUser == "AEC")
                     {
 
                     }
@@ -1610,7 +1610,6 @@ namespace OceanEduSlide.Controllers
 
                     }
                 }
-
                 var offices = _unitOfWork.OfficeRepository.GetQuery();
                 // Tính % HT cuộc gọi CN
                 foreach (var office in offices)
@@ -3583,6 +3582,101 @@ namespace OceanEduSlide.Controllers
             using (var pck = new ExcelPackage())
             {
                 var ws = pck.Workbook.Worksheets.Add("Thống kê cuộc gọi");
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportDthuNV(int month)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            //var allDthuNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == month && a.ReportCategoryId == );
+            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == 8 && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.ASM,
+            q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.Sort));
+
+            var dt = new DataTable();
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Mã NV");
+            dt.Columns.Add("Tên NV");
+            dt.Columns.Add("Vị trí");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt.Columns.Add("Chỉ tiêu");
+            dt.Columns.Add("Thực đạt");
+            dt.Columns.Add("% HT");
+
+            foreach (var item in listHistoryUser)
+            {
+                //var chitieu = ""; var thucdat = ""; var ht = "";
+
+                var chitieu = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == month && a.ReportCategoryId == 87).FirstOrDefault()?.Data ?? "";
+                var thucdat = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == month && a.ReportCategoryId == 88).FirstOrDefault()?.Data ?? "";
+                var ht = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == month && a.ReportCategoryId == 89).FirstOrDefault()?.Data ?? "";
+                dt.Rows.Add(
+                    item.Office?.Name,
+                    item.User.MaNhanVien,
+                    item.User.Fullname,
+                    GetEnumDisplayName(item.TypeUser),
+                    GetEnumDisplayName(item.Status),
+                    item.DayStart.ToString("dd/MM/yyyy"),
+                    item.DayEnd?.ToString("dd/MM/yyyy") ?? "",
+                    chitieu,
+                    thucdat,
+                    ht
+                );
+            }
+
+            var filename = "thong-ke-doanh-thu-NV-thang-" + month + ".xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Thống kê Doanh thu NV");
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportDthuCN(int month)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            //var allDthuNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == month && a.ReportCategoryId == );
+            var listOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q=> q.OrderBy(a => a.ZoneId));
+
+            var dt = new DataTable();
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Chỉ tiêu");
+            dt.Columns.Add("Thực đạt");
+            dt.Columns.Add("% HT");
+
+            foreach (var item in listOffice)
+            {
+                //var chitieu = ""; var thucdat = ""; var ht = "";
+
+                var chitieu = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == item.Id && a.Month == month && a.ReportCategoryId == 34).FirstOrDefault()?.Data ?? "";
+                var thucdat = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == item.Id && a.Month == month && a.ReportCategoryId == 35).FirstOrDefault()?.Data ?? "";
+                var ht = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == item.Id && a.Month == month && a.ReportCategoryId == 36).FirstOrDefault()?.Data ?? "";
+                dt.Rows.Add(
+                    item.Zone?.Name,
+                    item.Name,
+                    chitieu,
+                    thucdat,
+                    ht
+                );
+            }
+
+            var filename = "thong-ke-doanh-thu-CN-thang-" + month + ".xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Thống kê Doanh thu CN");
                 ws.Cells["A1"].LoadFromDataTable(dt, true);
                 ws.Cells[ws.Dimension.Address].AutoFitColumns();
 

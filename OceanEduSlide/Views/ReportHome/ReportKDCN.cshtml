@@ -149,7 +149,7 @@
                                 {
                                     <tr class="tr1">
                                         @{
-                                            var key = new { OfficeId = office.Id, CategoryId = category.Id };
+                                            var key = new { OfficeId = office?.Id, CategoryId = category.Id };
                                             var dataList = reportDataDict.ContainsKey(key) ? reportDataDict[key] : new List<ReportData>();
                                         }
 
