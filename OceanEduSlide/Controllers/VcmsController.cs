@@ -1761,6 +1761,17 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListUser");
         }
+        public ActionResult ChangeAEC(int month)
+        {
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == null && a.Month == month && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.User));
+            foreach (var user in users)
+            {
+                user.TypeUser = TypeUser.AEC;
+            }
+            _unitOfWork.Save();
+            return RedirectToAction("ListHistoryUser");
+        }
+
         #endregion
 
         #region Category
@@ -3686,7 +3697,6 @@ namespace OceanEduSlide.Controllers
             }
         }
         #endregion
-
 
         public static string GetEnumDisplayName(Enum enumValue)
         {
