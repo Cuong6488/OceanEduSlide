@@ -106,7 +106,7 @@ namespace OceanEduSlide.DAL
                         {
                             if (userDict.TryGetValue(log.Exten, out var userId))
                             {
-                                var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == userId && a.Month == day.Month && a.Year == day.Year && a.DayStart <= day && (a.DayEnd == null
+                                var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == userId && a.Month == day.Month && a.Year == day.Year && a.DayStart <= day && (a.DayEnd == null
                                 || (a.DayEnd != null && a.DayEnd.Value >= day)), q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
 
                                 if (historyUser != null)
