@@ -40,7 +40,7 @@
                         <select name="CatIDs" id="categorySelect" class="form_control" multiple="" style=" height: 200px;">
                             @foreach (var item in Model.Offices)
                             {
-                                <option value="@item.Id">@item.Name</option>
+                                <option value="@item.Id">@item.ShortName</option>
                             }
                         </select>
                     </td>

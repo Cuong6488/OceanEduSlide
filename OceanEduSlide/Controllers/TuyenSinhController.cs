@@ -119,7 +119,7 @@ namespace OceanEduSlide.Controllers
             var pageNumber = page ?? 1;
             var model = new RevenueViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
+                //SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "ShortName"),
                 Month = Month ?? DateTime.Now.Month,
                 Year = Year ?? DateTime.Now.Year,
                 OfficeId = OfficeId,
@@ -463,7 +463,7 @@ namespace OceanEduSlide.Controllers
         //        return RedirectToAction("Index","Home");
         //    var model = new RevenueOfficeViewModel
         //    {
-        //        SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "Name"),
+        //        SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "ShortName"),
         //        RevenueOffice = new RevenueOffice { Active = true },
         //    };
         //    ViewBag.Year = DateTime.Now.Year;
@@ -522,7 +522,7 @@ namespace OceanEduSlide.Controllers
             }
             var model = new ListRevenueOfficeViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "ShortName"),
                 RevenueOffices = revenueOffices.ToPagedList(pageNumber, pageSize),
                 OfficeId = officeId,
             };

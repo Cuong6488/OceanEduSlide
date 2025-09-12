@@ -13,7 +13,7 @@ namespace OceanEduSlide.Controllers
         public readonly UnitOfWork _unitOfWork = new UnitOfWork();
 
         public SelectList ZoneSelectList => new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
-        public SelectList OfficeSelectList(int? zoneId) => new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active && a.ZoneId == zoneId, q => q.OrderBy(a => a.Sort)), "Id", "Name");
+        public SelectList OfficeSelectList(int? zoneId) => new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active && a.ZoneId == zoneId, q => q.OrderBy(a => a.Sort)), "Id", "ShortName");
 
 
         public JsonResult GetOffice(int? zoneId)

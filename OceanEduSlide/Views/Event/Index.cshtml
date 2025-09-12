@@ -59,7 +59,7 @@
                 <option>Chọn chi nhánh</option>
                 @foreach (var item in Model.Offices)
                 {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
                 }
             </select>
         }

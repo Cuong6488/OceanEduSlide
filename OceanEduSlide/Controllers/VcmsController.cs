@@ -356,7 +356,7 @@ namespace OceanEduSlide.Controllers
         //        //};
         //        _unitOfWork.RevenueUser_MonthRepository.Insert(model.Revenue);
         //        _unitOfWork.Save();
-        //        //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+        //        //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName");
 
         //        return RedirectToAction("CreateTarget", new { result = "add" });
 
@@ -374,7 +374,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var model = new CreateUserViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
                 //Users = Users,
@@ -390,7 +390,7 @@ namespace OceanEduSlide.Controllers
                 if (exist)
                 {
                     ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName");
                     model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
                     return View(model);
                 }
@@ -398,7 +398,7 @@ namespace OceanEduSlide.Controllers
                 if (exist2)
                 {
                     ModelState.AddModelError("", @"Đã tồn tại nhân sự có mã nhân viên " + model.MaNhanVien);
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName");
                     model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
                     return View(model);
                 }
@@ -435,7 +435,7 @@ namespace OceanEduSlide.Controllers
                     };
                     _unitOfWork.UserRepository.Insert(m);
                     _unitOfWork.Save();
-                    //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name");
+                    //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName");
 
                     return RedirectToAction("ListUser", new { result = "add" });
                 }
@@ -494,7 +494,7 @@ namespace OceanEduSlide.Controllers
 
             var model = new ListUserViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
@@ -537,7 +537,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("ListUser");
             var model = new UpdateUserViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = users,
                 Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
@@ -1723,7 +1723,7 @@ namespace OceanEduSlide.Controllers
 
             var model = new ListHistoryUserViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 HistoryUsers = users.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
@@ -2610,7 +2610,7 @@ namespace OceanEduSlide.Controllers
                 Discounts = discounts.ToPagedList(pageNumber, pageSize),
                 Name = name,
                 Cth = Cth,
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "ShortCode", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "ShortCode", "ShortName"),
             };
             return View(model);
         }
@@ -2632,7 +2632,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var model = new CreateDiscountViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 //Discount = new Discount(),
             };
             return View(model);
@@ -2659,7 +2659,7 @@ namespace OceanEduSlide.Controllers
                 }
                 _unitOfWork.DiscountRepository.Insert(m);
                 _unitOfWork.Save();
-                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "Name"),
+                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
 
                 return RedirectToAction("CreateDiscount", new { result = "add" });
 

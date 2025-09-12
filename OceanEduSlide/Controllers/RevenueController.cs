@@ -896,7 +896,7 @@ namespace OceanEduSlide.Controllers
             }
             var model = new ListRevenueOfficeViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "ShortName"),
                 RevenueOffices = revenueOffices.ToPagedList(pageNumber, pageSize),
                 OfficeId = officeId,
             };
@@ -1131,7 +1131,7 @@ namespace OceanEduSlide.Controllers
 
             var model = new ListPhieuThuViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "ShortName", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "ShortName", "ShortName"),
                 PhieuThus = phieuThus.ToPagedList(pageNumber, pageSize),
                 officeId = officeId,
                 Username = username,
@@ -1367,7 +1367,7 @@ namespace OceanEduSlide.Controllers
             }
             var model = new ListRevenueUserViewModel
             {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "Name"),
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "ShortName"),
                 Revenues = revenueUsers.ToPagedList(pageNumber, pageSize),
                 OfficeId = officeId,
             };

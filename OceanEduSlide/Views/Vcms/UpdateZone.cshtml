@@ -43,7 +43,7 @@
                             @foreach (var item in Model.Offices)
                             {
                                 <option value="@item.Id" @(Model.Zone.OfficeIds != null && Model.Zone.OfficeIds.Split(',').Contains(item.Id.ToString()) ? "selected" : "")>
-                                    @item.Name
+                                    @item.ShortName
                                 </option>
                             }
                         </select>

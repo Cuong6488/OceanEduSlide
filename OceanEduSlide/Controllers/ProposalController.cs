@@ -43,14 +43,14 @@ namespace OceanEduSlide.Controllers
                         var officeAdd = _unitOfWork.OfficeRepository.GetQuery(a => a.ZoneId == zone.Id);
                         offices.AddRange(officeAdd);
                     }
-                    model.SelectOffices = new SelectList(offices, "Id", "Name");
+                    model.SelectOffices = new SelectList(offices, "Id", "ShortName");
 
                 }
                 else
                 {
                     var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
                     if (zone != null)
-                        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "Name");
+                        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "ShortName");
                 }
 
             }
@@ -70,7 +70,7 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        model.SelectOffices = new SelectList(selectOffices, "Id", "Name");
+                        model.SelectOffices = new SelectList(selectOffices, "Id", "ShortName");
 
                     }
                 }
