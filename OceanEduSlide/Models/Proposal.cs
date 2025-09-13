@@ -12,6 +12,8 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Nhân sự đề xuất"), Required]
         public int UserId { get; set; }
+        [Display(Name = "Nhân sự theo dõi")]
+        public int? UserId2 { get; set; }
         [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
         public int OfficeId { get; set; }
         [Display(Name = "Vùng"), Required(ErrorMessage = "Hãy chọn vùng")]
@@ -26,6 +28,8 @@ namespace OceanEduSlide.Models
         public string CVFeedBack { get; set; }
         [Display(Name = "Mã đề xuất")]
         public string MaDeXuat { get; set; }
+        [Display(Name = "Người phản hồi")]
+        public string CVFbName { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
         public int? TypeFaultId { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
@@ -35,6 +39,8 @@ namespace OceanEduSlide.Models
         public int? FaultNumber { get; set; }
         [Display(Name = "Kết luận")]
         public TypeApprove? TypeApprove { get; set; }
+        [Display(Name = "Cho phép CN bổ sung hồ sơ")]
+        public bool BMEdit { get; set; }
         public bool CVSeen { get; set; }
         public bool NSSeen { get; set; }
         [Display(Name = "BM Duyệt")]
@@ -42,6 +48,7 @@ namespace OceanEduSlide.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }
+        public virtual User User2 { get; set; }
         public virtual TypeFault TypeFault { get; set; }
         public virtual ProposalType ProposalType { get; set; }
         public virtual Office Office { get; set; }

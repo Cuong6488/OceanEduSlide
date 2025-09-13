@@ -22,17 +22,21 @@
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.MaDeXuat)</td>
                 <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.MaDeXuat)</strong></td>
             </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
-                <td class="form_text">
-                    @Html.DropDownListFor(model => model.Proposal.ProposalTypeId, Model.SelectProposalTypes, "Chọn loại đề xuất", new { @class = "form-select" })
-                    @Html.ValidationMessageFor(model => model.Proposal.ProposalTypeId)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
-            </tr>
+            @if (!Model.Proposal.BMEdit)
+            {
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Proposal.ProposalTypeId, Model.SelectProposalTypes, "Chọn loại đề xuất", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(model => model.Proposal.ProposalTypeId)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+                </tr>
+            }
+
             <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
                 <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>

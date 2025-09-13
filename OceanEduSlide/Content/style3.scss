@@ -477,6 +477,7 @@ $groupCount: 20;
         z-index: 10;
     }
 }
+
 .content-td {
     min-width: 600px;
 
@@ -516,13 +517,22 @@ $groupCount: 20;
         transition: all 0.5s;
     }
 }
+
 .sticky-left {
     position: sticky !important;
     left: -1rem;
     transform: translateX(-1px);
-    z-index:10;
+    z-index: 10;
 }
-td.sticky-left{
-        background:#eee;
 
+td.sticky-left {
+    background: #eee;
+}
+
+.body-format {
+    & * {
+        font-size: 12px !important;
+        color: #000000 !important;
+        font-family: 'Roboto', sans-serif !important;
+    }
 }

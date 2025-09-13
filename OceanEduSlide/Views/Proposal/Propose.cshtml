@@ -27,6 +27,13 @@
             }
 
             <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.UserId2)</td>
+                <td class="form_text">
+                    @Html.DropDownListFor(model => model.Proposal.UserId2, Model.SelectUsers, "Chọn nhân sự theo dõi", new { @class = "form-select" })
+                    @Html.ValidationMessageFor(model => model.Proposal.UserId2)
+                </td>
+            </tr>
+            <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
                 <td class="form_text">
                     @Html.DropDownListFor(model => model.Proposal.ProposalTypeId, Model.SelectProposalTypes, "Chọn loại đề xuất", new { @class = "form-select" })

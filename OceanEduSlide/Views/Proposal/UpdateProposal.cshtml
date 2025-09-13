@@ -59,6 +59,10 @@
                     @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
                 </td>
             </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.BMEdit)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Proposal.BMEdit)</td>
+            </tr>
             @*<tr>
             <td class="form_name w-25faultnumbertext ">@Html.LabelFor(model => model.Proposal.FaultNumber)</td>
             <td class="form_text">

@@ -603,3 +603,9 @@ h2 {
 td.sticky-left {
   background: #eee;
 }
+
+.body-format * {
+  font-size: 12px !important;
+  color: #000000 !important;
+  font-family: "Roboto", sans-serif !important;
+}

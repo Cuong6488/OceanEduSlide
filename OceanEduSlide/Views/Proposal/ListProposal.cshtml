@@ -11,7 +11,7 @@
         display: none !important;
     }
 
-    td {
+    .dexuat-body td {
         text-align: left !important;
         padding: 2px 7px !important;
     }
@@ -24,20 +24,14 @@
     }
     <div class="d-flex">
         <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
-            <select name="Year" class="form-select me-3 w-25">
-                <option value="">Chọn năm</option>
-                @for (int i = 2024; i <= DateTime.Now.Year; i++)
-                {
-                    <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
-                }
-            </select>
-            <select name="Month" class="form-select me-3 w-25">
-                <option value="">Chọn tháng</option>
-                @for (int i = 1; i <= 12; i++)
-                {
-                    <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
-                }
-            </select>
+            <div class="w-25 d-flex align-items-center">
+                <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
+                <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
+            </div>
+            <div class="w-25 d-flex align-items-center">
+                <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
+                <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
+            </div>
             @if (Model.Zones?.Count() > 1)
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
@@ -58,24 +52,20 @@
                     }
                 </select>
             }
-            @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.PKT)
-            {
-                <select name="Notice" class="form-select ms-3 w-25">
-                    <option value="">Tất cả</option>
-                    @if (Model.User.TypeUser == TypeUser.CV)
-                    {
-                        <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
-                        <option value="2" @(Model.Notice == 2 ? "selected" : "")>Đã phản hồi</option>
-                    }
-                    else
-                    {
-                        <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
-                        <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
-                        <option value="5" @(Model.Notice == 5 ? "selected" : "")> Không phê duyệt</option>
-                    }
-                </select>
-            }
-
+            <select name="Notice" class="form-select ms-3 w-25">
+                <option value="">Tình trạng</option>
+                <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
+                <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
+                <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
+                <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
+            </select>
+            <select name="Fault" class="form-select ms-3 w-25">
+                <option value="">Tổng hợp lỗi</option>
+                @foreach (var item in Model.Faults)
+                {
+                    <option value="@item" @(item == Model.Fault ? "selected" : "")>@item</option>
+                }
+            </select>
             <select name="Type" class="form-select ms-3 me-3 w-25">
                 <option value="">Loại đề xuất</option>
                 @foreach (var item in Model.ProposalTypes)
@@ -148,15 +138,15 @@
                     <th class="col-w90">
                         Loại đề xuất
                     </th>
-                    <th class="col-w90">
-                        Nhân sự <br /> đề xuất
+                    <th class="col-w100">
+                        Nhân sự
                     </th>
                     <th class="col-w65">
                         Ngày <br /> đề xuất
                     </th>
-                    <th class="col-w100">
-                        Tình trạng
-                    </th>
+                    @*<th class="col-w100">
+                            Tình trạng
+                        </th>*@
                     @*<th class="col-w90">
                             Phân loại <br /> đề xuất
                         </th>*@
@@ -175,9 +165,13 @@
                         <th class="col-w90">
                             Tổng hợp lỗi
                         </th>*@
-                    @*<th class="col-w90">
+                    @*
+                        <th class="col-w90">
                             BM Duyệt
                         </th>*@
+                    <th class="col-w65">
+                        CN sửa <br /> hồ sơ
+                    </th>
                     @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                     {
                         <th></th>
@@ -185,10 +179,11 @@
                 </tr>
             </thead>
 
-            @{int stt = 1 + (Model.Page - 1) * ViewBag.PageSize; }
-            <tbody>
+            @{int stt = 0; }
+            <tbody class="dexuat-body">
                 @foreach (var item in Model.Proposals)
                 {
+                    stt++;
                     <tr data-id="@item.Id">
                         <td>@stt</td>
                         <td style="word-break:break-word">@item.MaDeXuat</td>
@@ -196,28 +191,61 @@
                         <td>@item.CVName</td>
                         <td>@item.Office.ShortName - @item.Zone.Name</td>
                         <td>@(item.ProposalType?.Content)</td>
-                        <td>@item.User.Fullname</td>
-                        <td>@Html.DisplayFor(a => item.CreateDate)</td>
                         <td>
-                            @(item.CVSeen == true?"Đã phản hồi":"Chưa phản hồi")
+                            <strong>Đề xuất:</strong> <br />
+                            @item.User.Fullname <br />
+                            @if (item.User2 != null)
+                            {
+                                @: <br />
+                                <strong>Theo dõi:</strong> <br />
+                                @(item.User2?.Fullname)
+                            }
                         </td>
+                        <td>@Html.DisplayFor(a => item.CreateDate)</td>
+                        @*<td>
+                                @(item.CVSeen == true?"Đã phản hồi":"Chưa phản hồi")
+                            </td>*@
                         @*<td>@Html.DisplayFor(a => item.TypeProposal)</td>*@
-                        <td>@Html.Raw(item.Body)</td>
-                        <td style="word-break:break-word">@item.Url</td>
+                        <td class="body-format">@Html.Raw(item.Body)</td>
+                        <td style="word-break:break-word">
+                            @if (!string.IsNullOrEmpty(item.Url))
+                            {
+                                <a target="_blank" href="@item.Url">Link</a>
+                            }
+                            @if (item.BMEdit && Model.User.TypeUser == TypeUser.BM)
+                            {
+                                @: <br /> <br /> <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a>
+                            }
+                        </td>
                         <td>
+
                             @item.CVFeedBack <br /> <br />
                             @if (item.TypeApprove != null)
                             {
-                                @: <strong>Kết luận:</strong> @Html.DisplayFor(a => item.TypeApprove) <br /> <br />
+                                @: <strong>Kết luận:</strong> @Html.DisplayFor(a => item.TypeApprove)
                             }
                             @if (item.TypeFault?.Content != null)
                             {
-                                @: <strong>Tổng hợp lỗi:</strong> @(item.TypeFault?.Content)
+                                @: <br /> <br /> <strong>Tổng hợp lỗi:</strong> @(item.TypeFault?.Content)
                             }
+                            @if (item.CVFbName != null)
+                            {
+                                <br /> <br />
+                                @: <strong>Người phản hồi:</strong> <br />
+                                @item.CVFbName
+                            }
+
                         </td>
                         @*<td>@Html.DisplayFor(a => item.TypeApprove)</td>
                             <td>@(item.TypeFault?.Content)</td>*@
-                        @*<td>@Html.DisplayFor(a => item.Active)</td>*@
+                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+                        {
+                            <td class="text-center">@Html.EditorFor(a => item.BMEdit)</td>
+                        }
+                        else
+                        {
+                            <td class="text-center">@Html.DisplayFor(a => item.BMEdit)</td>
+                        }
                         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                         {
                             <td>
@@ -240,12 +268,11 @@
                             </td>
                         }
                     </tr>
-                    stt++;
                 }
 
             </tbody>
         </table>
-        @if (Model.Proposals.PageCount > 1)
+        @*@if (Model.Proposals.PageCount > 1)
         {
 
 
@@ -261,7 +288,7 @@
 
                 }
             </div>
-        }
+        }*@
     </div>
     @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
 
@@ -288,7 +315,35 @@
                     })
                 }
             });
-
         });
+        $('#item_BMEdit').on('change', function () {
+            const isChecked = $(this).is(':checked');
+            var toast = isChecked ? "Bạn chắc chắn muốn cho CN sửa/ bổ sung hồ sơ?" : "Bạn chắc chắn khóa quyền sửa hồ sơ của CN?";
+            var id = $(this).closest("tr").data("id");
+            if (confirm(toast)) {
+                $.post("/Proposal/UpdateBMEdit", { id: id, isChecked: isChecked }, function (data) {
+                    if (data.status) {
+                        $.toast({
+                            heading: 'Cập nhật thành công',
+                            icon: 'success'
+                        })
+                    } else {
+                        $.toast({
+                            heading: 'Cập nhật thất bại',
+                            icon: 'error'
+                        })
+                    }
+                });
+            }
+        });
+        var today = new Date();
+        $("#StartDay").datepicker({
+            dateFormat: 'dd/mm/yy',
+            maxDate: today,
+        }).attr('readonly', 'readonly');
+        $("#EndDay").datepicker({
+            dateFormat: 'dd/mm/yy',
+            maxDate: today,
+        }).attr('readonly', 'readonly');
     </script>
 }

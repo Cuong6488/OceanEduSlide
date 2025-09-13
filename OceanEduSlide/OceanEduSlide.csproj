@@ -613,6 +613,10 @@
     <Compile Include="Migrations\202509110843024_CDCMUser.Designer.cs">
       <DependentUpon>202509110843024_CDCMUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509130144255_fixproposal1.cs" />
+    <Compile Include="Migrations\202509130144255_fixproposal1.Designer.cs">
+      <DependentUpon>202509130144255_fixproposal1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1872,6 +1876,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509110843024_CDCMUser.resx">
       <DependentUpon>202509110843024_CDCMUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509130144255_fixproposal1.resx">
+      <DependentUpon>202509130144255_fixproposal1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

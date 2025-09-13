@@ -12,6 +12,7 @@ namespace OceanEduSlide.ViewModels
     public class ProposeViewModel
     {
         public SelectList SelectOffices { get; set; }
+        public SelectList SelectUsers { get; set; }
         public SelectList SelectProposalTypes { get; set; }
         public Proposal Proposal { get; set; }
 
@@ -27,10 +28,17 @@ namespace OceanEduSlide.ViewModels
         public string MaDeXuat { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
-        public IPagedList<Proposal> Proposals { get; set; }
+        public IEnumerable<Proposal> Proposals { get; set; }
         public User User { get; set; }
         public List<string> ProposalTypes { get; set; }
+        public List<string> Faults { get; set; }
         public string Type { get; set; }
+        public string Fault { get; set; }
+
+        [Display(Name = "Từ ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]
+        public string StartDay { get; set; }
+        [Display(Name = " Đến ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]
+        public string EndDay { get; set; }
     }
     public class ApproveViewModel
     {
