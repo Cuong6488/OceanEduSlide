@@ -13,6 +13,10 @@
             @Html.HiddenFor(a => a.Proposal.Id)
             @Html.HiddenFor(a => a.Notice)
             <tr>
+                <td class="form_name w-25">Mã đề xuất</td>
+                <td class="form_text"> @Html.DisplayFor(model => model.Proposal.MaDeXuat)</td>
+            </tr>
+            <tr>
                 <td class="form_name w-25">Nhân sự đề xuất</td>
                 <td class="form_text"> @Html.DisplayFor(model => model.Proposal.User.Fullname)</td>
             </tr>
@@ -32,7 +36,7 @@
             </tr>
             <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
-                <td class="form_text"> @Html.Raw(Model.Proposal.Body)</td>
+                <td class="form_text body-format "><div class="p-2 border">@Html.Raw(Model.Proposal.Body)</div></td>
             </tr>
             @if (Model.Proposal.Url != null)
             {
@@ -48,16 +52,20 @@
                 </td>
             </tr>
             <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
+                <td class="form_text">
+                    @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
+                </td>
+            </tr>
+            <tr>
                 <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeFaultId)</td>
                 <td class="form_text">
                     @Html.DropDownListFor(model => model.Proposal.TypeFaultId, Model.SelectFault, "Chọn tổng hợp lỗi", new { @class = "form-select" })
                 </td>
             </tr>
             <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.TypeApprove)</td>
-                <td class="form_text">
-                    @Html.EnumDropDownListFor(model => model.Proposal.TypeApprove, "Chọn kết luận", new { @class = "form-select" })
-                </td>
+                <td class="form_name">@Html.LabelFor(model => model.Proposal.Note)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Proposal.Note)</td>
             </tr>
             <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.BMEdit)</td>

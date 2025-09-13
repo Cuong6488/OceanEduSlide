@@ -7,6 +7,7 @@
     <table class="list_table" id="list-proposalType">
         <tbody>
             <tr>
+                <th>@Html.DisplayNameFor(model => model.Sort)</th>
                 <th>@Html.DisplayNameFor(model => model.Content)</th>
                 <th>@Html.DisplayNameFor(model => model.Active)</th>
                 <th></th>
@@ -14,6 +15,7 @@
             @foreach (var proposalType in Model)
             {
                 <tr data-id="@proposalType.Id">
+                    <td class="left">@proposalType.Sort</td>
                     <td class="left">@proposalType.Content</td>
                     <td>@Html.DisplayFor(a => proposalType.Active)</td>
                     <td class="list-icon">

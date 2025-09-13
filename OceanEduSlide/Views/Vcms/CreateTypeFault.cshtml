@@ -26,6 +26,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Sort)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Sort)
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Active)</td>
                     <td class="form_text">
                         @Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })

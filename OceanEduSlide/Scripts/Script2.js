@@ -12,6 +12,16 @@ $("#AlertBox").delay(5000).slideUp(500);
 //    dropdown: true,
 //    scrollbar: true
 //});
+function autoReload(minutes) {
+    if (!minutes || isNaN(minutes) || minutes <= 0) {
+        console.warn("Tham số không hợp lệ. Phải là số phút dương.");
+        return;
+    }
+
+    setInterval(function () {
+        location.reload();
+    }, minutes * 60 * 1000); // Chuyển phút sang mili giây
+}
 
 $(".form-filter select").on("change", function (data) {
     let form = $(this).closest("form");

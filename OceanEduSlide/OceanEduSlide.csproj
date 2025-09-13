@@ -617,6 +617,14 @@
     <Compile Include="Migrations\202509130144255_fixproposal1.Designer.cs">
       <DependentUpon>202509130144255_fixproposal1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509130824095_sortdexuat.cs" />
+    <Compile Include="Migrations\202509130824095_sortdexuat.Designer.cs">
+      <DependentUpon>202509130824095_sortdexuat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509130855416_notethl.cs" />
+    <Compile Include="Migrations\202509130855416_notethl.Designer.cs">
+      <DependentUpon>202509130855416_notethl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1576,7 +1584,7 @@
     <Content Include="Views\Revenue\RevenueUserWeek_Real.cshtml" />
     <Content Include="Views\Vcms\CreateProposalType.cshtml" />
     <Content Include="Views\Vcms\ListProposalType.cshtml" />
-    <Content Include="Views\Vcms\UpdateProposalType..cshtml" />
+    <Content Include="Views\Vcms\UpdateProposalType.cshtml" />
     <Content Include="Views\Home\ChangePasswordRequired.cshtml" />
     <Content Include="Views\Vcms\UnActiveUserExcel.cshtml" />
     <Content Include="Views\Event\LoadHistoryDedt.cshtml" />
@@ -1879,6 +1887,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509130144255_fixproposal1.resx">
       <DependentUpon>202509130144255_fixproposal1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509130824095_sortdexuat.resx">
+      <DependentUpon>202509130824095_sortdexuat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509130855416_notethl.resx">
+      <DependentUpon>202509130855416_notethl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

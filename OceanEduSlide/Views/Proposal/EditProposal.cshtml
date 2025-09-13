@@ -22,7 +22,7 @@
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.MaDeXuat)</td>
                 <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.MaDeXuat)</strong></td>
             </tr>
-            @if (!Model.Proposal.BMEdit)
+            @if (!Model.Proposal.CVSeen)
             {
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>

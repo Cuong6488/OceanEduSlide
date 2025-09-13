@@ -13,6 +13,7 @@ namespace OceanEduSlide.Models
         public string Content { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        public int Sort { get; set; }
         public virtual User User { get; set; }
         public virtual Office Office { get; set; }
         public TypeFault()

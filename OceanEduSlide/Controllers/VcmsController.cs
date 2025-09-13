@@ -2837,6 +2837,7 @@ namespace OceanEduSlide.Controllers
 
                     typeFault.Content = model.Content;
                     typeFault.Active = model.Active;
+                    typeFault.Sort = model.Sort;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateTypeFault", new { result = "add" });
                 }
@@ -2915,6 +2916,7 @@ namespace OceanEduSlide.Controllers
 
                     proposalType.Content = model.Content;
                     proposalType.Active = model.Active;
+                    proposalType.Sort = model.Sort;
                     _unitOfWork.Save();
                     return RedirectToAction("CreateProposalType", new { result = "add" });
                 }

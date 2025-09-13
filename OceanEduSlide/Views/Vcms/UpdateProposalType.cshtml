@@ -3,7 +3,7 @@
     ViewBag.Title = "Cập nhật loại đề xuất";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<h2 class="mb-5 mt-0">ViewBag.Title</h2>
+<h2 class="mb-5 mt-0">@ViewBag.Title</h2>
 @*<a class="btn quick-link" href="@Url.Action("CreateProposalType","Vcms")"><i class="far fa-list me-1"></i> Danh sách quản trị viên</a>*@
 <div class="box_content px-300 mb-5">
     @using (Html.BeginForm())
@@ -18,6 +18,12 @@
                         @*<input autocomplete="off" type="type" name="name" value="" />*@
                         @Html.EditorFor(model => model.Content, new { @class = "form_control w300" })
                         @Html.ValidationMessageFor(model => model.Content)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Sort)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Sort)
                     </td>
                 </tr>
                 <tr>

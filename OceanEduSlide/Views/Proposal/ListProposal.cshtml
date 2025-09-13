@@ -22,16 +22,9 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-    <div class="d-flex">
+    <div class="d-flex thead-sticky" style="background: #f1f4f6">
         <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
-            <div class="w-25 d-flex align-items-center">
-                <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
-                <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
-            </div>
-            <div class="w-25 d-flex align-items-center">
-                <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
-                <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
-            </div>
+            <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
             @if (Model.Zones?.Count() > 1)
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
@@ -52,20 +45,6 @@
                     }
                 </select>
             }
-            <select name="Notice" class="form-select ms-3 w-25">
-                <option value="">Tình trạng</option>
-                <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
-                <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
-                <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
-                <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
-            </select>
-            <select name="Fault" class="form-select ms-3 w-25">
-                <option value="">Tổng hợp lỗi</option>
-                @foreach (var item in Model.Faults)
-                {
-                    <option value="@item" @(item == Model.Fault ? "selected" : "")>@item</option>
-                }
-            </select>
             <select name="Type" class="form-select ms-3 me-3 w-25">
                 <option value="">Loại đề xuất</option>
                 @foreach (var item in Model.ProposalTypes)
@@ -73,7 +52,28 @@
                     <option value="@item" @(item == Model.Type ? "selected" : "")>@item</option>
                 }
             </select>
-            <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
+            <div class="w-25 d-flex align-items-center">
+                <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
+                <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
+            </div>
+            <div class="w-25 d-flex align-items-center">
+                <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
+                <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
+            </div>
+            <select name="Notice" class="form-select w-25">
+                <option value="">Tình trạng</option>
+                <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
+                <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
+                <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
+                <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
+            </select>
+            <select name="Fault" class="form-select ms-3 me-3 w-25">
+                <option value="">Tổng hợp lỗi</option>
+                @foreach (var item in Model.Faults)
+                {
+                    <option value="@item" @(item == Model.Fault ? "selected" : "")>@item</option>
+                }
+            </select>
         </form>
         @if (Model.User.TypeUser == TypeUser.CV)
         {
@@ -120,7 +120,7 @@
     }
     <div class="box_content no-scroll @(Model.User.TypeUser != TypeUser.BM && Model.User.TypeUser != TypeUser.ASM?"mt-0":"")">
         <table class="list_table tablecenter table-striped text-center">
-            <thead class="thead-sticky">
+            <thead class="thead-sticky" style="top:81px">
                 <tr>
                     <th>STT</th>
                     <th class="col-w65">
@@ -159,16 +159,6 @@
                     <th class="col-w150">
                         Phản hồi <br /> của phòng tuyển sinh <br /> - Kết luận - Tổng hợp lỗi
                     </th>
-                    @*<th class="col-w90">
-                            Kết luận
-                        </th>
-                        <th class="col-w90">
-                            Tổng hợp lỗi
-                        </th>*@
-                    @*
-                        <th class="col-w90">
-                            BM Duyệt
-                        </th>*@
                     <th class="col-w65">
                         CN sửa <br /> hồ sơ
                     </th>
@@ -212,21 +202,43 @@
                             {
                                 <a target="_blank" href="@item.Url">Link</a>
                             }
-                            @if (item.BMEdit && Model.User.TypeUser == TypeUser.BM)
+                            @if (item.BMEdit && item.CVSeen && Model.User.TypeUser == TypeUser.BM)
                             {
                                 @: <br /> <br /> <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a>
                             }
                         </td>
                         <td>
-
-                            @item.CVFeedBack <br /> <br />
+                            <div class="body-format">
+                                @Html.Raw(item.CVFeedBack)
+                            </div>
+                            <br /> <br />
                             @if (item.TypeApprove != null)
                             {
-                                @: <strong>Kết luận:</strong> @Html.DisplayFor(a => item.TypeApprove)
+                                var classColor = "";
+                                switch (item.TypeApprove)
+                                {
+                                    case TypeApprove.Type1:
+                                        classColor = "pheduyet";
+                                        break;
+                                    case TypeApprove.Type2:
+                                        classColor = "kpheduyet";
+                                        break;
+                                    case TypeApprove.Type3:
+                                        classColor = "dangxl";
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                @: <strong>Kết luận: <span class="@classColor">@Html.DisplayFor(a => item.TypeApprove)</span></strong>
                             }
                             @if (item.TypeFault?.Content != null)
                             {
                                 @: <br /> <br /> <strong>Tổng hợp lỗi:</strong> @(item.TypeFault?.Content)
+                                if (item.Note != null)
+                                {
+                                    @: <br /> Note: @item.Note
+
+                                }
                             }
                             @if (item.CVFbName != null)
                             {
@@ -234,10 +246,7 @@
                                 @: <strong>Người phản hồi:</strong> <br />
                                 @item.CVFbName
                             }
-
                         </td>
-                        @*<td>@Html.DisplayFor(a => item.TypeApprove)</td>
-                            <td>@(item.TypeFault?.Content)</td>*@
                         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
                         {
                             <td class="text-center">@Html.EditorFor(a => item.BMEdit)</td>
@@ -262,7 +271,7 @@
 
                                     else if (Model.Notice == 3)
                                     {
-                                        <a class="btn-read" href="javascript:;"> Đánh dấu đã xem</a>
+                                        <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
                                     }
                                 }
                             </td>
@@ -273,26 +282,23 @@
             </tbody>
         </table>
         @*@if (Model.Proposals.PageCount > 1)
-        {
+            {
 
 
-            <div class="text-center">
-                @if (Model.OfficeId != null)
-                {
-                    @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+                <div class="text-center">
+                    @if (Model.OfficeId != null)
+                    {
+                        @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
 
-                }
-                else
-                {
-                    @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
+                    }
+                    else
+                    {
+                        @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
 
-                }
-            </div>
-        }*@
+                    }
+                </div>
+            }*@
     </div>
-    @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
-
-    @*}*@
 </div>
 @section scripts{
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>
@@ -316,7 +322,7 @@
                 }
             });
         });
-        $('#item_BMEdit').on('change', function () {
+        $("input[name='item.BMEdit']").on('change', function () {
             const isChecked = $(this).is(':checked');
             var toast = isChecked ? "Bạn chắc chắn muốn cho CN sửa/ bổ sung hồ sơ?" : "Bạn chắc chắn khóa quyền sửa hồ sơ của CN?";
             var id = $(this).closest("tr").data("id");
@@ -335,6 +341,9 @@
                     }
                 });
             }
+            else {
+                $(this).prop('checked', !isChecked);
+            }
         });
         var today = new Date();
         $("#StartDay").datepicker({
@@ -345,5 +354,7 @@
             dateFormat: 'dd/mm/yy',
             maxDate: today,
         }).attr('readonly', 'readonly');
+        autoReload(10);
+
     </script>
 }

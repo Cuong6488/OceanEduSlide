@@ -24,12 +24,14 @@ namespace OceanEduSlide.Models
         public string Body { get; set; }
         [StringLength(500), Display(Name = "Hồ sơ, tài liệu mình chứng kèm theo")]
         public string Url { get; set; }
-        [StringLength(500), Display(Name = "Phản hồi của phòng tuyển sinh")]
+        [StringLength(500), Display(Name = "Phản hồi của phòng tuyển sinh"), UIHint("EditorBox")]
         public string CVFeedBack { get; set; }
         [Display(Name = "Mã đề xuất")]
         public string MaDeXuat { get; set; }
         [Display(Name = "Người phản hồi")]
         public string CVFbName { get; set; }
+        [Display(Name = "Note")]
+        public string Note { get; set; }
         [Display(Name = "Tổng hợp lỗi")]
         public int? TypeFaultId { get; set; }
         [Display(Name = "Tổng hợp lỗi")]

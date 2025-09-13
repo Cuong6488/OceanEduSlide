@@ -7,6 +7,7 @@
     <table class="list_table" id="list-typeFault">
         <tbody>
             <tr>
+                <th>@Html.DisplayNameFor(model => model.Sort)</th>
                 <th>@Html.DisplayNameFor(model => model.Content)</th>
                 <th>@Html.DisplayNameFor(model => model.Active)</th>
                 <th></th>
@@ -14,6 +15,7 @@
             @foreach (var typeFault in Model)
             {
                 <tr data-id="@typeFault.Id">
+                    <td class="left">@typeFault.Sort</td>
                     <td class="left">@typeFault.Content</td>
                     <td>@Html.DisplayFor(a => typeFault.Active)</td>
                     <td class="list-icon">
