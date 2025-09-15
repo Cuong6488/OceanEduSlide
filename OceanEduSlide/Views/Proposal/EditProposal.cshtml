@@ -22,21 +22,34 @@
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.MaDeXuat)</td>
                 <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.MaDeXuat)</strong></td>
             </tr>
+            <tr>
+                <td class="form_name w-25">Nhân sự đề xuất</td>
+                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.User.Fullname)</strong></td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
+                <td class="form_text">
+                    <strong>@(Model.Proposal.ProposalType?.Content)</strong>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
+                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.CreateDate)</strong></td>
+            </tr>
             @if (!Model.Proposal.CVSeen)
             {
-                <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
-                    <td class="form_text">
-                        @Html.DropDownListFor(model => model.Proposal.ProposalTypeId, Model.SelectProposalTypes, "Chọn loại đề xuất", new { @class = "form-select" })
-                        @Html.ValidationMessageFor(model => model.Proposal.ProposalTypeId)
-                    </td>
-                </tr>
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
                     <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
                 </tr>
             }
-
+            else
+            {
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
+                    <td class="form_text body-format "><div class="p-2 border">@Html.Raw(Model.Proposal.Body)</div></td>
+                </tr>
+            }
             <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
                 <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>

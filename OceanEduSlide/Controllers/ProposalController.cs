@@ -134,7 +134,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = Result;
             //var pageSize = 10;
             //ViewBag.PageSize = pageSize;
-            var types = _unitOfWork.ProposalTypeRepository.GetQuery(a => a.Active, q=> q.OrderBy(a => a.Sort)).Select(a => a.Content).ToList();
+            var types = _unitOfWork.ProposalTypeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).Select(a => a.Content).ToList();
             var faults = _unitOfWork.TypeFaultRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).Select(a => a.Content).ToList();
             if (string.IsNullOrEmpty(startDay))
             {
@@ -170,7 +170,7 @@ namespace OceanEduSlide.Controllers
                 Fault = Fault,
             };
             var historyQuery = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Year == model.Year);
-            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate), 
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate),
                 q => q.OrderByDescending(a => a.CreateDate));
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
@@ -243,7 +243,7 @@ namespace OceanEduSlide.Controllers
                         ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
                     }
                 }
-                else if(User.TypeUser == TypeUser.BM)
+                else if (User.TypeUser == TypeUser.BM)
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                     {
@@ -327,9 +327,12 @@ namespace OceanEduSlide.Controllers
             var proposal = _unitOfWork.ProposalRepository.GetById(model.Proposal.Id);
             if (proposal == null)
                 return RedirectToAction("ListProposal");
-            proposal.Body = model.Proposal.Body;
+            if (!proposal.CVSeen)
+            {
+                proposal.ProposalTypeId = model.Proposal.ProposalTypeId;
+                proposal.Body = model.Proposal.Body;
+            }
             proposal.Url = model.Proposal.Url;
-            proposal.ProposalTypeId = model.Proposal.ProposalTypeId;
             proposal.Active = true;
             //if (string.IsNullOrEmpty(proposal.CVName))
             //{

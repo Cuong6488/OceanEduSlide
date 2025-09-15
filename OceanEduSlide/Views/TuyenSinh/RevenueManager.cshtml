@@ -46,7 +46,7 @@
                 }
             </select>
             @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM && !string.IsNullOrEmpty(Model.User.ZoneIds) && Model.User.ZoneIds.Length > 2))*@
-            @if(Model.Zones?.Count() > 1)
+            @if (Model.Zones?.Count() > 1)
             {
                 <select name="ZoneId" class="form-select me-3 w-25">
                     <option value="">Chọn vùng</option>
@@ -74,15 +74,19 @@
             {
                 <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             }
-            <select name="UserType" class="form-select w-25">
-                <option value="">Tất cả chức danh</option>
-                <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
-                <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
-                <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
-                <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
-                <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
-                <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
-            </select>
+            @if (Model.TypeView == 2)
+            {
+                <select name="UserType" class="form-select w-25">
+                    <option value="">Tất cả chức danh</option>
+                    <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+                    <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+                    <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+                    <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+                    <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+                    <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+                </select>
+            }
+
         </form>
     </div>
     @*@if (Model.User.TypeUser == TypeUser.HO)
@@ -94,7 +98,8 @@
     @if (Model.TypeView == 1)
     {
         <h2>Chỉ tiêu - kế hoạch phân bổ doanh số</h2>
-        <div class="box_content mt-0 mb-5 no-scroll">
+        @*<a class="btn quick-link" href="@Url.Action("ExportRevenueCN", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
+        <div class="box_content mb-5 mt-0 no-scroll">
             <table class="list_table tablecenter table-striped listrevenue-user">
                 <thead class="thead-sticky">
                     <tr class="text-center">
@@ -113,7 +118,6 @@
                         <th class="col-w90">Phân bổ DS theo SAB</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @foreach (var item in Model.OfficeItems)
                     {
@@ -190,6 +194,8 @@
     else if (Model.TypeView == 2)
     {
         <h2>Kế hoạch phân bổ doanh số theo tuần</h2>
+        @*<a class="btn quick-link" href="@Url.Action("ExportRevenueNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId, UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
+
         <div class="box_content mt-0">
             <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
             <table class="list_table tablecenter table-striped listrevenue-user">

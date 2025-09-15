@@ -26,7 +26,7 @@ using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 using ImageResizer.ExtensionMethods;
 using Microsoft.IdentityModel.Tokens;
-
+using OceanEduSlide.EnumHelpers;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
