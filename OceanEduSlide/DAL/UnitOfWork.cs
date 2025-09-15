@@ -39,6 +39,9 @@ namespace OceanEduSlide.DAL
         private GenericRepository<TargetGroup> _targetGroupRepository;
         private GenericRepository<WorkingDay> _workingDayRepository;
         private GenericRepository<BC_PhieuThu_DB> _phieuThuRepository;
+        private GenericRepository<LockImport> _lockImportRepository;
+        public GenericRepository<LockImport> LockImportRepository =>
+           _lockImportRepository ?? (_lockImportRepository = new GenericRepository<LockImport>(_context));
         public GenericRepository<BC_PhieuThu_DB> PhieuThuRepository =>
            _phieuThuRepository ?? (_phieuThuRepository = new GenericRepository<BC_PhieuThu_DB>(_context));
         public GenericRepository<WorkingDay> WorkingDayRepository =>

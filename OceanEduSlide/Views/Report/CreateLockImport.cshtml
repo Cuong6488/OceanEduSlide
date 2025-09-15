@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Khóa số liệu hàng tháng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mb-5 mt-0">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("ListLockImport","Report")"><i class="far fa-list me-1"></i> Danh sách khóa số liệu</a>
+<div class="box_content px-300 mb-5">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <input name="Month" type="hidden" value="@ViewBag.Month" />
+        <input name="Year" type="hidden" value="@ViewBag.Year" />
+        <table class="form_table">
+            <tbody>
+                <tr>
+                    <td class="form_name">Tháng khóa</td>
+                    <td class="form_text">
+                        <strong>@ViewBag.Month - @ViewBag.Year</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">Loại số liệu</td>
+                    <td class="form_text">
+                        @*<input autocomplete="off" type="type" name="name" value="" />*@
+                        <select name="Type" class="form_control w300" required>
+                            <option value="">Chọn loại số liệu</option>
+                            <option value="0">Nhân sự theo tháng</option>
+                            <option value="1">Báo cáo KD CN - NV</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><input class="btn quick-link w-auto" type="submit" value="Khóa"></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
+@*<h2 class="mb-5">Danh sách User</h2>
+    @Html.Action("ListUser", "Vcms")*@

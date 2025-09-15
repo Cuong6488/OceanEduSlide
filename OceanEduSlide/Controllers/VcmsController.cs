@@ -970,6 +970,13 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("", @"Kiểm tra lại cột năm");
                     return View();
                 }
+                var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.HistoryUser).FirstOrDefault();
+                if (lockImport != null && Role != RoleAdmin.Admin)
+                {
+                    ModelState.AddModelError("", @"Số liệu tháng trước đã được khóa, chỉ quyền quản trị viên mới có thể cập nhật");
+                    return View();
+                }
+
                 var reportCallOffices = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
                 foreach (var item in reportCallOffices)
                 {
@@ -1096,23 +1103,24 @@ namespace OceanEduSlide.Controllers
                                         newUser.Zone = z;
                                     }
                                     break;
-                                case TypeUser.EC:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        newUser.OfficeIds = ",";
-                                        newUser.OfficeNames = "";
-                                        foreach (var item in zones.Split(','))
-                                        {
-                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o != null)
-                                            {
-                                                newUser.OfficeIds += o.Id + ",";
-                                                newUser.OfficeNames += o.ShortCode + ",";
-                                            }
-                                        }
-                                        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
-                                    }
-                                    break;
+                                //case TypeUser.EC:
+                                //    if (!string.IsNullOrEmpty(zones))
+                                //    {
+                                //        newUser.OfficeIds = ",";
+                                //        newUser.OfficeNames = "";
+                                //        foreach (var item in zones.Split(','))
+                                //        {
+                                //            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                //            if (o != null)
+                                //            {
+                                //                newUser.OfficeIds += o.Id + ",";
+                                //                newUser.OfficeNames += o.ShortCode + ",";
+                                //            }
+                                //        }
+                                //        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                //        newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
+                                //    }
+                                //    break;
                                 case TypeUser.BM:
                                     if (!string.IsNullOrEmpty(zones))
                                     {
@@ -1128,6 +1136,7 @@ namespace OceanEduSlide.Controllers
                                             }
                                         }
                                         newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                        newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
                                     }
 
                                     break;
@@ -1188,21 +1197,7 @@ namespace OceanEduSlide.Controllers
                                     }
                                     break;
                                 case TypeUser.EC:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        user.OfficeIds = ",";
-                                        user.OfficeNames = "";
-                                        foreach (var item in zones.Split(','))
-                                        {
-                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o != null)
-                                            {
-                                                user.OfficeIds += o.Id + ",";
-                                                user.OfficeNames += o.ShortCode + ",";
-                                            }
-                                        }
-                                        user.OfficeNames = user.OfficeNames.Trim(',');
-                                    }
+                                    user.OfficeIds = null;
                                     break;
                                 case TypeUser.BM:
                                     if (!string.IsNullOrEmpty(zones))
@@ -1219,6 +1214,7 @@ namespace OceanEduSlide.Controllers
                                             }
                                         }
                                         user.OfficeNames = user.OfficeNames.Trim(',');
+                                        user.OfficeIds = (user.OfficeIds == "," ? null : user.OfficeIds);
                                     }
 
                                     break;
@@ -1269,7 +1265,7 @@ namespace OceanEduSlide.Controllers
                     //    continue;
 
 
-                    var query = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && a.DayStart == startDate);
+                    var query = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.Active && a.Month == monthInt && a.Year == yearInt && a.TypeUser == type && a.DayStart == startDate);
                     if (office != null)
                     {
                         query = query.Where(a => a.OfficeId == office.Id);

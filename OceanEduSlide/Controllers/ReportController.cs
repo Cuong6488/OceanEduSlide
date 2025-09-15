@@ -1,5 +1,6 @@
 ﻿using Antlr.Runtime.Misc;
 using ExcelDataReader;
+using FluentScheduler;
 using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
@@ -26,9 +27,10 @@ namespace OceanEduSlide.Controllers
     public class ReportController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
+        private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
         private string Fullname => RouteData.Values["Fullname"].ToString();
 
-        public ActionResult Report(string result="")
+        public ActionResult Report(string result = "")
         {
             return View();
         }
@@ -85,13 +87,23 @@ namespace OceanEduSlide.Controllers
                     .GetQuery(a => a.TypeCat == TypeCat.Type1)
                     .Include(a => a.CategoryParent)
                     .ToList();
-
+                bool checkLock = false;
                 for (int i = 2; i < tbl.Rows.Count; i++)
                 {
+
                     var month = tbl.Rows[i][0].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     if (!int.TryParse(month, out int monthInt)) continue;
-
+                    if (checkLock == false)
+                    {
+                        var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == DateTime.Now.Year && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.ReportData).FirstOrDefault();
+                        checkLock = true;
+                        if (lockImport != null && Role != RoleAdmin.Admin)
+                        {
+                            ModelState.AddModelError("", @"Số liệu tháng trước đã được khóa, chỉ quyền quản trị viên mới có thể cập nhật");
+                            return View();
+                        }
+                    }
                     var officeShortName = tbl.Rows[i][3].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
 
@@ -338,11 +350,76 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.ReportDataRepository.InsertRange(reportDataList2);
 
                 _unitOfWork.Save();
-                return RedirectToAction("Report", new {result="add"});
+                return RedirectToAction("Report", new { result = "add" });
             }
             return RedirectToAction("Report");
         }
 
+        public ActionResult CreateLockImport()
+        {
+            int lastMonth = 0;
+            int yearLastMonth = 0;
+            if (DateTime.Now.Month == 1)
+            {
+                lastMonth = 12;
+                yearLastMonth = DateTime.Now.Year - 1;
+            }
+            else
+            {
+                lastMonth = DateTime.Now.Month - 1;
+                yearLastMonth = DateTime.Now.Year;
+            }
+            ViewBag.Month = lastMonth;
+            ViewBag.Year = yearLastMonth;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CreateLockImport(int Type, int Month, int Year)
+        {
+            var oldLock = _unitOfWork.LockImportRepository.GetQuery(a => (int)a.TypeLock == Type && a.Month == Month && a.Year == Year).FirstOrDefault();
+            if (oldLock == null)
+            {
+                var typeLock = new TypeLock();
+                switch (Type)
+                {
+                    case 0:
+                        typeLock = TypeLock.HistoryUser;
+                        break;
+                    case 1:
+                        typeLock = TypeLock.ReportData;
+                        break;
+                    default:
+                        break;
+                }
+                var lockImport = new LockImport
+                {
+                    Month = Month,
+                    Year = Year,
+                    TypeLock = typeLock
+                };
+                _unitOfWork.LockImportRepository.Insert(lockImport);
+                _unitOfWork.Save();
+            }
+
+            return RedirectToAction("ListLockImport", new { result = "add" });
+        }
+        public ActionResult ListLockImport(int? page, int? type, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 20;
+            var locks = _unitOfWork.LockImportRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate).ThenBy(a => a.TypeLock));
+            if (type != null)
+            {
+                locks = locks.Where(a => (int)a.TypeLock == type);
+            }
+            var model = new ListLockImportViewModel
+            {
+                LockImports = locks.ToPagedList(pageNumber, pageSize),
+                Type = type
+            };
+            return View(model);
+        }
         public ActionResult ReportCN(string result = "")
         {
             return View();

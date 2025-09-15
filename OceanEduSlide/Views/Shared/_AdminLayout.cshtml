@@ -130,10 +130,7 @@
                         <a class="root"><i class="fal fa-file-edit icon"></i><span>Quản lý Báo cáo</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Báo cáo KD CN - NV", "Report", "Report", null, new { @class = "text_link" })</div>
-                            @*<div>@Html.ActionLink("Báo cáo KD CN", "ReportCN", "Report", null, new { @class = "text_link" })</div>*@
-                            @*<div>@Html.ActionLink("Báo cáo KD CN", "Report", "Report", new { type = 1 }, new { @class = "text_link" })</div>*@
-                            @*<div>@Html.ActionLink("Báo cáo KD NV", "Report", "Report", new { type = 2 }, new { @class = "text_link" })</div>*@
-                            @*<div>@Html.ActionLink("QĐ PTS - Hàng tháng", "Report", "Report", new { type = 3 }, new { @class = "text_link" })</div>*@
+                            <div>@Html.ActionLink("Khóa số liệu", "CreateLockImport", "Report", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                 </ul>

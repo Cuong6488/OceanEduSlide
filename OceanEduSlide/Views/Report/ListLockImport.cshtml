@@ -1,0 +1,42 @@
+﻿@model OceanEduSlide.ViewModels.ListLockImportViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Lịch sử khóa số liệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Khóa thành công</strong></div>
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="far fa-undo-alt me-1"></i> Trở lại trang chủ</a>
+<div class="box_content">
+    <p class="w-25 d-flex align-items-center"><span class="d-block pb-2 w-50">Loại file</span> @Html.DropDownListFor(model => model.Type, Model.SelectGroup, "Tất cả loại dữ liệu", new { @class = "form_control w300", onchange = "window.location.href='/Report/ListLockImport?type='+this.value" })</p>
+    <table class="list_table tablecenter table-striped">
+        <tr>
+            <th>Thời gian khóa</th>
+            <th>Loại dữ liệu</th>
+            <th>Tháng khóa</th>
+        </tr>
+        @foreach (var item in Model.LockImports)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(a => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.TypeLock)
+                </td>
+                <td>
+                    @item.Month - @item.Year
+                </td>
+            </tr>
+        }
+        @if (Model.LockImports.PageCount > 1)
+        {
+            <tr>
+                <td colspan="3">@Html.PagedListPager(Model.LockImports, page => Url.Action("ListLockImport", new { page, type = Model.Type }))</td>
+            </tr>
+        }
+    </table>
+</div>

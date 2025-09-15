@@ -608,6 +608,7 @@ td.sticky-left {
   font-size: 12px !important;
   color: #000000 !important;
   font-family: "Roboto", sans-serif !important;
+  background: none !important;
 }
 
 .pheduyet {

@@ -102,7 +102,7 @@ namespace OceanEduSlide.Controllers
                     return View(model);
                 }
                 model.Proposal.ZoneId = z.Id;
-                var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.ZoneIds.Contains(z.ShortCode));
+                var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds.Contains(z.ShortCode));
                 model.Proposal.CVName = "";
                 foreach (var item in cvs)
                 {
@@ -393,6 +393,18 @@ namespace OceanEduSlide.Controllers
             proposal.BMEdit = isChecked;
             _unitOfWork.Save();
             return Json(new { status = true });
+        }
+        [HttpPost]
+        public bool DeleteProposal(int proposalId = 0)
+        {
+            var proposal = _unitOfWork.ProposalRepository.GetById(proposalId);
+            if (proposal == null)
+            {
+                return false;
+            }
+            _unitOfWork.ProposalRepository.Delete(proposal);
+            _unitOfWork.Save();
+            return true;
         }
         protected override void Dispose(bool disposing)
         {

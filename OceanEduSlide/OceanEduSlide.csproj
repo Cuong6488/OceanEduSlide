@@ -625,9 +625,14 @@
     <Compile Include="Migrations\202509130855416_notethl.Designer.cs">
       <DependentUpon>202509130855416_notethl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509150327009_lockimport.cs" />
+    <Compile Include="Migrations\202509150327009_lockimport.Designer.cs">
+      <DependentUpon>202509150327009_lockimport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
+    <Compile Include="Models\LockImport.cs" />
     <Compile Include="Models\TargetGroup.cs" />
     <Compile Include="Models\HistoryOffice.cs" />
     <Compile Include="Models\HistoryUser.cs" />
@@ -1608,6 +1613,8 @@
     <Content Include="Views\Revenue\TargetOffice2.cshtml" />
     <Content Include="Views\Revenue\PhieuThuTHDB.cshtml" />
     <Content Include="Views\Revenue\ListPhieuThu.cshtml" />
+    <Content Include="Views\Report\CreateLockImport.cshtml" />
+    <Content Include="Views\Report\ListLockImport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1893,6 +1900,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509130855416_notethl.resx">
       <DependentUpon>202509130855416_notethl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509150327009_lockimport.resx">
+      <DependentUpon>202509150327009_lockimport.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

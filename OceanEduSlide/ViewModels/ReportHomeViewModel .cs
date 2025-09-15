@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace OceanEduSlide.ViewModels
 {
@@ -84,5 +85,20 @@ namespace OceanEduSlide.ViewModels
         [Display(Name = " Đến ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]
         public string EndDay { get; set; }
         public IEnumerable<CallLog> CallLogs { get; set; }
+    }
+    public class ListLockImportViewModel
+    {
+        public PagedList.IPagedList<LockImport> LockImports { get; set; }
+        public int? Type { get; set; }
+        public SelectList SelectGroup { get; set; }
+        public ListLockImportViewModel()
+        {
+            var listgroup = new Dictionary<int, string>
+            {
+                { 0, "Nhân sự tháng" },
+                { 1, "Báo cáo KD CN - NV" },
+            };
+            SelectGroup = new SelectList(listgroup, "Key", "Value");
+        }
     }
 }
