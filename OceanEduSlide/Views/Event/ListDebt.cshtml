@@ -80,7 +80,8 @@
         {
             <a class="btn quick-link" href="@Url.Action("CreateDebt")">Thêm mới công nợ</a>
         }
-        <div class="box_content @(Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV?"mt-0":"")">
+        <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 1,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content">
             @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>
@@ -194,7 +195,7 @@
                                 <td>@Html.DisplayFor(a => item.Debt.ChannelPay)</td>
                                 <td>@Html.DisplayFor(a => item.Debt.FileStatus)</td>
                                 <td>@Html.DisplayFor(a => item.Debt.GrossDate)</td>
-                                <td>@(item.Debt.User.Fullname??item.Debt.User.Username)</td>
+                                <td>@item.Debt.User.Fullname</td>
                                 <td>@item.Debt.HardContent</td>
                                 <td>@item.Debt.ContactStatus</td>
                                 <td>@item.Debt.HandleWay</td>
@@ -223,7 +224,8 @@
         </div>
 
         <h2 class="mt-4">DANH SÁCH CÔNG NỢ đã xóa tháng @Model.Month - @Model.Year</h2>
-        <div class="box_content mt-0">
+        <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 0,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content">
             @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
             <table class="list_table tablecenter table-striped text-center">
                 <tbody>

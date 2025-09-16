@@ -88,7 +88,8 @@
     @if (Model.OfficeId != null)
     {
         <h2>KẾ HOẠCH TUẦN @Model.Week - Tháng @Model.Month - @Model.Year DỰ KIẾN</h2>
-        <div class="box_content box-overview mt-0 mb-5">
+        <a class="btn quick-link" href="@Url.Action("ExportEvent", new {Month = Model.Month,Year = Model.Year,Week = Model.Week,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content box-overview mb-5">
 
             <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
             <table class="list_table tablecenter table-striped text-center">

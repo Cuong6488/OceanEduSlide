@@ -360,8 +360,6 @@ namespace OceanEduSlide.Controllers
 
                 ws.Cells["A1"].LoadFromDataTable(dt, true);
 
-
-
                 if (ws.Dimension != null)
                 {
                     ws.Cells[ws.Dimension.Address].Style.WrapText = true;
@@ -676,7 +674,7 @@ namespace OceanEduSlide.Controllers
 
         }
 
-        public PartialViewResult LoadHistoryEvent(int year, int month, int officeId, int weekNumber, int dayOfWeek,int Type)
+        public PartialViewResult LoadHistoryEvent(int year, int month, int officeId, int weekNumber, int dayOfWeek, int Type)
         {
             var model = new LoadHistoryEventViewModel
             {
@@ -1169,6 +1167,66 @@ namespace OceanEduSlide.Controllers
             }
             return View(model);
         }
+        public void ExportDebt(int Year, int Month, int OfficeId, int? UserType, int Active)
+        {
+            var debts = _unitOfWork.DebtRepository.GetQuery(a => (a.Year < Year || (a.Year == Year && a.Month <= Month)) && a.DebtId == null && a.User.OfficeId == OfficeId);
+            if (Active == 1)
+                debts = debts.Where(a => a.Active);
+            else
+                debts = debts.Where(a => !a.Active);
+            if (UserType != null)
+                debts = debts.Where(a => (int)a.User.TypeUser == UserType);
+            var debtitems = debts.ToList().Select(x => new DebtViewModel.DebtItem
+            {
+                DebtParentId = x.Id,
+                Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id), q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
+            }).Where(x => x.Debt != null);
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Ngày phát sinh cọc");
+            dt.Columns.Add("Họ tên học viên");
+            dt.Columns.Add("Mã học viên");
+            dt.Columns.Add("Chương trình học");
+            dt.Columns.Add("Tên QĐ ưu đãi");
+            dt.Columns.Add("Lộ trình");
+            dt.Columns.Add("Thành tiền");
+            dt.Columns.Add("Tiền cọc giữ chỗ");
+            dt.Columns.Add("Tiền cọc bổ sung làm hồ sơ");
+            dt.Columns.Add("Tình trạng khách hàng");
+            dt.Columns.Add("Tiền giảm lộ trình");
+            dt.Columns.Add("Tiền còn lại phải thanh toán");
+            dt.Columns.Add("Hình thức thanh toán");
+            dt.Columns.Add("Kênh trả góp");
+            dt.Columns.Add("Tình trạng hồ sơ");
+            dt.Columns.Add("Ngày phát sinh gộp phí");
+            dt.Columns.Add("NS phụ trách");
+            dt.Columns.Add("Nội dung khó khăn");
+            dt.Columns.Add("Tình trạng liên hệ khách");
+            dt.Columns.Add("Hướng xử lý");
+            int stt = 1;
+            foreach (var item in debtitems)
+            {
+                dt.Rows.Add(stt, item.Debt.DepositDate, item.Debt.StudentName, item.Debt.StudentCode, item.Debt.Cth, item.Debt.DiscountName, item.Debt.Pathway, item.Debt.TotalMoney, item.Debt.DebtMoney, item.Debt.DebtMoney2,
+                    EnumExtensions.GetDisplayName(item.Debt.TypeDebt), item.Debt.DownMoney, item.Debt.RemainMoney, EnumExtensions.GetDisplayName(item.Debt.TypePay), EnumExtensions.GetDisplayName(item.Debt.ChannelPay),
+                    item.Debt.FileStatus, item.Debt.GrossDate, item.Debt.User.Fullname, item.Debt.HardContent, item.Debt.ContactStatus, item.Debt.HandleWay);
+                stt++;
+            }
+            var filename = $"phan-bo-DS-tong-quan.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ DS tổng quan");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
         public PartialViewResult LoadHistoryDedt(int debtId)
         {
             var debt = _unitOfWork.DebtRepository.GetById(debtId);

@@ -4,15 +4,18 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using OfficeOpenXml;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using System.Web.Services.Description;
+using Helpers;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
@@ -198,7 +201,6 @@ namespace OceanEduSlide.Controllers
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type1);
             if (User.TypeUser == TypeUser.CV)
             {
-                var k = User.ZoneIds;
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
                 //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
                 if (model.ZoneId == null)
@@ -233,7 +235,7 @@ namespace OceanEduSlide.Controllers
                         if (model.ZoneId == null)
                         {
                             model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            if (model.OfficeId != null)
+                            if (model.OfficeId == null)
                                 proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
                         }
                     }
@@ -302,6 +304,155 @@ namespace OceanEduSlide.Controllers
             //    return View(model);
             //}
         }
+        public void ExportProposal(int? ZoneId, int? OfficeId, string startDay, string endDay, int? Notice, string MaDeXuat, string Type, string Fault)
+        {
+            if (string.IsNullOrEmpty(startDay))
+            {
+                var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                startDay = startDate.ToString("dd/MM/yyyy");
+            }
+            if (string.IsNullOrEmpty(endDay))
+                endDay = DateTime.Now.ToString("dd/MM/yyyy");
+            DateTime StartDate = new DateTime();
+            DateTime EndDate = new DateTime();
+            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+            {
+                StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+            }
+            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+            {
+                EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+            }
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate),
+                q => q.OrderByDescending(a => a.CreateDate));
+            if (!string.IsNullOrEmpty(MaDeXuat))
+                proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            if (!string.IsNullOrEmpty(Type))
+            {
+                proposals = proposals.Where(a => a.ProposalTypeId != null && a.ProposalType.Content == Type);
+            }
+            if (!string.IsNullOrEmpty(Fault))
+            {
+                proposals = proposals.Where(a => a.TypeFaultId != null && a.TypeFault.Content == Fault);
+            }
+            if (Notice == 1)
+                proposals = proposals.Where(a => !a.CVSeen);
+            if (Notice == 4)
+                proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type3);
+            if (Notice == 5)
+                proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type2);
+            if (Notice == 6)
+                proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type1);
+            if (User.TypeUser == TypeUser.CV)
+            {
+                if (ZoneId == null)
+                {
+                    proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
+                }
+                if (Notice == 2)
+                    proposals = proposals.Where(a => a.CVSeen);
+            }
+            else if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.PKT)
+            {
+                proposals = proposals.Where(a => a.Active);
+            }
+            else
+            {
+                if (Notice == 2)
+                    proposals = proposals.Where(a => a.Active == false);
+                else if (Notice == 3)
+                {
+                    proposals = proposals.Where(a => a.NSSeen == false);
+                }
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        if (ZoneId == null)
+                        {
+                            if (OfficeId == null)
+                                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
+                        }
+                    }
+                    else
+                    {
+                        ZoneId = User.ZoneId;
+                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
+                    }
+                }
+                else if (User.TypeUser == TypeUser.BM)
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        OfficeId = User.OfficeId;
+                        if (User.TypeUser == TypeUser.BM)
+                            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
+                    }
+                    else
+                    {
+                        if (OfficeId == null)
+                            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
+                    }
+                }
+                else
+                {
+                    OfficeId = User.OfficeId;
+                    proposals = proposals.Where(a => a.UserId2 == User.Id);
+                }
+            }
+            if (ZoneId != null)
+            {
+                proposals = proposals.Where(a => a.ZoneId == ZoneId);
+            }
+            if (OfficeId != null)
+            {
+                proposals = proposals.Where(a => a.OfficeId == OfficeId);
+            }
+            var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Mã đề xuất");
+            dt.Columns.Add("CV PTS phụ trách");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Loại đề xuất");
+            dt.Columns.Add("Nhân sự đề xuất");
+            dt.Columns.Add("Nhân sự theo dõi");
+            dt.Columns.Add("Ngày đề xuất");
+            dt.Columns.Add("Nội dung và lý do đề xuất");
+            dt.Columns.Add("Hồ sơ, tài liệu minh chứng kèm theo");
+            dt.Columns.Add("Phản hồi của phòng tuyển sinh");
+            dt.Columns.Add("Kết luận");
+            dt.Columns.Add("Tổng hợp lỗi");
+            dt.Columns.Add("Note");
+            int stt = 1;
+            foreach (var item in proposals)
+            {
+                dt.Rows.Add(stt,item.MaDeXuat,item.CVName,item.Office.ShortName,item.Zone.Name, item.ProposalType?.Content, item.User.Fullname, item.User2?.Fullname, item.CreateDate.ToString("dd/MM/yyyy"),
+                   HtmlHelpers.RemoveHtml(null,item.Body), item.Url, HtmlHelpers.RemoveHtml(null, item.CVFeedBack),EnumExtensions.GetDisplayName(item.TypeApprove), item.TypeFault?.Content,item.Note);
+                stt++;
+            }
+            var filename = $"danh-sach-de-xuat.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách đề xuất");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
         public ActionResult EditProposal(int pId)
         {
             if (/*User.TypeUser != TypeUser.ASM &&*/ User.TypeUser != TypeUser.BM)

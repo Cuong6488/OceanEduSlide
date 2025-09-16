@@ -19,6 +19,9 @@ using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using NLog;
 using static Microsoft.IO.RecyclableMemoryStreamManager;
+using OfficeOpenXml;
+using System.Data;
+using OceanEduSlide.EnumHelpers;
 
 namespace OceanEduSlide.Controllers
 {
@@ -185,6 +188,103 @@ namespace OceanEduSlide.Controllers
 
             return View(model);
         }
+        public void ExportKDCN(int Year, int Month, int? ZoneId)
+        {
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+
+            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
+            if (User.TypeUser == TypeUser.CV)
+            {
+                if (ZoneId == null)
+                {
+                    offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
+                }
+            }
+            else if (User.TypeUser != TypeUser.HO)
+            {
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        if (ZoneId == null)
+                        {
+                            offices = offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        }
+                    }
+                    else
+                    {
+                        ZoneId = User.ZoneId;
+                    }
+                }
+                else
+                {
+                    if (User.OfficeIds != null)
+                        offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                    else
+                    {
+                        offices = offices.Where(a => a.Id == User.OfficeId);
+
+                    }
+                }
+            }
+            if (ZoneId != null)
+            {
+                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
+            }
+
+            var dt = new DataTable();
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Chi nhánh");
+            var categoryParents = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && (int)a.TypeCat == 1 && a.ReportCategoryId == null);
+            foreach (var catParent in categoryParents)
+            {
+                var categories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.ReportCategoryId == catParent.Id);
+                foreach (var category in categories)
+                {
+                    dt.Columns.Add(catParent.Name + " - " + category.Name);
+                }
+            }
+
+            foreach (var office in offices)
+            {
+                var listData = new List<string>();
+                listData.Add($"{Month}/{Year}");                // Tháng
+                listData.Add(office.Zone?.Name ?? "");          // Vùng
+                listData.Add(office.ShortName);
+                foreach (var catParent in categoryParents)
+                {
+                    var categories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.ReportCategoryId == catParent.Id);
+                    foreach (var category in categories)
+                    {
+                        var report = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.ReportCategoryId == category.Id && a.Month == Month && a.Year == Year && a.OfficeId == office.Id)
+                            .FirstOrDefault()?.Data ?? "";
+                        //thêm dữ liệu ở đây
+                        listData.Add(report);
+                    }
+                }
+                dt.Rows.Add(listData.ToArray());
+            }
+
+
+            var filename = $"bao-cao-kdcn.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Báo cáo KDCN");
+
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
 
         public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserType, int? Month, int? Year)
         {
@@ -204,7 +304,7 @@ namespace OceanEduSlide.Controllers
             var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear
             && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
             && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
-            if(User.TypeUser != TypeUser.ASM)
+            if (User.TypeUser != TypeUser.ASM)
             {
                 historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
             }
@@ -356,6 +456,148 @@ namespace OceanEduSlide.Controllers
             }
 
             return View(model);
+        }
+        public void ExportKDNV(int Year, int Month, int? ZoneId, int? OfficeId, int? UserType)
+        {
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == Month && a.Year == Year
+            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == Month) || a.DayEnd.Value.Month != Month)))
+            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
+            if (User.TypeUser != TypeUser.ASM)
+            {
+                historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
+            }
+            if (UserType != null)
+            {
+                historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
+            }
+
+            if (User.TypeUser == TypeUser.HO)
+            {
+
+            }
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                if (ZoneId == null)
+                {
+                    if (OfficeId == null)
+                        historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                }
+            }
+            else
+            {
+                //model.ZoneId = User.ZoneId;
+
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        if (ZoneId == null)
+                        {
+                            if (OfficeId == null)
+                                historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")))
+                                || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && User.ZoneIds.Contains("," + a.Zone.ShortCode + ",")));
+                        }
+                    }
+                    else
+                    {
+                        ZoneId = User.ZoneId;
+                    }
+                    //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        OfficeId = User.OfficeId;
+                    }
+                    else
+                    {
+                        if (OfficeId == null)
+                        {
+                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                        }
+                    }
+                }
+            }
+
+            if (ZoneId != null)
+            {
+                if (User.TypeUser != TypeUser.ASM)
+                    historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == ZoneId));
+                else
+                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == ZoneId))
+                    || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && ZoneId == a.ZoneId));
+            }
+
+            if (OfficeId != null)
+            {
+                historyQuery = historyQuery.Where(a => a.OfficeId == OfficeId);
+            }
+
+            var dt = new DataTable();
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Mã NV");
+            dt.Columns.Add("Họ tên nhân sự");
+            dt.Columns.Add("CDCM");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            var categoryParents = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && (int)a.TypeCat == 2 && a.ReportCategoryId == null);
+            foreach (var catParent in categoryParents)
+            {
+                var categories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.ReportCategoryId == catParent.Id);
+                foreach (var category in categories)
+                {
+                    dt.Columns.Add(catParent.Name + " - " + category.Name);
+                }
+            }
+
+            foreach (var historyUser in historyQuery)
+            {
+                var listData = new List<string>();
+                listData.Add($"{Month}/{Year}");
+                listData.Add(historyUser.Zone?.Name ?? "");
+                listData.Add(historyUser.Office?.ShortName ?? "");
+                listData.Add(historyUser.User.MaNhanVien ?? "");
+                listData.Add(historyUser.User.Fullname ?? "");
+                listData.Add(historyUser.CDCM ?? "");
+                listData.Add(EnumHelpers.EnumExtensions.GetDisplayName(historyUser.Status));
+                listData.Add(historyUser.DayStart.ToString("dd/MM/yyyy"));
+                listData.Add(historyUser.DayEnd?.ToString("dd/MM/yyyy") ?? "");
+                foreach (var catParent in categoryParents)
+                {
+                    var categories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.ReportCategoryId == catParent.Id);
+                    foreach (var category in categories)
+                    {
+                        var report = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.ReportCategoryId == category.Id && a.Month == Month && a.Year == Year && a.HistoryUserId == historyUser.Id)
+                            .FirstOrDefault()?.Data ?? "";
+                        listData.Add(report);
+                    }
+                }
+                dt.Rows.Add(listData.ToArray());
+            }
+
+
+            var filename = $"bao-cao-kdnv.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Báo cáo KDNV");
+
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
         }
 
         #region CallLogs

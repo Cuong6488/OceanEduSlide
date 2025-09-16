@@ -113,12 +113,12 @@
     @*@if (Model.ZoneId != null)
         {*@
     <h2>DANH SÁCH ĐỀ XUẤT</h2>
-    @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+    @if (Model.User.TypeUser == TypeUser.BM)
     {
         <a class="btn quick-link" href="@Url.Action("Propose")"><i class="fal fa-plus-circle me-1"></i>Thêm mới đề xuất</a>
-
     }
-    <div class="box_content no-scroll @(Model.User.TypeUser != TypeUser.BM && Model.User.TypeUser != TypeUser.ASM?"mt-0":"")">
+    <a class="btn quick-link" href="@Url.Action("ExportProposal", new {Month = Model.Month,Year = Model.Year,startDay = Model.StartDay,endDay = Model.EndDay,Notice = Model.Notice,MaDeXuat = Model.MaDeXuat,Type = Model.Type, Fault = Model.Fault,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <div class="box_content no-scroll">
         <table class="list_table tablecenter table-striped text-center">
             <thead class="thead-sticky" style="top:81px">
                 <tr>
@@ -238,6 +238,21 @@
                                 {
                                     @: <br /> Note: @item.Note
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                 }
                             }
                             @if (item.CVFbName != null)
@@ -255,28 +270,28 @@
                         {
                             <td class="text-center">@Html.DisplayFor(a => item.BMEdit)</td>
                         }
-                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO @*|| Model.User.TypeUser == TypeUser.ASM*@)
-                        {
-                    <td>
-                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
-                        {
-                            <a href="@Url.Action("UpdateProposal", new {pId = item.Id,notice = Model.Notice})">Phản hồi</a>
-                        }
-                        else
-                        {
-                            if (item.CVSeen == false)
-                            {
-                                <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a> <br /> <br />
-                                <a href="javascript:;" onclick="deleteProposal('@item.Id')" style="color: red;">Xóa</a>
-                            }
+                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO@*|| Model.User.TypeUser == TypeUser.ASM*@)
+{
+<td>
+    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+    {
+        <a href="@Url.Action("UpdateProposal", new {pId = item.Id,notice = Model.Notice})">Phản hồi</a>
+    }
+    else
+    {
+        if (item.CVSeen == false)
+        {
+            <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a> <br /> <br />
+            <a href="javascript:;" onclick="deleteProposal('@item.Id')" style="color: red;">Xóa</a>
+        }
 
-                            else if (Model.Notice == 3)
-                            {
-                                <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
-                            }
-                        }
-                    </td>
-                        }
+        else if (Model.Notice == 3)
+        {
+            <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
+        }
+    }
+</td>
+}
                     </tr>
                 }
 

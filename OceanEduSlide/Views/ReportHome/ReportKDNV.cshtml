@@ -138,7 +138,7 @@
     </form>
 
     <h2>BÁO CÁO KDNV tháng @Model.Month - @Model.Year</h2>
-    <a class="btn quick-link" href="@Url.Action("Report", "Report", new { type = 2 })">Cập nhật báo cáo KDNV</a>
+    <a class="btn quick-link" href="@Url.Action("ExportKDNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId,UserType=Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 
     <div class="box_content d-flex">
         <div class="columnGroup" data-group-id="group-0">
