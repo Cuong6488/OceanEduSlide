@@ -107,8 +107,8 @@
 
     </form>
     <h2>DANH SÁCH SỰ KIỆN</h2>
-    <div class="box_content box-overview mt-0 mb-5 no-scroll" style="width:fit-content;min-width:100%">
-
+    <a class="btn quick-link" href="@Url.Action("ExportEvent", new {Month = Model.Month,Year = Model.Year,Week = Model.Week,ZoneId = Model.ZoneId,TypeView = Model.TypeView})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <div class="box_content box-overview mb-5 no-scroll" style="width:fit-content;min-width:100%">
         <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
         <table class="list_table tablecenter table-striped text-center">
             <thead class="thead-sticky">

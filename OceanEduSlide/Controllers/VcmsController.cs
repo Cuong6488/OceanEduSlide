@@ -3329,7 +3329,7 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-        public void ExportEvent2()
+        public void ExportEvent2(int Year, int Month, int Week, int? OfficeId, int? ZoneId, int? TypeView)
         {
             var month = 8;
             var year = 2025;

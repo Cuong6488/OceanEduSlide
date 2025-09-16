@@ -144,7 +144,7 @@
                                             @if (ev != null)
                                             {
                                                 <div class="btnhistory-input">
-                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i})"
+                                                    <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryEvent",  new{month = Model.Month,year = Model.Year,officeId = ev.OfficeId,weekNumber = Model.Week,dayofWeek = i,Type = j})"
                                                        data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
                                                 </div>
                                                 @: @Html.LabelFor(a => ev.Name): @ev.Name <br />

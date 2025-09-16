@@ -157,7 +157,8 @@
         </div>
     }
     <h2>Kế hoạch phân bổ doanh số theo tuần</h2>
-    <div class="box_content mt-0">
+    <a class="btn quick-link" href="@Url.Action("ExportRevenueNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId, UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <div class="box_content">
         <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
         <table class="list_table tablecenter table-striped listrevenue-user">
             <tbody>

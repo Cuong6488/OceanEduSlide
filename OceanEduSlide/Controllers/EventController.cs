@@ -6,9 +6,12 @@ using OceanEduSlide.Filters;
 using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Drawing;
 using System.Globalization;
@@ -19,6 +22,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using System.Windows.Media;
 using Z.EntityFramework.Plus;
+using OceanEduSlide.EnumHelpers;
 
 namespace OceanEduSlide.Controllers
 {
@@ -168,6 +172,206 @@ namespace OceanEduSlide.Controllers
             var allRevenues = GetAllRevenues(model.Week ?? 0, model.Month ?? 0, model.Year ?? 0);
             ViewBag.AllRevenues = allRevenues;
             return View("EventManager", model);
+        }
+
+        public void ExportEvent(int Year, int Month, int Week, int? OfficeId, int? ZoneId, int? TypeView)
+        {
+            var events = _unitOfWork.EventRepository.GetQuery(a => a.Year == Year && a.Month == Month && (int)a.WeekNumber == Week);
+            var offices1 = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            if (User.TypeUser == TypeUser.HO)
+            {
+
+            }
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                if (ZoneId == null)
+                {
+                    offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+
+                    if (OfficeId == null)
+                        events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
+                }
+            }
+            else
+            {
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        if (ZoneId == null)
+                        {
+                            offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            if (OfficeId == null)
+                                events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                        }
+                    }
+                    else
+                    {
+                        ZoneId = User.ZoneId;
+                    }
+
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                        OfficeId = User.OfficeId;
+                    else
+                    {
+                        if (OfficeId == null)
+                        {
+                            events = events.Where(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
+                            offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                        }
+                    }
+                }
+
+            }
+            if (ZoneId != null && OfficeId == null)
+            {
+                offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
+                events = events.Where(a => a.Office.ZoneId == ZoneId);
+
+            }
+            else if (OfficeId != null)
+            {
+                events = events.Where(a => a.OfficeId == OfficeId);
+                offices1 = offices1.Where(a => a.Id == OfficeId);
+            }
+            //var latestEventsPerGroup = events.GroupBy(e => new { e.Month, e.Year, e.WeekNumber, e.OfficeId, e.DayofWeek })
+            //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
+            //model.Events = latestEventsPerGroup;
+            // Chọn bản ghi mới nhất cho mỗi nhóm
+            if (TypeView >= 1 && TypeView <= 4)
+            {
+                events = events.Where(a => (int)a.TypeEvent == TypeView);
+            }
+            // Lấy toàn bộ sự kiện thỏa điều kiện, group theo OfficeId + WeekNumber + DayofWeek
+            var eventsList = events.AsNoTracking().GroupBy(a => new { a.OfficeId, a.WeekNumber, a.DayofWeek }).Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault()).ToList();
+            // Dictionary tra cứu nhanh: OfficeId -> WeekEnum -> DayEnum
+            //var eventDict = eventsList
+            //    .GroupBy(e => e.OfficeId)
+            //    .ToDictionary(
+            //        g => g.Key,
+            //        g => g.GroupBy(e => e.WeekNumber)
+            //              .ToDictionary(
+            //                  wg => wg.Key,
+            //                  wg => wg.ToDictionary(e => e.DayofWeek, e => e)
+            //              )
+            //    );
+            var eventDict = events
+                    .GroupBy(e => e.OfficeId)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.GroupBy(e => e.WeekNumber)
+                              .ToDictionary(
+                                  wg => wg.Key,
+                                  wg => wg.GroupBy(e => e.DayofWeek)
+                                          .ToDictionary(
+                                              dg => dg.Key,
+                                              dg => dg.GroupBy(e => e.TypeEvent) // Mỗi loại hoạt động chỉ lấy bản mới nhất
+                                                    .Select(k => k.OrderByDescending(e => e.CreateDate).First())
+                                                    .ToList()
+                                          )
+                              )
+                    );
+
+            var offices = offices1.AsNoTracking().ToList();
+
+            var dt = new DataTable();
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Vùng");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Tuần");
+
+            for (int d = 2; d <= 8; d++) // Thứ 2 đến Chủ nhật
+            {
+                dt.Columns.Add(d == 8 ? "Chủ nhật" : $"Thứ {d}");
+            }
+
+            foreach (var office in offices)
+            {
+                var row = dt.NewRow();
+                row["Chi nhánh"] = office.ShortName;
+                row["Vùng"] = office.Zone?.Name;
+                row["Tháng"] = Month.ToString();
+                row["Tuần"] = Week;
+
+                // Ép kiểu từ int sang enum (WeekEnum và DayEnum là enum thực tế bạn đang dùng)
+                var weekEnum = (WeekNumber)Week;
+
+                //for (int j = 2; j <= 8; j++)
+                //{
+                //    var dayEnum = (DayofWeek)j;
+
+                //    if (eventDict.TryGetValue(office.Id, out var weekDict) &&
+                //        weekDict.TryGetValue(weekEnum, out var dayDict) &&
+                //        dayDict.TryGetValue(dayEnum, out var eventDay))
+                //    {
+                //        var eventInfo = string.Join("\n", new[]
+                //        {
+                //        $"Loại hoạt động: {EnumExtensions.GetDisplayName(eventDay.TypeEvent)}",
+                //        $"Tên hoạt động: {eventDay.Name}",
+                //        $"Đối tượng tham gia: {EnumExtensions.GetDisplayName(eventDay.TypeJoin)}",
+                //        $"Lứa tuổi: {eventDay.Ages}",
+                //        $"Thời gian: {eventDay.TimeFrom} - {eventDay.TimeTo}",
+                //    });
+
+                //        var columnName = j == 8 ? "Chủ nhật" : $"Thứ {j}";
+                //        row[columnName] = eventInfo.Trim();
+                //    }
+                //}
+                for (int j = 2; j <= 8; j++)
+                {
+                    var dayEnum = (DayofWeek)j;
+
+                    if (eventDict.TryGetValue(office.Id, out var weekDict) &&
+                        weekDict.TryGetValue(weekEnum, out var dayDict) &&
+                        dayDict.TryGetValue(dayEnum, out var eventList) && eventList.Any())
+                    {
+                        // Gộp thông tin các sự kiện trong ngày đó (mỗi loại 1 bản mới nhất)
+                        var eventInfoList = eventList.Select(eventDay => string.Join("\n", new[]
+                        {
+            $"Loại hoạt động: {EnumExtensions.GetDisplayName(eventDay.TypeEvent)}",
+            $"Tên hoạt động: {eventDay.Name}",
+            $"Đối tượng tham gia: {EnumExtensions.GetDisplayName(eventDay.TypeJoin)}",
+            $"Lứa tuổi: {eventDay.Ages}",
+            $"Thời gian: {eventDay.TimeFrom} - {eventDay.TimeTo}"
+        }));
+
+                        var columnName = j == 8 ? "Chủ nhật" : $"Thứ {j}";
+                        row[columnName] = string.Join("\n\n---\n\n", eventInfoList); // Ngăn cách giữa các sự kiện
+                    }
+                }
+
+                dt.Rows.Add(row);
+
+            }
+
+            var filename = $"danh-sach-su-kien.xlsx";
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Danh sách sự kiện");
+
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+
+
+                if (ws.Dimension != null)
+                {
+                    ws.Cells[ws.Dimension.Address].Style.WrapText = true;
+                    ws.Cells[ws.Dimension.Address].AutoFitColumns();
+                }
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
         }
         public List<RevenueUser_DayOfWeek> GetAllRevenues(int week, int month, int year)
         {
@@ -472,14 +676,14 @@ namespace OceanEduSlide.Controllers
 
         }
 
-        public PartialViewResult LoadHistoryEvent(int year, int month, int officeId, int weekNumber, int dayOfWeek)
+        public PartialViewResult LoadHistoryEvent(int year, int month, int officeId, int weekNumber, int dayOfWeek,int Type)
         {
             var model = new LoadHistoryEventViewModel
             {
                 Year = year,
                 Month = month,
                 Office = _unitOfWork.OfficeRepository.GetById(officeId),
-                Events = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && a.OfficeId == officeId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek, q => q.OrderBy(a => a.CreateDate)),
+                Events = _unitOfWork.EventRepository.GetQuery(a => a.Year == year && a.Month == month && a.OfficeId == officeId && (int)a.WeekNumber == weekNumber && (int)a.DayofWeek == dayOfWeek && (int)a.TypeEvent == Type, q => q.OrderBy(a => a.CreateDate)),
             };
             switch (weekNumber)
             {

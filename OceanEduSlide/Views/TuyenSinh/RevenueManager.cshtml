@@ -98,8 +98,8 @@
     @if (Model.TypeView == 1)
     {
         <h2>Chỉ tiêu - kế hoạch phân bổ doanh số</h2>
-        @*<a class="btn quick-link" href="@Url.Action("ExportRevenueCN", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
-        <div class="box_content mb-5 mt-0 no-scroll">
+        <a class="btn quick-link" href="@Url.Action("ExportRevenueCN", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content mb-5 no-scroll">
             <table class="list_table tablecenter table-striped listrevenue-user">
                 <thead class="thead-sticky">
                     <tr class="text-center">
@@ -194,9 +194,8 @@
     else if (Model.TypeView == 2)
     {
         <h2>Kế hoạch phân bổ doanh số theo tuần</h2>
-        @*<a class="btn quick-link" href="@Url.Action("ExportRevenueNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId, UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
-
-        <div class="box_content mt-0">
+        <a class="btn quick-link" href="@Url.Action("ExportRevenueNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId, UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content">
             <a href=""><i class="fa-solid fa-arrows-rotate"></i></a>
             <table class="list_table tablecenter table-striped listrevenue-user">
                 <tbody>

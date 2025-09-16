@@ -253,6 +253,7 @@ namespace OceanEduSlide.Controllers
                 // Bước 2: Truy vấn danh sách người dùng đầy đủ
                 var listHistoryUsers = historyUsers
                     .ToList();
+                //var allUserIds = listHistoryUsers.Select(u => u.UserId).Distinct().ToList();
 
                 // Bước 3: Phân trang danh sách người dùng
                 var pagedHistoryUsers = historyUsers
@@ -262,6 +263,8 @@ namespace OceanEduSlide.Controllers
 
                 // Bước 4: Lấy danh sách userId cần xử lý
                 var userIds = pagedHistoryUsers.Select(u => u.Id).ToList();
+                var pagedUserIds = pagedHistoryUsers.Select(u => u.UserId).Distinct().ToList();
+
 
                 // Bước 5: Truy vấn dữ liệu liên quan theo userIds
                 var revenueMonthsList = _unitOfWork.RevenueUser_MonthRepository
@@ -298,14 +301,25 @@ namespace OceanEduSlide.Controllers
                     .GroupBy(p => p.HistoryUserId)
                     .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).ToList());
 
+                //var debtsList = _unitOfWork.DebtRepository
+                //    .GetQuery(q => q.Active && userIds.Contains(q.UserId) &&
+                //        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
+                //        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+                //    .AsNoTracking()
+                //    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
+                //    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
+                //    .ToList();
+                //var debtDict = debtsList
+                //    .GroupBy(q => q.UserId)
+                //    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0);
                 var debtsList = _unitOfWork.DebtRepository
-                    .GetQuery(q => q.Active && userIds.Contains(q.UserId) &&
-                        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
-                        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
-                    .AsNoTracking()
-                    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
-                    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
-                    .ToList();
+    .GetQuery(q => q.Active && pagedUserIds.Contains(q.UserId) &&
+        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
+        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+    .AsNoTracking()
+    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
+    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
+    .ToList();
 
                 var debtDict = debtsList
                     .GroupBy(q => q.UserId)
@@ -346,6 +360,13 @@ namespace OceanEduSlide.Controllers
         }
         public void ExportRevenueCN(int Year, int Month, int? ZoneId)
         {
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
             if (User.TypeUser == TypeUser.CV)
             {
@@ -354,7 +375,7 @@ namespace OceanEduSlide.Controllers
                     offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
                 }
             }
-            else
+            else if(User.TypeUser != TypeUser.HO)
             {
                 if (User.TypeUser == TypeUser.ASM)
                 {
@@ -362,7 +383,8 @@ namespace OceanEduSlide.Controllers
                     {
                         if (ZoneId == null)
                         {
-                            offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
+                            //offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
+                            offices = offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                         }
                     }
                     else
@@ -372,12 +394,14 @@ namespace OceanEduSlide.Controllers
                 }
                 else if (User.OfficeIds != null)
                 {
-                    offices = offices.Where(a => User.OfficeIds.Contains("," + a.Id + ","));
+                    //offices = offices.Where(a => User.OfficeIds.Contains("," + a.Id + ","));
+                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId + ",")));
                 }
             }
             if (ZoneId != null)
             {
-                offices = offices.Where(a => a.ZoneId == ZoneId);
+                //offices = offices.Where(a => a.ZoneId == ZoneId);
+                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
             }
             var dt = new DataTable();
             dt.Columns.Add("Vùng");
@@ -423,17 +447,20 @@ namespace OceanEduSlide.Controllers
             && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.AEC
             && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == Month) || a.DayEnd.Value.Month != Month))),
             q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort));
-            if (User.TypeUser == TypeUser.CV && ZoneId == null && OfficeId == null)
+            if (User.TypeUser == TypeUser.CV)
             {
-                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                if (ZoneId == null && OfficeId == null)
+                    historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
             }
-            else
+            else if (User.TypeUser != TypeUser.HO)
             {
                 if (User.TypeUser == TypeUser.ASM)
                 {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2 && ZoneId == null && OfficeId == null)
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
                     {
-                        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        if (ZoneId == null && OfficeId == null)
+                            historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        var hs = historyUsers.Count();
                     }
                     else
                     {
@@ -522,7 +549,7 @@ namespace OceanEduSlide.Controllers
                 foreach (var item in historyUsers)
                 {
                     var targetMonth = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
-                    var camKetMonth = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year, q=> q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+                    var camKetMonth = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
                     var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == item.UserId && (q.Year < Year || (q.Year == Year && q.Month < Month))
                         && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id)
                         .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
