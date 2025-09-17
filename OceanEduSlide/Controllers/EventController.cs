@@ -1211,11 +1211,11 @@ namespace OceanEduSlide.Controllers
                     item.Debt.FileStatus, item.Debt.GrossDate, item.Debt.User.Fullname, item.Debt.HardContent, item.Debt.ContactStatus, item.Debt.HandleWay);
                 stt++;
             }
-            var filename = $"phan-bo-DS-tong-quan.xlsx";
+            var filename = $"danh-sach-cong-no.xlsx";
             using (var pck = new ExcelPackage())
             {
                 //Create the worksheet
-                var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ DS tổng quan");
+                var ws = pck.Workbook.Worksheets.Add("Danh sách công nợ");
 
                 //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
                 ws.Cells["A1"].LoadFromDataTable(dt, true);

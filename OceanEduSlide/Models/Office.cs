@@ -20,6 +20,9 @@ namespace OceanEduSlide.Models
         public string ShortName { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [Display(Name = "Ngày khai trương")]
+        public DateTime? OpenDate { get; set; }
         [Display(Name = "Hotline"), StringLength(20, ErrorMessage = "Tối đa 20 ký tự"), UIHint("TextBox")]
         public string Hotline { get; set; }
         [StringLength(50, ErrorMessage = "Tối đa 50 ký tự"), Display(Name = "Email"),

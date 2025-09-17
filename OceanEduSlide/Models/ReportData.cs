@@ -20,6 +20,8 @@ namespace OceanEduSlide.Models
         public int ReportCategoryId { get; set; }
         [Display(Name = "Data")]
         public string Data { get; set; }
+        [Display(Name = "Data")]
+        public decimal? DataReal { get; set; }
         [Display(Name = "Họ tên nhân sự")]
         public string FullName { get; set; }
         [Display(Name = "Mã nhân viên")]
