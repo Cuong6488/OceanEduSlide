@@ -433,8 +433,8 @@ namespace OceanEduSlide.Controllers
             int stt = 1;
             foreach (var item in proposals)
             {
-                dt.Rows.Add(stt,item.MaDeXuat,item.CVName,item.Office.ShortName,item.Zone.Name, item.ProposalType?.Content, item.User.Fullname, item.User2?.Fullname, item.CreateDate.ToString("dd/MM/yyyy"),
-                   HtmlHelpers.RemoveHtml(null,item.Body), item.Url, HtmlHelpers.RemoveHtml(null, item.CVFeedBack),EnumExtensions.GetDisplayName(item.TypeApprove), item.TypeFault?.Content,item.Note);
+                dt.Rows.Add(stt, item.MaDeXuat, item.CVName, item.Office.ShortName, item.Zone.Name, item.ProposalType?.Content, item.User.Fullname, item.User2?.Fullname, item.CreateDate.ToString("dd/MM/yyyy"),
+                   HtmlHelpers.RemoveHtml(null, item.Body), item.Url, HtmlHelpers.RemoveHtml(null, item.CVFeedBack), EnumExtensions.GetDisplayName(item.TypeApprove), item.TypeFault?.Content, item.Note);
                 stt++;
             }
             var filename = $"danh-sach-de-xuat.xlsx";
@@ -515,6 +515,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("ListProposal");
 
             proposal.BMEdit = model.Proposal.BMEdit;
+            proposal.Note = model.Proposal.Note;
             if (proposal.CVFeedBack != model.Proposal.CVFeedBack || proposal.TypeApprove != model.Proposal.TypeApprove || proposal.TypeFaultId != model.Proposal.TypeFaultId)
             {
                 proposal.NSSeen = false;
@@ -523,7 +524,6 @@ namespace OceanEduSlide.Controllers
                 proposal.TypeApprove = model.Proposal.TypeApprove;
                 proposal.TypeFaultId = model.Proposal.TypeFaultId;
                 proposal.CVFbName = User.Fullname;
-                proposal.Note = model.Proposal.Note;
                 _unitOfWork.Save();
             }
             return RedirectToAction("ListProposal", new { Result = "add", notice = model.Notice });

@@ -38,6 +38,7 @@
                 <th>Mã chi nhánh</th>
                 <th>Tên ngắn</th>
                 <th>Vùng</th>
+                <th>Ngày khai trương</th>
                 @*<th>Địa chỉ</th>
                     <th>Số điện thoại</th>
                     <th>Email</th>*@
@@ -57,6 +58,7 @@
                     <td>@office.ShortCode</td>
                     <td>@office.ShortName</td>
                     <td>@(office.Zone?.Name)</td>
+                    <td>@Html.DisplayFor(model => office.OpenDate)</td>
                     @*<td>@office.Place</td>
                         <td>@office.Hotline</td>
                         <td>@office.Email</td>*@
@@ -71,7 +73,7 @@
             @if (Model.Offices.PageCount > 1)
             {
                 <tr>
-                    <td colspan="5">@Html.PagedListPager(Model.Offices, page => Url.Action("ListOffice", new { page, catId = Model.cityId, name = Model.Name }))</td>
+                    <td colspan="8">@Html.PagedListPager(Model.Offices, page => Url.Action("ListOffice", new { page, catId = Model.cityId, name = Model.Name }))</td>
                 </tr>
             }
         </tbody>

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DongBoTuyenSinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DongBoTuyenSinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BC_PhieuThu">
           <Key>
             <PropertyRef Name="ID_StudentDept" />
@@ -27,7 +27,7 @@
           <Property Name="MaNVChotSale" Type="varchar" MaxLength="100" />
           <Property Name="ChotSale" Type="nvarchar" MaxLength="255" />
           <Property Name="CongTacVien" Type="nvarchar" MaxLength="100" />
-          <Property Name="ThangHocDuKien" Type="int" />
+          <Property Name="ThangHocDuKien" Type="float" />
           <Property Name="UD_FINAL" Type="nvarchar" MaxLength="255" />
           <Property Name="LoaiCTH" Type="nvarchar" MaxLength="255" />
           <Property Name="ChuongTrinhHoc" Type="nvarchar" MaxLength="255" />
@@ -44,7 +44,8 @@
         <EntityContainer Name="DongBoTuyenSinhModelStoreContainer">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DongBoTuyenSinhModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -70,7 +71,7 @@
           <Property Name="MaNVChotSale" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ChotSale" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="CongTacVien" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ThangHocDuKien" Type="Int32" />
+          <Property Name="ThangHocDuKien" Type="Double" />
           <Property Name="UD_FINAL" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="LoaiCTH" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ChuongTrinhHoc" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -84,7 +85,7 @@
           <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ID_StudentDept" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
         </EntityContainer>
       </Schema>
@@ -92,12 +93,10 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="DongBoTuyenSinhEntities">
+        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="BC_PhieuThu">
             <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
               <MappingFragment StoreEntitySet="BC_PhieuThu">
-                <ScalarProperty Name="ID_StudentDept" ColumnName="ID_StudentDept" />
-                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
                 <ScalarProperty Name="PhieuThuKeToan" ColumnName="PhieuThuKeToan" />
                 <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
                 <ScalarProperty Name="NgayThanhToan" ColumnName="NgayThanhToan" />
@@ -127,6 +126,8 @@
                 <ScalarProperty Name="DonHang" ColumnName="DonHang" />
                 <ScalarProperty Name="UDPhieuThu" ColumnName="UDPhieuThu" />
                 <ScalarProperty Name="ThoiGianCapNhat" ColumnName="ThoiGianCapNhat" />
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
+                <ScalarProperty Name="ID_StudentDept" ColumnName="ID_StudentDept" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

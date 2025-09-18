@@ -633,6 +633,14 @@
     <Compile Include="Migrations\202509170447534_openDateOffice.Designer.cs">
       <DependentUpon>202509170447534_openDateOffice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509180411451_auto.cs" />
+    <Compile Include="Migrations\202509180411451_auto.Designer.cs">
+      <DependentUpon>202509180411451_auto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509181010420_data189.cs" />
+    <Compile Include="Migrations\202509181010420_data189.Designer.cs">
+      <DependentUpon>202509181010420_data189.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1620,6 +1628,8 @@
     <Content Include="Views\Revenue\ListPhieuThu.cshtml" />
     <Content Include="Views\Report\CreateLockImport.cshtml" />
     <Content Include="Views\Report\ListLockImport.cshtml" />
+    <Content Include="Views\Report\ReportAllField.cshtml" />
+    <Content Include="Views\Report\ListReportCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1911,6 +1921,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202509170447534_openDateOffice.resx">
       <DependentUpon>202509170447534_openDateOffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509180411451_auto.resx">
+      <DependentUpon>202509180411451_auto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509181010420_data189.resx">
+      <DependentUpon>202509181010420_data189.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -32,7 +32,7 @@ namespace OceanEduSlide.OEDongBo
         public string MaNVChotSale { get; set; }
         public string ChotSale { get; set; }
         public string CongTacVien { get; set; }
-        public Nullable<int> ThangHocDuKien { get; set; }
+        public Nullable<double> ThangHocDuKien { get; set; }
         public string UD_FINAL { get; set; }
         public string LoaiCTH { get; set; }
         public string ChuongTrinhHoc { get; set; }

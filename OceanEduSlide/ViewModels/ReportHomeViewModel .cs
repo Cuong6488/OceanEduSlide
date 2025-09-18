@@ -101,4 +101,19 @@ namespace OceanEduSlide.ViewModels
             SelectGroup = new SelectList(listgroup, "Key", "Value");
         }
     }
+    public class ListReportCategoryViewModel
+    {
+        public IEnumerable<ReportCategory> ReportCategories { get; set; }
+        public int? TypeCat { get; set; }
+        public SelectList SelectGroup { get; set; }
+        public ListReportCategoryViewModel()
+        {
+            var listgroup = new Dictionary<int, string>
+            {
+                { 1, "Chi Nhánh" },
+                { 2, "Nhân sự" },
+            };
+            SelectGroup = new SelectList(listgroup, "Key", "Value");
+        }
+    }
 }

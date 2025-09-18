@@ -435,6 +435,8 @@ namespace OceanEduSlide.Controllers
                         revenueOffice.Target_SAB = 0;
                         revenueOffice.Target_HV = 0;
                     }
+                    // Khởi tạo chỉ tiêu HV CN
+                    decimal chitieuHVCN = 0;
                     var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
@@ -612,32 +614,39 @@ namespace OceanEduSlide.Controllers
                                 }
                             }
                             revenueOffice.Target_TS += targetNS;
-                            // Báo cáo chỉ tiêu học viên
-                            //var chiTieuHocVien = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95).FirstOrDefault();
-                            //if (chiTieuHocVien == null)
-                            //    chiTieuHocVien = reportDataList.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
-                            //// Tính số ngày từ khi khai trương
-                            //DateTime lastDateOfMonth = new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                            // Báo cáo chỉ tiêu học viên NV
+                            var reportDatactHV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95).FirstOrDefault();
+                            if (reportDatactHV == null)
+                                reportDatactHV = reportDataList.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
+                            // Tính số ngày từ khi khai trương
+                            int totalMonths = (yearInt - office.OpenDate.Value.Year) * 12 + (monthInt - office.OpenDate.Value.Month);
+                            var STHBQ = totalMonths > 6 ? 20 : 12;
+                            decimal ctHV = 0;
+                            ctHV = targetNS / (2989000 * ((decimal)50 / 100) * STHBQ);
+                            // Cộng dồn chỉ tiêu HV CN
+                            chitieuHVCN += ctHV;
+                            if (reportDatactHV == null)
+                            {
+                                reportDatactHV = new ReportData()
+                                {
+                                    Data = ctHV.ToString("N2"),
+                                    UserId = item.UserId,
+                                    HistoryUserId = item.Id,
+                                    Month = monthInt,
+                                    Year = yearInt,
+                                    ReportCategoryId = 95,
+                                    OfficeId = office.Id,
+                                    Sort = 15,
+                                    DataReal = ctHV
+                                };
+                                reportDataList.Add(reportDatactHV);
+                            }
+                            else
+                            {
+                                reportDatactHV.Data = ctHV.ToString("N2");
+                                reportDatactHV.DataReal = ctHV;
+                            }
 
-                            //if (chiTieuHocVien == null)
-                            //{
-                            //    chiTieuHocVien = new ReportData()
-                            //    {
-                            //        Data = targetNS.ToString("N0"),
-                            //        UserId = item.UserId,
-                            //        HistoryUserId = item.Id,
-                            //        Month = monthInt,
-                            //        Year = yearInt,
-                            //        ReportCategoryId = 95,
-                            //        OfficeId = office.Id,
-                            //        Sort = 15,
-                            //    };
-                            //    reportDataList.Add(chiTieuHocVien);
-                            //}
-                            //else
-                            //{
-                            //    chiTieuHocVien.Data = targetNS.ToString("N0");
-                            //}
                         }
                         else if (item.TypeUser == TypeUser.CM || item.TypeUser == TypeUser.TTL)
                         {
@@ -709,7 +718,6 @@ namespace OceanEduSlide.Controllers
                             };
                             newRevenueList2.Add(rnew);
                         }
-
                     }
                     revenueOffice.Target_TS = Math.Max(targetBaseDec, revenueOffice.Target_TS);
                     //Chỉ tiêu báo cáo doanh thu chi nhánh
@@ -721,6 +729,7 @@ namespace OceanEduSlide.Controllers
                         reportDataCN = new ReportData()
                         {
                             Data = revenueOffice.Target_TS.ToString("N0"),
+                            DataReal = revenueOffice.Target_TS,
                             Month = monthInt,
                             Year = yearInt,
                             ReportCategoryId = 34,
@@ -732,8 +741,42 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         reportDataCN.Data = revenueOffice.Target_TS.ToString("N0");
+                        reportDataCN.DataReal = revenueOffice.Target_TS;
                     }
+                    // % HT báo cáo doanh thu chi nhánh
+                    //if (reportDataCN.DataReal > 0)
+                    //{
+                    //    var reportDataTDSCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35).FirstOrDefault();
+                    //    if (reportDataTDSCN != null)
+                    //    {
+                    //        decimal tdDSCN = reportDataTDSCN.DataReal ?? 0;
+                    //        decimal ht = tdDSCN / reportDataCN.DataReal.Value;
 
+                    //    }
+                    //}
+                    // Chỉ tiêu HV CN
+                    var reportDataHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30).FirstOrDefault();
+                    if (reportDataHVCN == null)
+                        reportDataHVCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30);
+                    if (reportDataHVCN == null)
+                    {
+                        reportDataHVCN = new ReportData()
+                        {
+                            Data = chitieuHVCN.ToString("N2"),
+                            Month = monthInt,
+                            Year = yearInt,
+                            ReportCategoryId = 30,
+                            OfficeId = office.Id,
+                            Sort = 10,
+                            DataReal = chitieuHVCN,
+                        };
+                        reportDataList.Add(reportDataHVCN);
+                    }
+                    else
+                    {
+                        reportDataHVCN.Data = chitieuHVCN.ToString("N2");
+                        reportDataHVCN.DataReal = chitieuHVCN;
+                    }
                 }
 
                 if (newRevenueList.Any())
@@ -1236,7 +1279,7 @@ namespace OceanEduSlide.Controllers
                         GioTao = gioTao,
                         ChotSale = chotSale,
                         CongTacVien = congTacVien,
-                        ThangHocDuKien = (int)thangHocDuKien,
+                        ThangHocDuKienDecimal = thangHocDuKien,
                         UD_FINAL = uD_FINAL,
                         LoaiCTH = loaiCTH,
                         ChuongTrinhHoc = chuongTrinhHoc,

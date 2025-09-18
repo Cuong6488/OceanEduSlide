@@ -17,6 +17,8 @@ namespace OceanEduSlide.Models
         public int? Count { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        [Display(Name = "Auto")]
+        public bool Auto { get; set; }
         [Display(Name = "Cột cha")]
         public int? ReportCategoryId { get; set; }
         [Display(Name = "Loại cột")]
@@ -32,9 +34,9 @@ namespace OceanEduSlide.Models
     }
     public enum TypeCat
     {
-        [Display(Name = "Báo cáo tĩnh 1")]
+        [Display(Name = "Chi nhánh")]
         Type1 = 1,
-        [Display(Name = "Báo cáo tĩnh 2")]
+        [Display(Name = "Nhân sự")]
         Type2,
     }
 }

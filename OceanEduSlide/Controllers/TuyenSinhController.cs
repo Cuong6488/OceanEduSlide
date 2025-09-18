@@ -30,7 +30,7 @@ namespace OceanEduSlide.Controllers
     public class TuyenSinhController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
-        private DongBoTuyenSinhEntities db = new DongBoTuyenSinhEntities();
+        private Entities db = new Entities();
 
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
@@ -375,7 +375,7 @@ namespace OceanEduSlide.Controllers
                     offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
                 }
             }
-            else if(User.TypeUser != TypeUser.HO)
+            else if (User.TypeUser != TypeUser.HO)
             {
                 if (User.TypeUser == TypeUser.ASM)
                 {
@@ -437,20 +437,43 @@ namespace OceanEduSlide.Controllers
         }
         public void ExportRevenueNV(int Year, int Month, int? ZoneId, int? OfficeId, int? UserType)
         {
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => historyOffices.Any(h => h.OfficeId == a.OfficeId) && a.Active && a.Year == Year && a.Month == Month
-            && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.AEC
-            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == Month) || a.DayEnd.Value.Month != Month))),
-            q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort));
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year)
+                .AsNoTracking()
+                .Select(h => new
+                {
+                    h.OfficeId,
+                    h.ZoneId,
+                    ZoneShortCode = h.Zone.ShortCode,
+                    ZoneName = h.Zone.Name,
+                    OfficeName = h.Office.ShortName
+                }).ToList();
+
+            var officeIdToZone = historyOffices.ToDictionary(x => x.OfficeId);
+
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
+                a.Active &&
+                a.Year == Year &&
+                a.Month == Month &&
+                a.TypeUser != TypeUser.ASM &&
+                a.TypeUser != TypeUser.HO &&
+                a.TypeUser != TypeUser.CV &&
+                a.TypeUser != TypeUser.PKT &&
+                a.TypeUser != TypeUser.AEC &&
+                (a.DayEnd == null || (a.DayEnd.Value.Month != Month || (a.DayEnd.Value.Day != 1))),
+                q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort)
+            ).AsNoTracking().ToList();
+
+            // Filter theo quyền người dùng
             if (User.TypeUser == TypeUser.CV)
             {
                 if (ZoneId == null && OfficeId == null)
-                    historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                {
+                    historyUsers = historyUsers
+                        .Where(a => a.OfficeId != null &&
+                                    officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
+                                    User.ZoneIds.Contains("," + h.ZoneShortCode + ","))
+                        .ToList();
+                }
             }
             else if (User.TypeUser != TypeUser.HO)
             {
@@ -459,72 +482,151 @@ namespace OceanEduSlide.Controllers
                     if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
                     {
                         if (ZoneId == null && OfficeId == null)
-                            historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                        var hs = historyUsers.Count();
+                        {
+                            historyUsers = historyUsers
+                                .Where(a => a.OfficeId != null &&
+                                            officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
+                                            User.ZoneIds.Contains("," + h.ZoneShortCode + ","))
+                                .ToList();
+                        }
                     }
                     else
                     {
                         ZoneId = User.ZoneId;
                     }
                 }
-
                 else
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                         OfficeId = User.OfficeId;
                     else if (OfficeId == null)
                     {
-                        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                        historyUsers = historyUsers
+                            .Where(a => a.OfficeId != null &&
+                                        User.OfficeIds.Contains("," + a.OfficeId + ","))
+                            .ToList();
                     }
                 }
             }
+
             if (UserType != null)
             {
-                historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
+                historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType).ToList();
             }
-            //else
-            //{
-            //    historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-            //}
+
             if (ZoneId != null)
             {
-                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == ZoneId));
+                historyUsers = historyUsers
+                    .Where(a => a.OfficeId != null &&
+                                officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
+                                h.ZoneId == ZoneId)
+                    .ToList();
             }
+
             if (OfficeId != null)
             {
-                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.OfficeId == OfficeId));
+                historyUsers = historyUsers
+                    .Where(a => a.OfficeId == OfficeId)
+                    .ToList();
             }
+
+            var userIds = historyUsers.Select(u => u.Id).ToList();
+            var actualUserIds = historyUsers.Select(u => u.UserId).ToList();
+
+            // Load dữ liệu batch
+            var targetMonths = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null &&
+                userIds.Contains(a.HistoryUserId.Value) && a.Month == Month && a.Year == Year)
+                .AsNoTracking().ToDictionary(a => a.HistoryUserId);
+
+            var camKetMonths = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId != null &&
+                userIds.Contains(a.HistoryUserId.Value) && a.Month == Month && a.Year == Year)
+                .AsNoTracking()
+                .GroupBy(a => a.HistoryUserId)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.CreateDate).First());
+
+            var allDebts = _unitOfWork.DebtRepository.GetQuery(q =>
+                q.Active &&
+                actualUserIds.Contains(q.UserId) &&
+                (q.Year < Year || (q.Year == Year && q.Month < Month)) &&
+                (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+                .AsNoTracking()
+                .ToList();
+
+            var debts = allDebts
+                .GroupBy(q => new { q.UserId, DebtId = q.DebtId ?? q.Id })
+                .Select(g => g.OrderByDescending(x => x.CreateDate).First())
+                .GroupBy(x => x.UserId)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.TotalMoney - x.DownMoney));
+
+            var revenueWeeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.HistoryUserId != null &&
+                userIds.Contains(a.HistoryUserId.Value) && a.Month == Month && a.Year == Year)
+                .AsNoTracking().ToList();
+
+            var revenueWeekReals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId != null &&
+                userIds.Contains(a.HistoryUserId.Value) && a.Month == Month && a.Year == Year)
+                .AsNoTracking().ToList();
+
             var dt = new DataTable();
             var (workingWeeks, currentWeek) = CalculateWeeks(Year, Month);
 
-            // Các cột cố định
-            string[] fixedHeaders = new[] { "Vùng", "Chi nhánh", "Tháng", "Họ tên nhân sự","Mã nhân viên", "CDCM", "Ngày vào làm", "Ngày nghỉ/điều chuyển", "Trạng thái", "Chỉ tiêu doanh số", "Cam kết HT doanh số (gồm dự thu cũ)",
-            "Dự thu tháng trước","Số tiền thực chạy"};
-
-            // Các loại dữ liệu trong mỗi tuần
+            string[] fixedHeaders = new[] {
+                "Vùng", "Chi nhánh", "Tháng", "Họ tên nhân sự", "Mã nhân viên", "CDCM",
+                "Ngày vào làm", "Ngày nghỉ/điều chuyển", "Trạng thái", "Chỉ tiêu doanh số",
+                "Cam kết HT doanh số (gồm dự thu cũ)", "Dự thu tháng trước", "Số tiền thực chạy"
+            };
             string[] subHeaders = new[] { "Dự kiến", "Thực tế" };
-            foreach (var header in fixedHeaders)
-                dt.Columns.Add(header);
 
-            // 2. Thêm cột động theo tuần
+            foreach (var header in fixedHeaders) dt.Columns.Add(header);
             for (int week = 1; week <= workingWeeks; week++)
-            {
                 foreach (var sub in subHeaders)
-                {
                     dt.Columns.Add($"Tuần {week} - {sub}");
+
+            foreach (var item in historyUsers)
+            {
+                var row = dt.NewRow();
+
+                var zoneInfo = item.OfficeId.HasValue && officeIdToZone.TryGetValue(item.OfficeId.Value, out var h) ? h : null;
+                row["Vùng"] = zoneInfo?.ZoneName;
+                row["Chi nhánh"] = zoneInfo?.OfficeName;
+                row["Tháng"] = Month;
+                row["Họ tên nhân sự"] = item.User.Fullname;
+                row["Mã nhân viên"] = item.User.MaNhanVien;
+                row["CDCM"] = item.CDCM;
+                row["Ngày vào làm"] = item.DayStart.ToString("dd/MM/yyyy");
+                row["Ngày nghỉ/điều chuyển"] = item.DayEnd?.ToString("dd/MM/yyyy");
+                row["Trạng thái"] = EnumExtensions.GetDisplayName(item.Status);
+
+                //var targetMonth = targetMonths.GetValueOrDefault(item.Id);
+                //var camKetMonth = camKetMonths.GetValueOrDefault(item.Id);
+                //var debt = debts.GetValueOrDefault(item.UserId);
+                var targetMonth = targetMonths.ContainsKey(item.Id) ? targetMonths[item.Id] : null;
+                var camKetMonth = camKetMonths.ContainsKey(item.Id) ? camKetMonths[item.Id] : null;
+                var userId = item.UserId;
+                var debt = debts.ContainsKey(userId) ? debts[userId] : 0;
+
+                decimal soTienThucChay = camKetMonth?.TargetBM - debt ?? 0;
+
+                row["Chỉ tiêu doanh số"] = targetMonth?.Target;
+                row["Cam kết HT doanh số (gồm dự thu cũ)"] = camKetMonth?.TargetBM;
+                row["Dự thu tháng trước"] = debt;
+                row["Số tiền thực chạy"] = soTienThucChay;
+
+                for (int week = 1; week <= workingWeeks; week++)
+                {
+                    var targetWeek = revenueWeeks.FirstOrDefault(a => a.HistoryUserId == item.Id && (int)a.WeekNumber == week);
+                    var realWeek = revenueWeekReals.FirstOrDefault(a => a.HistoryUserId == item.Id && (int)a.WeekNumber == week);
+
+                    row[$"Tuần {week} - Dự kiến"] = targetWeek?.TargetBM;
+                    row[$"Tuần {week} - Thực tế"] = realWeek?.TargetBM;
                 }
+
+                dt.Rows.Add(row);
             }
-            //foreach (var item in historyUsers)
-            //{
-            //    var revenueHO = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
-            //    var revenueOffice = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
-            //    dt.Rows.Add(office.Zone?.Name, office.ShortName, Month, revenueHO?.Target_TS, revenueHO?.Target_HV, revenueHO?.Target_SAB, revenueOffice?.TargetBM_TS, revenueOffice?.TargetBM_New, revenueOffice?.TargetBM_HV, revenueOffice?.TargetBM_SAB);
-            //}
-            var filename = $"phan-bo-DS-chi-tiet.xlsx";
+
             using (var pck = new ExcelPackage())
             {
-                //Create the worksheet
                 var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ DS chi tiết");
+
                 int row1 = 1, row2 = 2, col = 1;
                 foreach (var header in fixedHeaders)
                 {
@@ -532,65 +634,179 @@ namespace OceanEduSlide.Controllers
                     ws.Cells[row1, col].Value = header;
                     col++;
                 }
+
                 for (int week = 1; week <= workingWeeks; week++)
                 {
                     int startCol = col;
-
                     foreach (var sub in subHeaders)
-                    {
-                        ws.Cells[row2, col].Value = sub;
-                        col++;
-                    }
+                        ws.Cells[row2, col++].Value = sub;
 
-                    // Merge dòng 1 cho tuần
                     ws.Cells[row1, startCol, row1, col - 1].Merge = true;
                     ws.Cells[row1, startCol].Value = $"Tuần {week}";
                 }
-                foreach (var item in historyUsers)
-                {
-                    var targetMonth = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
-                    var camKetMonth = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
-                    var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == item.UserId && (q.Year < Year || (q.Year == Year && q.Month < Month))
-                        && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id)
-                        .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
-                    decimal soTienThucChay = 0;
 
-                    if (camKetMonth != null)
-                    {
-                        soTienThucChay = camKetMonth.TargetBM - debt;
-                    }
-                    //dt.Rows.Add(item.Zone?.Name, item.Office?.ShortName, Month,item.User.Fullname,item.User.MaNhanVien,item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd?.ToString("dd/MM/yyyy"),
-                    //    EnumExtensions.GetDisplayName(item.Status), targetMonth?.Target, camKetMonth?.TargetBM, debt, soTienThucChay);
-                    var row = dt.NewRow();
-                    row["Vùng"] = item.Zone?.Name;
-                    row["Chi nhánh"] = item.Office?.ShortName;
-                    row["Tháng"] = Month;
-                    row["Họ tên nhân sự"] = item.User.Fullname;
-                    row["Mã nhân viên"] = item.User.MaNhanVien;
-                    row["CDCM"] = item.CDCM;
-                    row["Ngày vào làm"] = item.DayStart.ToString("dd/MM/yyyy");
-                    row["Ngày nghỉ/điều chuyển"] = item.DayEnd?.ToString("dd/MM/yyyy");
-                    row["Trạng thái"] = EnumExtensions.GetDisplayName(item.Status);
-                    row["Chỉ tiêu doanh số"] = targetMonth?.Target;
-                    row["Cam kết HT doanh số (gồm dự thu cũ)"] = camKetMonth?.TargetBM;
-                    row["Dự thu tháng trước"] = debt;
-                    row["Số tiền thực chạy"] = soTienThucChay;
-                    for (int week = 1; week <= workingWeeks; week++)
-                    {
-                        var targetWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.Month == Month && a.Year == Year && (int)a.WeekNumber == week && a.HistoryUserId == item.Id).FirstOrDefault();
-                        var revenueWeekReal = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.Month == Month && a.Year == Year && (int)a.WeekNumber == week && a.HistoryUserId == item.Id).FirstOrDefault();
-                        row[$"Tuần {week} - Dự kiến"] = targetWeek?.TargetBM;
-                        row[$"Tuần {week} - Thực tế"] = revenueWeekReal?.TargetBM;
-                    }
-                    dt.Rows.Add(row);
-                }
                 ws.Cells[3, 1].LoadFromDataTable(dt, false);
-                //Write it back to the client
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.AddHeader("content-disposition", $"attachment; filename=phan-bo-DS-chi-tiet.xlsx");
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        //public void ExportRevenueNV(int Year, int Month, int? ZoneId, int? OfficeId, int? UserType)
+        //{
+        //    var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
+        //    {
+        //        h.OfficeId,
+        //        ZoneShortCode = h.Zone.ShortCode,
+        //        h.ZoneId
+        //    });
+        //    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => historyOffices.Any(h => h.OfficeId == a.OfficeId) && a.Active && a.Year == Year && a.Month == Month
+        //    && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.AEC
+        //    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == Month) || a.DayEnd.Value.Month != Month))),
+        //    q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort));
+        //    if (User.TypeUser == TypeUser.CV)
+        //    {
+        //        if (ZoneId == null && OfficeId == null)
+        //            historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //    }
+        //    else if (User.TypeUser != TypeUser.HO)
+        //    {
+        //        if (User.TypeUser == TypeUser.ASM)
+        //        {
+        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+        //            {
+        //                if (ZoneId == null && OfficeId == null)
+        //                    historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //                var hs = historyUsers.Count();
+        //            }
+        //            else
+        //            {
+        //                ZoneId = User.ZoneId;
+        //            }
+        //        }
+
+        //        else
+        //        {
+        //            if (string.IsNullOrEmpty(User.OfficeIds))
+        //                OfficeId = User.OfficeId;
+        //            else if (OfficeId == null)
+        //            {
+        //                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+        //            }
+        //        }
+        //    }
+        //    if (UserType != null)
+        //    {
+        //        historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
+        //    }
+        //    //else
+        //    //{
+        //    //    historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
+        //    //}
+        //    if (ZoneId != null)
+        //    {
+        //        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == ZoneId));
+        //    }
+        //    if (OfficeId != null)
+        //    {
+        //        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.OfficeId == OfficeId));
+        //    }
+        //    var dt = new DataTable();
+        //    var (workingWeeks, currentWeek) = CalculateWeeks(Year, Month);
+
+        //    // Các cột cố định
+        //    string[] fixedHeaders = new[] { "Vùng", "Chi nhánh", "Tháng", "Họ tên nhân sự","Mã nhân viên", "CDCM", "Ngày vào làm", "Ngày nghỉ/điều chuyển", "Trạng thái", "Chỉ tiêu doanh số", "Cam kết HT doanh số (gồm dự thu cũ)",
+        //    "Dự thu tháng trước","Số tiền thực chạy"};
+
+        //    // Các loại dữ liệu trong mỗi tuần
+        //    string[] subHeaders = new[] { "Dự kiến", "Thực tế" };
+        //    foreach (var header in fixedHeaders)
+        //        dt.Columns.Add(header);
+
+        //    // 2. Thêm cột động theo tuần
+        //    for (int week = 1; week <= workingWeeks; week++)
+        //    {
+        //        foreach (var sub in subHeaders)
+        //        {
+        //            dt.Columns.Add($"Tuần {week} - {sub}");
+        //        }
+        //    }
+        //    //foreach (var item in historyUsers)
+        //    //{
+        //    //    var revenueHO = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
+        //    //    var revenueOffice = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
+        //    //    dt.Rows.Add(office.Zone?.Name, office.ShortName, Month, revenueHO?.Target_TS, revenueHO?.Target_HV, revenueHO?.Target_SAB, revenueOffice?.TargetBM_TS, revenueOffice?.TargetBM_New, revenueOffice?.TargetBM_HV, revenueOffice?.TargetBM_SAB);
+        //    //}
+        //    var filename = $"phan-bo-DS-chi-tiet.xlsx";
+        //    using (var pck = new ExcelPackage())
+        //    {
+        //        //Create the worksheet
+        //        var ws = pck.Workbook.Worksheets.Add("Danh sách phân bổ DS chi tiết");
+        //        int row1 = 1, row2 = 2, col = 1;
+        //        foreach (var header in fixedHeaders)
+        //        {
+        //            ws.Cells[row1, col, row2, col].Merge = true;
+        //            ws.Cells[row1, col].Value = header;
+        //            col++;
+        //        }
+        //        for (int week = 1; week <= workingWeeks; week++)
+        //        {
+        //            int startCol = col;
+
+        //            foreach (var sub in subHeaders)
+        //            {
+        //                ws.Cells[row2, col].Value = sub;
+        //                col++;
+        //            }
+
+        //            // Merge dòng 1 cho tuần
+        //            ws.Cells[row1, startCol, row1, col - 1].Merge = true;
+        //            ws.Cells[row1, startCol].Value = $"Tuần {week}";
+        //        }
+        //        foreach (var item in historyUsers)
+        //        {
+        //            var targetMonth = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year).FirstOrDefault();
+        //            var camKetMonth = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == Month && a.Year == Year, q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault();
+        //            var debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == item.UserId && (q.Year < Year || (q.Year == Year && q.Month < Month))
+        //                && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id)
+        //                .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0;
+        //            decimal soTienThucChay = 0;
+
+        //            if (camKetMonth != null)
+        //            {
+        //                soTienThucChay = camKetMonth.TargetBM - debt;
+        //            }
+        //            //dt.Rows.Add(item.Zone?.Name, item.Office?.ShortName, Month,item.User.Fullname,item.User.MaNhanVien,item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd?.ToString("dd/MM/yyyy"),
+        //            //    EnumExtensions.GetDisplayName(item.Status), targetMonth?.Target, camKetMonth?.TargetBM, debt, soTienThucChay);
+        //            var row = dt.NewRow();
+        //            row["Vùng"] = item.Zone?.Name;
+        //            row["Chi nhánh"] = item.Office?.ShortName;
+        //            row["Tháng"] = Month;
+        //            row["Họ tên nhân sự"] = item.User.Fullname;
+        //            row["Mã nhân viên"] = item.User.MaNhanVien;
+        //            row["CDCM"] = item.CDCM;
+        //            row["Ngày vào làm"] = item.DayStart.ToString("dd/MM/yyyy");
+        //            row["Ngày nghỉ/điều chuyển"] = item.DayEnd?.ToString("dd/MM/yyyy");
+        //            row["Trạng thái"] = EnumExtensions.GetDisplayName(item.Status);
+        //            row["Chỉ tiêu doanh số"] = targetMonth?.Target;
+        //            row["Cam kết HT doanh số (gồm dự thu cũ)"] = camKetMonth?.TargetBM;
+        //            row["Dự thu tháng trước"] = debt;
+        //            row["Số tiền thực chạy"] = soTienThucChay;
+        //            for (int week = 1; week <= workingWeeks; week++)
+        //            {
+        //                var targetWeek = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.Month == Month && a.Year == Year && (int)a.WeekNumber == week && a.HistoryUserId == item.Id).FirstOrDefault();
+        //                var revenueWeekReal = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.Month == Month && a.Year == Year && (int)a.WeekNumber == week && a.HistoryUserId == item.Id).FirstOrDefault();
+        //                row[$"Tuần {week} - Dự kiến"] = targetWeek?.TargetBM;
+        //                row[$"Tuần {week} - Thực tế"] = revenueWeekReal?.TargetBM;
+        //            }
+        //            dt.Rows.Add(row);
+        //        }
+        //        ws.Cells[3, 1].LoadFromDataTable(dt, false);
+        //        //Write it back to the client
+        //        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //        Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+        //        Response.BinaryWrite(pck.GetAsByteArray());
+        //    }
+        //}
 
         public ActionResult ChangeDataRevenueMonth(int month)
         {
@@ -921,12 +1137,6 @@ namespace OceanEduSlide.Controllers
         }
 
         #endregion
-        public ActionResult ListTest()
-        {
-            var danhSachPhieuThu = db.BC_PhieuThu;
-            //var danhSach2 = danhSachPhieuThu.Where(a => a.)
-            return View(danhSachPhieuThu);
-        }
 
         protected override void Dispose(bool disposing)
         {

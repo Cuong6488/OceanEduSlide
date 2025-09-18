@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Báo cáo - lấy toàn bộ dữ liệu theo Template";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@*<a target="_blank" class="btn quick-link" href="@Url.Action("ReportKDCN","ReportHome")"><i class="far fa-list me-1"></i> Danh sách @ViewBag.Title</a>*@
+<a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile","Revenue", new {type = 0})" href="javascript:;">
+    <i class="far fa-list me-1"></i> Lịch sử cập nhật
+</a>
+<div class="box_content">
+    @using (Html.BeginForm("ReportAllField", "Report", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+
+        <table class="form_table">
+            <tr>
+                <td class="form_name">Đính kèm File</td>
+                <td class="form_text"><input type="file" name="ReportFile" value="" /></td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Xác nhận" />
+                </td>
+            </tr>
+        </table>
+    }
+</div>

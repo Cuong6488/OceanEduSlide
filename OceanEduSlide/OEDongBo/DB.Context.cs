@@ -13,10 +13,10 @@ namespace OceanEduSlide.OEDongBo
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class DongBoTuyenSinhEntities : DbContext
+    public partial class Entities : DbContext
     {
-        public DongBoTuyenSinhEntities()
-            : base("name=DongBoTuyenSinhEntities")
+        public Entities()
+            : base("name=Entities")
         {
         }
     

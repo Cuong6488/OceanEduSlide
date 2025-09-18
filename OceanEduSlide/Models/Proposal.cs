@@ -24,7 +24,7 @@ namespace OceanEduSlide.Models
         public string Body { get; set; }
         [StringLength(500), Display(Name = "Hồ sơ, tài liệu mình chứng kèm theo")]
         public string Url { get; set; }
-        [StringLength(500), Display(Name = "Phản hồi của phòng tuyển sinh"), UIHint("EditorBox")]
+        [Display(Name = "Phản hồi của phòng tuyển sinh"), UIHint("EditorBox")]
         public string CVFeedBack { get; set; }
         [Display(Name = "Mã đề xuất")]
         public string MaDeXuat { get; set; }

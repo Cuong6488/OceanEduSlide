@@ -1,0 +1,42 @@
+﻿@model OceanEduSlide.ViewModels.ListReportCategoryViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách tiêu đề báo cáo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="far fa-undo-alt me-1"></i> Trở lại trang chủ</a>
+<div class="box_content">
+    <p class="w-25 d-flex align-items-center"><span class="d-block pb-2 w-50">Loại file</span> @Html.DropDownListFor(model => model.TypeCat, Model.SelectGroup, "Tất cả", new { @class = "form_control w300", onchange = "window.location.href='/Report/ListReportCategory?typeCat='+this.value" })</p>
+    <table class="list_table tablecenter table-striped">
+        <tr>
+            <th>Loại</th>
+            <th>Tên - Id</th>
+            <th>Sort</th>
+            <th>Auto</th>
+            <th style="width: 150px"></th>
+        </tr>
+        @foreach (var item in Model.ReportCategories)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(a => item.TypeCat)
+                </td>
+                <td class="text-start">
+                    @(item.CategoryParent?.Name) <br />
+                    @item.Name - @item.Id
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Auto)
+                </td>
+                <td>
+                    @Html.ActionLink("Auto/ UnAuto", "UpdateAuto", new { Id = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

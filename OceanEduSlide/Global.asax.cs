@@ -78,7 +78,7 @@ namespace OceanEduSlide
                         try
                         {
                             var phieuThuService = new PhieuThuService();
-                            await phieuThuService.SyncPhieuThuAsync(); 
+                            await phieuThuService.SyncPhieuThuAsync();
                         }
                         catch (Exception ex)
                         {
