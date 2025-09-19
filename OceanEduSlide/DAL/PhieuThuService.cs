@@ -232,6 +232,7 @@ namespace OceanEduSlide.DAL
                     b.DataReal = 0;
                 }
                 //var countHV = phieuThuThongThuong.Where(a => a.ChiNhanh == cn).Select(a => a.MaHV).Distinct().Count();
+                // Thực đạt HV CN
                 var countHV = phieuThuList.Where(a => a.ChiNhanh == cn).GroupBy(a => a.MaHV).Where(g => g.Sum(x => x.SUD ?? 0) > 0).Count();
 
                 var bcTDHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 31 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
@@ -256,10 +257,164 @@ namespace OceanEduSlide.DAL
                     bcTDHVCN.DataReal = countHV;
                     bcTDHVCN.Data = countHV.ToString("N0");
                 }
+                // % ht báo cáo HV CN
+                var reportCTHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 30).FirstOrDefault();
+                if (reportCTHVCN?.DataReal > 0)
+                {
+                    var htHVCN = bcTDHVCN.DataReal / reportCTHVCN.DataReal * 100;
+                    var datahtHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 32).FirstOrDefault();
+                    if (datahtHVCN == null)
+                        datahtHVCN = bcList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 32);
+                    if (datahtHVCN == null)
+                    {
+                        datahtHVCN = new ReportData()
+                        {
+                            Data = (htHVCN ?? 0).ToString("F2") + "%",
+                            DataReal = htHVCN / 100,
+                            Month = day.Month,
+                            Year = day.Month,
+                            ReportCategoryId = 32,
+                            OfficeId = office.Id,
+                            Sort = 12,
+                        };
+                        bcList.Add(datahtHVCN);
+                    }
+                    else
+                    {
+                        datahtHVCN.Data = (htHVCN ?? 0).ToString("F2") + "%";
+                        datahtHVCN.DataReal = htHVCN / 100;
+                    }
+                }
+
+                //var countHVGDM = phieuThuList.Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh mới").GroupBy(a => a.MaHV).Where(g => g.Sum(x => x.SUD ?? 0) > 0).Count();
+                //var countHVGDL = phieuThuList.Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh tiếp" && !phieuThuList.Any(q => q.DangKy == "Ghi danh mới" && q.MaHV == a.MaHV)).GroupBy(a => a.MaHV)
+                //    .Where(g => g.Sum(x => x.SUD ?? 0) > 0).Count();
+                // Lấy danh sách học viên đã ghi danh mới
+                var maHVGhiDanhMoi = new HashSet<string>(
+                    phieuThuList
+                        .Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh mới")
+                        .Select(a => a.MaHV)
+                        .Distinct()
+                );
+
+                // Đếm học viên ghi danh mới
+                var countHVGDM = phieuThuList
+                    .Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh mới")
+                    .GroupBy(a => a.MaHV)
+                    .Where(g => g.Sum(x => x.SUD ?? 0) > 0)
+                    .Count();
+
+                // Đếm học viên ghi danh lại (không nằm trong danh sách ghi danh mới)
+                var countHVGDL = phieuThuList
+                    .Where(a => a.ChiNhanh == cn
+                             && a.DangKy == "Ghi danh tiếp"
+                             && !maHVGhiDanhMoi.Contains(a.MaHV))
+                    .GroupBy(a => a.MaHV)
+                    .Where(g => g.Sum(x => x.SUD ?? 0) > 0)
+                    .Count();
+
+
+                var bcHVGDM = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 60 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcHVGDM == null)
+                    bcHVGDM = bcList.FirstOrDefault(a => a.ReportCategoryId == 60 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcHVGDM == null)
+                {
+                    bcHVGDM = new ReportData()
+                    {
+                        Sort = 28,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 60,
+                        Data = countHVGDM.ToString("N0"),
+                        OfficeId = office.Id,
+                        DataReal = countHVGDM,
+                    };
+                    bcList.Add(bcHVGDM);
+                }
+                else
+                {
+                    bcHVGDM.DataReal = countHVGDM;
+                    bcHVGDM.Data = countHVGDM.ToString("N0");
+                }
+
+                var bcHVGDL = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 58 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcHVGDL == null)
+                    bcHVGDL = bcList.FirstOrDefault(a => a.ReportCategoryId == 58 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcHVGDL == null)
+                {
+                    bcHVGDL = new ReportData()
+                    {
+                        Sort = 27,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 58,
+                        Data = countHVGDL.ToString("N0"),
+                        OfficeId = office.Id,
+                        DataReal = countHVGDL,
+                    };
+                    bcList.Add(bcHVGDL);
+                }
+                else
+                {
+                    bcHVGDL.DataReal = countHVGDL;
+                    bcHVGDL.Data = countHVGDL.ToString("N0");
+                }
+
+                // Báo cáo Tổng số tháng ĐK, tháng học BQ/HV
+                var sumSoThangDK = phieuThuList.Where(a => a.ChiNhanh == cn && a.SUD != 0).Sum(a => a.ThangHocDuKienDecimal ?? 0);
+                decimal? STHBQ1HV = null;
+                STHBQ1HV = countHV > 0 ? sumSoThangDK / countHV : (decimal?)null;
+
+                var bcSoThangDK = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 62 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcSoThangDK == null)
+                    bcSoThangDK = bcList.FirstOrDefault(a => a.ReportCategoryId == 62 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcSoThangDK == null)
+                {
+                    bcSoThangDK = new ReportData()
+                    {
+                        Sort = 29,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 62,
+                        Data = sumSoThangDK.ToString("N2"),
+                        OfficeId = office.Id,
+                        DataReal = sumSoThangDK,
+                    };
+                    bcList.Add(bcSoThangDK);
+                }
+                else
+                {
+                    bcSoThangDK.DataReal = sumSoThangDK;
+                    bcSoThangDK.Data = sumSoThangDK.ToString("N2");
+                }
+
+                var bcSTHBQ1HV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 64 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcSTHBQ1HV == null)
+                    bcSTHBQ1HV = bcList.FirstOrDefault(a => a.ReportCategoryId == 64 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcSTHBQ1HV == null)
+                {
+                    bcSTHBQ1HV = new ReportData()
+                    {
+                        Sort = 30,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 64,
+                        Data = countHV > 0 ? (STHBQ1HV ?? 0).ToString("N2") : "",
+                        OfficeId = office.Id,
+                        DataReal = STHBQ1HV,
+                    };
+                    bcList.Add(bcSTHBQ1HV);
+                }
+                else
+                {
+                    bcSTHBQ1HV.DataReal = STHBQ1HV;
+                    bcSTHBQ1HV.Data = countHV > 0 ? (STHBQ1HV ?? 0).ToString("N2") : "";
+                }
+
             }
-            //var listChiTieuHV = new List<Tuple<string, string>>();
-            //var listChiTieuCN = new List<Tuple<string, string>>();
-            foreach (var item in phieuThuAllList)
+            //List chứa các mã học viên đã được tính
+            var listMaHV = new List<string>();
+            foreach (var item in phieuThuList)
             {
                 var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == item.ChiNhanh).FirstOrDefault();
                 if (office == null)
@@ -318,13 +473,47 @@ namespace OceanEduSlide.DAL
                         logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
                         continue;
                     }
-                    // Doanh số sale - đào tạo- kế toán
+                    // Doanh số sale - đào tạo- kế toán; Thực đạt HV NV
                     int idTyTrong = 0;
                     int sortTyTrong = 0;
                     if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT)
                     {
                         idTyTrong = 40;
                         sortTyTrong = 18;
+
+                        // Thực đạt HV NV
+                        if (!listMaHV.Contains(item.MaHV))
+                        {
+                            var sumSUD = phieuThuList.Where(a => a.MaHV == item.MaHV).Sum(a => a.SUD);
+                            if (sumSUD > 0)
+                            {
+                                listMaHV.Add(item.MaHV);
+                                var bcTDHVNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 96 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == historyUser.Id).FirstOrDefault();
+                                if (bcTDHVNV == null)
+                                    bcTDHVNV = bcList.FirstOrDefault(a => a.ReportCategoryId == 96 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == historyUser.Id);
+                                if (bcTDHVNV == null)
+                                {
+                                    bcTDHVNV = new ReportData()
+                                    {
+                                        Sort = 16,
+                                        Month = day.Month,
+                                        Year = day.Year,
+                                        ReportCategoryId = 96,
+                                        Data = "1",
+                                        HistoryUserId = historyUser.Id,
+                                        DataReal = 1,
+                                    };
+                                    bcList.Add(bcTDHVNV);
+                                }
+                                else
+                                {
+                                    if (bcTDHVNV.DataReal == null)
+                                        bcTDHVNV.DataReal = 0;
+                                    bcTDHVNV.DataReal += 1;
+                                    bcTDHVNV.Data = (bcTDHVNV.DataReal ?? 0).ToString("N0");
+                                }
+                            }
+                        }
                     }
                     else if (historyUser.TypeUser == TypeUser.CM || historyUser.TypeUser == TypeUser.TTL)
                     {
@@ -474,11 +663,12 @@ namespace OceanEduSlide.DAL
             //_unitOfWork.Save();
 
             var bcListNew = new List<ReportData>();
-            var newDataList = _unitOfWork.ReportDataRepository.GetQuery(a => (a.ReportCategoryId == 35 || a.ReportCategoryId == 88) && a.Month == day.Month && a.Year == day.Year);
-            // % ht doanh số cn - nv / Cơ cấu
+            var newDataList = _unitOfWork.ReportDataRepository.GetQuery(a => (a.ReportCategoryId == 35 || a.ReportCategoryId == 88 || a.ReportCategoryId == 96) && a.Month == day.Month && a.Year == day.Year);
+            // % ht doanh số cn - nv; %ht HVNV; Cơ cấu DS
             foreach (var item in newDataList)
             {
                 //var day = item.CreateDate;
+                // Data Thực đạt DS CN
                 if (item.ReportCategoryId == 35)
                 {
                     // Chỉ tiêu DS CN
@@ -663,7 +853,8 @@ namespace OceanEduSlide.DAL
                     }
 
                 }
-                else
+                // Data Thực đạt DS NV
+                else if (item.ReportCategoryId == 88)
                 {
                     //var datact = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 87 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == item.HistoryUserId && a.Data != null && a.Data != "0" && a.Data != "").FirstOrDefault();
                     // Tìm báo cáo chỉ tiêu ds của nv
@@ -744,6 +935,38 @@ namespace OceanEduSlide.DAL
                             OfficeId = item.OfficeId,
                         };
                         bcListNew.Add(dataht);
+                    }
+                }
+                // Data Thực đạt HV NV
+                else if (item.ReportCategoryId == 96)
+                {
+                    // % ht báo cáo HV NV
+                    var reportCTHVNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.HistoryUserId && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 95).FirstOrDefault();
+                    if (reportCTHVNV?.DataReal > 0)
+                    {
+                        var htHVNV = (item.DataReal ?? 0) / reportCTHVNV.DataReal * 100;
+                        var datahtHVNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.HistoryUserId && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 97).FirstOrDefault();
+                        if (datahtHVNV == null)
+                            datahtHVNV = bcListNew.FirstOrDefault(a => a.HistoryUserId == item.HistoryUserId && a.Month == day.Month && a.Year == day.Year && a.ReportCategoryId == 97);
+                        if (datahtHVNV == null)
+                        {
+                            datahtHVNV = new ReportData()
+                            {
+                                Data = (htHVNV ?? 0).ToString("F2") + "%",
+                                DataReal = htHVNV / 100,
+                                Month = day.Month,
+                                Year = day.Month,
+                                ReportCategoryId = 97,
+                                HistoryUserId = item.HistoryUserId,
+                                Sort = 17,
+                            };
+                            bcListNew.Add(datahtHVNV);
+                        }
+                        else
+                        {
+                            datahtHVNV.Data = (htHVNV ?? 0).ToString("F2") + "%";
+                            datahtHVNV.DataReal = htHVNV / 100;
+                        }
                     }
                 }
             }

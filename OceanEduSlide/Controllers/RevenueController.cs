@@ -655,7 +655,7 @@ namespace OceanEduSlide.Controllers
                                 reportDatactHV.Data = ctHV.ToString("N2");
                                 reportDatactHV.DataReal = ctHV;
                             }
-                            // %ht chỉ tiêu HV
+                            // %ht báo cáo  HV NV
                             if (reportDatactHV.DataReal > 0)
                             {
                                 // thực đạt HV NV
@@ -881,6 +881,7 @@ namespace OceanEduSlide.Controllers
                         reportDataHVCN.Data = chitieuHVCN.ToString("N2");
                         reportDataHVCN.DataReal = chitieuHVCN;
                     }
+                    // % ht báo cáo HV CN
                     if (reportDataHVCN.DataReal > 0)
                     {
                         // thực đạt HV CN

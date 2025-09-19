@@ -742,7 +742,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult ListReportCategory(int? typeCat, string result = "")
         {
             ViewBag.Result = result;
-            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.ReportCategoryId != null, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort));
+            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.ReportCategoryId != null, q => q.OrderBy(a => a.TypeCat).ThenBy(a => a.ReportCategoryId).ThenBy(a => a.Group).ThenBy(a => a.Sort));
             if (typeCat != null)
             {
                 reportCategories = reportCategories.Where(a => (int)a.TypeCat == typeCat);
