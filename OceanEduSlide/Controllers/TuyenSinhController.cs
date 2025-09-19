@@ -30,7 +30,7 @@ namespace OceanEduSlide.Controllers
     public class TuyenSinhController : Controller
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
-        private Entities db = new Entities();
+        private DongBoTuyenSinhEntities db = new DongBoTuyenSinhEntities();
 
         private string Username => RouteData.Values["Username"].ToString();
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();

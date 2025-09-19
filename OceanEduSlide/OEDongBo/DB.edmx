@@ -85,7 +85,7 @@
           <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ID_StudentDept" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
         </EntityContainer>
       </Schema>
@@ -93,7 +93,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="DongBoTuyenSinhEntities">
           <EntitySetMapping Name="BC_PhieuThu">
             <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
               <MappingFragment StoreEntitySet="BC_PhieuThu">

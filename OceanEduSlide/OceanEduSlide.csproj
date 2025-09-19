@@ -677,22 +677,22 @@
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="OEDongBo\BC_PhieuThu.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>Db.tt</DependentUpon>
     </Compile>
-    <Compile Include="OEDongBo\DB.Context.cs">
+    <Compile Include="OEDongBo\Db.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DB.Context.tt</DependentUpon>
+      <DependentUpon>Db.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="OEDongBo\DB.cs">
+    <Compile Include="OEDongBo\Db.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>Db.tt</DependentUpon>
     </Compile>
-    <Compile Include="OEDongBo\DB.Designer.cs">
+    <Compile Include="OEDongBo\Db.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DB.edmx</DependentUpon>
+      <DependentUpon>Db.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ExcelHelpers.cs" />
@@ -1269,15 +1269,15 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="OEDongBo\DB.Context.tt">
+    <Content Include="OEDongBo\Db.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB.edmx</DependentUpon>
-      <LastGenOutput>DB.Context.cs</LastGenOutput>
+      <DependentUpon>Db.edmx</DependentUpon>
+      <LastGenOutput>Db.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="OEDongBo\DB.tt">
+    <Content Include="OEDongBo\Db.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB.edmx</DependentUpon>
-      <LastGenOutput>DB.cs</LastGenOutput>
+      <DependentUpon>Db.edmx</DependentUpon>
+      <LastGenOutput>Db.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -1332,12 +1332,12 @@
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
     <Content Include="Nlog.config" />
-    <EntityDeploy Include="OEDongBo\DB.edmx">
+    <EntityDeploy Include="OEDongBo\Db.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DB.Designer.cs</LastGenOutput>
+      <LastGenOutput>Db.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="OEDongBo\DB.edmx.diagram">
-      <DependentUpon>DB.edmx</DependentUpon>
+    <Content Include="OEDongBo\Db.edmx.diagram">
+      <DependentUpon>Db.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
