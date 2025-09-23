@@ -985,6 +985,11 @@ namespace OceanEduSlide.Controllers
                 for (var i = 1; i < tbl2.Rows.Count; i++)
                 {
                     var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+                    if (string.IsNullOrEmpty(manhanvien))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã nhân viên dòng " + (i + 1));
+                        return View();
+                    }
                     var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
 
                     var officeShortName = tbl2.Rows[i][1].ToString().Trim();
@@ -997,7 +1002,10 @@ namespace OceanEduSlide.Controllers
 
                     var typeUser = tbl2.Rows[i][10].ToString().Trim();
                     if (string.IsNullOrEmpty(typeUser))
-                        continue;
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột phân quyền dòng " + (i + 1));
+                        return View();
+                    }
                     TypeUser type = new TypeUser();
                     switch (typeUser)
                     {
@@ -1035,12 +1043,17 @@ namespace OceanEduSlide.Controllers
                             type = TypeUser.AEC;
                             break;
                         default:
-                            break;
+                            ModelState.AddModelError("", @"Chưa tồn tại phân quyền " + typeUser + ", dòng " + (i + 1));
+                            return View();
+                            //break;
                     }
 
                     var status = tbl2.Rows[i][5].ToString().Trim();
                     if (string.IsNullOrEmpty(status))
-                        continue;
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Trạng thái nhân viên chốt dòng " + (i + 1));
+                        return View();
+                    }
 
                     StatusUser statusUser = new StatusUser();
                     switch (status)
@@ -1067,7 +1080,8 @@ namespace OceanEduSlide.Controllers
                             statusUser = StatusUser.Transfer;
                             break;
                         default:
-                            break;
+                            ModelState.AddModelError("", @"Chưa tồn tại Trạng thái " + status + ", dòng " + (i + 1));
+                            return View();
                     }
                     var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
@@ -1094,33 +1108,27 @@ namespace OceanEduSlide.Controllers
                             switch (type)
                             {
                                 case TypeUser.ASM:
-                                    newUser.ZoneIds = "," + zones + ",";
-                                    var zonef = zones.Split(',')[0];
-                                    var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
-                                    if (z != null)
+                                    if (!string.IsNullOrEmpty(zones))
                                     {
-                                        newUser.ZoneId = z.Id;
-                                        newUser.Zone = z;
+                                        newUser.ZoneIds = "," + zones + ",";
+                                        var listZ = zones.Split(',');
+                                        foreach (var item in listZ)
+                                        {
+                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                            if (zItem == null)
+                                            {
+                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
+                                            }
+                                            if (item == listZ[0])
+                                            {
+                                                newUser.ZoneId = zItem.Id;
+                                                newUser.Zone = zItem;
+                                            }
+                                        }
                                     }
+
                                     break;
-                                //case TypeUser.EC:
-                                //    if (!string.IsNullOrEmpty(zones))
-                                //    {
-                                //        newUser.OfficeIds = ",";
-                                //        newUser.OfficeNames = "";
-                                //        foreach (var item in zones.Split(','))
-                                //        {
-                                //            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                //            if (o != null)
-                                //            {
-                                //                newUser.OfficeIds += o.Id + ",";
-                                //                newUser.OfficeNames += o.ShortCode + ",";
-                                //            }
-                                //        }
-                                //        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
-                                //        newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
-                                //    }
-                                //    break;
                                 case TypeUser.BM:
                                     if (!string.IsNullOrEmpty(zones))
                                     {
@@ -1129,11 +1137,14 @@ namespace OceanEduSlide.Controllers
                                         foreach (var item in zones.Split(','))
                                         {
                                             var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o != null)
+                                            if (o == null)
                                             {
-                                                newUser.OfficeIds += o.Id + ",";
-                                                newUser.OfficeNames += o.ShortCode + ",";
+                                                ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
                                             }
+                                            newUser.OfficeIds += o.Id + ",";
+                                            newUser.OfficeNames += o.ShortCode + ",";
+
                                         }
                                         newUser.OfficeNames = newUser.OfficeNames.Trim(',');
                                         newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
@@ -1141,7 +1152,20 @@ namespace OceanEduSlide.Controllers
 
                                     break;
                                 case TypeUser.CV:
-                                    user.ZoneIds = "," + zones + ",";
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        user.ZoneIds = "," + zones + ",";
+                                        var listZ = zones.Split(',');
+                                        foreach (var item in listZ)
+                                        {
+                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                            if (zItem == null)
+                                            {
+                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
+                                            }
+                                        }
+                                    }
                                     break;
                                 default:
                                     break;
@@ -1183,18 +1207,29 @@ namespace OceanEduSlide.Controllers
                                     continue;
                                 }
                             }
-
                             switch (type)
                             {
                                 case TypeUser.ASM:
-                                    user.ZoneIds = "," + zones + ",";
-                                    var zonef = zones.Split(',')[0];
-                                    var z = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == zonef).FirstOrDefault();
-                                    if (z != null)
+                                    if (!string.IsNullOrEmpty(zones))
                                     {
-                                        user.ZoneId = z.Id;
-                                        user.Zone = z;
+                                        user.ZoneIds = "," + zones + ",";
+                                        var listZ = zones.Split(',');
+                                        foreach (var item in listZ)
+                                        {
+                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                            if (zItem == null)
+                                            {
+                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
+                                            }
+                                            if (item == listZ[0])
+                                            {
+                                                user.ZoneId = zItem.Id;
+                                                user.Zone = zItem;
+                                            }
+                                        }
                                     }
+
                                     break;
                                 case TypeUser.EC:
                                     user.OfficeIds = null;
@@ -1207,11 +1242,14 @@ namespace OceanEduSlide.Controllers
                                         foreach (var item in zones.Split(','))
                                         {
                                             var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o != null)
+                                            if (o == null)
                                             {
-                                                user.OfficeIds += o.Id + ",";
-                                                user.OfficeNames += o.ShortCode + ",";
+                                                ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
                                             }
+                                            user.OfficeIds += o.Id + ",";
+                                            user.OfficeNames += o.ShortCode + ",";
+
                                         }
                                         user.OfficeNames = user.OfficeNames.Trim(',');
                                         user.OfficeIds = (user.OfficeIds == "," ? null : user.OfficeIds);
@@ -1219,7 +1257,21 @@ namespace OceanEduSlide.Controllers
 
                                     break;
                                 case TypeUser.CV:
-                                    user.ZoneIds = "," + zones + ",";
+                                    if (!string.IsNullOrEmpty(zones))
+                                    {
+                                        user.ZoneIds = "," + zones + ",";
+                                        var listZ = zones.Split(',');
+                                        foreach (var item in listZ)
+                                        {
+                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                            if (zItem == null)
+                                            {
+                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                return View();
+                                            }
+                                        }
+                                    }
+
                                     break;
                                 default:
                                     break;
@@ -1241,7 +1293,10 @@ namespace OceanEduSlide.Controllers
 
                     var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
-                        continue;
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Ngày vào làm, dòng " + (i + 1));
+                        return View();
+                    }
                     var dayEnd = tbl2.Rows[i][7].ToString().Trim().Replace("'", "");
                     var startDate = new DateTime();
                     var endDate = new DateTime();
@@ -1249,12 +1304,18 @@ namespace OceanEduSlide.Controllers
                     if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
                         startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
                     else
-                        continue;
+                    {
+                        ModelState.AddModelError("", @"Lỗi định dạng cột Ngày vào làm, dòng " + (i + 1));
+                        return View();
+                    }
                     if (!string.IsNullOrEmpty(dayEnd))
                         if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
                             endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
                         else
-                            continue;
+                        {
+                            ModelState.AddModelError("", @"Lỗi định dạng cột Ngày nghỉ việc/TS/ĐC, dòng " + (i + 1));
+                            return View();
+                        }
 
                     //var monthStr = tbl2.Rows[i][8].ToString().Trim();
                     //if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt))

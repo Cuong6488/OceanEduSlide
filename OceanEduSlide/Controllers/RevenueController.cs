@@ -654,6 +654,10 @@ namespace OceanEduSlide.Controllers
                             {
                                 reportDatactHV.Data = ctHV.ToString("N2");
                                 reportDatactHV.DataReal = ctHV;
+                                if(reportDatactHV.Id == 104876)
+                                {
+
+                                }
                             }
                             // %ht báo cáo  HV NV
                             if (reportDatactHV.DataReal > 0)
