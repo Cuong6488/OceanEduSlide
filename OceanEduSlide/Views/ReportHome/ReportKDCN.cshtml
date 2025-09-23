@@ -139,7 +139,16 @@
                                 <tr>
                                     @foreach (var child in subCategories)
                                     {
-                                        <th class="col-w65">@child.Name</th>
+                                        <th data-categoryid="@child.Id" class="col-w65 th-filter">
+                                            @child.Name
+                                            @*<div class="btn-filter">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                                <ul class="ul-reset">
+                                                    <li>Thấp <i class="fa-solid fa-right"></i> cao</li>
+                                                    <li>Cao <i class="fa-solid fa-right"></i> thấp</li>
+                                                </ul>
+                                            </div>*@
+                                        </th>
                                     }
                                 </tr>
                             </thead>
@@ -214,6 +223,16 @@
                     wrapper.append(group);
                 });
             }
+        });
+
+        $(".btn-filter").on("click", function (data) {
+            $(".btn-filter").not(this).find("ul").removeClass("active");
+            $(this).find("ul").toggleClass("active");
+
+        });
+
+        $(".btn-filter li").on("click", function (data) {
+            $(this).siblings("ul").removeClass("active");
         });
     </script>
 }

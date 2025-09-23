@@ -34,13 +34,18 @@ namespace OceanEduSlide.DAL
                 await FetchAndSaveLogsAsync(daycheck);
             }
         }
-        public async Task SyncYesterdayAsync()
+        public async Task SyncRecentlyAsync()
         {
             for (int i = 1; i <= 7; i++)
             {
-                DateTime yesterday = DateTime.Today.AddDays(-i);
-                await FetchAndSaveLogsAsync(yesterday);
+                DateTime day = DateTime.Today.AddDays(-i);
+                await FetchAndSaveLogsAsync(day);
             }
+        }
+        public async Task SyncTodayAsync()
+        {
+                DateTime day = DateTime.Today;
+                await FetchAndSaveLogsAsync(day);
         }
         private async Task FetchAndSaveLogsAsync(DateTime day)
         {

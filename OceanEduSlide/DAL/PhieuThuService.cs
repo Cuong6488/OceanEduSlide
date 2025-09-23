@@ -25,11 +25,11 @@ namespace OceanEduSlide.DAL
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
 
-
         public void SyncPhieuThu()
         {
-            //Or custom day để test
-            var day = DateTime.Today.AddDays(-1);
+            // Đồng bộ ngày hôm qua (vào buổi đêm)
+            //var day = DateTime.Today.AddDays(-1);
+            var day = DateTime.Today;
             var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
             //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
             var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && !a.THDB);
@@ -71,7 +71,7 @@ namespace OceanEduSlide.DAL
                     GioTao = item.GioTao,
                     ChotSale = item.ChotSale,
                     CongTacVien = item.CongTacVien,
-                    ThangHocDuKienDecimal = (decimal)item.ThangHocDuKien,
+                    ThangHocDuKienDecimal = (decimal?)item.ThangHocDuKien,
                     UD_FINAL = item.UD_FINAL,
                     LoaiCTH = item.LoaiCTH,
                     ChuongTrinhHoc = item.ChuongTrinhHoc,
@@ -94,7 +94,6 @@ namespace OceanEduSlide.DAL
         }
 
         //Test Sync
-
         public void TestSyncPhieuThu(int date, int month)
         {
 
@@ -121,10 +120,6 @@ namespace OceanEduSlide.DAL
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
                     continue;
-                }
-                if (!item.NgayThanhToan.HasValue)
-                {
-
                 }
                 var phieuThu = new BC_PhieuThu_DB()
                 {
@@ -168,7 +163,7 @@ namespace OceanEduSlide.DAL
             _unitOfWork.Save();
             SyncDthu(day.Month, day.Year);
         }
-        // Tự động tính Doanh thu BC CN - NV - thực tế tuấn
+        // Tự động tính BC CN - NV; thực tế tuấn NV
         public void SyncDthu(int month, int year)
         {
             var day = new DateTime(year, month, 1);
@@ -188,7 +183,7 @@ namespace OceanEduSlide.DAL
                 var bcnvs = _unitOfWork.ReportDataRepository.GetQuery(a => (a.ReportCategoryId == 88 || a.ReportCategoryId == 96 || a.ReportCategoryId == 103) && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null && a.HistoryUser.User.MaNhanVien == mnv);
                 foreach (var bcnv in bcnvs)
                 {
-                    bcnv.Data = "0";
+                    bcnv.Data = "";
                     bcnv.DataReal = 0;
                 }
 
@@ -465,12 +460,23 @@ namespace OceanEduSlide.DAL
                         }
                         else
                         {
-                            // Xử lý chỉ tiêu rỗng cho AEC
-
-                        }
-                        if (historyUser.Id == 2770)
-                        {
-
+                            // Xử lý chỉ tiêu HV rỗng cho AEC
+                            var bcCTHVAEC = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 95 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == historyUser.Id).FirstOrDefault();
+                            if (bcCTHVAEC == null)
+                                bcCTHVAEC = bcList.FirstOrDefault(a => a.ReportCategoryId == 95 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == historyUser.Id);
+                            if (bcCTHVAEC == null)
+                            {
+                                bcCTHVAEC = new ReportData()
+                                {
+                                    Sort = 15,
+                                    Month = day.Month,
+                                    Year = day.Year,
+                                    ReportCategoryId = 95,
+                                    Data = "",
+                                    HistoryUserId = historyUser.Id,
+                                };
+                                bcList.Add(bcCTHVAEC);
+                            }
                         }
                         if (!listMaHV.Contains(item.MaHV))
                         {
@@ -529,7 +535,6 @@ namespace OceanEduSlide.DAL
                                     bcTSTCNV.DataReal += (item.ThangHocDuKienDecimal ?? 0);
                                     bcTSTCNV.Data = (bcTSTCNV.DataReal ?? 0).ToString("N2");
                                 }
-
                             }
                         }
                     }
@@ -612,13 +617,15 @@ namespace OceanEduSlide.DAL
 
                         if (string.IsNullOrEmpty(bcNV.Data))
                             bcNV.Data = "0";
+                        if (bcNV.DataReal == null)
+                            bcNV.DataReal = 0;
                         var cleanedData = bcNV.Data.Replace(",", "").Replace(".", "");
 
                         if (decimal.TryParse(cleanedData, out DataNV))
                         {
                             DataNV += item.SUD ?? 0;
                             bcNV.Data = DataNV.ToString("N0");
-                            bcNV.DataReal = item.SUD ?? 0;
+                            bcNV.DataReal += item.SUD ?? 0;
                         }
                         else
                         {
@@ -1032,6 +1039,5 @@ namespace OceanEduSlide.DAL
                 SyncPhieuThu();
             });
         }
-
     }
 }

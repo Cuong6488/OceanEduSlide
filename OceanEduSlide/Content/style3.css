@@ -618,3 +618,51 @@ td.sticky-left {
 .kpheduyet {
   color: red;
 }
+
+.th-filter {
+  position: relative;
+}
+.th-filter .btn-filter {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  margin: 0;
+  height: 16px;
+  width: 18px;
+  border: 1px solid #ccc;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+.th-filter .btn-filter ul {
+  position: absolute;
+  top: 14px;
+  right: -1px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  width: 75px;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  background: white;
+}
+.th-filter .btn-filter ul.active {
+  opacity: 1;
+  visibility: visible;
+}
+.th-filter .btn-filter ul li {
+  cursor: pointer;
+  font-weight: 400;
+  text-align: left;
+  padding: 5px;
+}
+.th-filter .btn-filter ul li:hover {
+  background: #eee;
+}
+.th-filter .btn-filter i {
+  color: #aba9a9;
+  margin-bottom: 3px;
+}

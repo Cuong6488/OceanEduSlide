@@ -37,57 +37,69 @@ namespace OceanEduSlide
                 Application["ConfigSite"] = unitofWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             }
 
-            Task.Run(async () =>
-            {
-                try
-                {
-                    var callLogService = new CallLogService();
-                    await callLogService.SyncYesterdayAsync();
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"✗ Startup sync error: {ex.Message}");
-                }
-            });
 
             JobManager.Initialize();
+            for (int h = 3; h < 24; h += 3)
+            {
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var callLogService = new CallLogService();
+                                await callLogService.SyncRecentlyAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 10)
+                );
+            }
+            for (int h = 7; h < 24; h++)
+            {
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var phieuThuService = new PhieuThuService();
+                                await phieuThuService.SyncPhieuThuAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 30)
+                );
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var callLogService = new CallLogService();
+                                await callLogService.SyncTodayAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 0)
+                );
+            }
 
-            JobManager.AddJob(
-                () =>
-                {
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            var callLogService = new CallLogService();
-                            await callLogService.SyncYesterdayAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-                        }
-                    });
-                },
-                s => s.ToRunEvery(1).Days().At(3, 0)
-            );
-            JobManager.AddJob(
-                () =>
-                {
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            var phieuThuService = new PhieuThuService();
-                            await phieuThuService.SyncPhieuThuAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
-                        }
-                    });
-                },
-                s => s.ToRunEvery(1).Days().At(3, 30)
-            );
         }
 
     }
