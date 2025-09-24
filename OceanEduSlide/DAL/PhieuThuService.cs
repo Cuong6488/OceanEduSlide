@@ -261,9 +261,8 @@ namespace OceanEduSlide.DAL
                     }
                 }
 
-                //var countHVGDM = phieuThuList.Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh mới").GroupBy(a => a.MaHV).Where(g => g.Sum(x => x.SUD ?? 0) > 0).Count();
-                //var countHVGDL = phieuThuList.Where(a => a.ChiNhanh == cn && a.DangKy == "Ghi danh tiếp" && !phieuThuList.Any(q => q.DangKy == "Ghi danh mới" && q.MaHV == a.MaHV)).GroupBy(a => a.MaHV)
-                //    .Where(g => g.Sum(x => x.SUD ?? 0) > 0).Count();
+                // BC Học viên GD mới, GD lại
+
                 // Lấy danh sách học viên đã ghi danh mới
                 var maHVGhiDanhMoi = new HashSet<string>(
                     phieuThuList
@@ -386,6 +385,36 @@ namespace OceanEduSlide.DAL
                     bcSTHBQ1HV.Data = countHV > 0 ? (STHBQ1HV ?? 0).ToString("N2") : "";
                 }
 
+                //BQ Ưu đãi sử dụng
+                var listPhieuThuKhac0d = phieuThuList.Where(a => a.ChiNhanh == cn && a.SUD != 0);
+                var SUDTotal = listPhieuThuKhac0d.Sum(a => a.SUD);
+                var TUDTotal = listPhieuThuKhac0d.Sum(a => a.TUD);
+                if (TUDTotal > 0)
+                {
+                    var bqUDSD = SUDTotal / TUDTotal;
+                    var bcBQUDSDCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 66 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                    if (bcBQUDSDCN == null)
+                        bcBQUDSDCN = bcList.FirstOrDefault(a => a.ReportCategoryId == 66 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                    if (bcBQUDSDCN == null)
+                    {
+                        bcBQUDSDCN = new ReportData()
+                        {
+                            Sort = 31,
+                            Month = day.Month,
+                            Year = day.Year,
+                            ReportCategoryId = 66,
+                            Data = ((bqUDSD ?? 0) * 100).ToString("F2") + "%",
+                            OfficeId = office.Id,
+                            DataReal = bqUDSD,
+                        };
+                        bcList.Add(bcBQUDSDCN);
+                    }
+                    else
+                    {
+                        bcBQUDSDCN.DataReal = bqUDSD;
+                        bcBQUDSDCN.Data = ((bqUDSD ?? 0) * 100).ToString("F2") + "%";
+                    }
+                }
             }
             //List chứa các mã học viên đã được tính
             var listMaHV = new List<string>();

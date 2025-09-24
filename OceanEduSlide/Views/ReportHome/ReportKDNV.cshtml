@@ -210,17 +210,17 @@
                                                 <div class="icon-default @(Model.categoryId == child.Id?"active":"")">
                                                     <i class="fa-solid fa-sort-down"></i>
                                                 </div>
-                                                <div class="icon-order order @(Model.categoryId == child.Id && Model.sort == 1?"active":"")">
-                                                    <i class="fa-solid fa-sort-down"></i>
-                                                    <i class="fa-solid fa-arrow-down-long"></i>
-                                                </div>
                                                 <div class="icon-order orderdesc @(Model.categoryId == child.Id && Model.sort == 0?"active":"")">
                                                     <i class="fa-solid fa-sort-down"></i>
                                                     <i class="fa-solid fa-arrow-up-long"></i>
                                                 </div>
+                                                <div class="icon-order order @(Model.categoryId == child.Id && Model.sort == 1?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                    <i class="fa-solid fa-arrow-down-long"></i>
+                                                </div>
                                                 <ul class="ul-reset">
-                                                    <li data-sort="0">Thấp <i class="fa-solid fa-right"></i> cao</li>
                                                     <li data-sort="1">Cao <i class="fa-solid fa-right"></i> thấp</li>
+                                                    <li data-sort="0">Thấp <i class="fa-solid fa-right"></i> cao</li>
                                                 </ul>
                                             </div>
                                         </th>
