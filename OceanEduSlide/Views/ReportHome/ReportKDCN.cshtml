@@ -14,8 +14,8 @@
     .ToHashSet();
 
 
-    var officeHasData = Model.Offices.Where(o => officeIdList.Contains(o.Id)).ToList();
-    var officeNoData = Model.Offices.Where(o => !officeIdList.Contains(o.Id)).ToList();
+    //var officeHasData = Model.Offices.Where(o => officeIdList.Contains(o.Id)).ToList();
+    //var officeNoData = Model.Offices.Where(o => !officeIdList.Contains(o.Id)).ToList();
 
     var reportDataDict = Model.ReportDatas
         .GroupBy(d => new { d.OfficeId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
@@ -97,7 +97,7 @@
                     </tr>
                     <tr></tr>
 
-                    @foreach (var office in officeHasData)
+                    @foreach (var office in Model.Offices)
                     {
                         <tr class="tr1">
                             <td>@Model.Month</td>
@@ -106,14 +106,14 @@
                         </tr>
                     }
 
-                    @foreach (var office in officeNoData)
+                    @*@foreach (var office in officeNoData)
                     {
                         <tr class="tr2">
                             <td>@Model.Month</td>
                             <td class="text-start">@(office.Zone?.Name)</td>
                             <td class="text-start">@office.ShortName</td>
                         </tr>
-                    }
+                    }*@
                 </tbody>
             </table>
         </div>
@@ -141,19 +141,29 @@
                                     {
                                         <th data-categoryid="@child.Id" class="col-w65 th-filter">
                                             @child.Name
-                                            @*<div class="btn-filter">
-                                                <i class="fa-solid fa-sort-down"></i>
+                                            <div class="btn-filter">
+                                                <div class="icon-default @(Model.categoryId == child.Id?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                </div>
+                                                <div class="icon-order order @(Model.categoryId == child.Id && Model.sort == 1?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                    <i class="fa-solid fa-arrow-down-long"></i>
+                                                </div>
+                                                <div class="icon-order orderdesc @(Model.categoryId == child.Id && Model.sort == 0?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                    <i class="fa-solid fa-arrow-up-long"></i>
+                                                </div>
                                                 <ul class="ul-reset">
-                                                    <li>Thấp <i class="fa-solid fa-right"></i> cao</li>
-                                                    <li>Cao <i class="fa-solid fa-right"></i> thấp</li>
+                                                    <li data-sort="0">Thấp <i class="fa-solid fa-right"></i> cao</li>
+                                                    <li data-sort="1">Cao <i class="fa-solid fa-right"></i> thấp</li>
                                                 </ul>
-                                            </div>*@
+                                            </div>
                                         </th>
                                     }
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var office in officeHasData)
+                                @foreach (var office in Model.Offices)
                                 {
                                     <tr class="tr1">
                                         @{
@@ -173,7 +183,7 @@
                                     </tr>
                                 }
 
-                                @foreach (var office in officeNoData)
+                                @*@foreach (var office in officeNoData)
                                 {
                                     <tr class="tr2">
                                         @for (var j = 0; j < (category.Count ?? 1); j++)
@@ -181,7 +191,7 @@
                                             <td></td>
                                         }
                                     </tr>
-                                }
+                                }*@
                             </tbody>
                         </table>
                         i++;
@@ -194,9 +204,11 @@
     @if (Model.Offices.PageCount > 1)
     {
         <div class="text-center">
-            @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year }))
+            @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+
         </div>
     }
+    <input type="hidden" name="page" value="@ViewBag.Page" />
 </div>
 
 @section scripts
@@ -225,14 +237,18 @@
             }
         });
 
-        $(".btn-filter").on("click", function (data) {
-            $(".btn-filter").not(this).find("ul").removeClass("active");
-            $(this).find("ul").toggleClass("active");
-
-        });
 
         $(".btn-filter li").on("click", function (data) {
-            $(this).siblings("ul").removeClass("active");
+            //$(this).siblings("ul").removeClass("active");
+            var categoryid = $(this).closest('th').data("categoryid");
+            var sort = $(this).data("sort");
+            var zoneId = $('select[name="ZoneId"]').val();
+            var month = $('select[name="Month"]').val();
+            var year = $('select[name="Year"]').val();
+            var page = $('input[name="page"]').val();
+            window.location.href = `/ReportHome/ReportKDCN?page=${page}&Year=${year}&Month=${month}&ZoneId=${zoneId}&categoryid=${categoryid}&sort=${sort}`;
+
         });
+
     </script>
 }

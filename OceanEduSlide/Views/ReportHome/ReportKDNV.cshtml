@@ -8,13 +8,13 @@
         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
         .ToHashSet();
     // Phân nhóm user có/không dữ liệu theo mã NV
-    var usersHasData = Model.HistoryUsers
-        .Where(u => maNhanVienList.Contains(u.User?.MaNhanVien))
-        .ToList();
+    //var usersHasData = Model.HistoryUsers
+    //    .Where(u => maNhanVienList.Contains(u.User?.MaNhanVien))
+    //    .ToList();
 
-    var usersNoData = Model.HistoryUsers
-        .Where(u => !maNhanVienList.Contains(u.User?.MaNhanVien))
-        .ToList();
+    //var usersNoData = Model.HistoryUsers
+    //    .Where(u => !maNhanVienList.Contains(u.User?.MaNhanVien))
+    //    .ToList();
 
     // Gom dữ liệu báo cáo theo UserId + CategoryId
     var reportDataDict = Model.ReportDatas
@@ -157,33 +157,9 @@
                     </tr>
                     <tr></tr>
 
-                    @foreach (var u in usersHasData)
+                    @foreach (var u in Model.HistoryUsers)
                     {
                         <tr class="tr-1">
-                            <td>@Model.Month</td>
-                            @*<td class="text-start">@(u.Office?.Zone.Name)</td>*@
-                            <td class="text-start">
-                                @if (u.ZoneId != null)
-                                {
-                                    @u.Zone.Name
-                                }
-                                else if (u.Office?.ZoneId != null)
-                                {
-                                    @u.Office.Zone.Name
-                                }
-                            </td>
-                            <td class="text-start">@(u.Office?.ShortName)</td>
-                            <td class="text-start">@(u.User?.MaNhanVien)</td>
-                            <td class="text-start">@(u.User?.Fullname)</td>
-                            <td class="text-start">@u.CDCM</td>
-                            <td class="text-start">@Html.DisplayFor(m => u.Status)</td>
-                            <td class="text-start">@Html.DisplayFor(m => u.DayStart)</td>
-                            <td class="text-start">@Html.DisplayFor(m => u.DayEnd)</td>
-                        </tr>
-                    }
-                    @foreach (var u in usersNoData)
-                    {
-                        <tr class="tr-2">
                             <td>@Model.Month</td>
                             @*<td class="text-start">@(u.Office?.Zone.Name)</td>*@
                             <td class="text-start">
@@ -228,12 +204,31 @@
                                 <tr>
                                     @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == cat.Id))
                                     {
-                                        <th class="col-w65">@child.Name</th>
+                                        <th data-categoryid="@child.Id" class="col-w65 th-filter">
+                                            @child.Name
+                                            <div class="btn-filter">
+                                                <div class="icon-default @(Model.categoryId == child.Id?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                </div>
+                                                <div class="icon-order order @(Model.categoryId == child.Id && Model.sort == 1?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                    <i class="fa-solid fa-arrow-down-long"></i>
+                                                </div>
+                                                <div class="icon-order orderdesc @(Model.categoryId == child.Id && Model.sort == 0?"active":"")">
+                                                    <i class="fa-solid fa-sort-down"></i>
+                                                    <i class="fa-solid fa-arrow-up-long"></i>
+                                                </div>
+                                                <ul class="ul-reset">
+                                                    <li data-sort="0">Thấp <i class="fa-solid fa-right"></i> cao</li>
+                                                    <li data-sort="1">Cao <i class="fa-solid fa-right"></i> thấp</li>
+                                                </ul>
+                                            </div>
+                                        </th>
                                     }
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var u in usersHasData)
+                                @foreach (var u in Model.HistoryUsers)
                                 {
                                     <tr class="tr-1">
                                         @{
@@ -250,7 +245,7 @@
                                         }
                                     </tr>
                                 }
-                                @foreach (var _ in usersNoData)
+                                @*@foreach (var _ in usersNoData)
                                 {
                                     <tr class="tr-2">
                                         @for (int j = 0; j < (cat.Count ?? 1); j++)
@@ -258,7 +253,7 @@
                                             <td></td>
                                         }
                                     </tr>
-                                }
+                                }*@
                             </tbody>
                         </table>
                         i++;
@@ -281,6 +276,7 @@
             }
         </div>
     }
+    <input type="hidden" name="page" value="@ViewBag.Page" />
 </div>
 
 @section scripts {
@@ -303,6 +299,19 @@
                     wrapper.append(wrapper.find(`[data-group-id="${id}"]`))
                 );
             }
+        });
+        $(".btn-filter li").on("click", function (data) {
+            //$(this).siblings("ul").removeClass("active");
+            var categoryid = $(this).closest('th').data("categoryid");
+            var sort = $(this).data("sort");
+            var zoneId = $('select[name="ZoneId"]').val();
+            var officeId = $('select[name="OfficeId"]').val();
+            var userType = $('select[name="UserType"]').val();
+            var month = $('select[name="Month"]').val();
+            var year = $('select[name="Year"]').val();
+            var page = $('input[name="page"]').val();
+            window.location.href = `/ReportHome/ReportKDNV?page=${page}&Year=${year}&Month=${month}&ZoneId=${zoneId}&categoryid=${categoryid}&sort=${sort}&OfficeId=${officeId}&UserType=${userType}`;
+
         });
     </script>
 }

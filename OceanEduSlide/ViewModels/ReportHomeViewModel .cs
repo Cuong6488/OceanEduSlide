@@ -22,6 +22,8 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public int? categoryId { get; set; }
+        public int sort { get; set; }
         public User User { get; set; }
     }
     public class ListReportNVHomeViewModel
@@ -36,6 +38,8 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public int? categoryId { get; set; }
+        public int sort { get; set; }
         public User User { get; set; }
         public int? UserType { get; set; }
     }

@@ -655,3 +655,15 @@ function scrollToTop() {
         behavior: 'smooth'
     });
 }
+
+$(".btn-filter").on("click", function (data) {
+    $(".btn-filter").not(this).find("ul").removeClass("active");
+    $(this).find("ul").toggleClass("active");
+});
+
+$(document).on("click", function (e) {
+    // Nếu click không nằm trong .btn-filter
+    if (!$(e.target).closest(".btn-filter").length) {
+        $(".btn-filter ul").removeClass("active");
+    }
+});

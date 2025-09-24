@@ -1346,12 +1346,20 @@ namespace OceanEduSlide.Controllers
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
                         if (!string.IsNullOrEmpty(sort))
-                            historyUser.Sort = int.Parse(sort);
-                        //Tính chỉ tiêu - TĐ - HT cuộc gọi
-                        //if (office != null)
-                        //{
-                        // cuộc gọi thực đạt
-                        var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
+                            if (int.TryParse(sort, out int sortValue))
+                            {
+                                historyUser.Sort = sortValue;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", @"Lỗi định dạng cột Thứ tự, dòng " + (i + 1));
+                                return View();
+                            }
+                                //Tính chỉ tiêu - TĐ - HT cuộc gọi
+                                //if (office != null)
+                                //{
+                                // cuộc gọi thực đạt
+                                var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
                         // Thêm hoặc update thực đạt CG cho NV
                         if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC || countTD > 0)
                         {

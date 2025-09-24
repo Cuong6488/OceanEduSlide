@@ -39,14 +39,15 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year)
+        public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year, int? categoryid, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-
+            categoryid = categoryid ?? 35;
             int currentMonth = Month ?? DateTime.Now.Month;
             int currentYear = Year ?? DateTime.Now.Year;
             int pageNumber = page ?? 1;
+            ViewBag.Page = pageNumber;
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == currentMonth && h.Year == currentYear).Select(h => new
             {
                 h.OfficeId,
@@ -97,14 +98,14 @@ namespace OceanEduSlide.Controllers
             var allOffices = officeQuery.AsNoTracking().ToList();
             var officeIds = allOffices.Select(o => o.Id).ToList();
 
-            // 2. Truy vấn ReportData cho chỉ ReportCategoryId == 35
+            // 2. Truy vấn ReportData cho chỉ ReportCategoryId
             var reportDataRaw = _unitOfWork.ReportDataRepository
                 .GetQuery(a =>
                     a.Active &&
                     a.Month == currentMonth &&
                     a.Year == currentYear &&
                     a.ReportCategory.TypeCat == TypeCat.Type1 &&
-                    a.ReportCategoryId == 35 &&
+                    a.ReportCategoryId == categoryid &&
                     officeIds.Contains(a.OfficeId ?? 0)) // giới hạn trong office được truy cập
                 .Select(a => new { a.OfficeId, a.Data })
                 .AsNoTracking()
@@ -118,15 +119,34 @@ namespace OceanEduSlide.Controllers
                     g => g.Sum(r =>
                     {
                         decimal val;
-                        var cleaned = r.Data?.Replace(".", "").Replace(",", "") ?? "0";
+                        var cleaned = r.Data?.Replace(".", "").Replace(",", "").Replace("%", "") ?? "0";
                         return decimal.TryParse(cleaned, out val) ? val : 0;
                     })
                 );
 
-            // 4. Sắp xếp Offices theo tổng ReportData giảm dần
-            var sortedOffices = allOffices
-                .OrderByDescending(o => officeDataDict.ContainsKey(o.Id) ? officeDataDict[o.Id] : 0)
-                .ToPagedList(pageNumber, 15);
+            // 4. Tách offices có và không có data
+            var officeHasData = allOffices.Where(o => officeDataDict.ContainsKey(o.Id)).ToList();
+            var officeNoData = allOffices.Where(o => !officeDataDict.ContainsKey(o.Id)).ToList();
+            List<Office> sortedAllOffices;
+            // 5. Sắp xếp officeHasData
+            if (sort == 1)
+            {
+                officeHasData = officeHasData
+                                .OrderByDescending(o => officeDataDict[o.Id])
+                                .ToList();
+                sortedAllOffices = officeHasData.Concat(officeNoData).ToList();
+            }
+            else
+            {
+                officeHasData = officeHasData
+                                .OrderBy(o => officeDataDict[o.Id])
+                                .ToList();
+                sortedAllOffices = officeNoData.Concat(officeHasData).ToList();
+            }
+
+            // Gộp lại: officeHasData lên trước, officeNoData ở sau
+            // Phân trang
+            var sortedOffices = sortedAllOffices.ToPagedList(pageNumber, 15);
 
             var pagedOfficeIds = sortedOffices.Select(o => o.Id).ToList();
 
@@ -147,6 +167,8 @@ namespace OceanEduSlide.Controllers
                 Year = currentYear,
                 User = User,
                 ZoneId = ZoneId,
+                categoryId = categoryid,
+                sort = sort,
                 Offices = sortedOffices,
                 ReportCategories = _unitOfWork.ReportCategoryRepository
                     .GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1,
@@ -345,12 +367,14 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserType, int? Month, int? Year)
+        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserType, int? Month, int? Year, int? categoryid, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
 
             var pageNumber = page ?? 1;
+            ViewBag.Page = pageNumber;
+            categoryid = categoryid ?? 88;
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
 
@@ -381,6 +405,8 @@ namespace OceanEduSlide.Controllers
                 Offices = offices,
                 User = User,
                 ZoneId = ZoneId,
+                categoryId = categoryid,
+                sort = sort,
                 UserType = UserType,
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
                 OfficeId = OfficeId
@@ -465,7 +491,7 @@ namespace OceanEduSlide.Controllers
                 a.Month == selectedMonth &&
                 a.Year == selectedYear &&
                 a.ReportCategory.TypeCat == TypeCat.Type2 &&
-                a.ReportCategoryId == 88 &&
+                a.ReportCategoryId == categoryid &&
                 historyUserIds.Contains(a.HistoryUserId ?? 0)).ToList();
 
             // Tính tổng
@@ -481,10 +507,44 @@ namespace OceanEduSlide.Controllers
                     })
                 );
 
+
             // SẮP XẾP LẠI USER TRƯỚC KHI PHÂN TRANG
-            filteredHistoryUsers = filteredHistoryUsers
-                .OrderByDescending(u => userDataDict.ContainsKey(u.Id) ? userDataDict[u.Id] : 0)
-                .ThenBy(u => u.OfficeId);
+            //filteredHistoryUsers = filteredHistoryUsers
+            //    .OrderByDescending(u => userDataDict.ContainsKey(u.Id) ? userDataDict[u.Id] : 0)
+            //    .ThenBy(u => u.OfficeId);
+            var usersHasData = filteredHistoryUsers
+                .Where(u => userDataDict.ContainsKey(u.Id))
+                .ToList();
+
+            var usersNoData = filteredHistoryUsers
+                .Where(u => !userDataDict.ContainsKey(u.Id))
+                .ToList();
+
+            List<HistoryUser> sortedUsers;
+
+            if (sort == 1)
+            {
+                // Giảm dần (mặc định)
+                usersHasData = usersHasData
+                    .OrderByDescending(u => userDataDict[u.Id])
+                    .ThenBy(u => u.OfficeId)
+                    .ToList();
+
+                sortedUsers = usersHasData.Concat(usersNoData.OrderBy(u => u.OfficeId)).ToList();
+            }
+            else
+            {
+                // Tăng dần, và user không có data sẽ lên trước
+                usersHasData = usersHasData
+                    .OrderBy(u => userDataDict[u.Id])
+                    .ThenBy(u => u.OfficeId)
+                    .ToList();
+
+                sortedUsers = usersNoData.OrderBy(u => u.OfficeId).Concat(usersHasData).ToList();
+            }
+
+            filteredHistoryUsers = sortedUsers;
+
 
             // PHÂN TRANG
             var pagedUsers = filteredHistoryUsers.ToPagedList(pageNumber, 15);

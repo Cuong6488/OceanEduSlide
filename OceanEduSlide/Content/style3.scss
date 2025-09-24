@@ -595,8 +595,37 @@ td.sticky-left {
 
 
         i {
-            color: #aba9a9;
-            margin-bottom: 3px;
+            color: #7a7979;
+        }
+
+        .icon-default {
+            display: block;
+
+            i {
+                margin-bottom: 3px;
+            }
+
+            &.active {
+                display: none;
+            }
+        }
+
+        .icon-order {
+            display: none;
+            font-size: 8px;
+
+            & > :first-child {
+                margin-right: 1px;
+                margin-top: 1px;
+            }
+
+            & > :last-child {
+                margin-bottom: 1px;
+            }
+
+            &.active {
+                display: flex;
+            }
         }
     }
 }
