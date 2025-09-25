@@ -82,6 +82,7 @@ namespace OceanEduSlide.DAL
                     DonHang = item.DonHang,
                     UDPhieuThu = item.UDPhieuThu,
                     ThangTinhDThu = item.NgayThanhToan.Value.Month,
+                    TrangThai = item.TrangThai,
                 };
                 phieuThuAddList.Add(phieuThu);
             }
@@ -169,7 +170,6 @@ namespace OceanEduSlide.DAL
             var day = new DateTime(year, month, 1);
             var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.ThangTinhDThu == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") &&
             (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm" || a.TrangThai == null || a.TrangThai == ""));
-
             var phieuThuList = phieuThuAllList.ToList();
             var bcList = new List<ReportData>();
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
@@ -391,7 +391,7 @@ namespace OceanEduSlide.DAL
                 var TUDTotal = listPhieuThuKhac0d.Sum(a => a.TUD);
                 if (TUDTotal > 0)
                 {
-                    var bqUDSD = SUDTotal / TUDTotal;
+                    var bqUDSD = 1 - (SUDTotal / TUDTotal);
                     var bcBQUDSDCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 66 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
                     if (bcBQUDSDCN == null)
                         bcBQUDSDCN = bcList.FirstOrDefault(a => a.ReportCategoryId == 66 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);

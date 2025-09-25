@@ -15,6 +15,8 @@ namespace OceanEduSlide.Models
         public int Month { get; set; }
         public int DBATL { get; set; }
         public int DBEC { get; set; }
+        public int? NVKDOver { get; set; }
+        public decimal? TargetReduce { get; set; }
         public StatusOffice Status { get; set; } = StatusOffice.Active;
         public GroupOffice GroupOffice { get; set; }
         public int Sort { get; set; } = 1;

@@ -270,11 +270,11 @@
         <div class="text-center">
             @if (Model.OfficeId != null)
             {
-                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year }))
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
             }
             else
             {
-                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year }))
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
             }
         </div>
     }

@@ -841,6 +841,14 @@ namespace OceanEduSlide.Controllers
                             newRevenueList2.Add(rnew);
                         }
                     }
+                    //if(historyOffice.TargetReduce > 0)
+                    //{
+                    //    revenueOffice.Target_TS -= (historyOffice.TargetReduce ?? 0);
+                    //}
+                    //if(historyOffice.NVKDOver > 0)
+                    //{
+
+                    //}
                     revenueOffice.Target_TS = Math.Max(targetBaseDec, revenueOffice.Target_TS);
                     //Chỉ tiêu báo cáo doanh thu chi nhánh
                     var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
@@ -971,107 +979,6 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
                 }
                 _unitOfWork.Save();
-
-                //var tbl3 = result.Tables[1];
-                //var listRevenue = new List<RevenueUser_Week_Real>();
-                //for (var i = 1; i < tbl3.Rows.Count; i++)
-                //{
-                //    var manhanvien = tbl3.Rows[i][2].ToString().Trim();
-                //    var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
-                //    if (user == null) continue;
-                //    var officeSortName = tbl3.Rows[i][1].ToString().Trim();
-                //    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeSortName).FirstOrDefault();
-                //    if (office == null) continue;
-                //    var typeUser = tbl3.Rows[i][4].ToString().Trim();
-                //    if (string.IsNullOrEmpty(typeUser))
-                //        continue;
-                //    TypeUser type = new TypeUser();
-                //    switch (typeUser)
-                //    {
-                //        case "EC":
-                //            type = TypeUser.EC;
-                //            break;
-                //        case "BM":
-                //            type = TypeUser.BM;
-                //            break;
-                //        case "BSA":
-                //            type = TypeUser.SAB;
-                //            break;
-                //        case "SAB":
-                //            type = TypeUser.SAB;
-                //            break;
-                //        case "ATL":
-                //            type = TypeUser.ALT;
-                //            break;
-                //        case "CM":
-                //            type = TypeUser.CM;
-                //            break;
-                //        case "TTL":
-                //            type = TypeUser.TTL;
-                //            break;
-                //        default:
-                //            break;
-                //    }
-                //    var month = tbl3.Rows[i][6].ToString().Trim();
-                //    if (string.IsNullOrEmpty(month)) continue;
-                //    var monthInt = int.Parse(month);
-                //    var year = tbl3.Rows[i][7].ToString().Trim();
-                //    if (string.IsNullOrEmpty(year)) continue;
-                //    var yearInt = int.Parse(year);
-                //    var week = tbl3.Rows[i][5].ToString().Trim();
-                //    if (string.IsNullOrEmpty(week)) continue;
-                //    var weekInt = int.Parse(week);
-                //    var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt).FirstOrDefault();
-                //    if (historyUser == null) continue;
-                //    var ds = tbl3.Rows[i][8].ToString().Trim();
-                //    decimal dsDec = string.IsNullOrEmpty(ds) ? 0 : decimal.Parse(ds);
-                //    var revenue = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && (int)a.WeekNumber == weekInt).FirstOrDefault();
-                //    if (revenue != null)
-                //    {
-                //        revenue.TargetBM = dsDec;
-                //    }
-                //    else
-                //    {
-                //        var newRevenue = new RevenueUser_Week_Real
-                //        {
-                //            UserId = user.Id,
-                //            HistoryUserId = historyUser.Id,
-                //            Month = monthInt,
-                //            Year = yearInt,
-                //            TargetBM = dsDec,
-                //            Active = true,
-                //        };
-                //        switch (weekInt)
-                //        {
-                //            case 1:
-                //                newRevenue.WeekNumber = WeekNumber.Week1;
-                //                break;
-                //            case 2:
-                //                newRevenue.WeekNumber = WeekNumber.Week2;
-                //                break;
-                //            case 3:
-                //                newRevenue.WeekNumber = WeekNumber.Week3;
-                //                break;
-                //            case 4:
-                //                newRevenue.WeekNumber = WeekNumber.Week4;
-                //                break;
-                //            case 5:
-                //                newRevenue.WeekNumber = WeekNumber.Week5;
-                //                break;
-                //            case 6:
-                //                newRevenue.WeekNumber = WeekNumber.Week6;
-                //                break;
-                //            default:
-                //                break;
-                //        }
-                //        //_unitOfWork.RevenueUser_Week_RealRepository.Insert(newRevenue);
-                //        listRevenue.Add(newRevenue);
-                //    }
-
-                //}
-                //if (listRevenue.Any())
-                //    _unitOfWork.RevenueUser_Week_RealRepository.InsertRange(listRevenue);
-                //_unitOfWork.Save();
                 ViewBag.Result = "add";
                 return View();
             }
