@@ -61,6 +61,8 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
+        <input type="hidden" name="categoryid" value="@Model.categoryId" />
+        <input type="hidden" name="sort" value="@Model.sort" />
         @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
         @if (Model.Zones?.Count() > 1)
         {
@@ -73,15 +75,15 @@
             </select>
         }
         @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
-            {
-                <select name="OfficeId" class="form-select w-25 me-3">
-                    <option>Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")> @item.Name </option>
-                    }
-                </select>
-            }*@
+        {
+            <select name="OfficeId" class="form-select w-25 me-3">
+                <option>Chọn chi nhánh</option>
+                @foreach (var item in Model.Offices)
+                {
+                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")> @item.Name </option>
+                }
+            </select>
+        }*@
     </form>
 
     <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>

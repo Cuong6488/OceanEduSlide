@@ -502,7 +502,7 @@ namespace OceanEduSlide.Controllers
                     g => g.Sum(r =>
                     {
                         int val;
-                        var cleanedData = r.Data?.Replace(",", "");
+                        var cleanedData = r.Data?.Replace(",", "").Replace(".", "").Replace("%", "");
                         return int.TryParse(cleanedData, out val) ? val : 0;
                     })
                 );

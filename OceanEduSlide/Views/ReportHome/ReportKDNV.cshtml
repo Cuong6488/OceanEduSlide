@@ -135,6 +135,8 @@
             <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
             <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
         </select>
+        <input type="hidden" name="categoryid" value="@Model.categoryId" />
+        <input type="hidden" name="sort" value="@Model.sort" />
     </form>
 
     <h2>BÁO CÁO KDNV tháng @Model.Month - @Model.Year</h2>
