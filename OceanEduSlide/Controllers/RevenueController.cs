@@ -1210,7 +1210,7 @@ namespace OceanEduSlide.Controllers
                             {
                                 datahtDSCN = new ReportData()
                                 {
-                                    Data = (htDSCN * 100).ToString("N0"),
+                                    Data = (htDSCN * 100).ToString("F2") + "%",
                                     DataReal = htDSCN,
                                     Month = monthInt,
                                     Year = yearInt,
