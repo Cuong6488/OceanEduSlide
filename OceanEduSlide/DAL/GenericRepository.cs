@@ -45,10 +45,6 @@ namespace OceanEduSlide.DAL
 
             return query;
         }
-        public virtual void InsertRange(IEnumerable<T> entities)
-        {
-            DbSet.AddRange(entities); // Thêm tất cả các bản ghi vào DbSet
-        }
 
         public virtual IEnumerable<T> Get(
                     Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
@@ -87,6 +83,10 @@ namespace OceanEduSlide.DAL
         public virtual void Insert(T entity)
         {
             DbSet.Add(entity);
+        }
+        public virtual void InsertRange(IEnumerable<T> entities)
+        {
+            DbSet.AddRange(entities); // Thêm tất cả các bản ghi vào DbSet
         }
 
         public virtual void Delete(object id)

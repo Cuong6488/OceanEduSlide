@@ -483,7 +483,7 @@ namespace OceanEduSlide.Controllers
             }
             IEnumerable<HistoryUser> filteredHistoryUsers = historyQuery.OrderBy(a => a.OfficeId).ToList();
 
-            // LẤY ReportData CHỈ CHO CategoryId == 88 (dùng để sort user)
+            // LẤY ReportData CHỈ CHO categoryid (dùng để sort user)
             //var userIds = filteredUsers.Select(u => u.Id).ToList();
             var historyUserIds = filteredHistoryUsers.Select(h => h.Id).ToList();
             var reportData88 = _unitOfWork.ReportDataRepository.GetQuery(a =>

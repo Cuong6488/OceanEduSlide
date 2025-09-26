@@ -1086,6 +1086,13 @@ namespace OceanEduSlide.Controllers
                     var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
                     var fullname = tbl2.Rows[i][3].ToString().Trim();
                     var zones = tbl2.Rows[i][12].ToString().Trim();
+                    var dayReduceStr = tbl2.Rows[i][13].ToString().Trim();
+                    int dayReduce = 0;
+                    if (!string.IsNullOrEmpty(dayReduceStr) && !int.TryParse(dayReduceStr, out dayReduce))
+                    {
+                        ModelState.AddModelError("", @"Sai định dạng cột Số ngày công giảm, dòng " + (i + 1));
+                        return View();
+                    }
                     var sort = tbl2.Rows[i][11].ToString().Trim();
                     if (user == null)
                     {
@@ -1342,6 +1349,7 @@ namespace OceanEduSlide.Controllers
                         historyUser.Status = statusUser;
                         historyUser.ZoneId = zone?.Id;
                         historyUser.CDCM = cdcm;
+                        historyUser.DayReduce = dayReduce;
                         //historyUser.DayStart = startDate;
                         if (!string.IsNullOrEmpty(dayEnd))
                             historyUser.DayEnd = endDate;
@@ -1355,11 +1363,11 @@ namespace OceanEduSlide.Controllers
                                 ModelState.AddModelError("", @"Lỗi định dạng cột Thứ tự, dòng " + (i + 1));
                                 return View();
                             }
-                                //Tính chỉ tiêu - TĐ - HT cuộc gọi
-                                //if (office != null)
-                                //{
-                                // cuộc gọi thực đạt
-                                var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
+                        //Tính chỉ tiêu - TĐ - HT cuộc gọi
+                        //if (office != null)
+                        //{
+                        // cuộc gọi thực đạt
+                        var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
                         // Thêm hoặc update thực đạt CG cho NV
                         if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC || countTD > 0)
                         {
@@ -1668,6 +1676,7 @@ namespace OceanEduSlide.Controllers
                             Status = statusUser,
                             DayStart = startDate,
                             CDCM = cdcm,
+                            DayReduce = dayReduce,
                             Active = true
                         };
 
@@ -2258,8 +2267,6 @@ namespace OceanEduSlide.Controllers
                     var yearStr = tbl.Rows[i][3].ToString().Trim();
                     if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt))
                         continue;
-
-
                     var dbECStr = tbl.Rows[i][4].ToString().Trim();
                     if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
                         continue;

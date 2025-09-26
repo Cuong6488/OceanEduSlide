@@ -266,6 +266,21 @@ namespace OceanEduSlide.Controllers
                         ModelState.AddModelError("", @"Chi nhánh " + shortname + " có định biên sale <= 0");
                         return View();
                     }
+
+                    var moneyDownStr = tbl.Rows[i][24].ToString().Trim();
+                    decimal moneyDown = 0;
+                    if (!string.IsNullOrEmpty(moneyDownStr) && !decimal.TryParse(moneyDownStr, out moneyDown))
+                    {
+                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số tiền giảm chỉ tiêu");
+                        return View();
+                    }
+                    var nvkdDownStr = tbl.Rows[i][25].ToString().Trim();
+                    int nvkdDown = 0;
+                    if (!string.IsNullOrEmpty(nvkdDownStr) && !int.TryParse(nvkdDownStr, out nvkdDown))
+                    {
+                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số NVKD cắt giảm chỉ tiêu");
+                        return View();
+                    }
                     var bcCTDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22).FirstOrDefault();
                     if (bcCTDBCN == null)
                         bcCTDBCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22);
@@ -328,6 +343,8 @@ namespace OceanEduSlide.Controllers
                         historyOffice.DBATL = dbATLInt;
                         historyOffice.DBEC = dbECInt;
                         historyOffice.QD156 = string.IsNullOrEmpty(qd156) ? false : true;
+                        historyOffice.NVKDOver = nvkdDown;
+                        historyOffice.TargetReduce = moneyDown;
                     }
                     else
                     {
@@ -340,6 +357,8 @@ namespace OceanEduSlide.Controllers
                             ZoneId = zone.Id,
                             DBATL = dbATLInt,
                             DBEC = dbECInt,
+                            NVKDOver = nvkdDown,
+                            TargetReduce = moneyDown,
                             QD156 = string.IsNullOrEmpty(qd156) ? false : true
                         };
                         historyOfficeList.Add(newhistoryOffice);
@@ -357,11 +376,11 @@ namespace OceanEduSlide.Controllers
                 {
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
-                    //if (office == null)
-                    //{
-                    //    ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
-                    //    return View();
-                    //}
+                    if (office == null)
+                    {
+                        ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
+                        return View();
+                    }
 
                     var monthStr = tbl.Rows[i][4].ToString().Trim();
                     int monthInt = int.Parse(monthStr);
@@ -550,6 +569,11 @@ namespace OceanEduSlide.Controllers
                                 }
 
                             }
+                            if (item.DayReduce > 0)
+                            {
+                                workingDayTT -= item.DayReduce ?? 0;
+                            }
+                            workingDayTT = Math.Max(workingDayTT, 0);
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
                             if (item.DayStart.Month == monthInt && item.DayStart.Year == yearInt)
@@ -819,7 +843,7 @@ namespace OceanEduSlide.Controllers
                             }
                         }
 
-                        // Chỉ tiêu nhân sự - phân bổ ds
+                        // Chỉ tiêu DS nhân sự - phân bổ ds
                         var r = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt).FirstOrDefault();
                         if (r == null)
                             r = newRevenueList2.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt);
@@ -841,14 +865,46 @@ namespace OceanEduSlide.Controllers
                             newRevenueList2.Add(rnew);
                         }
                     }
-                    //if(historyOffice.TargetReduce > 0)
-                    //{
-                    //    revenueOffice.Target_TS -= (historyOffice.TargetReduce ?? 0);
-                    //}
-                    //if(historyOffice.NVKDOver > 0)
-                    //{
+                    if (historyOffice.TargetReduce > 0)
+                    {
+                        revenueOffice.Target_TS -= (historyOffice.TargetReduce ?? 0);
+                    }
+                    if (historyOffice.NVKDOver > 0)
+                    {
+                        var nvkdOver = historyOffice.NVKDOver ?? 0;
 
-                    //}
+                        var listRevenueUserDataBase = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null && a.HistoryUser.OfficeId == historyOffice.OfficeId
+                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt);
+
+                        var listRevenueUserNew = newRevenueList2.Where(a => a.HistoryUserId != null && a.HistoryUser.OfficeId == historyOffice.OfficeId
+                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt);
+
+                        var mergedList = listRevenueUserDataBase.Concat(listRevenueUserNew).OrderByDescending(a => a.Target).ToList();
+
+                        var countNVKD = historyUserMonths.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT).Count();
+                        //var countNVKD = listRevenueUser.Count();
+                        // Nếu số NVKD không bằng số chỉ tiêu của NVKD
+                        var countRevenueUser = mergedList.Count();
+                        if (countRevenueUser != countNVKD)
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có số bản ghi NVKD trong tháng là " + countNVKD + ", nhưng số bản ghi chỉ tiêu của NVKD trong tháng là " + countRevenueUser);
+                            return View();
+                        }
+                        // Nếu số NVKD không bằng số chỉ tiêu của NVKD
+                        //if (listRevenueUser.Count() != countNVKD)
+                        //{
+                        //    ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có số bản ghi NVKD trong tháng là " + countNVKD + ", nhưng số bản ghi chỉ tiêu của NVKD trong tháng là "+ listRevenueUser.Count());
+                        //    return View();
+                        //}
+                        var skipNVKD = countNVKD - nvkdOver;
+                        if (skipNVKD < DBKD)
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có định biên NVKD là " + DBKD + ", mà hiện tại đang có " + countNVKD + " chỉ tiêu NVKD, không thể giảm trừ chỉ tiêu " + historyOffice.NVKDOver + " NVKD");
+                            return View();
+                        }
+                        var sumTargetDown = mergedList.Skip(skipNVKD).Take(nvkdOver).Sum(a => a.Target);
+                        revenueOffice.Target_TS -= sumTargetDown;
+                    }
                     revenueOffice.Target_TS = Math.Max(targetBaseDec, revenueOffice.Target_TS);
                     //Chỉ tiêu báo cáo doanh thu chi nhánh
                     var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
