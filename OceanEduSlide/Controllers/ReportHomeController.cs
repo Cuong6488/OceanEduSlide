@@ -800,22 +800,23 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
+
             var pageNumber = page ?? 1;
 
             if (string.IsNullOrEmpty(startDay))
                 startDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
             if (string.IsNullOrEmpty(endDay))
                 endDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
-            DateTime StartDate = new DateTime();
-            DateTime EndDate = new DateTime();
-            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-            {
-                StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-            }
-            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
-            {
-                EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
-            }
+
+            DateTime startDate, endDate;
+            if (!DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                cd = DateTime.Now;
+            if (!DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+                crd = DateTime.Now;
+
+            startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+            endDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+
             var model = new ListCallViewModel
             {
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
@@ -825,129 +826,292 @@ namespace OceanEduSlide.Controllers
                 StartDay = startDay,
                 EndDay = endDay
             };
-            // Đã yêu cầu người dùng phải chọn khoảng thời gian trong 1 năm
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
+
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h =>
+                h.Month >= startDate.Month &&
+                h.Month <= endDate.Month &&
+                h.Year == startDate.Year)
+                .Select(h => new { h.OfficeId, ZoneShortCode = h.Zone.ShortCode, h.ZoneId });
+
             if (User.TypeUser == TypeUser.HO)
+            {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            }
             else if (User.TypeUser == TypeUser.CV)
             {
                 model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
                 if (model.ZoneId == null)
                 {
-                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    model.Offices = model.Offices.Where(o =>
+                        historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                 }
             }
-            else
+            else if (User.TypeUser == TypeUser.ASM)
             {
-                //model.ZoneId = User.ZoneId;
-                //if (User.TypeUser == TypeUser.ASM)
-                //    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-                //else
-                //    model.OfficeId = User.OfficeId;
-                if (User.TypeUser == TypeUser.ASM)
+                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
                 {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                    if (model.ZoneId == null)
                     {
-                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                        if (model.ZoneId == null)
-                        {
-                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                        }
-                    }
-                    else
-                    {
-                        model.ZoneId = User.ZoneId;
+                        model.Offices = model.Offices.Where(o =>
+                            historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
                     }
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        model.OfficeId = User.OfficeId;
-                    else
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-
-                    }
+                    model.ZoneId = User.ZoneId;
                 }
             }
+            else
+            {
+                if (string.IsNullOrEmpty(User.OfficeIds))
+                    model.OfficeId = User.OfficeId;
+                else
+                {
+                    model.Offices = model.Offices.Where(a =>
+                        historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                }
+            }
+
             if (model.ZoneId != null)
             {
-                //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
-
+                model.Offices = model.Offices.Where(a =>
+                    historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
             }
+
             if (model.Offices.Count() == 1)
                 model.OfficeId = model.Offices.First().Id;
-            if (model.OfficeId != null && !string.IsNullOrEmpty(startDay) && !string.IsNullOrEmpty(endDay))
-            {
 
-                var startDate = StartDate.Date;
-                var endDate = EndDate.Date.AddDays(1);
-                var callData = _unitOfWork.CallLogRepository.GetQuery(p => p.CallDate >= startDate && p.CallDate < endDate && p.HistoryUser.OfficeId == model.OfficeId);
-                var aggregated = callData.GroupBy(p => p.HistoryUserId).Select(g => new
-                {
-                    HistoryUserId = g.Key,
-                    Over120s = g.Count(x => x.BillSec > 120),
-                    Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
-                    Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
-                    Under60s = g.Count(x => x.BillSec >= 30 && x.BillSec < 60),
-                    Under30s = g.Count(x => x.BillSec < 30 && x.Disposition == "ANSWERED"),
-                    NoAns = g.Count(x => x.Disposition == "NO ANSWER"),
-                    Busy = g.Count(x => x.Disposition == "BUSY"),
-                    Failed = g.Count(x => x.Disposition == "FAILED"),
-                    TotalOver60s = g.Count(x => x.BillSec >= 60),
-                    TotalOver30s = g.Count(x => x.BillSec >= 30),
-                    Total = g.Count(),
-                }).ToList();
-                var khoang = EndDate.Month - StartDate.Month;
-                List<int> months = new List<int>();
-                if (khoang >= 0)
-                {
-                    for (int i = StartDate.Month; i <= EndDate.Month; i++)
-                    {
-                        months.Add(i);
-                    }
-                }
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && months.Contains(a.Month) && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
-                && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort).ThenBy(a => a.UserId).ThenBy(a => a.Month)).ToList();
+            if (model.OfficeId != null)
+            {
+                var officeId = model.OfficeId.Value;
+                var months = Enumerable.Range(startDate.Month, endDate.Month - startDate.Month + 1).ToList();
+
+                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(u =>
+                    u.Active &&
+                    months.Contains(u.Month) &&
+                    u.OfficeId == officeId &&
+                    (u.DayEnd == null || u.DayEnd >= startDate) &&
+                    u.DayStart <= endDate &&
+                    u.TypeUser != TypeUser.ASM &&
+                    u.TypeUser != TypeUser.HO &&
+                    u.TypeUser != TypeUser.CV &&
+                    u.TypeUser != TypeUser.PKT &&
+                    u.TypeUser != TypeUser.BM,
+                    q => q.OrderBy(a => a.Sort).ThenBy(a => a.UserId).ThenBy(a => a.Month)).ToList();
+
+                var userIds = historyUsers.Select(u => (int?)u.Id).ToList();
+                var endDatePlusOne = endDate.AddDays(1);
+
+                var callLogs = _unitOfWork.CallLogRepository.GetQuery(c =>
+                    c.CallDate >= startDate &&
+                    c.CallDate < endDatePlusOne &&
+                    c.HistoryUser.OfficeId == officeId &&
+                    userIds.Contains(c.HistoryUserId)).ToList();
+
+                // Gom lại theo HistoryUserId 
+                var groupedLogs = callLogs.GroupBy(c => c.HistoryUserId)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => new
+                        {
+                            Over120s = g.Count(x => x.BillSec > 120),
+                            Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
+                            Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
+                            Under60s = g.Count(x => x.BillSec >= 30 && x.BillSec < 60),
+                            Under30s = g.Count(x => x.BillSec < 30 && x.Disposition == "ANSWERED"),
+                            NoAns = g.Count(x => x.Disposition == "NO ANSWER"),
+                            Busy = g.Count(x => x.Disposition == "BUSY"),
+                            Failed = g.Count(x => x.Disposition == "FAILED"),
+                            TotalOver60s = g.Count(x => x.BillSec >= 60),
+                            TotalOver30s = g.Count(x => x.BillSec >= 30),
+                            Total = g.Count(),
+                        });
+
                 var userItems = historyUsers.Select(u =>
                 {
-                    var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);
-
+                    groupedLogs.TryGetValue(u.Id, out var stat);
                     return new ListCallViewModel.UserItem
                     {
-                        //User = u,
                         HistoryUser = u,
-                        Over120s = match?.Over120s ?? 0,
-                        Over90s = match?.Over90s ?? 0,
-                        Over60s = match?.Over60s ?? 0,
-                        Under60s = match?.Under60s ?? 0,
-                        Under30s = match?.Under30s ?? 0,
-                        NoAns = match?.NoAns ?? 0,
-                        Busy = match?.Busy ?? 0,
-                        Failed = match?.Failed ?? 0,
-                        Total = match?.Total ?? 0,
-                        TotalOver30s = match?.TotalOver30s ?? 0,
-                        TotalOver60s = match?.TotalOver60s ?? 0,
+                        Over120s = stat?.Over120s ?? 0,
+                        Over90s = stat?.Over90s ?? 0,
+                        Over60s = stat?.Over60s ?? 0,
+                        Under60s = stat?.Under60s ?? 0,
+                        Under30s = stat?.Under30s ?? 0,
+                        NoAns = stat?.NoAns ?? 0,
+                        Busy = stat?.Busy ?? 0,
+                        Failed = stat?.Failed ?? 0,
+                        TotalOver60s = stat?.TotalOver60s ?? 0,
+                        TotalOver30s = stat?.TotalOver30s ?? 0,
+                        Total = stat?.Total ?? 0
                     };
                 }).ToList();
+
+                model.UserItems = userItems;
                 model.TotalOver120s = userItems.Sum(a => a.Over120s);
                 model.TotalOver90s = userItems.Sum(a => a.Over90s);
                 model.TotalOver60s = userItems.Sum(a => a.Over60s);
                 model.TotalUnder60s = userItems.Sum(a => a.Under60s);
                 model.TotalUnder30s = userItems.Sum(a => a.Under30s);
-                model.UserItems = userItems;
             }
-            return View(model);
 
+            return View(model);
         }
+
+        //public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
+        //{
+        //    if (User.TypeUser == null)
+        //        return HttpNotFound();
+        //    var pageNumber = page ?? 1;
+
+        //    if (string.IsNullOrEmpty(startDay))
+        //        startDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+        //    if (string.IsNullOrEmpty(endDay))
+        //        endDay = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+        //    DateTime StartDate = new DateTime();
+        //    DateTime EndDate = new DateTime();
+        //    if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+        //    {
+        //        StartDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+        //    }
+        //    if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+        //    {
+        //        EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
+        //    }
+        //    var model = new ListCallViewModel
+        //    {
+        //        Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)),
+        //        User = User,
+        //        ZoneId = ZoneId,
+        //        OfficeId = OfficeId,
+        //        StartDay = startDay,
+        //        EndDay = endDay
+        //    };
+        //    // Đã yêu cầu người dùng phải chọn khoảng thời gian trong 1 năm
+        //    var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
+        //    {
+        //        h.OfficeId,
+        //        ZoneShortCode = h.Zone.ShortCode,
+        //        h.ZoneId
+        //    });
+        //    if (User.TypeUser == TypeUser.HO)
+        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+        //    else if (User.TypeUser == TypeUser.CV)
+        //    {
+        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+        //        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+        //        if (model.ZoneId == null)
+        //        {
+        //            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //model.ZoneId = User.ZoneId;
+        //        //if (User.TypeUser == TypeUser.ASM)
+        //        //    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
+        //        //else
+        //        //    model.OfficeId = User.OfficeId;
+        //        if (User.TypeUser == TypeUser.ASM)
+        //        {
+        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+        //            {
+        //                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+        //                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
+        //                if (model.ZoneId == null)
+        //                {
+        //                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //                }
+        //            }
+        //            else
+        //            {
+        //                model.ZoneId = User.ZoneId;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (string.IsNullOrEmpty(User.OfficeIds))
+        //                model.OfficeId = User.OfficeId;
+        //            else
+        //            {
+        //                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+
+        //            }
+        //        }
+        //    }
+        //    if (model.ZoneId != null)
+        //    {
+        //        //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
+        //        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
+
+        //    }
+        //    if (model.Offices.Count() == 1)
+        //        model.OfficeId = model.Offices.First().Id;
+        //    if (model.OfficeId != null && !string.IsNullOrEmpty(startDay) && !string.IsNullOrEmpty(endDay))
+        //    {
+
+        //        var startDate = StartDate.Date;
+        //        var endDate = EndDate.Date.AddDays(1);
+        //        var callData = _unitOfWork.CallLogRepository.Get(p => p.CallDate >= startDate && p.CallDate < endDate && p.HistoryUser.OfficeId == model.OfficeId);
+        //        var aggregated = callData.GroupBy(p => p.HistoryUserId).Select(g => new
+        //        {
+        //            HistoryUserId = g.Key,
+        //            Over120s = g.Count(x => x.BillSec > 120),
+        //            Over90s = g.Count(x => x.BillSec > 90 && x.BillSec <= 120),
+        //            Over60s = g.Count(x => x.BillSec >= 60 && x.BillSec <= 90),
+        //            Under60s = g.Count(x => x.BillSec >= 30 && x.BillSec < 60),
+        //            Under30s = g.Count(x => x.BillSec < 30 && x.Disposition == "ANSWERED"),
+        //            NoAns = g.Count(x => x.Disposition == "NO ANSWER"),
+        //            Busy = g.Count(x => x.Disposition == "BUSY"),
+        //            Failed = g.Count(x => x.Disposition == "FAILED"),
+        //            TotalOver60s = g.Count(x => x.BillSec >= 60),
+        //            TotalOver30s = g.Count(x => x.BillSec >= 30),
+        //            Total = g.Count(),
+        //        }).ToList();
+        //        var khoang = EndDate.Month - StartDate.Month;
+        //        List<int> months = new List<int>();
+        //        if (khoang >= 0)
+        //        {
+        //            for (int i = StartDate.Month; i <= EndDate.Month; i++)
+        //            {
+        //                months.Add(i);
+        //            }
+        //        }
+        //        var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && months.Contains(a.Month) && a.OfficeId == model.OfficeId && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd >= startDate)) && a.DayStart <= endDate
+        //        && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.BM, q => q.OrderBy(a => a.Sort).ThenBy(a => a.UserId).ThenBy(a => a.Month)).ToList();
+        //        var userItems = historyUsers.Select(u =>
+        //        {
+        //            var match = aggregated.FirstOrDefault(x => x.HistoryUserId == u.Id);
+
+        //            return new ListCallViewModel.UserItem
+        //            {
+        //                //User = u,
+        //                HistoryUser = u,
+        //                Over120s = match?.Over120s ?? 0,
+        //                Over90s = match?.Over90s ?? 0,
+        //                Over60s = match?.Over60s ?? 0,
+        //                Under60s = match?.Under60s ?? 0,
+        //                Under30s = match?.Under30s ?? 0,
+        //                NoAns = match?.NoAns ?? 0,
+        //                Busy = match?.Busy ?? 0,
+        //                Failed = match?.Failed ?? 0,
+        //                Total = match?.Total ?? 0,
+        //                TotalOver30s = match?.TotalOver30s ?? 0,
+        //                TotalOver60s = match?.TotalOver60s ?? 0,
+        //            };
+        //        }).ToList();
+        //        model.TotalOver120s = userItems.Sum(a => a.Over120s);
+        //        model.TotalOver90s = userItems.Sum(a => a.Over90s);
+        //        model.TotalOver60s = userItems.Sum(a => a.Over60s);
+        //        model.TotalUnder60s = userItems.Sum(a => a.Under60s);
+        //        model.TotalUnder30s = userItems.Sum(a => a.Under30s);
+        //        model.UserItems = userItems;
+        //    }
+        //    return View(model);
+
+        //}
+
         public PartialViewResult LoadListCall(int userId, int type, string startDay, string endDay)
         {
             var model = new LoadListCallViewModel

@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -74,14 +75,14 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 var tbl = result.Tables[0];
-                var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Sort));
+                //var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Sort));
                 string lastCategoryParent = "";
                 //string previousCategoryParent = "";
 
                 var reportDataList = new List<ReportData>();
 
                 // Cache dữ liệu để tránh query lặp lại
-                var allOffices = _unitOfWork.OfficeRepository.GetQuery().ToList();
+                var allOffices = _unitOfWork.OfficeRepository.Get(a => a.Active);
                 var allCategories = _unitOfWork.ReportCategoryRepository
                     .GetQuery(a => a.TypeCat == TypeCat.Type1)
                     .Include(a => a.CategoryParent)
@@ -216,7 +217,7 @@ namespace OceanEduSlide.Controllers
 
                     var officeShortName = tbl2.Rows[i][2].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
-                    var office = allOffices.FirstOrDefault(a => a.ShortName == officeShortName);
+                    var office = allOffices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
                     if (office == null) continue;
 
                     var maNhanVien = tbl2.Rows[i][3].ToString().Trim();
@@ -397,14 +398,14 @@ namespace OceanEduSlide.Controllers
                 reader.Close();
 
                 var tbl = result.Tables[0];
-                var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Sort));
+                //var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Sort));
                 string lastCategoryParent = "";
                 //string previousCategoryParent = "";
 
                 var reportDataList = new List<ReportData>();
 
                 // Cache dữ liệu để tránh query lặp lại
-                var allOffices = _unitOfWork.OfficeRepository.GetQuery().ToList();
+                var allOffices = _unitOfWork.OfficeRepository.Get(a => a.Active);
                 var allCategories = _unitOfWork.ReportCategoryRepository
                     .GetQuery(a => a.TypeCat == TypeCat.Type1)
                     .Include(a => a.CategoryParent)
@@ -429,7 +430,7 @@ namespace OceanEduSlide.Controllers
                     var officeShortName = tbl.Rows[i][3].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
 
-                    var office = allOffices.FirstOrDefault(a => a.ShortName == officeShortName);
+                    var office = allOffices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
                     if (office == null) continue;
 
                     int cChildSort = 1;

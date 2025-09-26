@@ -39,27 +39,43 @@ namespace OceanEduSlide
 
 
             JobManager.Initialize();
-            for (int h = 3; h < 24; h += 3)
-            {
-                JobManager.AddJob(
-                    () =>
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
                     {
-                        Task.Run(async () =>
+                        try
                         {
-                            try
-                            {
-                                var callLogService = new CallLogService();
-                                await callLogService.SyncRecentlyAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-                            }
-                        });
-                    },
-                    s => s.ToRunEvery(1).Days().At(h, 10)
-                );
-            }
+                            var callLogService = new CallLogService();
+                            await callLogService.SyncRecentlyAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(3, 10)
+            );
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var callLogService = new CallLogService();
+                            await callLogService.SyncRecentlyAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(12, 30)
+            );
+
             for (int h = 7; h < 24; h++)
             {
                 JobManager.AddJob(

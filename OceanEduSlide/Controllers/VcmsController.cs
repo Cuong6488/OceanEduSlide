@@ -27,6 +27,7 @@ using System.ComponentModel.DataAnnotations;
 using ImageResizer.ExtensionMethods;
 using Microsoft.IdentityModel.Tokens;
 using OceanEduSlide.EnumHelpers;
+using System.Text;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
@@ -978,6 +979,8 @@ namespace OceanEduSlide.Controllers
                 }
 
                 var reportCallOffices = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
+                var offices = _unitOfWork.OfficeRepository.Get(a => a.Active);
+
                 foreach (var item in reportCallOffices)
                 {
                     item.Data = "0";
@@ -993,7 +996,7 @@ namespace OceanEduSlide.Controllers
                     var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
 
                     var officeShortName = tbl2.Rows[i][1].ToString().Trim();
-                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeShortName).FirstOrDefault();
+                    var office = offices.Where(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC)).FirstOrDefault();
 
                     var zoneName = tbl2.Rows[i][0].ToString().Trim();
                     var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
@@ -1688,7 +1691,7 @@ namespace OceanEduSlide.Controllers
 
                     }
                 }
-                var offices = _unitOfWork.OfficeRepository.GetQuery();
+                //var offices = _unitOfWork.OfficeRepository.GetQuery();
                 // Tính % HT cuộc gọi CN
                 foreach (var office in offices)
                 {

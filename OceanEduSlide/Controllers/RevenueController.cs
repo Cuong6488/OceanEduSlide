@@ -26,6 +26,7 @@ using Z.EntityFramework.Plus;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Text;
 
 namespace OceanEduSlide.Controllers
 {
@@ -161,8 +162,8 @@ namespace OceanEduSlide.Controllers
                 var historyOfficeList = new List<HistoryOffice>();
 
                 // CN theo tháng 
-                var offices = _unitOfWork.OfficeRepository.GetQuery();
-                var zones = _unitOfWork.ZoneRepository.GetQuery();
+                var offices = _unitOfWork.OfficeRepository.Get(a => a.Active);
+                var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var shortname = tbl.Rows[i][0].ToString().Trim();
@@ -171,8 +172,7 @@ namespace OceanEduSlide.Controllers
                         ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh - Dòng " + (i + 1));
                         return View();
                     }
-
-                    var office = offices.FirstOrDefault(a => a.ShortName == shortname);
+                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == shortname.Normalize(NormalizationForm.FormC));
                     if (office == null)
                     {
                         ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + shortname);
@@ -372,10 +372,11 @@ namespace OceanEduSlide.Controllers
 
                 var workingDays = _unitOfWork.WorkingDayRepository.GetQuery();
                 var targetGroups = _unitOfWork.TargetGroupRepository.GetQuery(a => a.Active);
+
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
-                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officeshortname).FirstOrDefault();
+                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeshortname.Normalize(NormalizationForm.FormC));
                     if (office == null)
                     {
                         ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
@@ -874,9 +875,10 @@ namespace OceanEduSlide.Controllers
                         var nvkdOver = historyOffice.NVKDOver ?? 0;
 
                         var listRevenueUserDataBase = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null && a.HistoryUser.OfficeId == historyOffice.OfficeId
-                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt);
+                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt
+                        && (a.HistoryUser.DayEnd == null || (a.HistoryUser.DayEnd != null && a.HistoryUser.DayEnd.Value.Month != monthInt || (a.HistoryUser.DayEnd.Value.Day != 1 && a.HistoryUser.DayEnd.Value.Month == monthInt))));
 
-                        var listRevenueUserNew = newRevenueList2.Where(a => a.HistoryUserId != null && a.HistoryUser.OfficeId == historyOffice.OfficeId
+                        var listRevenueUserNew = newRevenueList2.Where(a => a.HistoryUser != null && a.HistoryUser.OfficeId == historyOffice.OfficeId
                         && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt);
 
                         var mergedList = listRevenueUserDataBase.Concat(listRevenueUserNew).OrderByDescending(a => a.Target).ToList();
