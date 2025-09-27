@@ -980,10 +980,11 @@ namespace OceanEduSlide.Controllers
 
                 var reportCallOffices = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
                 var offices = _unitOfWork.OfficeRepository.Get(a => a.Active);
-
+                var listZone = _unitOfWork.ZoneRepository.Get(a => a.Active);
                 foreach (var item in reportCallOffices)
                 {
                     item.Data = "0";
+                    item.DataReal = 0;
                 }
                 for (var i = 1; i < tbl2.Rows.Count; i++)
                 {
@@ -996,10 +997,10 @@ namespace OceanEduSlide.Controllers
                     var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
 
                     var officeShortName = tbl2.Rows[i][1].ToString().Trim();
-                    var office = offices.Where(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC)).FirstOrDefault();
+                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
 
                     var zoneName = tbl2.Rows[i][0].ToString().Trim();
-                    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
+                    var zone = listZone.FirstOrDefault(a => a.Name == zoneName);
 
                     var cdcm = tbl2.Rows[i][4].ToString().Trim();
 
