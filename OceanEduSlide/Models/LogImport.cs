@@ -22,7 +22,7 @@ namespace OceanEduSlide.Models
     {
         [Display(Name = "File báo cáo TH CN - NV")]
         Type1,
-        [Display(Name = "File chỉ tiêu CN - NV - DS hoàn thành thực tế tuần")]
+        [Display(Name = "File chỉ tiêu CN - NV")]
         Type2,
         [Display(Name = "File Vùng")]
         Type3,
@@ -40,6 +40,12 @@ namespace OceanEduSlide.Models
         Type9,
         [Display(Name = "File Phiếu thu đặc biệt")]
         Type10,
+        [Display(Name = "File chỉ tiêu CN - NV; Nhân sự theo tháng")]
+        Type11,
+        [Display(Name = "File chỉ tiêu CN - NV; Chi nhánh theo tháng")]
+        Type12,
+        [Display(Name = "File chỉ tiêu CN - NV; CN tháng; NS tháng")]
+        Type13,
 
     }
 }

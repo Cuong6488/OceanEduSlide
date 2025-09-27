@@ -119,12 +119,11 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult TargetOffice(FormCollection fc)
+        public ActionResult TargetOffice(FormCollection fc, int TypeUpdate)
         {
             var file = Request.Files["TargetOfficeFile"];
             if (file != null && file.ContentLength > 0)
             {
-
                 var stream = file.InputStream;
                 IExcelDataReader reader;
                 if (file.FileName.EndsWith(".xls"))
@@ -143,12 +142,27 @@ namespace OceanEduSlide.Controllers
                 var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
                 HtmlHelpers.CreateFolder(Server.MapPath(docPath));
                 var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                var typeImport = TypeImport.Type2;
+                switch (TypeUpdate)
+                {
+                    case 2:
+                        typeImport = TypeImport.Type11;
+                        break;
+                    case 3:
+                        typeImport = TypeImport.Type12;
+                        break;
+                    case 4:
+                        typeImport = TypeImport.Type13;
+                        break;
+                    default:
+                        break;
+                }
                 var logImport = new Models.LogImport
                 {
                     Admin = Fullname,
                     Name = Path.GetFileName(file.FileName),
                     File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
-                    TypeImport = TypeImport.Type2,
+                    TypeImport = typeImport,
                 };
                 _unitOfWork.LogImportRepository.Insert(logImport);
                 _unitOfWork.Save();
@@ -156,17 +170,10 @@ namespace OceanEduSlide.Controllers
                 var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
                 file.SaveAs(filePath);
 
-
                 var result = reader.AsDataSet();
                 reader.Close();
 
                 var tbl = result.Tables[0];
-                var newRevenueList = new List<RevenueOffice>();
-                var newRevenueList2 = new List<RevenueUser_Month>();
-                var reportDataList = new List<ReportData>();
-                var historyOfficeList = new List<HistoryOffice>();
-
-                // CN theo tháng 
                 var offices = _unitOfWork.OfficeRepository.Get(a => a.Active);
                 var listZone = _unitOfWork.ZoneRepository.Get(a => a.Active);
                 var monthStr = tbl.Rows[1][4].ToString().Trim();
@@ -182,456 +189,567 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("", @"Kiểm tra lại cột năm");
                     return View();
                 }
-                for (var i = 1; i < tbl.Rows.Count; i++)
+                int lastMonth = 0;
+                int yearLastMonth = 0;
+                if (monthInt == 1)
                 {
-                    var shortname = tbl.Rows[i][0].ToString().Trim();
-                    if (string.IsNullOrEmpty(shortname))
-                    {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh - Dòng " + (i + 1));
-                        return View();
-                    }
-                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == shortname.Normalize(NormalizationForm.FormC));
-                    if (office == null)
-                    {
-                        ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + shortname);
-                        return View();
-                    }
-                    var zonename = tbl.Rows[i][1].ToString().Trim();
-                    if (string.IsNullOrEmpty(zonename))
-                    {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Vùng - Dòng " + (i + 1));
-                        return View();
-                    }
-                    var zone = listZone.FirstOrDefault(a => a.Name == zonename || a.ShortCode == zonename);
-                    if (zone == null)
-                    {
-                        ModelState.AddModelError("", @"Không tồn tại vùng nào có tên là " + zonename);
-                        return View();
-                    }
-                    //var monthStr = tbl.Rows[i][4].ToString().Trim();
-                    //if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt))
-                    //{
-                    //    ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột tháng, hoặc không thể chuyển thành dạng số");
-                    //    return View();
-                    //}
-
-                    //var yearStr = tbl.Rows[i][5].ToString().Trim();
-                    //if (string.IsNullOrEmpty(yearStr) || !int.TryParse(yearStr, out var yearInt))
-                    //{
-                    //    ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột năm, hoặc không thể chuyển thành dạng số");
-                    //    return View();
-                    //}
-                    var dbECStr = tbl.Rows[i][7].ToString().Trim();
-                    if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột định biên EC, hoặc không thể chuyển thành dạng số");
-                        return View();
-                    }
-                    var dbATLStr = tbl.Rows[i][6].ToString().Trim();
-                    if (string.IsNullOrEmpty(dbATLStr) || !int.TryParse(dbATLStr, out var dbATLInt))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột định biên ATL, hoặc không thể chuyển thành dạng số");
-                        return View();
-                    }
-
-                    var dayOpen = tbl.Rows[i][3].ToString().Trim().Replace("'", "");
-                    if (string.IsNullOrEmpty(dayOpen))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột ngày khai trương");
-                        return View();
-                    }
-                    var openDate = new DateTime();
-
-                    if (!DateTime.TryParse(dayOpen, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " không thể chuyển thành dạng ngày tháng cột ngày khai trương");
-                        return View();
-                    }
-                    else
-                    {
-                        openDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                        office.OpenDate = openDate;
-                    }
-                    var group = tbl.Rows[i][15].ToString().Trim();
-                    if (string.IsNullOrEmpty(group))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột phân nhóm đào tạo");
-                        return View();
-                    }
-                    GroupOffice groupOffice = new GroupOffice();
-                    switch (group)
-                    {
-                        case "A":
-                            groupOffice = GroupOffice.A;
-                            break;
-                        case "B":
-                            groupOffice = GroupOffice.B;
-                            break;
-                        case "C":
-                            groupOffice = GroupOffice.C;
-                            break;
-                        case "D":
-                            groupOffice = GroupOffice.D;
-                            break;
-                        default:
-                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai dữ liệu cột phân nhóm đào tạo");
-                            return View();
-                    }
-                    var qd156 = tbl.Rows[i][2].ToString().Trim();
-                    var dbSale = dbECInt + dbATLInt;
-                    if (dbSale <= 0)
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " có định biên sale <= 0");
-                        return View();
-                    }
-
-                    var moneyDownStr = tbl.Rows[i][24].ToString().Trim();
-                    decimal moneyDown = 0;
-                    if (!string.IsNullOrEmpty(moneyDownStr) && !decimal.TryParse(moneyDownStr, out moneyDown))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số tiền giảm chỉ tiêu");
-                        return View();
-                    }
-                    var nvkdDownStr = tbl.Rows[i][25].ToString().Trim();
-                    int nvkdDown = 0;
-                    if (!string.IsNullOrEmpty(nvkdDownStr) && !int.TryParse(nvkdDownStr, out nvkdDown))
-                    {
-                        ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số NVKD cắt giảm chỉ tiêu");
-                        return View();
-                    }
-                    var bcCTDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22).FirstOrDefault();
-                    if (bcCTDBCN == null)
-                        bcCTDBCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22);
-                    if (bcCTDBCN == null)
-                    {
-                        bcCTDBCN = new ReportData()
-                        {
-                            Data = dbSale.ToString("N0"),
-                            DataReal = dbSale,
-                            Month = monthInt,
-                            Year = yearInt,
-                            ReportCategoryId = 22,
-                            OfficeId = office.Id,
-                            Sort = 4,
-                        };
-                        reportDataList.Add(bcCTDBCN);
-                    }
-                    else
-                    {
-                        bcCTDBCN.Data = dbSale.ToString("N0");
-                        bcCTDBCN.DataReal = dbSale;
-                    }
-                    // Báo cáo %ht ĐB Sale
-
-                    // thực đạt ĐB Sale
-                    var bcTDDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 23).FirstOrDefault();
-                    if (bcTDDBCN?.DataReal != null)
-                    {
-                        var htDBCN = bcTDDBCN.DataReal / dbSale * 100;
-                        var datahtDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 24 && a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
-                        if (datahtDBCN == null)
-                            datahtDBCN = reportDataList.FirstOrDefault(a => a.ReportCategoryId == 24 && a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id);
-                        if (datahtDBCN == null)
-                        {
-                            datahtDBCN = new ReportData()
-                            {
-                                Data = (htDBCN ?? 0).ToString("F2") + "%",
-                                DataReal = htDBCN / 100,
-                                Month = monthInt,
-                                Year = yearInt,
-                                ReportCategoryId = 24,
-                                OfficeId = office.Id,
-                                Sort = 6,
-                            };
-                            reportDataList.Add(datahtDBCN);
-                        }
-                        else
-                        {
-                            datahtDBCN.Data = (htDBCN ?? 0).ToString("F2") + "%";
-                            datahtDBCN.DataReal = htDBCN / 100;
-                        }
-                    }
-
-                    var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
-
-                    if (historyOffice != null)
-                    {
-                        historyOffice.GroupOffice = groupOffice;
-                        historyOffice.ZoneId = zone.Id;
-                        historyOffice.DBATL = dbATLInt;
-                        historyOffice.DBEC = dbECInt;
-                        historyOffice.QD156 = string.IsNullOrEmpty(qd156) ? false : true;
-                        historyOffice.NVKDOver = nvkdDown;
-                        historyOffice.TargetReduce = moneyDown;
-                    }
-                    else
-                    {
-                        var newhistoryOffice = new HistoryOffice
-                        {
-                            Month = monthInt,
-                            Year = yearInt,
-                            OfficeId = office.Id,
-                            GroupOffice = groupOffice,
-                            ZoneId = zone.Id,
-                            DBATL = dbATLInt,
-                            DBEC = dbECInt,
-                            NVKDOver = nvkdDown,
-                            TargetReduce = moneyDown,
-                            QD156 = string.IsNullOrEmpty(qd156) ? false : true
-                        };
-                        historyOfficeList.Add(newhistoryOffice);
-                    }
+                    lastMonth = 12;
+                    yearLastMonth = yearInt - 1;
                 }
-
-                if (historyOfficeList.Any())
-                    _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
-
-                // Nhân sự tháng
-
-                var tbl2 = result.Tables[1];
-                var historyUserList = new List<HistoryUser>();
-                //var reportDataList = new List<ReportData>();
-                var listHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt);
-
-                var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.HistoryUser).FirstOrDefault();
-                if (lockImport != null && Role != RoleAdmin.Admin)
+                else
                 {
-                    ModelState.AddModelError("", @"Số liệu tháng trước đã được khóa, chỉ quyền quản trị viên mới có thể cập nhật");
+                    lastMonth = monthInt - 1;
+                    yearLastMonth = yearInt;
+                }
+                DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
+                var workingDay = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Year == yearInt).FirstOrDefault();
+                if (workingDay == null)
+                {
+                    ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + yearInt);
+                    return View();
+                }
+                var workingDayLastYear = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Year == yearInt - 1).FirstOrDefault();
+                if (workingDayLastYear == null)
+                {
+                    ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + (yearInt - 1));
+                    return View();
+                }
+                var targetGroup = _unitOfWork.TargetGroupRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt).FirstOrDefault();
+                if (targetGroup == null)
+                {
+                    ModelState.AddModelError("", @"Chưa có dữ liệu bảng chỉ tiêu NVĐT theo tháng - tháng" + monthInt + "/" + yearInt);
                     return View();
                 }
 
-                var reportCallOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
-                var reportCallHTOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
+                var newRevenueList = new List<RevenueOffice>();
+                var newRevenueList2 = new List<RevenueUser_Month>();
+                var reportDataList = new List<ReportData>();
 
-                foreach (var item in reportCallOffices)
+                // CN theo tháng
+                if (TypeUpdate == 3 || TypeUpdate == 4)
                 {
-                    item.Data = "0";
-                    item.DataReal = 0;
+                    var historyOfficeList = new List<HistoryOffice>();
+                    for (var i = 1; i < tbl.Rows.Count; i++)
+                    {
+                        var shortname = tbl.Rows[i][0].ToString().Trim();
+                        if (string.IsNullOrEmpty(shortname))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh - Dòng " + (i + 1));
+                            return View();
+                        }
+                        var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == shortname.Normalize(NormalizationForm.FormC));
+                        if (office == null)
+                        {
+                            ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + shortname);
+                            return View();
+                        }
+                        var zonename = tbl.Rows[i][1].ToString().Trim();
+                        if (string.IsNullOrEmpty(zonename))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Vùng - Dòng " + (i + 1));
+                            return View();
+                        }
+                        var zone = listZone.FirstOrDefault(a => a.Name == zonename || a.ShortCode == zonename);
+                        if (zone == null)
+                        {
+                            ModelState.AddModelError("", @"Không tồn tại vùng nào có tên là " + zonename);
+                            return View();
+                        }
+                        var dbECStr = tbl.Rows[i][7].ToString().Trim();
+                        if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột định biên EC, hoặc không thể chuyển thành dạng số");
+                            return View();
+                        }
+                        var dbATLStr = tbl.Rows[i][6].ToString().Trim();
+                        if (string.IsNullOrEmpty(dbATLStr) || !int.TryParse(dbATLStr, out var dbATLInt))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột định biên ATL, hoặc không thể chuyển thành dạng số");
+                            return View();
+                        }
+
+                        var dayOpen = tbl.Rows[i][3].ToString().Trim().Replace("'", "");
+                        if (string.IsNullOrEmpty(dayOpen))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột ngày khai trương");
+                            return View();
+                        }
+                        var openDate = new DateTime();
+
+                        if (!DateTime.TryParse(dayOpen, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không thể chuyển thành dạng ngày tháng cột ngày khai trương");
+                            return View();
+                        }
+                        else
+                        {
+                            openDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                            office.OpenDate = openDate;
+                        }
+                        var group = tbl.Rows[i][15].ToString().Trim();
+                        if (string.IsNullOrEmpty(group))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột phân nhóm đào tạo");
+                            return View();
+                        }
+                        GroupOffice groupOffice = new GroupOffice();
+                        switch (group)
+                        {
+                            case "A":
+                                groupOffice = GroupOffice.A;
+                                break;
+                            case "B":
+                                groupOffice = GroupOffice.B;
+                                break;
+                            case "C":
+                                groupOffice = GroupOffice.C;
+                                break;
+                            case "D":
+                                groupOffice = GroupOffice.D;
+                                break;
+                            default:
+                                ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai dữ liệu cột phân nhóm đào tạo");
+                                return View();
+                        }
+                        var qd156 = tbl.Rows[i][2].ToString().Trim();
+                        var dbSale = dbECInt + dbATLInt;
+                        if (dbSale <= 0)
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " có định biên sale <= 0");
+                            return View();
+                        }
+
+                        var moneyDownStr = tbl.Rows[i][24].ToString().Trim();
+                        decimal moneyDown = 0;
+                        if (!string.IsNullOrEmpty(moneyDownStr) && !decimal.TryParse(moneyDownStr, out moneyDown))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số tiền giảm chỉ tiêu");
+                            return View();
+                        }
+                        var nvkdDownStr = tbl.Rows[i][25].ToString().Trim();
+                        int nvkdDown = 0;
+                        if (!string.IsNullOrEmpty(nvkdDownStr) && !int.TryParse(nvkdDownStr, out nvkdDown))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số NVKD cắt giảm chỉ tiêu");
+                            return View();
+                        }
+                        var bcCTDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22).FirstOrDefault();
+                        if (bcCTDBCN == null)
+                            bcCTDBCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22);
+                        if (bcCTDBCN == null)
+                        {
+                            bcCTDBCN = new ReportData()
+                            {
+                                Data = dbSale.ToString("N0"),
+                                DataReal = dbSale,
+                                Month = monthInt,
+                                Year = yearInt,
+                                ReportCategoryId = 22,
+                                OfficeId = office.Id,
+                                Sort = 4,
+                            };
+                            reportDataList.Add(bcCTDBCN);
+                        }
+                        else
+                        {
+                            bcCTDBCN.Data = dbSale.ToString("N0");
+                            bcCTDBCN.DataReal = dbSale;
+                        }
+                        // Báo cáo %ht ĐB Sale
+
+                        // thực đạt ĐB Sale
+                        var bcTDDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 23).FirstOrDefault();
+                        if (bcTDDBCN?.DataReal != null)
+                        {
+                            var htDBCN = bcTDDBCN.DataReal / dbSale * 100;
+                            var datahtDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 24 && a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
+                            if (datahtDBCN == null)
+                                datahtDBCN = reportDataList.FirstOrDefault(a => a.ReportCategoryId == 24 && a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id);
+                            if (datahtDBCN == null)
+                            {
+                                datahtDBCN = new ReportData()
+                                {
+                                    Data = (htDBCN ?? 0).ToString("F2") + "%",
+                                    DataReal = htDBCN / 100,
+                                    Month = monthInt,
+                                    Year = yearInt,
+                                    ReportCategoryId = 24,
+                                    OfficeId = office.Id,
+                                    Sort = 6,
+                                };
+                                reportDataList.Add(datahtDBCN);
+                            }
+                            else
+                            {
+                                datahtDBCN.Data = (htDBCN ?? 0).ToString("F2") + "%";
+                                datahtDBCN.DataReal = htDBCN / 100;
+                            }
+                        }
+
+                        var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.OfficeId == office.Id).FirstOrDefault();
+
+                        if (historyOffice != null)
+                        {
+                            historyOffice.GroupOffice = groupOffice;
+                            historyOffice.ZoneId = zone.Id;
+                            historyOffice.DBATL = dbATLInt;
+                            historyOffice.DBEC = dbECInt;
+                            historyOffice.QD156 = string.IsNullOrEmpty(qd156) ? false : true;
+                            historyOffice.NVKDOver = nvkdDown;
+                            historyOffice.TargetReduce = moneyDown;
+                        }
+                        else
+                        {
+                            var newhistoryOffice = new HistoryOffice
+                            {
+                                Month = monthInt,
+                                Year = yearInt,
+                                OfficeId = office.Id,
+                                GroupOffice = groupOffice,
+                                ZoneId = zone.Id,
+                                DBATL = dbATLInt,
+                                DBEC = dbECInt,
+                                NVKDOver = nvkdDown,
+                                TargetReduce = moneyDown,
+                                QD156 = string.IsNullOrEmpty(qd156) ? false : true
+                            };
+                            historyOfficeList.Add(newhistoryOffice);
+                        }
+                    }
+
+                    if (historyOfficeList.Any())
+                        _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
                 }
 
-                for (var i = 1; i < tbl2.Rows.Count; i++)
+                // Nhân sự tháng
+                if (TypeUpdate == 2 || TypeUpdate == 4)
                 {
-                    var manhanvien = tbl2.Rows[i][2].ToString().Trim();
-                    if (string.IsNullOrEmpty(manhanvien))
+                    var tbl2 = result.Tables[1];
+                    var historyUserList = new List<HistoryUser>();
+                    var listHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt);
+                    var users = _unitOfWork.UserRepository.Get(a => a.Active);
+
+                    var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.HistoryUser).FirstOrDefault();
+                    if (lockImport != null && Role != RoleAdmin.Admin)
                     {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã nhân viên dòng " + (i + 1));
-                        return View();
-                    }
-                    var user = _unitOfWork.UserRepository.GetQuery(a => a.MaNhanVien == manhanvien).FirstOrDefault();
-
-                    var officeShortName = tbl2.Rows[i][1].ToString().Trim();
-                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
-
-                    var zoneName = tbl2.Rows[i][0].ToString().Trim();
-                    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
-
-                    var cdcm = tbl2.Rows[i][4].ToString().Trim();
-
-                    var typeUser = tbl2.Rows[i][10].ToString().Trim();
-                    if (string.IsNullOrEmpty(typeUser))
-                    {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột phân quyền dòng " + (i + 1));
-                        return View();
-                    }
-                    TypeUser type = new TypeUser();
-                    switch (typeUser)
-                    {
-                        case "ASM":
-                            type = TypeUser.ASM;
-                            break;
-                        case "GĐTS":
-                            type = TypeUser.HO;
-                            break;
-                        case "EC":
-                            type = TypeUser.EC;
-                            break;
-                        case "BM":
-                            type = TypeUser.BM;
-                            break;
-                        case "BSA":
-                            type = TypeUser.SAB;
-                            break;
-                        case "SAB":
-                            type = TypeUser.SAB;
-                            break;
-                        case "ATL":
-                            type = TypeUser.ALT;
-                            break;
-                        case "CM":
-                            type = TypeUser.CM;
-                            break;
-                        case "TTL":
-                            type = TypeUser.TTL;
-                            break;
-                        case "Chuyên viên":
-                            type = TypeUser.CV;
-                            break;
-                        case "AEC":
-                            type = TypeUser.AEC;
-                            break;
-                        default:
-                            ModelState.AddModelError("", @"Chưa tồn tại phân quyền " + typeUser + ", dòng " + (i + 1));
-                            return View();
-                            //break;
-                    }
-
-                    var status = tbl2.Rows[i][5].ToString().Trim();
-                    if (string.IsNullOrEmpty(status))
-                    {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Trạng thái nhân viên chốt dòng " + (i + 1));
+                        ModelState.AddModelError("", @"Số liệu tháng trước đã được khóa, chỉ quyền quản trị viên mới có thể cập nhật");
                         return View();
                     }
 
-                    StatusUser statusUser = new StatusUser();
-                    switch (status)
+                    var reportCallOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
+                    var reportCallHTOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
+
+                    foreach (var item in reportCallOffices)
                     {
-                        case "Đang làm việc":
-                            statusUser = StatusUser.Active;
-                            break;
-                        case "Nghỉ thai sản":
-                            statusUser = StatusUser.InActive;
-                            break;
-                        case "Đã nghỉ":
-                            statusUser = StatusUser.InActive;
-                            break;
-                        case "Nghỉ việc":
-                            statusUser = StatusUser.InActive;
-                            break;
-                        case "Miễn nhiệm":
-                            statusUser = StatusUser.InActive;
-                            break;
-                        case "Điều chuyển":
-                            statusUser = StatusUser.Transfer;
-                            break;
-                        case "Bổ nhiệm":
-                            statusUser = StatusUser.Transfer;
-                            break;
-                        default:
-                            ModelState.AddModelError("", @"Chưa tồn tại Trạng thái " + status + ", dòng " + (i + 1));
-                            return View();
+                        item.Data = "0";
+                        item.DataReal = 0;
                     }
-                    var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
-                    var fullname = tbl2.Rows[i][3].ToString().Trim();
-                    var zones = tbl2.Rows[i][12].ToString().Trim();
-                    var dayReduceStr = tbl2.Rows[i][13].ToString().Trim();
-                    int dayReduce = 0;
-                    if (!string.IsNullOrEmpty(dayReduceStr) && !int.TryParse(dayReduceStr, out dayReduce))
+
+                    for (var i = 1; i < tbl2.Rows.Count; i++)
                     {
-                        ModelState.AddModelError("", @"Sai định dạng cột Số ngày công giảm, dòng " + (i + 1));
-                        return View();
-                    }
-                    var sort = tbl2.Rows[i][11].ToString().Trim();
-                    if (user == null)
-                    {
-                        if (statusUser == StatusUser.Active)
+                        var manhanvien = tbl2.Rows[i][2].ToString().Trim();
+                        if (string.IsNullOrEmpty(manhanvien))
                         {
-                            var newUser = new User
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã nhân viên dòng " + (i + 1));
+                            return View();
+                        }
+                        var user = users.FirstOrDefault(a => a.MaNhanVien == manhanvien);
+
+                        var officeShortName = tbl2.Rows[i][1].ToString().Trim();
+                        var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
+
+                        var zoneName = tbl2.Rows[i][0].ToString().Trim();
+                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
+
+                        var cdcm = tbl2.Rows[i][4].ToString().Trim();
+
+                        var typeUser = tbl2.Rows[i][10].ToString().Trim();
+                        if (string.IsNullOrEmpty(typeUser))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột phân quyền dòng " + (i + 1));
+                            return View();
+                        }
+                        TypeUser type = new TypeUser();
+                        switch (typeUser)
+                        {
+                            case "ASM":
+                                type = TypeUser.ASM;
+                                break;
+                            case "GĐTS":
+                                type = TypeUser.HO;
+                                break;
+                            case "EC":
+                                type = TypeUser.EC;
+                                break;
+                            case "BM":
+                                type = TypeUser.BM;
+                                break;
+                            case "BSA":
+                                type = TypeUser.SAB;
+                                break;
+                            case "SAB":
+                                type = TypeUser.SAB;
+                                break;
+                            case "ATL":
+                                type = TypeUser.ALT;
+                                break;
+                            case "CM":
+                                type = TypeUser.CM;
+                                break;
+                            case "TTL":
+                                type = TypeUser.TTL;
+                                break;
+                            case "Chuyên viên":
+                                type = TypeUser.CV;
+                                break;
+                            case "AEC":
+                                type = TypeUser.AEC;
+                                break;
+                            default:
+                                ModelState.AddModelError("", @"Chưa tồn tại phân quyền " + typeUser + ", dòng " + (i + 1));
+                                return View();
+                                //break;
+                        }
+
+                        var status = tbl2.Rows[i][5].ToString().Trim();
+                        if (string.IsNullOrEmpty(status))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Trạng thái nhân viên chốt dòng " + (i + 1));
+                            return View();
+                        }
+
+                        StatusUser statusUser = new StatusUser();
+                        switch (status)
+                        {
+                            case "Đang làm việc":
+                                statusUser = StatusUser.Active;
+                                break;
+                            case "Nghỉ thai sản":
+                                statusUser = StatusUser.InActive;
+                                break;
+                            case "Đã nghỉ":
+                                statusUser = StatusUser.InActive;
+                                break;
+                            case "Nghỉ việc":
+                                statusUser = StatusUser.InActive;
+                                break;
+                            case "Miễn nhiệm":
+                                statusUser = StatusUser.InActive;
+                                break;
+                            case "Điều chuyển":
+                                statusUser = StatusUser.Transfer;
+                                break;
+                            case "Bổ nhiệm":
+                                statusUser = StatusUser.Transfer;
+                                break;
+                            default:
+                                ModelState.AddModelError("", @"Chưa tồn tại Trạng thái " + status + ", dòng " + (i + 1));
+                                return View();
+                        }
+                        var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
+                        var fullname = tbl2.Rows[i][3].ToString().Trim();
+                        var zones = tbl2.Rows[i][12].ToString().Trim();
+                        var dayReduceStr = tbl2.Rows[i][13].ToString().Trim();
+                        int dayReduce = 0;
+                        if (!string.IsNullOrEmpty(dayReduceStr) && !int.TryParse(dayReduceStr, out dayReduce))
+                        {
+                            ModelState.AddModelError("", @"Sai định dạng cột Số ngày công giảm, dòng " + (i + 1));
+                            return View();
+                        }
+                        var sort = tbl2.Rows[i][11].ToString().Trim();
+                        if (user == null)
+                        {
+                            if (statusUser == StatusUser.Active)
                             {
-                                Username = manhanvien,
-                                MaNhanVien = manhanvien,
-                                Password = password,
-                                Active = true,
-                                OfficeId = office?.Id,
-                                ZoneId = zone?.Id,
-                                Fullname = fullname,
-                                SaleKit = true,
-                                TypeUser = type,
-                                CDCM = cdcm,
-                                //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
-                            };
-                            switch (type)
-                            {
-                                case TypeUser.ASM:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        newUser.ZoneIds = "," + zones + ",";
-                                        var listZ = zones.Split(',');
-                                        foreach (var item in listZ)
+                                var newUser = new User
+                                {
+                                    Username = manhanvien,
+                                    MaNhanVien = manhanvien,
+                                    Password = password,
+                                    Active = true,
+                                    OfficeId = office?.Id,
+                                    ZoneId = zone?.Id,
+                                    Fullname = fullname,
+                                    SaleKit = true,
+                                    TypeUser = type,
+                                    CDCM = cdcm,
+                                    //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
+                                };
+                                switch (type)
+                                {
+                                    case TypeUser.ASM:
+                                        if (!string.IsNullOrEmpty(zones))
                                         {
-                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                            if (zItem == null)
+                                            newUser.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
                                             {
-                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
-                                            }
-                                            if (item == listZ[0])
-                                            {
-                                                newUser.ZoneId = zItem.Id;
-                                                newUser.Zone = zItem;
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                if (item == listZ[0])
+                                                {
+                                                    newUser.ZoneId = zItem.Id;
+                                                    newUser.Zone = zItem;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    break;
-                                case TypeUser.BM:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        newUser.OfficeIds = ",";
-                                        newUser.OfficeNames = "";
-                                        foreach (var item in zones.Split(','))
+                                        break;
+                                    case TypeUser.BM:
+                                        if (!string.IsNullOrEmpty(zones))
                                         {
-                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o == null)
+                                            newUser.OfficeIds = ",";
+                                            newUser.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
                                             {
-                                                ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
+
                                             }
-                                            newUser.OfficeIds += o.Id + ",";
-                                            newUser.OfficeNames += o.ShortCode + ",";
-
+                                            newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                            newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
                                         }
-                                        newUser.OfficeNames = newUser.OfficeNames.Trim(',');
-                                        newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
-                                    }
 
-                                    break;
-                                case TypeUser.CV:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        user.ZoneIds = "," + zones + ",";
-                                        var listZ = zones.Split(',');
-                                        foreach (var item in listZ)
+                                        break;
+                                    case TypeUser.CV:
+                                        if (!string.IsNullOrEmpty(zones))
                                         {
-                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                            if (zItem == null)
+                                            user.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
                                             {
-                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
                                             }
                                         }
-                                    }
-                                    break;
-                                default:
-                                    break;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                try
+                                {
+                                    _unitOfWork.UserRepository.Insert(newUser);
+                                    _unitOfWork.Save();
+                                    user = newUser;
+                                }
+                                catch (Exception e)
+                                {
+                                    continue;
+                                }
                             }
-                            try
-                            {
-                                _unitOfWork.UserRepository.Insert(newUser);
-                                _unitOfWork.Save();
-                                user = newUser;
-                            }
-                            catch (Exception e)
+                            else
                             {
                                 continue;
                             }
                         }
                         else
                         {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        user.CDCM = cdcm;
-                        user.ZoneId = zone?.Id;
-                        if (statusUser == StatusUser.Active)
-                        {
-                            user.Active = true;
-                            user.SaleKit = true;
-                            if (user.OfficeId != office?.Id || user.TypeUser != type)
+                            user.CDCM = cdcm;
+                            user.ZoneId = zone?.Id;
+                            if (statusUser == StatusUser.Active)
                             {
-                                user.OfficeId = office?.Id;
-                                user.TypeUser = type;
+                                user.Active = true;
+                                user.SaleKit = true;
+                                if (user.OfficeId != office?.Id || user.TypeUser != type)
+                                {
+                                    user.OfficeId = office?.Id;
+                                    user.TypeUser = type;
+                                    try
+                                    {
+                                        _unitOfWork.Save();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                switch (type)
+                                {
+                                    case TypeUser.ASM:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            user.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
+                                            {
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                if (item == listZ[0])
+                                                {
+                                                    user.ZoneId = zItem.Id;
+                                                    user.Zone = zItem;
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    case TypeUser.EC:
+                                        user.OfficeIds = null;
+                                        break;
+                                    case TypeUser.BM:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            user.OfficeIds = ",";
+                                            user.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
+                                            {
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                user.OfficeIds += o.Id + ",";
+                                                user.OfficeNames += o.ShortCode + ",";
+
+                                            }
+                                            user.OfficeNames = user.OfficeNames.Trim(',');
+                                            user.OfficeIds = (user.OfficeIds == "," ? null : user.OfficeIds);
+                                        }
+
+                                        break;
+                                    case TypeUser.CV:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            user.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
+                                            {
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else if (statusUser == StatusUser.InActive)
+                            {
+                                user.Active = false;
                                 try
                                 {
                                     _unitOfWork.Save();
@@ -641,521 +759,437 @@ namespace OceanEduSlide.Controllers
                                     continue;
                                 }
                             }
-                            switch (type)
-                            {
-                                case TypeUser.ASM:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        user.ZoneIds = "," + zones + ",";
-                                        var listZ = zones.Split(',');
-                                        foreach (var item in listZ)
-                                        {
-                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                            if (zItem == null)
-                                            {
-                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
-                                            }
-                                            if (item == listZ[0])
-                                            {
-                                                user.ZoneId = zItem.Id;
-                                                user.Zone = zItem;
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                case TypeUser.EC:
-                                    user.OfficeIds = null;
-                                    break;
-                                case TypeUser.BM:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        user.OfficeIds = ",";
-                                        user.OfficeNames = "";
-                                        foreach (var item in zones.Split(','))
-                                        {
-                                            var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                            if (o == null)
-                                            {
-                                                ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
-                                            }
-                                            user.OfficeIds += o.Id + ",";
-                                            user.OfficeNames += o.ShortCode + ",";
-
-                                        }
-                                        user.OfficeNames = user.OfficeNames.Trim(',');
-                                        user.OfficeIds = (user.OfficeIds == "," ? null : user.OfficeIds);
-                                    }
-
-                                    break;
-                                case TypeUser.CV:
-                                    if (!string.IsNullOrEmpty(zones))
-                                    {
-                                        user.ZoneIds = "," + zones + ",";
-                                        var listZ = zones.Split(',');
-                                        foreach (var item in listZ)
-                                        {
-                                            var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                            if (zItem == null)
-                                            {
-                                                ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                return View();
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                default:
-                                    break;
-                            }
                         }
-                        else if (statusUser == StatusUser.InActive)
-                        {
-                            user.Active = false;
-                            try
-                            {
-                                _unitOfWork.Save();
-                            }
-                            catch (Exception e)
-                            {
-                                continue;
-                            }
-                        }
-                    }
 
-                    var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
-                    if (string.IsNullOrEmpty(dayStart))
-                    {
-                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Ngày vào làm, dòng " + (i + 1));
-                        return View();
-                    }
-                    var dayEnd = tbl2.Rows[i][7].ToString().Trim().Replace("'", "");
-                    var startDate = new DateTime();
-                    var endDate = new DateTime();
-
-                    if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                        startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
-                    else
-                    {
-                        ModelState.AddModelError("", @"Lỗi định dạng cột Ngày vào làm, dòng " + (i + 1));
-                        return View();
-                    }
-                    if (!string.IsNullOrEmpty(dayEnd))
-                        if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
-                            endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
-                        else
+                        var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
+                        if (string.IsNullOrEmpty(dayStart))
                         {
-                            ModelState.AddModelError("", @"Lỗi định dạng cột Ngày nghỉ việc/TS/ĐC, dòng " + (i + 1));
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Ngày vào làm, dòng " + (i + 1));
                             return View();
                         }
+                        var dayEnd = tbl2.Rows[i][7].ToString().Trim().Replace("'", "");
+                        var startDate = new DateTime();
+                        var endDate = new DateTime();
 
-                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart == startDate && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
-                    if (historyUser != null)
-                    {
-                        historyUser.Status = statusUser;
-                        historyUser.ZoneId = zone?.Id;
-                        historyUser.CDCM = cdcm;
-                        historyUser.DayReduce = dayReduce;
-                        //historyUser.DayStart = startDate;
+                        if (DateTime.TryParse(dayStart, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                            startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
+                        else
+                        {
+                            ModelState.AddModelError("", @"Lỗi định dạng cột Ngày vào làm, dòng " + (i + 1));
+                            return View();
+                        }
                         if (!string.IsNullOrEmpty(dayEnd))
-                            historyUser.DayEnd = endDate;
-                        if (!string.IsNullOrEmpty(sort))
-                            if (int.TryParse(sort, out int sortValue))
-                            {
-                                historyUser.Sort = sortValue;
-                            }
+                            if (DateTime.TryParse(dayEnd, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd2))
+                                endDate = new DateTime(cd2.Year, cd2.Month, cd2.Day, 0, 0, 0);
                             else
                             {
-                                ModelState.AddModelError("", @"Lỗi định dạng cột Thứ tự, dòng " + (i + 1));
+                                ModelState.AddModelError("", @"Lỗi định dạng cột Ngày nghỉ việc/TS/ĐC, dòng " + (i + 1));
                                 return View();
                             }
-                        //Tính chỉ tiêu - TĐ - HT cuộc gọi
 
-                        // cuộc gọi thực đạt
-                        var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
-                        // Thêm hoặc update thực đạt CG cho NV
-                        if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC || countTD > 0)
+                        var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart == startDate && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                        if (historyUser != null)
                         {
-                            var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
-                            if (reportDataCallTD == null)
-                                reportDataCallTD = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100);
-                            if (reportDataCallTD == null)
-                            {
-                                reportDataCallTD = new ReportData()
+                            historyUser.Status = statusUser;
+                            historyUser.ZoneId = zone?.Id;
+                            historyUser.CDCM = cdcm;
+                            historyUser.DayReduce = dayReduce;
+                            //historyUser.DayStart = startDate;
+                            if (!string.IsNullOrEmpty(dayEnd))
+                                historyUser.DayEnd = endDate;
+                            if (!string.IsNullOrEmpty(sort))
+                                if (int.TryParse(sort, out int sortValue))
                                 {
-                                    Data = countTD.ToString("N0"),
-                                    UserId = historyUser.UserId,
-                                    HistoryUserId = historyUser.Id,
-                                    Month = monthInt,
-                                    Year = yearInt,
-                                    ReportCategoryId = 100,
-                                    OfficeId = office?.Id,
-                                    ZoneId = zone?.Id,
-                                    Sort = 19,
-                                };
-                                reportDataList.Add(reportDataCallTD);
-                            }
-                            else
-                            {
-                                reportDataCallTD.Data = countTD.ToString("N0");
-                            }
-                            // Nếu không phải là NVKD: Chỉ tiêu CG trống
-                            if (historyUser.TypeUser != TypeUser.EC && historyUser.TypeUser != TypeUser.ALT && historyUser.TypeUser != TypeUser.AEC)
-                            {
-                                var targetCallEmpty = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
-                                if (targetCallEmpty == null)
-                                    targetCallEmpty = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
-                                if (targetCallEmpty == null)
+                                    historyUser.Sort = sortValue;
+                                }
+                                else
                                 {
-                                    targetCallEmpty = new ReportData()
+                                    ModelState.AddModelError("", @"Lỗi định dạng cột Thứ tự, dòng " + (i + 1));
+                                    return View();
+                                }
+                            //Tính chỉ tiêu - TĐ - HT cuộc gọi
+
+                            // cuộc gọi thực đạt
+                            var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
+                            // Thêm hoặc update thực đạt CG cho NV
+                            if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC || countTD > 0)
+                            {
+                                var reportDataCallTD = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100).FirstOrDefault();
+                                if (reportDataCallTD == null)
+                                    reportDataCallTD = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 100);
+                                if (reportDataCallTD == null)
+                                {
+                                    reportDataCallTD = new ReportData()
                                     {
-                                        Data = "",
+                                        Data = countTD.ToString("N0"),
+                                        DataReal = countTD,
+                                        UserId = historyUser.UserId,
+                                        HistoryUserId = historyUser.Id,
+                                        Month = monthInt,
+                                        Year = yearInt,
+                                        ReportCategoryId = 100,
+                                        OfficeId = office?.Id,
+                                        ZoneId = zone?.Id,
+                                        Sort = 19,
+                                    };
+                                    reportDataList.Add(reportDataCallTD);
+                                }
+                                else
+                                {
+                                    reportDataCallTD.Data = countTD.ToString("N0");
+                                    reportDataCallTD.DataReal = countTD;
+                                }
+                                // Nếu không phải là NVKD: Chỉ tiêu CG trống
+                                if (historyUser.TypeUser != TypeUser.EC && historyUser.TypeUser != TypeUser.ALT && historyUser.TypeUser != TypeUser.AEC)
+                                {
+                                    var targetCallEmpty = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
+                                    if (targetCallEmpty == null)
+                                        targetCallEmpty = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
+                                    if (targetCallEmpty == null)
+                                    {
+                                        targetCallEmpty = new ReportData()
+                                        {
+                                            Data = "",
+                                            UserId = historyUser.UserId,
+                                            HistoryUserId = historyUser.Id,
+                                            Month = monthInt,
+                                            Year = yearInt,
+                                            ReportCategoryId = 99,
+                                            OfficeId = office?.Id,
+                                            Sort = 18,
+                                        };
+                                        reportDataList.Add(targetCallEmpty);
+                                    }
+
+                                }
+                            }
+                            if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC)
+                            {
+                                HistoryUser oldPosittion = null;
+                                var startDateReal = historyUser.DayStart;
+                                // Nếu trạng thái là Đang làm việc
+                                if (historyUser.Status == StatusUser.Active)
+                                {
+                                    //Tìm vị trí cũ
+                                    oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == historyUser.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
+                                    if (oldPosittion != null)
+                                    {
+                                        if (oldPosittion.DayEnd == null)
+                                        {
+                                            ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
+                                            return View();
+                                        }
+                                        // Gán biến theo ngày điều chuyển để tính ngày bắt đầu làm việc ở vị trí hiện tại
+                                        startDateReal = oldPosittion.DayEnd.Value;
+                                    }
+                                }
+                                int workingDayFull = 1;
+
+                                switch (monthInt)
+                                {
+                                    case 1:
+                                        workingDayFull = workingDay.WorkingDayMonth1;
+                                        break;
+                                    case 2:
+                                        workingDayFull = workingDay.WorkingDayMonth2;
+                                        break;
+                                    case 3:
+                                        workingDayFull = workingDay.WorkingDayMonth3;
+                                        break;
+                                    case 4:
+                                        workingDayFull = workingDay.WorkingDayMonth4;
+                                        break;
+                                    case 5:
+                                        workingDayFull = workingDay.WorkingDayMonth5;
+                                        break;
+                                    case 6:
+                                        workingDayFull = workingDay.WorkingDayMonth6;
+                                        break;
+                                    case 7:
+                                        workingDayFull = workingDay.WorkingDayMonth7;
+                                        break;
+                                    case 8:
+                                        workingDayFull = workingDay.WorkingDayMonth8;
+                                        break;
+                                    case 9:
+                                        workingDayFull = workingDay.WorkingDayMonth9;
+                                        break;
+                                    case 10:
+                                        workingDayFull = workingDay.WorkingDayMonth10;
+                                        break;
+                                    case 11:
+                                        workingDayFull = workingDay.WorkingDayMonth11;
+                                        break;
+                                    case 12:
+                                        workingDayFull = workingDay.WorkingDayMonth12;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                int workingDayTT = 0;
+                                if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (historyUser.DayEnd == null || (historyUser.DayEnd != null && historyUser.DayEnd.Value.Month > monthInt)))
+                                {
+                                    workingDayTT = workingDayFull;
+                                }
+                                else
+                                {
+                                    DateTime ngayBatDau = historyUser.DayStart.Year < yearInt || (historyUser.DayStart.Year == yearInt && historyUser.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : historyUser.DayStart;
+                                    if (oldPosittion != null)
+                                    {
+                                        var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
+                                        var oldDayWork = oldDayFull - (oldDayFull / 7);
+                                        workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
+                                    }
+                                    else
+                                    {
+                                        DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                        int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
+                                        if (soNgayLamViec < 0)
+                                        {
+                                            ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
+                                            return View();
+                                        }
+                                        int soNgayNghi = soNgayLamViec / 7;
+                                        workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
+                                    }
+                                }
+                                if (historyUser.DayReduce > 0)
+                                {
+                                    workingDayTT -= historyUser.DayReduce ?? 0;
+                                }
+                                int callTarget = 0;
+                                if (historyUser.DayStart.Month == monthInt || historyUser.DayStart.Month == lastMonth)
+                                {
+                                    //Số ngày làm việc tháng trước
+                                    var dayFree = (endDayLastMonth - historyUser.DayStart).Days + 1;
+                                    if (dayFree < 0)
+                                        dayFree = 0;
+                                    if (dayFree <= 5)
+                                    {
+                                        workingDayTT = Math.Max(0, workingDayTT - (5 - dayFree));
+                                    }
+                                }
+                                callTarget = 12 * workingDayTT;
+                                // Chỉ tiêu báo cáo cuộc gọi nhân sự
+                                var reportDataCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
+                                if (reportDataCall == null)
+                                    reportDataCall = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
+                                if (reportDataCall == null)
+                                {
+                                    reportDataCall = new ReportData()
+                                    {
+                                        Data = callTarget.ToString("N0"),
+                                        DataReal = callTarget,
                                         UserId = historyUser.UserId,
                                         HistoryUserId = historyUser.Id,
                                         Month = monthInt,
                                         Year = yearInt,
                                         ReportCategoryId = 99,
+                                        //check null
                                         OfficeId = office?.Id,
+                                        ZoneId = zone?.Id,
                                         Sort = 18,
                                     };
-                                    reportDataList.Add(targetCallEmpty);
-                                }
-
-                            }
-                        }
-                        if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC)
-                        {
-                            HistoryUser oldPosittion = null;
-                            var startDateReal = historyUser.DayStart;
-                            // Nếu trạng thái là Đang làm việc
-                            if (historyUser.Status == StatusUser.Active)
-                            {
-                                //Tìm vị trí cũ
-                                oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == historyUser.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
-                                if (oldPosittion != null)
-                                {
-                                    if (oldPosittion.DayEnd == null)
-                                    {
-                                        ModelState.AddModelError("", @"Nhân sự điều chuyển " + oldPosittion.User.MaNhanVien + " không có ngày điều chuyển");
-                                        return View();
-                                    }
-                                    // Gán biến theo ngày điều chuyển để tính ngày bắt đầu làm việc ở vị trí hiện tại
-                                    startDateReal = oldPosittion.DayEnd.Value;
-                                }
-                            }
-                            var workingDay = _unitOfWork.WorkingDayRepository.GetQuery(a => a.Year == yearInt).FirstOrDefault();
-                            if (workingDay == null)
-                            {
-                                ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + yearInt);
-                                return View();
-                            }
-                            int workingDayFull = 1;
-
-                            switch (monthInt)
-                            {
-                                case 1:
-                                    workingDayFull = workingDay.WorkingDayMonth1;
-                                    break;
-                                case 2:
-                                    workingDayFull = workingDay.WorkingDayMonth2;
-                                    break;
-                                case 3:
-                                    workingDayFull = workingDay.WorkingDayMonth3;
-                                    break;
-                                case 4:
-                                    workingDayFull = workingDay.WorkingDayMonth4;
-                                    break;
-                                case 5:
-                                    workingDayFull = workingDay.WorkingDayMonth5;
-                                    break;
-                                case 6:
-                                    workingDayFull = workingDay.WorkingDayMonth6;
-                                    break;
-                                case 7:
-                                    workingDayFull = workingDay.WorkingDayMonth7;
-                                    break;
-                                case 8:
-                                    workingDayFull = workingDay.WorkingDayMonth8;
-                                    break;
-                                case 9:
-                                    workingDayFull = workingDay.WorkingDayMonth9;
-                                    break;
-                                case 10:
-                                    workingDayFull = workingDay.WorkingDayMonth10;
-                                    break;
-                                case 11:
-                                    workingDayFull = workingDay.WorkingDayMonth11;
-                                    break;
-                                case 12:
-                                    workingDayFull = workingDay.WorkingDayMonth12;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            int workingDayTT = 0;
-                            int lastMonth = 0;
-                            int yearLastMonth = 0;
-                            if (monthInt == 1)
-                            {
-                                lastMonth = 12;
-                                yearLastMonth = yearInt - 1;
-                            }
-                            else
-                            {
-                                lastMonth = monthInt - 1;
-                                yearLastMonth = yearInt;
-                            }
-                            DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
-                            if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (historyUser.DayEnd == null || (historyUser.DayEnd != null && historyUser.DayEnd.Value.Month > monthInt)))
-                            {
-                                workingDayTT = workingDayFull;
-                            }
-                            else
-                            {
-                                DateTime ngayBatDau = historyUser.DayStart.Year < yearInt || (historyUser.DayStart.Year == yearInt && historyUser.DayStart.Month < monthInt) ? new DateTime(yearInt, monthInt, 1) : historyUser.DayStart;
-                                if (oldPosittion != null)
-                                {
-                                    var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
-                                    var oldDayWork = oldDayFull - (oldDayFull / 7);
-                                    workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
-                                }
-                                else
-                                {
-                                    DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
-                                    int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
-                                    if (soNgayLamViec < 0)
-                                    {
-                                        ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
-                                        return View();
-                                    }
-                                    int soNgayNghi = soNgayLamViec / 7;
-                                    workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
-                                }
-
-                            }
-                            int callTarget = 0;
-                            if (historyUser.DayStart.Month == monthInt || historyUser.DayStart.Month == lastMonth)
-                            {
-                                //Số ngày làm việc tháng trước
-                                var dayFree = (endDayLastMonth - historyUser.DayStart).Days + 1;
-                                if (dayFree < 0)
-                                    dayFree = 0;
-                                if (dayFree <= 5)
-                                {
-                                    workingDayTT = Math.Max(0, workingDayTT - (5 - dayFree));
-                                }
-                            }
-                            callTarget = 12 * workingDayTT;
-                            // Chỉ tiêu báo cáo cuộc gọi nhân sự
-                            var reportDataCall = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99).FirstOrDefault();
-                            if (reportDataCall == null)
-                                reportDataCall = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 99);
-                            if (reportDataCall == null)
-                            {
-                                reportDataCall = new ReportData()
-                                {
-                                    Data = callTarget.ToString("N0"),
-                                    UserId = historyUser.UserId,
-                                    HistoryUserId = historyUser.Id,
-                                    Month = monthInt,
-                                    Year = yearInt,
-                                    ReportCategoryId = 99,
-                                    //check null
-                                    OfficeId = office?.Id,
-                                    ZoneId = zone?.Id,
-                                    Sort = 18,
-                                };
-                                reportDataList.Add(reportDataCall);
-
-                            }
-                            else
-                            {
-                                reportDataCall.Data = callTarget.ToString("N0");
-                            }
-
-                            // % Hoàn thành CG Nhân sự
-                            var ht = ((double)countTD / callTarget * 100).ToString("F2") + "%";
-                            var reportDataCallHT = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101).FirstOrDefault();
-                            if (reportDataCallHT == null)
-                                reportDataCallHT = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101);
-                            if (reportDataCallHT == null)
-                            {
-                                reportDataCallHT = new ReportData()
-                                {
-                                    Data = ht,
-                                    UserId = historyUser.UserId,
-                                    HistoryUserId = historyUser.Id,
-                                    Month = monthInt,
-                                    Year = yearInt,
-                                    ReportCategoryId = 101,
-                                    OfficeId = office?.Id,
-                                    ZoneId = zone?.Id,
-                                    Sort = 20,
-                                };
-                                reportDataList.Add(reportDataCallHT);
-                            }
-                            else
-                            {
-                                reportDataCallHT.Data = ht;
-                            }
-
-                            //Chỉ tiêu DS - thực đạt chi nhánh
-                            if (office != null)
-                            {
-                                var reportCallOfficeTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
-                                if (reportCallOfficeTarget == null)
-                                    reportCallOfficeTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
-                                var reportCallOfficeTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
-                                if (reportCallOfficeTD == null)
-                                    reportCallOfficeTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
-                                if (reportCallOfficeTarget == null)
-                                {
-                                    reportCallOfficeTarget = new ReportData()
-                                    {
-                                        Data = callTarget.ToString("N0"),
-                                        Month = monthInt,
-                                        Year = yearInt,
-                                        ReportCategoryId = 26,
-                                        //check null
-                                        OfficeId = office.Id,
-                                        Sort = 7,
-                                    };
-                                    reportDataList.Add(reportCallOfficeTarget);
+                                    reportDataList.Add(reportDataCall);
 
                                 }
                                 else
                                 {
-                                    int oldData;
-                                    var cleanedData = reportCallOfficeTarget.Data.Replace(",", "").Replace(".", "");
-
-                                    if (!int.TryParse(cleanedData, out oldData))
-                                    {
-                                        ModelState.AddModelError("", @"Có lỗi xảy ra. Mã lỗi: Error 3947bn06");
-                                        return View();
-                                    }
-                                    int newData = oldData + callTarget;
-                                    reportCallOfficeTarget.Data = newData.ToString("N0");
+                                    reportDataCall.Data = callTarget.ToString("N0");
+                                    reportDataCall.DataReal = callTarget;
                                 }
-                                if (reportCallOfficeTD == null)
-                                {
-                                    reportCallOfficeTD = new ReportData()
-                                    {
-                                        Data = countTD.ToString("N0"),
-                                        Month = monthInt,
-                                        Year = yearInt,
-                                        ReportCategoryId = 27,
-                                        //check null
-                                        OfficeId = office.Id,
-                                        Sort = 8,
-                                    };
-                                    reportDataList.Add(reportCallOfficeTD);
 
-                                }
-                                else
+                                // % Hoàn thành CG Nhân sự
+                                //var ht = ((double)countTD / callTarget * 100).ToString("F2") + "%";
+                                if (callTarget > 0)
                                 {
-                                    int oldData;
-                                    var cleanedData = reportCallOfficeTD.Data.Replace(",", "").Replace(".", "");
-
-                                    if (!int.TryParse(cleanedData, out oldData))
+                                    var ht = (decimal)countTD / callTarget;
+                                    var reportDataCallHT = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101).FirstOrDefault();
+                                    if (reportDataCallHT == null)
+                                        reportDataCallHT = reportDataList.FirstOrDefault(a => a.HistoryUserId == historyUser.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 101);
+                                    if (reportDataCallHT == null)
                                     {
-                                        ModelState.AddModelError("", @"Có lỗi xảy ra. Mã lỗi: Error 3947bn07");
-                                        return View();
+                                        reportDataCallHT = new ReportData()
+                                        {
+                                            Data = (ht * 100).ToString("F2") + "%",
+                                            DataReal = ht,
+                                            UserId = historyUser.UserId,
+                                            HistoryUserId = historyUser.Id,
+                                            Month = monthInt,
+                                            Year = yearInt,
+                                            ReportCategoryId = 101,
+                                            OfficeId = office?.Id,
+                                            ZoneId = zone?.Id,
+                                            Sort = 20,
+                                        };
+                                        reportDataList.Add(reportDataCallHT);
                                     }
-                                    int newData = oldData + countTD;
-                                    reportCallOfficeTD.Data = newData.ToString("N0");
+                                    else
+                                    {
+                                        reportDataCallHT.Data = (ht * 100).ToString("F2") + "%";
+                                        reportDataCallHT.DataReal = ht;
+                                    }
+                                }
+
+                                //Chỉ tiêu - thực đạt cuộc gọi chi nhánh
+                                if (office != null)
+                                {
+                                    //Chỉ tiêu
+                                    var reportCallOfficeTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                                    if (reportCallOfficeTarget == null)
+                                        reportCallOfficeTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                                    var reportCallOfficeTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                                    if (reportCallOfficeTD == null)
+                                        reportCallOfficeTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                                    if (reportCallOfficeTarget == null)
+                                    {
+                                        reportCallOfficeTarget = new ReportData()
+                                        {
+                                            Data = callTarget.ToString("N0"),
+                                            DataReal = callTarget,
+                                            Month = monthInt,
+                                            Year = yearInt,
+                                            ReportCategoryId = 26,
+                                            //check null
+                                            OfficeId = office.Id,
+                                            Sort = 7,
+                                        };
+                                        reportDataList.Add(reportCallOfficeTarget);
+
+                                    }
+                                    else
+                                    {
+                                        if (reportCallOfficeTarget.DataReal == null)
+                                            reportCallOfficeTarget.DataReal = 0;
+                                        reportCallOfficeTarget.DataReal += callTarget;
+                                        reportCallOfficeTarget.Data = (reportCallOfficeTarget.DataReal ?? 0).ToString("N0");
+                                    }
+
+                                    if (reportCallOfficeTD == null)
+                                    {
+                                        reportCallOfficeTD = new ReportData()
+                                        {
+                                            Data = countTD.ToString("N0"),
+                                            DataReal = countTD,
+                                            Month = monthInt,
+                                            Year = yearInt,
+                                            ReportCategoryId = 27,
+                                            //check null
+                                            OfficeId = office.Id,
+                                            Sort = 8,
+                                        };
+                                        reportDataList.Add(reportCallOfficeTD);
+                                    }
+                                    else
+                                    {
+                                        if (reportCallOfficeTD.DataReal == null)
+                                            reportCallOfficeTD.DataReal = 0;
+                                        reportCallOfficeTD.DataReal += countTD;
+                                        reportCallOfficeTD.Data = (reportCallOfficeTD.DataReal ?? 0).ToString("N0");
+                                    }
                                 }
                             }
-                        }
-                        //}
-                    }
-                    else
-                    {
-                        var newhistoryUser = new HistoryUser
-                        {
-                            UserId = user.Id,
-                            Month = monthInt,
-                            Year = yearInt,
-                            TypeUser = type,
-                            OfficeId = office?.Id,
-                            ZoneId = zone?.Id,
-                            Status = statusUser,
-                            DayStart = startDate,
-                            CDCM = cdcm,
-                            DayReduce = dayReduce,
-                            Active = true
-                        };
-
-                        if (!string.IsNullOrEmpty(dayEnd))
-                            newhistoryUser.DayEnd = endDate;
-                        if (!string.IsNullOrEmpty(sort))
-                            newhistoryUser.Sort = int.Parse(sort);
-                        historyUserList.Add(newhistoryUser);
-
-                    }
-                }
-                //var offices = _unitOfWork.OfficeRepository.GetQuery();
-                // Tính % HT cuộc gọi CN
-                foreach (var office in offices)
-                {
-                    var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
-                    if (callTarget == null)
-                        callTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
-                    var callTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
-                    if (callTD == null)
-                        callTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
-                    var callHT = reportCallHTOffices.FirstOrDefault(a => a.OfficeId == office.Id);
-                    if (callHT == null)
-                        callHT = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
-                    if (callTarget?.DataReal != null && callTD?.DataReal != null)
-                    {
-                        var callTargetInt = callTarget.DataReal ?? 1;
-                        var callTDInt = callTD.DataReal ?? 0;
-                        var ht = (callTDInt / callTargetInt);
-                        if (callHT != null)
-                        {
-                            callHT.Data = (ht * 100).ToString("F2") + "%";
-                            callHT.DataReal = ht;
+                            //}
                         }
                         else
                         {
-                            callHT = new ReportData()
+                            var newhistoryUser = new HistoryUser
                             {
-                                Data = (ht * 100).ToString("F2") + "%",
-                                DataReal = ht,
+                                UserId = user.Id,
                                 Month = monthInt,
                                 Year = yearInt,
-                                ReportCategoryId = 28,
-                                //check null
-                                OfficeId = office.Id,
-                                Sort = 9,
+                                TypeUser = type,
+                                OfficeId = office?.Id,
+                                ZoneId = zone?.Id,
+                                Status = statusUser,
+                                DayStart = startDate,
+                                CDCM = cdcm,
+                                DayReduce = dayReduce,
+                                Active = true
                             };
 
-                            reportDataList.Add(callHT);
+                            if (!string.IsNullOrEmpty(dayEnd))
+                                newhistoryUser.DayEnd = endDate;
+                            if (!string.IsNullOrEmpty(sort))
+                                newhistoryUser.Sort = int.Parse(sort);
+                            historyUserList.Add(newhistoryUser);
                         }
                     }
+                    //var offices = _unitOfWork.OfficeRepository.GetQuery();
+                    // Tính % HT cuộc gọi CN
+                    foreach (var office in offices)
+                    {
+                        var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                        if (callTarget == null)
+                            callTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
+                        var callTD = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                        if (callTD == null)
+                            callTD = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 27);
+                        var callHT = reportCallHTOffices.FirstOrDefault(a => a.OfficeId == office.Id);
+                        if (callHT == null)
+                            callHT = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
+                        if (callTarget?.DataReal > 0 && callTD?.DataReal != null)
+                        {
+                            var callTargetInt = callTarget.DataReal ?? 1;
+                            var callTDInt = callTD.DataReal ?? 0;
+                            var ht = (callTDInt / callTargetInt);
+                            if (callHT != null)
+                            {
+                                callHT.Data = (ht * 100).ToString("F2") + "%";
+                                callHT.DataReal = ht;
+                            }
+                            else
+                            {
+                                callHT = new ReportData()
+                                {
+                                    Data = (ht * 100).ToString("F2") + "%",
+                                    DataReal = ht,
+                                    Month = monthInt,
+                                    Year = yearInt,
+                                    ReportCategoryId = 28,
+                                    //check null
+                                    OfficeId = office.Id,
+                                    Sort = 9,
+                                };
+
+                                reportDataList.Add(callHT);
+                            }
+                        }
+                    }
+                    if (historyUserList.Any())
+                        _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
+                    if (reportDataList.Any())
+                        _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
+
                 }
-                if (historyUserList.Any())
-                    _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
-                if (reportDataList.Any())
-                    _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
 
                 // Chỉ tiêu CN - NV
+
+                // Tải trước các bản ghi vào bộ nhớ
                 var historyOffices = _unitOfWork.HistoryOfficeRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt);
-                var historyUserMonthList = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt 
+                var historyUserMonthList = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt
                     && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB)
                     && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt))));
                 var revenueOffices = _unitOfWork.RevenueOfficeRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
                 var reportDatas = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87);
                 var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
-                var listRevenueUserDataBases = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null 
+                var listRevenueUserDataBases = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null
                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt
                        && (a.HistoryUser.DayEnd == null || (a.HistoryUser.DayEnd != null && a.HistoryUser.DayEnd.Value.Month != monthInt || (a.HistoryUser.DayEnd.Value.Day != 1 && a.HistoryUser.DayEnd.Value.Month == monthInt))));
-
-
-                var workingDays = _unitOfWork.WorkingDayRepository.Get(a => a.Active);
-                var targetGroups = _unitOfWork.TargetGroupRepository.Get(a => a.Active);
+                var reportDataHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30);
+                var reportDataCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34);
+                var reportTDHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 31);
+                var datahtHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32);
+                var reportDatactHVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
+                var oldPosittions = _unitOfWork.HistoryUserRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd));
+                var NVKDLastMonths = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
+                                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth)));
+                var reportTDHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96);
+                var datahtHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97);
+                var reportTDDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 88);
+                var datahtDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt);
+                var reportTDDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35);
+                var datahtDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36);
 
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
@@ -1167,12 +1201,7 @@ namespace OceanEduSlide.Controllers
                         return View();
                     }
 
-                    //var monthStr = tbl.Rows[i][4].ToString().Trim();
-                    //int monthInt = int.Parse(monthStr);
-
-                    //var yearStr = tbl.Rows[i][5].ToString().Trim();
-                    //int yearInt = int.Parse(yearStr);
-                    var historyOffice = historyOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.Year == yearInt && a.Month == monthInt);
+                    var historyOffice = historyOffices.FirstOrDefault(a => a.OfficeId == office.Id);
                     if (historyOffice == null)
                     {
                         ModelState.AddModelError("", @"Chưa có dữ liệu chi nhánh theo tháng chi nhánh " + officeshortname);
@@ -1183,24 +1212,7 @@ namespace OceanEduSlide.Controllers
                         ModelState.AddModelError("", @"Định biên NVKD chi nhánh " + officeshortname + " không hợp lệ");
                         return View();
                     }
-                    var workingDay = workingDays.FirstOrDefault(a => a.Year == yearInt);
-                    if (workingDay == null)
-                    {
-                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + yearInt);
-                        return View();
-                    }
-                    var workingDayLastYear = workingDays.FirstOrDefault(a => a.Year == yearInt - 1);
-                    if (workingDayLastYear == null)
-                    {
-                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng số ngày công năm " + (yearInt - 1));
-                        return View();
-                    }
-                    var targetGroup = targetGroups.FirstOrDefault(a => a.Year == yearInt && a.Month == monthInt);
-                    if (targetGroup == null)
-                    {
-                        ModelState.AddModelError("", @"Chưa có dữ liệu bảng chỉ tiêu NVĐT theo tháng - tháng" + monthInt + "/" + yearInt);
-                        return View();
-                    }
+
                     var targetBase = tbl.Rows[i][10].ToString().Trim();
                     if (string.IsNullOrEmpty(targetBase))
                     {
@@ -1254,7 +1266,7 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var historyUserMonths = historyUserMonthList.Where(a =>  a.OfficeId == office.Id);
+                    var historyUserMonths = historyUserMonthList.Where(a => a.OfficeId == office.Id);
 
                     var revenueOffice = revenueOffices.FirstOrDefault(a => a.OfficeId == office.Id);
                     if (revenueOffice == null)
@@ -1274,8 +1286,6 @@ namespace OceanEduSlide.Controllers
                             OfficeId = office.Id,
                         };
                         newRevenueList.Add(revenueOffice);
-                        //_unitOfWork.RevenueOfficeRepository.Insert(revenueOffice);
-                        //_unitOfWork.Save();
                     }
                     else
                     {
@@ -1288,7 +1298,7 @@ namespace OceanEduSlide.Controllers
                     var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
-                        // Khởi tạo chỉ tiêu nhân viên
+                        // Khởi tạo chỉ tiêu DS nhân viên
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)
                         {
@@ -1296,7 +1306,7 @@ namespace OceanEduSlide.Controllers
                             var startDateReal = item.DayStart;
                             if (item.Status == StatusUser.Active)
                             {
-                                oldPosittion = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == item.UserId && a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).FirstOrDefault();
+                                oldPosittion = oldPosittions.FirstOrDefault(a => a.UserId == item.UserId);
                                 if (oldPosittion != null)
                                 {
                                     if (oldPosittion.DayEnd == null)
@@ -1310,19 +1320,7 @@ namespace OceanEduSlide.Controllers
                             // Khởi tạo số ngày làm việc thực tế
                             int workingDayTT = 0;
                             bool nsFullTarget = true;
-                            int lastMonth = 0;
-                            int yearLastMonth = 0;
-                            if (monthInt == 1)
-                            {
-                                lastMonth = 12;
-                                yearLastMonth = yearInt - 1;
-                            }
-                            else
-                            {
-                                lastMonth = monthInt - 1;
-                                yearLastMonth = yearInt;
-                            }
-                            DateTime endDayLastMonth = new DateTime(yearLastMonth, lastMonth, DateTime.DaysInMonth(yearLastMonth, lastMonth));
+
                             if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
                             {
                                 workingDayTT = workingDayFull;
@@ -1430,8 +1428,7 @@ namespace OceanEduSlide.Controllers
                             }
                             if (historyOffice.QD156 && nsFullTarget)
                             {
-                                var countNVKDLastMonth = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
-                                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).Count();
+                                var countNVKDLastMonth = NVKDLastMonths.Count(a => a.OfficeId == office.Id);
                                 decimal hesoEC = 1;
                                 decimal hesoATL = 1;
                                 int chenhLech = DBKD - countNVKDLastMonth;
@@ -1472,7 +1469,7 @@ namespace OceanEduSlide.Controllers
 
                             // Báo cáo chỉ tiêu học viên NV
 
-                            var reportDatactHV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95).FirstOrDefault();
+                            var reportDatactHV = reportDatactHVs.FirstOrDefault(a => a.HistoryUserId == item.Id);
                             if (reportDatactHV == null)
                                 reportDatactHV = reportDataList.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
 
@@ -1508,12 +1505,12 @@ namespace OceanEduSlide.Controllers
                             if (reportDatactHV.DataReal > 0)
                             {
                                 // thực đạt HV NV
-                                var reportTDHVNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96).FirstOrDefault();
+                                var reportTDHVNV = reportTDHVNVs.FirstOrDefault(a => a.HistoryUserId == item.Id);
                                 if (reportTDHVNV != null)
                                 {
                                     var TDHVNV = reportTDHVNV.DataReal ?? 0;
                                     var htHVNV = TDHVNV / reportDatactHV.DataReal * 100;
-                                    var datahtHVNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97).FirstOrDefault();
+                                    var datahtHVNV = datahtHVNVs.FirstOrDefault(a => a.HistoryUserId == item.Id);
                                     if (datahtHVNV == null)
                                         datahtHVNV = reportDataList.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97);
                                     if (datahtHVNV == null)
@@ -1566,7 +1563,7 @@ namespace OceanEduSlide.Controllers
                             revenueOffice.Target_SAB += targetNS;
                         }
                         // Báo cáo chỉ tiêu doanh số nhân sự
-                        var reportData = reportDatas.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87);
+                        var reportData = reportDatas.FirstOrDefault(a => a.HistoryUserId == item.Id);
                         if (reportData == null)
                             reportData = reportDataList.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87);
                         if (reportData == null)
@@ -1594,12 +1591,12 @@ namespace OceanEduSlide.Controllers
                         if (targetNS > 0)
                         {
                             // thực đạt doanh số NV
-                            var reportTDDSNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 88).FirstOrDefault();
+                            var reportTDDSNV = reportTDDSNVs.FirstOrDefault(a => a.HistoryUserId == item.Id);
                             if (reportTDDSNV != null)
                             {
                                 var TDDSNV = reportTDDSNV.DataReal ?? 0;
                                 var htDSNV = TDDSNV / targetNS * 100;
-                                var datahtDSNV = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt && a.HistoryUserId == item.Id).FirstOrDefault();
+                                var datahtDSNV = datahtDSNVs.FirstOrDefault(a => a.HistoryUserId == item.Id);
                                 if (datahtDSNV == null)
                                     datahtDSNV = reportDataList.FirstOrDefault(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt && a.HistoryUserId == item.Id);
                                 if (datahtDSNV == null)
@@ -1689,7 +1686,7 @@ namespace OceanEduSlide.Controllers
                     }
                     revenueOffice.Target_TS = Math.Max(targetBaseDec, revenueOffice.Target_TS);
                     //Chỉ tiêu báo cáo doanh thu chi nhánh
-                    var reportDataCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).FirstOrDefault();
+                    var reportDataCN = reportDataCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                     if (reportDataCN == null)
                         reportDataCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34);
                     if (reportDataCN == null)
@@ -1716,12 +1713,12 @@ namespace OceanEduSlide.Controllers
                     if (reportDataCN.DataReal > 0)
                     {
                         // thực đạt doanh số CN
-                        var reportTDDSCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35).FirstOrDefault();
+                        var reportTDDSCN = reportTDDSCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                         if (reportTDDSCN != null)
                         {
                             var TDDSCN = reportTDDSCN.DataReal ?? 0;
                             var htDSCN = TDDSCN / reportDataCN.DataReal * 100;
-                            var datahtDSCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36).FirstOrDefault();
+                            var datahtDSCN = datahtDSCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                             if (datahtDSCN == null)
                                 datahtDSCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36);
                             if (datahtDSCN == null)
@@ -1747,7 +1744,7 @@ namespace OceanEduSlide.Controllers
                     }
 
                     // Chỉ tiêu HV CN
-                    var reportDataHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30).FirstOrDefault();
+                    var reportDataHVCN = reportDataHVCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                     if (reportDataHVCN == null)
                         reportDataHVCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30);
                     if (reportDataHVCN == null)
@@ -1773,12 +1770,12 @@ namespace OceanEduSlide.Controllers
                     if (reportDataHVCN.DataReal > 0)
                     {
                         // thực đạt HV CN
-                        var reportTDHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 31).FirstOrDefault();
+                        var reportTDHVCN = reportTDHVCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                         if (reportTDHVCN != null)
                         {
                             var TDHVCN = reportTDHVCN.DataReal ?? 0;
-                            var htHVCN = TDHVCN / reportTDHVCN.DataReal * 100;
-                            var datahtHVCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32).FirstOrDefault();
+                            var htHVCN = TDHVCN / reportDataHVCN.DataReal * 100;
+                            var datahtHVCN = datahtHVCNs.FirstOrDefault(a => a.OfficeId == office.Id);
                             if (datahtHVCN == null)
                                 datahtHVCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32);
                             if (datahtHVCN == null)
@@ -2404,7 +2401,7 @@ namespace OceanEduSlide.Controllers
                     typeName = "Báo cáo TH CN - NV";
                     break;
                 case 1:
-                    typeName = "Bhỉ tiêu CN - NV - DS hoàn thành thực tế tuần";
+                    typeName = "Chỉ tiêu CN - NV";
                     break;
                 case 2:
                     typeName = "Vùng";
@@ -2434,8 +2431,16 @@ namespace OceanEduSlide.Controllers
                     break;
             }
             ViewBag.TypeName = typeName;
-            var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month, q => q.OrderByDescending(a => a.CreateDate));
-            return PartialView(logImport);
+            if (type == 1)
+            {
+                var logImport = _unitOfWork.LogImportRepository.GetQuery(a => ((int)a.TypeImport == 1 || (int)a.TypeImport == 10 || (int)a.TypeImport == 11 || (int)a.TypeImport == 12) && a.CreateDate.Month == DateTime.Now.Month, q => q.OrderByDescending(a => a.CreateDate));
+                return PartialView(logImport);
+            }
+            else
+            {
+                var logImport = _unitOfWork.LogImportRepository.GetQuery(a => (int)a.TypeImport == type && a.CreateDate.Month == DateTime.Now.Month, q => q.OrderByDescending(a => a.CreateDate));
+                return PartialView(logImport);
+            }
         }
         public ActionResult ListFileAll(int? page, int? type)
         {
@@ -2627,6 +2632,12 @@ namespace OceanEduSlide.Controllers
             var phieuthuService = new PhieuThuService();
             phieuthuService.TestSyncPhieuThu(date, month);
             return Content("Đã đồng bộ phiếu thu");
+        }
+        public ActionResult SyncUserAsync()
+        {
+            var userService = new UserService();
+            userService.SyncUser();
+            return Content("Đã đồng bộ nhân sự");
         }
         protected override void Dispose(bool disposing)
         {

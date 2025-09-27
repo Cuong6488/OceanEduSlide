@@ -313,6 +313,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
+    <Compile Include="DAL\UserService.cs" />
     <Compile Include="DAL\PhieuThuService.cs" />
     <Compile Include="DAL\CallLogService.cs" />
     <Compile Include="DAL\DataEntities.cs" />
@@ -697,6 +698,15 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Db.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\DSNhanSuNguon.cs">
+      <DependentUpon>Db.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\QuaTrinhCongTac.cs">
+      <DependentUpon>Db.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OEDongBo\ThaiSan.cs">
+      <DependentUpon>Db.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ExcelHelpers.cs" />

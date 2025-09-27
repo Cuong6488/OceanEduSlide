@@ -19,17 +19,29 @@
     {
         @Html.ValidationSummary(true)
 
-        <table class="form_table">
-            <tr>
-                <td class="form_name">Đính kèm File</td>
-                <td class="form_text"><input type="file" name="TargetOfficeFile" value="" /></td>
-            </tr>
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Xác nhận" />
-                </td>
-            </tr>
-        </table>
+    <table class="form_table">
+        <tr>
+            <td class="form_name">Loại dữ liệu</td>
+            <td class="form_text">
+                <select name="TypeUpdate" required>
+                    <option value="">Chọn loại dữ liệu update</option>
+                    <option value="1">Chỉ tiêu</option>
+                    <option value="2">Chỉ tiêu + Nhân sự tháng</option>
+                    <option value="3">Chỉ tiêu + Chi nhánh tháng</option>
+                    <option value="4">Chỉ tiêu + CN tháng + NS tháng</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">Đính kèm File</td>
+            <td class="form_text"><input type="file" name="TargetOfficeFile" value="" /></td>
+        </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Xác nhận" />
+            </td>
+        </tr>
+    </table>
     }
 </div>
