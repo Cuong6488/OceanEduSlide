@@ -787,7 +787,7 @@ namespace OceanEduSlide.Controllers
                                 return View();
                             }
 
-                        var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart == startDate && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                        var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart == startDate && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
                         if (historyUser != null)
                         {
                             historyUser.Status = statusUser;
