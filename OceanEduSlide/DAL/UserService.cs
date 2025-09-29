@@ -54,6 +54,46 @@ namespace OceanEduSlide.DAL
             foreach (var item in listAllDanglamviec)
             {
                 // Xử lý ns đang làm việc
+                TypeUser type = new TypeUser();
+                switch (item.MaChucDanhChuyenMon)
+                {
+                    case "ASM":
+                        type = TypeUser.ASM;
+                        break;
+                    case "GĐTS":
+                        type = TypeUser.HO;
+                        break;
+                    case "EC":
+                        type = TypeUser.EC;
+                        break;
+                    case "BM":
+                        type = TypeUser.BM;
+                        break;
+                    case "BSA":
+                        type = TypeUser.SAB;
+                        break;
+                    case "SAB":
+                        type = TypeUser.SAB;
+                        break;
+                    case "ATL":
+                        type = TypeUser.ALT;
+                        break;
+                    case "CM":
+                        type = TypeUser.CM;
+                        break;
+                    case "TTL":
+                        type = TypeUser.TTL;
+                        break;
+                    case "Chuyên viên":
+                        type = TypeUser.CV;
+                        break;
+                    case "AEC":
+                        type = TypeUser.AEC;
+                        break;
+                    default:
+                        continue;
+                        //break;
+                }
 
 
             }
