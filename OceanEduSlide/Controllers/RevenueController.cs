@@ -419,6 +419,7 @@ namespace OceanEduSlide.Controllers
 
                     if (historyOfficeList.Any())
                         _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
+                    _unitOfWork.Save();
                 }
 
                 // Nhân sự tháng
@@ -426,8 +427,8 @@ namespace OceanEduSlide.Controllers
                 {
                     var tbl2 = result.Tables[1];
                     var historyUserList = new List<HistoryUser>();
-                    var listHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt);
-                    var users = _unitOfWork.UserRepository.Get(a => a.Active);
+                    var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt).AsNoTracking().ToList();
+                    var users = _unitOfWork.UserRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
 
                     var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.HistoryUser).FirstOrDefault();
                     if (lockImport != null && Role != RoleAdmin.Admin)
@@ -436,8 +437,8 @@ namespace OceanEduSlide.Controllers
                         return View();
                     }
 
-                    var reportCallOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
-                    var reportCallHTOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
+                    var reportCallOffices = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27)).AsNoTracking().ToList();
+                    var reportCallHTOffices = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28).AsNoTracking().ToList();
 
                     foreach (var item in reportCallOffices)
                     {
@@ -1160,37 +1161,61 @@ namespace OceanEduSlide.Controllers
                         _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
                     if (reportDataList.Any())
                         _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
+                    _unitOfWork.Save();
 
                 }
 
                 // Chỉ tiêu CN - NV
 
                 // Tải trước các bản ghi vào bộ nhớ
-                var historyOffices = _unitOfWork.HistoryOfficeRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt);
-                var historyUserMonthList = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt
+                //var historyOffices = _unitOfWork.HistoryOfficeRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt);
+                //var historyUserMonthList = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearInt && a.Month == monthInt
+                //    && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB)
+                //    && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt))));
+                //var revenueOffices = _unitOfWork.RevenueOfficeRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
+                //var reportDatas = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87);
+                //var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
+                //var listRevenueUserDataBases = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null
+                //       && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt
+                //       && (a.HistoryUser.DayEnd == null || (a.HistoryUser.DayEnd != null && a.HistoryUser.DayEnd.Value.Month != monthInt || (a.HistoryUser.DayEnd.Value.Day != 1 && a.HistoryUser.DayEnd.Value.Month == monthInt))));
+                //var reportDataHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30);
+                //var reportDataCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34);
+                //var reportTDHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 31);
+                //var datahtHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32);
+                //var reportDatactHVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
+                //var oldPosittions = _unitOfWork.HistoryUserRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd));
+                //var NVKDLastMonths = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
+                //                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth)));
+                //var reportTDHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96);
+                //var datahtHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97);
+                //var reportTDDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 88);
+                //var datahtDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt);
+                //var reportTDDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35);
+                //var datahtDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36);
+                var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt).AsNoTracking().ToList();
+                var historyUserMonthList = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearInt && a.Month == monthInt
                     && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB)
-                    && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt))));
-                var revenueOffices = _unitOfWork.RevenueOfficeRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
-                var reportDatas = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87);
-                var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.Month == monthInt && a.Year == yearInt);
-                var listRevenueUserDataBases = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.HistoryUserId != null
+                    && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != monthInt || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == monthInt)))).AsNoTracking().ToList();
+                var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt).AsNoTracking().ToList();
+                var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 87).AsNoTracking().ToList();
+                var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt).AsNoTracking().ToList();
+                var listRevenueUserDataBases = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null
                        && (a.HistoryUser.TypeUser == TypeUser.EC || a.HistoryUser.TypeUser == TypeUser.ALT) && a.Month == monthInt && a.Year == yearInt
-                       && (a.HistoryUser.DayEnd == null || (a.HistoryUser.DayEnd != null && a.HistoryUser.DayEnd.Value.Month != monthInt || (a.HistoryUser.DayEnd.Value.Day != 1 && a.HistoryUser.DayEnd.Value.Month == monthInt))));
-                var reportDataHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30);
-                var reportDataCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34);
-                var reportTDHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 31);
-                var datahtHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32);
-                var reportDatactHVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
-                var oldPosittions = _unitOfWork.HistoryUserRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd));
-                var NVKDLastMonths = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
-                                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth)));
-                var reportTDHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96);
-                var datahtHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97);
-                var reportTDDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 88);
-                var datahtDSNVs = _unitOfWork.ReportDataRepository.Get(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt);
-                var reportTDDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35);
-                var datahtDSCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36);
-
+                       && (a.HistoryUser.DayEnd == null || (a.HistoryUser.DayEnd != null && a.HistoryUser.DayEnd.Value.Month != monthInt || (a.HistoryUser.DayEnd.Value.Day != 1 && a.HistoryUser.DayEnd.Value.Month == monthInt)))).AsNoTracking().ToList();
+                var reportDataHVCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 30).AsNoTracking().ToList();
+                var reportDataCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 34).AsNoTracking().ToList();
+                var reportTDHVCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 31).AsNoTracking().ToList();
+                var datahtHVCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32).AsNoTracking().ToList();
+                var reportDatactHVs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95).AsNoTracking().ToList();
+                var oldPosittions = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd)).AsNoTracking().ToList();
+                var NVKDLastMonths = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
+                                && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth))).AsNoTracking().ToList();
+                var reportTDHVNVs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96).AsNoTracking().ToList();
+                var datahtHVNVs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 97).AsNoTracking().ToList();
+                var reportTDDSNVs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 88).AsNoTracking().ToList();
+                var datahtDSNVs = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 89 && a.Month == monthInt && a.Year == yearInt).AsNoTracking().ToList();
+                var reportTDDSCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 35).AsNoTracking().ToList();
+                var datahtDSCNs = _unitOfWork.ReportDataRepository.GetQuery(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 36).AsNoTracking().ToList();
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
@@ -1664,11 +1689,11 @@ namespace OceanEduSlide.Controllers
                         //var countNVKD = listRevenueUser.Count();
                         // Nếu số NVKD không bằng số chỉ tiêu của NVKD
                         var countRevenueUser = mergedList.Count();
-                        if (countRevenueUser != countNVKD)
-                        {
-                            ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có số bản ghi NVKD trong tháng là " + countNVKD + ", nhưng số bản ghi chỉ tiêu của NVKD trong tháng là " + countRevenueUser);
-                            return View();
-                        }
+                        //if (countRevenueUser != countNVKD)
+                        //{
+                        //    ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có số bản ghi NVKD trong tháng là " + countNVKD + ", nhưng số bản ghi chỉ tiêu của NVKD trong tháng là " + countRevenueUser);
+                        //    return View();
+                        //}
                         // Nếu số NVKD không bằng số chỉ tiêu của NVKD
                         //if (listRevenueUser.Count() != countNVKD)
                         //{
