@@ -374,7 +374,7 @@ namespace OceanEduSlide.Controllers
 
             var pageNumber = page ?? 1;
             ViewBag.Page = pageNumber;
-            categoryid = categoryid ?? 88;
+            //categoryid = categoryid ?? 88;
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
 
@@ -387,6 +387,7 @@ namespace OceanEduSlide.Controllers
             var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear
             && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
             && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
+
             if (User.TypeUser != TypeUser.ASM)
             {
                 historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
@@ -512,36 +513,76 @@ namespace OceanEduSlide.Controllers
             //filteredHistoryUsers = filteredHistoryUsers
             //    .OrderByDescending(u => userDataDict.ContainsKey(u.Id) ? userDataDict[u.Id] : 0)
             //    .ThenBy(u => u.OfficeId);
-            var usersHasData = filteredHistoryUsers
-                .Where(u => userDataDict.ContainsKey(u.Id))
-                .ToList();
 
-            var usersNoData = filteredHistoryUsers
-                .Where(u => !userDataDict.ContainsKey(u.Id))
-                .ToList();
+            //var usersHasData = filteredHistoryUsers
+            //    .Where(u => userDataDict.ContainsKey(u.Id))
+            //    .ToList();
+
+            //var usersNoData = filteredHistoryUsers
+            //    .Where(u => !userDataDict.ContainsKey(u.Id))
+            //    .ToList();
 
             List<HistoryUser> sortedUsers;
-
-            if (sort == 1)
+            if (categoryid == null)
             {
-                // Giảm dần (mặc định)
-                usersHasData = usersHasData
-                    .OrderByDescending(u => userDataDict[u.Id])
+                // categoryid == null => sắp xếp theo HistoryUser.Sort
+                sortedUsers = filteredHistoryUsers
+                    .OrderBy(u => u.Sort)
                     .ThenBy(u => u.OfficeId)
                     .ToList();
-
-                sortedUsers = usersHasData.Concat(usersNoData.OrderBy(u => u.OfficeId)).ToList();
             }
             else
             {
-                // Tăng dần, và user không có data sẽ lên trước
-                usersHasData = usersHasData
-                    .OrderBy(u => userDataDict[u.Id])
-                    .ThenBy(u => u.OfficeId)
+                // Có categoryid => sắp xếp theo tổng report data
+                var usersHasData = filteredHistoryUsers
+                    .Where(u => userDataDict.ContainsKey(u.Id))
                     .ToList();
 
-                sortedUsers = usersNoData.OrderBy(u => u.OfficeId).Concat(usersHasData).ToList();
+                var usersNoData = filteredHistoryUsers
+                    .Where(u => !userDataDict.ContainsKey(u.Id))
+                    .ToList();
+
+                if (sort == 1)
+                {
+                    // Giảm dần theo tổng
+                    usersHasData = usersHasData
+                        .OrderByDescending(u => userDataDict[u.Id])
+                        .ThenBy(u => u.OfficeId)
+                        .ToList();
+
+                    sortedUsers = usersHasData.Concat(usersNoData.OrderBy(u => u.OfficeId)).ToList();
+                }
+                else
+                {
+                    // Tăng dần theo tổng
+                    usersHasData = usersHasData
+                        .OrderBy(u => userDataDict[u.Id])
+                        .ThenBy(u => u.OfficeId)
+                        .ToList();
+
+                    sortedUsers = usersNoData.OrderBy(u => u.OfficeId).Concat(usersHasData).ToList();
+                }
             }
+            //if (sort == 1)
+            //{
+            //    // Giảm dần (mặc định)
+            //    usersHasData = usersHasData
+            //        .OrderByDescending(u => userDataDict[u.Id])
+            //        .ThenBy(u => u.OfficeId)
+            //        .ToList();
+
+            //    sortedUsers = usersHasData.Concat(usersNoData.OrderBy(u => u.OfficeId)).ToList();
+            //}
+            //else
+            //{
+            //    // Tăng dần, và user không có data sẽ lên trước
+            //    usersHasData = usersHasData
+            //        .OrderBy(u => userDataDict[u.Id])
+            //        .ThenBy(u => u.OfficeId)
+            //        .ToList();
+
+            //    sortedUsers = usersNoData.OrderBy(u => u.OfficeId).Concat(usersHasData).ToList();
+            //}
 
             filteredHistoryUsers = sortedUsers;
 
