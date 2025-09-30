@@ -1756,7 +1756,7 @@ namespace OceanEduSlide.Controllers
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
-            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.TypeUser));
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.OfficeId).ThenBy(a => a.User.MaNhanVien).ThenBy(a => a.TypeUser));
             if (zoneId.HasValue)
             {
                 users = users.Where(l => l.Office != null && l.Office.ZoneId == zoneId);
@@ -1776,6 +1776,16 @@ namespace OceanEduSlide.Controllers
             if (UserType.HasValue)
             {
                 users = users.Where(l => (int)l.TypeUser == UserType);
+            }
+            if (trung == 1)
+            {
+                var duplicatedMaNhanViens = users.Where(u => u.Status == StatusUser.Active)
+                    .GroupBy(u => u.User.MaNhanVien)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                users = users.Where(u => duplicatedMaNhanViens.Contains(u.User.MaNhanVien) && u.User.MaNhanVien != null);
             }
             if (active == 1)
             {
@@ -3116,7 +3126,81 @@ namespace OceanEduSlide.Controllers
         }
         public void ExportHistoryUser()
         {
-            var users = _unitOfWork.HistoryUserRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId));
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId)).ToList();
+                        var dt = new DataTable();
+            dt.Columns.Add("STT");
+            dt.Columns.Add("Tháng");
+            dt.Columns.Add("Họ và tên");
+            dt.Columns.Add("Mã nhân viên");
+            dt.Columns.Add("Trạng thái");
+            dt.Columns.Add("Ngày vào làm");
+            dt.Columns.Add("Ngày nghỉ/ điều chuyển");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Phân quyền");
+
+            var filename = $"danh-sach-nhan-su-theo-thang.xlsx";
+            var i = 1;
+            foreach (var item in users)
+            {
+                dt.Rows.Add(i, item.Month.ToString() + " - " + item.Year.ToString(), item.User.Fullname, item.User.MaNhanVien, GetEnumDisplayName(item.Status), item.DayStart.ToString("dd/MM/yyyy"), item.DayEnd == null ? "" : item.DayEnd.Value.ToString("dd/MM/yyyy"), item.Office?.Name, GetEnumDisplayName(item.TypeUser));
+                i++;
+            }
+            using (var pck = new ExcelPackage())
+            {
+                //Create the worksheet
+                var ws = pck.Workbook.Worksheets.Add("Danh sách nhân sự theo tháng");
+
+                //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
+                ws.Cells["A1"].LoadFromDataTable(dt, true);
+
+                //Format the header for column 1-14
+                using (var rng = ws.Cells["A1:O1"])
+                {
+                    rng.Style.Font.Bold = true;
+                    rng.Style.Fill.PatternType = ExcelFillStyle.Solid;                      //Set Pattern for the background to Solid
+                    rng.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(79, 129, 189));  //Set color to dark blue
+                    rng.Style.Font.Color.SetColor(Color.White);
+                }
+
+                //Example how to Format Column 7 as numeric
+                //using (var col = ws.Cells[2, 7, 2 + dt.Rows.Count, 7])
+                //{
+                //    col.Style.Numberformat.Format = "#,##0";
+                //    col.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                //}
+
+                //Write it back to the client
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+        public void ExportHistoryUser2(int trung,int month)
+        {
+            var users = _unitOfWork.HistoryUserRepository.GetQuery(
+    a => a.Active && a.Month == month && a.Year == DateTime.Now.Year && a.Status == StatusUser.Active,
+    q => q.OrderByDescending(a => a.Year)
+          .ThenByDescending(a => a.Month)
+          .ThenBy(a => a.OfficeId == null)
+          .ThenByDescending(a => a.Office.ZoneId)
+          .ThenBy(a => a.OfficeId)
+).ToList();
+
+            if (trung == 1)
+            {
+                // Lọc ra những MaNhanVien bị trùng trong danh sách đã lọc theo StatusUser.Active
+                var duplicatedMaNhanViens = users
+                    .Where(u => !string.IsNullOrEmpty(u.User.MaNhanVien))
+                    .GroupBy(u => u.User.MaNhanVien)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                users = users
+                    .Where(u => duplicatedMaNhanViens.Contains(u.User.MaNhanVien))
+                    .ToList();
+            }
+
             var dt = new DataTable();
             dt.Columns.Add("STT");
             dt.Columns.Add("Tháng");

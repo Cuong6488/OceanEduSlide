@@ -313,6 +313,8 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
+    <Compile Include="DAL\UserTypeService.cs" />
+    <Compile Include="DAL\IUserTypeService.cs" />
     <Compile Include="DAL\UserService.cs" />
     <Compile Include="DAL\PhieuThuService.cs" />
     <Compile Include="DAL\CallLogService.cs" />
