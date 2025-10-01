@@ -14,7 +14,7 @@
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
 }
 <a class="btn quick-link" href="@Url.Action("TargetOffice","Revenue")"><i class="fal fa-plus-circle me-1"></i>Cập nhật Nhân sự theo tháng</a>
-<a class="btn quick-link" href="@Url.Action("ExportHistoryUser")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+<a class="btn quick-link" href="@Url.Action("ExportHistoryUser", new {month = Model.month})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 <div class="box_content">
     <form action="@Url.Action("ListHistoryUser")" method="get">
         <div class="row">
@@ -129,7 +129,7 @@
             @if (Model.HistoryUsers.PageCount > 1)
             {
                 <tr>
-                    <td colspan="9">@Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ListHistoryUser", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, active = Model.active, UserType = Model.TypeUser, zoneId = Model.ZoneId }))</td>
+                    <td colspan="13">@Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ListHistoryUser", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, active = Model.active, UserType = Model.TypeUser, zoneId = Model.ZoneId }))</td>
                 </tr>
             }
         </tbody>

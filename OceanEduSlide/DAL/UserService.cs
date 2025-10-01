@@ -21,6 +21,7 @@ using System.Web.UI.WebControls;
 using ImageResizer.ExtensionMethods;
 using Microsoft.IdentityModel.Tokens;
 using System.Web.Services.Description;
+using System.Text;
 namespace OceanEduSlide.DAL
 {
     public class UserService
@@ -39,6 +40,7 @@ namespace OceanEduSlide.DAL
             var allCDCM = _userTypeService.GetAllCDCM();
             var today = DateTime.Now.Date;
             var currentMonth = today.Month;
+            currentMonth = 9;
             var currentYear = today.Year;
             int lastMonth = 0;
             int yearLastMonth = 0;
@@ -138,7 +140,122 @@ namespace OceanEduSlide.DAL
 
             var historyUserList = new List<HistoryUser>();
             //var userList = new List<User>();
-            var newRevenueList2 = new List<RevenueUser_Month>();
+            //var newRevenueList2 = new List<RevenueUser_Month>();
+
+            // Danh sách Ns sau khi được Điều chuyển
+            var listNSSauDieuchuyen = QuaTrinhCongTacs.Where(q => currentMonth == q.NgayApDung.Month && q.NgayApDung.Year == currentYear && (q.Loai == "DieuChuyen" || q.Loai == "BoNhiem" || q.Loai == "MienNhiem"));
+            //Danh sách NS Điều chuyển
+            var listNSDieuchuyen = new List<QuaTrinhCongTac>();
+            foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
+            {
+                var NsDieuchuyen = QuaTrinhCongTacs.Where(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item).OrderByDescending(a => a.NgayApDung).FirstOrDefault(); /*(bản ghi B)*/
+                if (NsDieuchuyen != null)
+                {
+                    var manhanvien = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == NsDieuchuyen.IDNhanSuHRM)?.MaNhanSu;
+                    listNSDieuchuyen.Add(NsDieuchuyen);
+                }
+                var nhanSuNguon = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
+                if (nhanSuNguon == null)
+                {
+                    logger.Error("Khong nhan su nguon, IDNhanSuHRM: " + item.IDNhanSuHRM);
+                    continue;
+                }
+                // Ngày đc là ngày banghiA, chức danh và CN-Vùng là banghiB
+
+                if (string.IsNullOrEmpty(nhanSuNguon.MaNhanSu))
+                {
+                    logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
+                    continue;
+                }
+                if (nhanSuNguon.NgayVaoLam == null)
+                {
+                    logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam null");
+                    continue;
+                }
+                if (string.IsNullOrEmpty(item.MaChucDanh))
+                {
+                    logger.Error("Nhan su " + item.MaChucDanh + ": MaChucDanhChuyenMon null");
+                    continue;
+                }
+                var type = _userTypeService.GetTypeUser(nhanSuNguon.MaChucDanhChuyenMon);
+                if (type == null)
+                {
+                    logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Khong ton tai CDCM: " + nhanSuNguon.MaChucDanhChuyenMon);
+                    continue;
+                }
+                Office office = null;
+                Zone zone = null;
+                office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                if (office == null)
+                {
+                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == item.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    if (zone == null)
+                    {
+                        logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + item.WorkPlaceName);
+                        //continue;
+                    }
+                }
+                var sort = _userTypeService.GetSort((TypeUser)type);
+                var user = users.FirstOrDefault(a => a.MaNhanVien == nhanSuNguon.MaNhanSu);
+                //if (user != null)
+                //{
+                //    user.CDCM = item.MaChucDanh;
+                //    user.ZoneId = zone?.Id;
+                //}
+
+                if (user == null)
+                {
+                    var newUser = new User
+                    {
+                        Username = nhanSuNguon.MaNhanSu,
+                        MaNhanVien = nhanSuNguon.MaNhanSu,
+                        Password = password,
+                        Active = true,
+                        OfficeId = office?.Id,
+                        ZoneId = zone?.Id,
+                        Fullname = nhanSuNguon.TenNhanSu,
+                        SaleKit = true,
+                        TypeUser = type,
+                        CDCM = item.MaChucDanh,
+                    };
+                    _unitOfWork.UserRepository.Insert(newUser);
+                    _unitOfWork.Save();
+                    user = newUser;
+                }
+                else
+                {
+                    user.CDCM = item.MaChucDanh;
+                    user.ZoneId = zone?.Id;
+                }
+                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == nhanSuNguon.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                if (historyUser != null)
+                {
+                    historyUser.Status = StatusUser.Transfer;
+                    historyUser.ZoneId = zone?.Id;
+                    historyUser.CDCM = item.MaChucDanh;
+                    historyUser.DayEnd = item.NgayApDung;
+                    historyUser.Sort = sort;
+                }
+                else
+                {
+                    var newhistoryUser = new HistoryUser
+                    {
+                        UserId = user.Id,
+                        Month = currentMonth,
+                        Year = currentYear,
+                        TypeUser = (TypeUser)type,
+                        OfficeId = office?.Id,
+                        ZoneId = zone?.Id,
+                        Status = StatusUser.Transfer,
+                        DayStart = (DateTime)nhanSuNguon.NgayVaoLam,
+                        CDCM = item.MaChucDanh,
+                        DayEnd = item.NgayApDung,
+                        Sort = sort,
+                        Active = true
+                    };
+                    historyUserList.Add(newhistoryUser);
+                }
+            }
             foreach (var item in listAllDanglamviec)
             {
                 // Xử lý ns đang làm việc
@@ -166,10 +283,10 @@ namespace OceanEduSlide.DAL
                 }
                 Office office = null;
                 Zone zone = null;
-                office = allOffice.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
+                office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
                 if (office == null)
                 {
-                    zone = allZone.FirstOrDefault(a => a.Name == item.ChiNhanh);
+                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
                     if (zone == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + item.ChiNhanh);
@@ -281,10 +398,10 @@ namespace OceanEduSlide.DAL
                 }
                 Office office = null;
                 Zone zone = null;
-                office = allOffice.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
+                office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
                 if (office == null)
                 {
-                    zone = allZone.FirstOrDefault(a => a.Name == item.ChiNhanh);
+                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
                     if (zone == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + item.ChiNhanh);
@@ -293,133 +410,75 @@ namespace OceanEduSlide.DAL
                 }
                 var sort = _userTypeService.GetSort((TypeUser)type);
                 var user = users.FirstOrDefault(a => a.MaNhanVien == item.MaNhanSu);
-                if (user != null)
-                {
+                //if (user != null)
+                //{
 
+                //    user.CDCM = item.MaChucDanhChuyenMon;
+                //    user.ZoneId = zone?.Id;
+                //    user.Active = false;
+                //    //continue;
+                //}
+                if (user == null)
+                {
+                    var newUser = new User
+                    {
+                        Username = item.MaNhanSu,
+                        MaNhanVien = item.MaNhanSu,
+                        Password = password,
+                        Active = false,
+                        OfficeId = office?.Id,
+                        ZoneId = zone?.Id,
+                        Fullname = item.TenNhanSu,
+                        SaleKit = true,
+                        TypeUser = type,
+                        CDCM = item.MaChucDanhChuyenMon,
+                    };
+                    _unitOfWork.UserRepository.Insert(newUser);
+                    _unitOfWork.Save();
+                    user = newUser;
+                }
+                else
+                {
                     user.CDCM = item.MaChucDanhChuyenMon;
                     user.ZoneId = zone?.Id;
                     user.Active = false;
-                    //continue;
-                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == item.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
-                    if (historyUser != null)
+                    user.SaleKit = true;
+                    if (user.OfficeId != office?.Id || user.TypeUser != type)
                     {
-                        historyUser.Status = StatusUser.InActive;
-                        historyUser.ZoneId = zone?.Id;
-                        historyUser.CDCM = item.MaChucDanhChuyenMon;
-                        historyUser.DayEnd = ngayNghiViec;
-                        historyUser.Sort = sort;
+                        user.OfficeId = office?.Id;
+                        user.TypeUser = type;
                     }
-                    else
+                }
+                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == item.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                if (historyUser != null)
+                {
+                    historyUser.Status = StatusUser.InActive;
+                    historyUser.ZoneId = zone?.Id;
+                    historyUser.CDCM = item.MaChucDanhChuyenMon;
+                    historyUser.DayEnd = ngayNghiViec;
+                    historyUser.Sort = sort;
+                }
+                else
+                {
+                    var newhistoryUser = new HistoryUser
                     {
-                        var newhistoryUser = new HistoryUser
-                        {
-                            UserId = user.Id,
-                            Month = currentMonth,
-                            Year = currentYear,
-                            TypeUser = (TypeUser)type,
-                            OfficeId = office?.Id,
-                            ZoneId = zone?.Id,
-                            Status = StatusUser.InActive,
-                            DayStart = (DateTime)item.NgayVaoLam,
-                            CDCM = item.MaChucDanhChuyenMon,
-                            DayEnd = ngayNghiViec,
-                            Sort = sort,
-                            Active = true
-                        };
-                        historyUserList.Add(newhistoryUser);
-                    }
+                        UserId = user.Id,
+                        Month = currentMonth,
+                        Year = currentYear,
+                        TypeUser = (TypeUser)type,
+                        OfficeId = office?.Id,
+                        ZoneId = zone?.Id,
+                        Status = StatusUser.InActive,
+                        DayStart = (DateTime)item.NgayVaoLam,
+                        CDCM = item.MaChucDanhChuyenMon,
+                        DayEnd = ngayNghiViec,
+                        Sort = sort,
+                        Active = true
+                    };
+                    historyUserList.Add(newhistoryUser);
                 }
             }
 
-            // Danh sách Ns sau khi được Điều chuyển
-            var listNSSauDieuchuyen = QuaTrinhCongTacs.Where(q => currentMonth == q.NgayApDung.Month && q.NgayApDung.Year == currentYear && (q.Loai == "DieuChuyen" || q.Loai == "BoNhiem" || q.Loai == "MienNhiem"));
-            //Danh sách NS Điều chuyển
-            var listNSDieuchuyen = new List<QuaTrinhCongTac>();
-            foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
-            {
-                var NsDieuchuyen = QuaTrinhCongTacs.Where(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item).OrderByDescending(a => a.NgayApDung).FirstOrDefault(); /*(bản ghi B)*/
-                if (NsDieuchuyen != null)
-                {
-                    var manhanvien = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == NsDieuchuyen.IDNhanSuHRM)?.MaNhanSu;
-                    listNSDieuchuyen.Add(NsDieuchuyen);
-                }
-                var nhanSuNguon = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
-                if (nhanSuNguon == null)
-                {
-                    logger.Error("Khong nhan su nguon, IDNhanSuHRM: " + item.IDNhanSuHRM);
-                    continue;
-                }
-                // Ngày đc là ngày banghiA, chức danh và CN-Vùng là banghiB
-
-                if (string.IsNullOrEmpty(nhanSuNguon.MaNhanSu))
-                {
-                    logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
-                    continue;
-                }
-                if (nhanSuNguon.NgayVaoLam == null)
-                {
-                    logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam null");
-                    continue;
-                }
-                if (string.IsNullOrEmpty(item.MaChucDanh))
-                {
-                    logger.Error("Nhan su " + item.MaChucDanh + ": MaChucDanhChuyenMon null");
-                    continue;
-                }
-                var type = _userTypeService.GetTypeUser(nhanSuNguon.MaChucDanhChuyenMon);
-                if (type == null)
-                {
-                    logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Khong ton tai CDCM: " + nhanSuNguon.MaChucDanhChuyenMon);
-                    continue;
-                }
-                Office office = null;
-                Zone zone = null;
-                office = allOffice.FirstOrDefault(a => a.ShortName == item.WorkPlaceName);
-                if (office == null)
-                {
-                    zone = allZone.FirstOrDefault(a => a.Name == item.WorkPlaceName);
-                    if (zone == null)
-                    {
-                        logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + item.WorkPlaceName);
-                        //continue;
-                    }
-                }
-                var sort = _userTypeService.GetSort((TypeUser)type);
-                var user = users.FirstOrDefault(a => a.MaNhanVien == nhanSuNguon.MaNhanSu);
-                if (user != null)
-                {
-                    user.CDCM = item.MaChucDanh;
-                    user.ZoneId = zone?.Id;
-                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == nhanSuNguon.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
-                    if (historyUser != null)
-                    {
-                        historyUser.Status = StatusUser.Transfer;
-                        historyUser.ZoneId = zone?.Id;
-                        historyUser.CDCM = item.MaChucDanh;
-                        historyUser.DayEnd = item.NgayApDung;
-                        historyUser.Sort = sort;
-                    }
-                    else
-                    {
-                        var newhistoryUser = new HistoryUser
-                        {
-                            UserId = user.Id,
-                            Month = currentMonth,
-                            Year = currentYear,
-                            TypeUser = (TypeUser)type,
-                            OfficeId = office?.Id,
-                            ZoneId = zone?.Id,
-                            Status = StatusUser.Transfer,
-                            DayStart = (DateTime)nhanSuNguon.NgayVaoLam,
-                            CDCM = item.MaChucDanh,
-                            DayEnd = item.NgayApDung,
-                            Sort = sort,
-                            Active = true
-                        };
-                        historyUserList.Add(newhistoryUser);
-                    }
-                }
-            }
 
             //if (userList.Any())
             //    _unitOfWork.UserRepository.InsertRange(userList);
@@ -443,16 +502,12 @@ namespace OceanEduSlide.DAL
             }
             foreach (var historyUser in listNewHistoryUser)
             {
-                if(historyUser.User == null)
-                {
-
-                }
                 //var zone = allZone.FirstOrDefault(a => a.Id == historyUser.ZoneId);
                 //var office = allOffice.FirstOrDefault(a => a.Id == historyUser.OfficeId);
 
                 // cuộc gọi thực đạt
                 //var countTD = callLogCounts.TryGetValue(historyUser.Id, out var count) ? count : 0;
-                var countTD = _unitOfWork.CallLogRepository.GetQuery( a =>a.HistoryUserId == historyUser.Id && a.CallDate.Year == currentYear && a.CallDate.Month == currentMonth && a.BillSec >= 60).Count();
+                var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == currentYear && a.CallDate.Month == currentMonth && a.BillSec >= 60).Count();
                 // Thêm hoặc update thực đạt CG cho NV
                 if (historyUser.TypeUser == TypeUser.EC || historyUser.TypeUser == TypeUser.ALT || historyUser.TypeUser == TypeUser.AEC || countTD > 0)
                 {
@@ -742,97 +797,7 @@ namespace OceanEduSlide.DAL
                 _unitOfWork.ReportDataRepository.InsertRange(reportDataList2);
             _unitOfWork.Save();
         }
-        //public void SyncUser()
-        //{
-        //    var today = DateTime.Now.Date;
-        //    var currentMonth = today.Month;
-        //    var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.ToList();
-        //    var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.ToList();
-        //    var ThaiSans = _dongBoTuyenSinh.ThaiSans.ToList();
-        //    var listNSTS = new List<DSNhanSuNguon>();
-        //    var listNSStop_danghi = new List<DSNhanSuNguon>();
-        //    var listNSStop_danglamviec = new List<DSNhanSuNguon>();
-        //    var listNSDanglamviec = new List<DSNhanSuNguon>();
-        //    foreach (var ns in DSNhanSuNguons)
-        //    {
-        //        // Thai sản
-        //        if (ThaiSans.Any(t => t.IDNhanSuHRM == ns.IDNhanSuHRM && today >= t.NgayBatDauNghiThaiSan.Date && today <= t.NgayKetthucNghiThaiSan.Date))
-        //        {
-        //            listNSTS.Add(ns);
-        //        }
 
-        //        // E_HIRE
-        //        if (ns.TrangThai == "E_HIRE")
-        //        {
-        //            listNSDanglamviec.Add(ns);
-        //        }
-        //        // E_STOP
-        //        else if (ns.TrangThai == "E_STOP" && ns.NgayNghiViec.HasValue)
-        //        {
-        //            if (ns.NgayNghiViec.Value.Month == currentMonth && today <= ns.NgayNghiViec.Value.Date)
-        //            {
-        //                listNSStop_danghi.Add(ns);
-        //            }
-        //            else if (today > ns.NgayNghiViec.Value.Date)
-        //            {
-        //                listNSStop_danglamviec.Add(ns);
-        //            }
-        //        }
-
-        //    }
-        //    // Nghỉ thai sản
-        //    //var listNSTS = DSNhanSuNguons.Where(a => ThaiSans.Any(t => t.IDNhanSuHRM == a.IDNhanSuHRM && DateTime.Now.Date >= t.NgayBatDauNghiThaiSan && DateTime.Now.Date <= t.NgayKetthucNghiThaiSan)).ToList();
-        //    //// Trạng thái Stop - đã nghỉ
-        //    //var listNSStop_danghi = DSNhanSuNguons.Where(a => a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month == DateTime.Now.Month && a.TrangThai == "E_STOP" && DateTime.Now.Date <= a.NgayNghiViec).ToList();
-        //    //// Trạng thái Stop - vẫn đang làm việc
-        //    //var listNSStop_danglamviec = DSNhanSuNguons.Where(a => a.NgayNghiViec.HasValue && a.TrangThai == "E_STOP" && DateTime.Now.Date > a.NgayNghiViec).ToList();
-        //    //// Trạng thái E_Hire - đang làm việc
-        //    //var listNSDanglamviec = DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE").ToList();
-
-        //    // Tổng hợp danh sách NS đang làm việc
-        //    var listAllDanglamviec = listNSDanglamviec.Concat(listNSStop_danglamviec);
-
-        //    // Tổng hợp danh sách NS đã nghỉ
-        //    var listAllNghiviec = listNSStop_danghi.Concat(listNSTS);
-
-        //    foreach (var item in listAllDanglamviec)
-        //    {
-        //        // Xử lý ns đang làm việc
-
-        //    }
-        //    foreach (var item in listAllNghiviec)
-        //    {
-        //        // Xử lý ns nghỉ việc / TS
-        //    }
-
-        //    // Danh sách Ns sau khi được Điều chuyển
-        //    var listNSSauDieuchuyen = QuaTrinhCongTacs.Where(q => currentMonth == q.NgayApDung.Month && (q.Loai == "DieuChuyen" || q.Loai == "BoNhiem" || q.Loai == "MienNhiem")).ToList();
-        //    //Danh sách NS Điều chuyển
-        //    var listNSDieuchuyen = new List<QuaTrinhCongTac>();
-        //    var dictNhanSu = DSNhanSuNguons.ToDictionary(x => x.IDNhanSuHRM, x => x);
-        //    var lookupQTCongTac = QuaTrinhCongTacs.GroupBy(q => q.IDNhanSuHRM).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.NgayApDung).ToList());
-
-        //    foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
-        //    {
-        //        //var NsDieuchuyen = QuaTrinhCongTacs.Where(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item).OrderByDescending(a => a.NgayApDung).FirstOrDefault(); /*(bản ghi B)*/
-        //        if (lookupQTCongTac.TryGetValue(item.IDNhanSuHRM, out var list))
-        //        {
-        //            var NsDieuchuyen = list.FirstOrDefault(x => x != item);
-        //            if (NsDieuchuyen != null)
-        //            {
-        //                //var manhanvien = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == NsDieuchuyen.IDNhanSuHRM)?.MaNhanSu;
-        //                if (dictNhanSu.TryGetValue(NsDieuchuyen.IDNhanSuHRM, out var ns))
-        //                {
-        //                    var manhanvien = ns.MaNhanSu;
-        //                }
-        //                listNSDieuchuyen.Add(NsDieuchuyen);
-        //            }
-        //        }
-
-        //        // Ngày đc là ngày banghiA, chức danh và CN-Vùng là banghiB
-
-        //    }
-        //}
 
         public async Task SyncUserAsync()
         {

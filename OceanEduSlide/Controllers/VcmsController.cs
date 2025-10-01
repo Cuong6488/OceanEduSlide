@@ -908,6 +908,15 @@ namespace OceanEduSlide.Controllers
         {
             var list = _unitOfWork.UserRepository.GetQuery(a => a.Username.Contains("'") || a.MaNhanVien.Contains("'"));
             var list2 = _unitOfWork.HistoryUserRepository.GetQuery(a => a.User.Username.Contains("'") || a.User.MaNhanVien.Contains("'"));
+            foreach (var item in list2)
+            {
+                item.Active = false;
+            }
+            foreach (var item in list)
+            {
+                item.Active = false;
+            }
+            _unitOfWork.Save();
             list2.Delete();
             list.Delete();
             return Content("Đã xóa các User chứa ký tự '");
@@ -3124,10 +3133,10 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-        public void ExportHistoryUser()
+        public void ExportHistoryUser(int month)
         {
             var users = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active, q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month).ThenBy(a => a.OfficeId == null).ThenByDescending(a => a.Office.ZoneId).ThenBy(a => a.OfficeId)).ToList();
-                        var dt = new DataTable();
+            var dt = new DataTable();
             dt.Columns.Add("STT");
             dt.Columns.Add("Tháng");
             dt.Columns.Add("Họ và tên");
@@ -3175,7 +3184,7 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
-        public void ExportHistoryUser2(int trung,int month)
+        public void ExportHistoryUser2(int trung, int month)
         {
             var users = _unitOfWork.HistoryUserRepository.GetQuery(
     a => a.Active && a.Month == month && a.Year == DateTime.Now.Year && a.Status == StatusUser.Active,
