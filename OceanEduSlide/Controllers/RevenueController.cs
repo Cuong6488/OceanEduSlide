@@ -787,10 +787,7 @@ namespace OceanEduSlide.Controllers
                             }
 
                         var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart == startDate && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
-                        if(historyUser.User?.MaNhanVien == "25040229")
-                        {
-
-                        }
+                        
                         if (historyUser != null)
                         {
                             historyUser.Status = statusUser;
@@ -1186,6 +1183,7 @@ namespace OceanEduSlide.Controllers
                 var datahtHVCNs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 32);
                 var reportDatactHVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 95);
                 var oldPosittions = _unitOfWork.HistoryUserRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.Status == StatusUser.Transfer, q => q.OrderByDescending(a => a.DayEnd));
+                
                 var NVKDLastMonths = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == yearLastMonth && a.Month == lastMonth && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT)
                                 && a.DayStart <= endDayLastMonth && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value > endDayLastMonth)));
                 var reportTDHVNVs = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 96);
@@ -1308,10 +1306,6 @@ namespace OceanEduSlide.Controllers
                     var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                     foreach (var item in historyUserMonths)
                     {
-                        if (item.User?.MaNhanVien == "25040229")
-                        {
-
-                        }
                         // Khởi tạo chỉ tiêu DS nhân viên
                         decimal targetNS = 0;
                         if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)

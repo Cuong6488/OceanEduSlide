@@ -911,6 +911,13 @@ namespace OceanEduSlide.Controllers
             foreach (var item in list2)
             {
                 item.Active = false;
+                var listData = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                listData.Delete();
+                var listRevenueMonth = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                listRevenueMonth.Delete();
+                var reportCalls = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                reportCalls.Delete();
+
             }
             foreach (var item in list)
             {
