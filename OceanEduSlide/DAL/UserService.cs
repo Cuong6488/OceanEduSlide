@@ -163,11 +163,6 @@ namespace OceanEduSlide.DAL
                         logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                         continue;
                     }
-
-                    if (nhanSuNguon.MaNhanSu == "22060056")
-                    {
-
-                    }
                     if (nhanSuNguon.NgayVaoLam == null)
                     {
                         logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam null");
@@ -188,6 +183,11 @@ namespace OceanEduSlide.DAL
                     Zone zone = null;
                     if (!string.IsNullOrEmpty(item.WorkPlaceName))
                     {
+
+                        if (item.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                        {
+                            item.WorkPlaceName = "OE BMT";
+                        }
                         office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.WorkPlaceName.Normalize(NormalizationForm.FormC));
                         if (office == null)
                         {
@@ -272,10 +272,6 @@ namespace OceanEduSlide.DAL
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                     continue;
                 }
-                if (item.MaNhanSu == "22060056")
-                {
-
-                }
                 if (item.NgayVaoLam == null)
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam null");
@@ -302,6 +298,10 @@ namespace OceanEduSlide.DAL
                 }
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
+                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    {
+                        QTCT.WorkPlaceName = "OE BMT";
+                    }
                     office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
                     if (office == null)
                     {
@@ -386,10 +386,6 @@ namespace OceanEduSlide.DAL
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                     continue;
                 }
-                if (item.MaNhanSu == "22060056")
-                {
-
-                }
                 if (item.NgayVaoLam == null)
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam null");
@@ -437,6 +433,10 @@ namespace OceanEduSlide.DAL
                 }
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
+                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    {
+                        QTCT.WorkPlaceName = "OE BMT";
+                    }
                     office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
                     if (office == null)
                     {
@@ -542,10 +542,6 @@ namespace OceanEduSlide.DAL
             }
             foreach (var historyUser in listNewHistoryUser)
             {
-                if (historyUser.User?.MaNhanVien == "22060056")
-                {
-
-                }
                 //var zone = allZone.FirstOrDefault(a => a.Id == historyUser.ZoneId);
                 //var office = allOffice.FirstOrDefault(a => a.Id == historyUser.OfficeId);
 

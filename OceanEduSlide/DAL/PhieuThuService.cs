@@ -30,9 +30,9 @@ namespace OceanEduSlide.DAL
             // Đồng bộ ngày hôm qua (vào buổi đêm)
             //var day = DateTime.Today.AddDays(-1);
             var day = DateTime.Today;
-            var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
+            var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year);
             //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
-            var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && !a.THDB);
+            var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && !a.THDB);
             oldList.Delete();
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year, q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null));
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
@@ -82,6 +82,7 @@ namespace OceanEduSlide.DAL
                     DonHang = item.DonHang,
                     UDPhieuThu = item.UDPhieuThu,
                     ThangTinhDThu = item.NgayThanhToan.Value.Month,
+                    NamTinhDThu = item.NgayThanhToan.Value.Year,
                     TrangThai = item.TrangThai,
                 };
                 phieuThuAddList.Add(phieuThu);
@@ -103,7 +104,7 @@ namespace OceanEduSlide.DAL
             var day = new DateTime(2025, month, date).Date;
             var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month);
             //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
-            var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && !a.THDB);
+            var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && !a.THDB);
             oldList.Delete();
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year, q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null));
@@ -113,7 +114,7 @@ namespace OceanEduSlide.DAL
 
                 var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale
                 && DbFunctions.TruncateTime(a.DayStart) <= DbFunctions.TruncateTime(item.NgayThanhToan) && (a.DayEnd == null || DbFunctions.TruncateTime(a.DayEnd) >= DbFunctions.TruncateTime(item.NgayThanhToan)));
-                
+
                 if (historyUser == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
@@ -157,6 +158,7 @@ namespace OceanEduSlide.DAL
                     UDPhieuThu = item.UDPhieuThu,
                     TrangThai = item.TrangThai,
                     ThangTinhDThu = item.NgayThanhToan.Value.Month,
+                    NamTinhDThu = item.NgayThanhToan.Value.Year,
                 };
                 phieuThuAddList.Add(phieuThu);
             }
@@ -171,14 +173,14 @@ namespace OceanEduSlide.DAL
         public void SyncDthu(int month, int year)
         {
             var day = new DateTime(year, month, 1);
-            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.ThangTinhDThu == day.Month && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") &&
+            var phieuThuAllList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.ThangTinhDThu == day.Month && a.NamTinhDThu == day.Year && (a.Loai == "Phiếu gộp" || a.Loai == "Học phí") &&
             (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm" || a.TrangThai == null || a.TrangThai == ""));
             var phieuThuList = phieuThuAllList.ToList();
             var bcList = new List<ReportData>();
             var rUserWeek_RealList = new List<RevenueUser_Week_Real>();
             var listMaNV = phieuThuAllList.Select(a => a.MaNVChotSale).Distinct().ToList();
             var listCN = phieuThuAllList.Select(a => a.ChiNhanh).Distinct().ToList();
-
+            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
             foreach (var mnv in listMaNV)
             {
                 //Reset thực đạt NV về 0
@@ -198,7 +200,7 @@ namespace OceanEduSlide.DAL
 
             foreach (var cn in listCN)
             {
-                var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Active && a.ShortName == cn).FirstOrDefault();
+                var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
                 if (office == null)
                     continue;
                 var listIdReset = new List<int> { 35, 40, 43, 119, 78, 80, 82, 84 };
@@ -696,6 +698,121 @@ namespace OceanEduSlide.DAL
                     }
                 }
             }
+
+            // ht phiếu cọc
+
+            //var listPhieuCoc = _unitOfWork.PhieuThuRepository.Get(a => a.NgayThanhToan.HasValue && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && a.Loai == "Đặt cọc" &&
+            //(a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm") && !a.THDB);
+            //var listChiNhanh = listPhieuCoc.Select(a => a.ChiNhanh).Distinct().ToList();
+            //foreach (var cn in listChiNhanh)
+            //{
+            //    var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
+            //    if (office == null)
+            //        continue;
+            //    var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).GroupBy(a => a.HDBH).Select(g => g.First()).ToList();
+
+            //    var tongThangCoc = phieuCocCN.Sum(s => s.ThangHocDuKienDecimal);
+            //    var thangCocDaGop = phieuCocCN.Where(a => a.HDBH != null).Sum(s => s.ThangHocDuKienDecimal);
+            //    var thangCocTon = tongThangCoc - thangCocDaGop;
+            //    // Báo cáo Tổng tháng cọc
+            //    var bctongThangCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+            //    if (bctongThangCoc == null)
+            //        bctongThangCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+            //    if (bctongThangCoc == null)
+            //    {
+            //        bctongThangCoc = new ReportData()
+            //        {
+            //            Sort = 1,
+            //            Month = day.Month,
+            //            Year = day.Year,
+            //            ReportCategoryId = 68,
+            //            Data = (tongThangCoc ?? 0).ToString("N2"),
+            //            OfficeId = office.Id,
+            //            DataReal = tongThangCoc,
+            //        };
+            //        bcList.Add(bctongThangCoc);
+            //    }
+            //    else
+            //    {
+            //        bctongThangCoc.DataReal = tongThangCoc;
+            //        bctongThangCoc.Data = (tongThangCoc ?? 0).ToString("N2");
+            //    }
+            //    // Báo cáo tháng cọc đã gộp
+            //    var bcThangCocDaGop = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+            //    if (bcThangCocDaGop == null)
+            //        bcThangCocDaGop = bcList.FirstOrDefault(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+            //    if (bcThangCocDaGop == null)
+            //    {
+            //        bcThangCocDaGop = new ReportData()
+            //        {
+            //            Sort = 1,
+            //            Month = day.Month,
+            //            Year = day.Year,
+            //            ReportCategoryId = 71,
+            //            Data = (thangCocDaGop ?? 0).ToString("N2"),
+            //            OfficeId = office.Id,
+            //            DataReal = thangCocDaGop,
+            //        };
+            //        bcList.Add(bcThangCocDaGop);
+            //    }
+            //    else
+            //    {
+            //        bcThangCocDaGop.DataReal = thangCocDaGop;
+            //        bcThangCocDaGop.Data = (thangCocDaGop ?? 0).ToString("N2");
+            //    }
+
+            //    // Báo cáo tháng cọc tồn
+            //    var bcThangCocTon = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+            //    if (bcThangCocTon == null)
+            //        bcThangCocTon = bcList.FirstOrDefault(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+            //    if (bcThangCocTon == null)
+            //    {
+            //        bcThangCocTon = new ReportData()
+            //        {
+            //            Sort = 1,
+            //            Month = day.Month,
+            //            Year = day.Year,
+            //            ReportCategoryId = 76,
+            //            Data = (thangCocTon ?? 0).ToString("N2"),
+            //            OfficeId = office.Id,
+            //            DataReal = thangCocTon,
+            //        };
+            //        bcList.Add(bcThangCocTon);
+            //    }
+            //    else
+            //    {
+            //        bcThangCocTon.DataReal = thangCocTon;
+            //        bcThangCocTon.Data = (thangCocTon ?? 0).ToString("N2");
+            //    }
+
+            //    if (tongThangCoc > 0 && thangCocDaGop != null)
+            //    {
+            //        var tileChuyenDoiCoc = thangCocDaGop / tongThangCoc;
+            //        // Báo cáo tỉ lệ chuyển đổi cọc
+            //        var bcTiLeCDCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+            //        if (bcTiLeCDCoc == null)
+            //            bcTiLeCDCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+            //        if (bcTiLeCDCoc == null)
+            //        {
+            //            bcTiLeCDCoc = new ReportData()
+            //            {
+            //                Sort = 1,
+            //                Month = day.Month,
+            //                Year = day.Year,
+            //                ReportCategoryId = 73,
+            //                Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%",
+            //                OfficeId = office.Id,
+            //                DataReal = tileChuyenDoiCoc,
+            //            };
+            //            bcList.Add(bcTiLeCDCoc);
+            //        }
+            //        else
+            //        {
+            //            bcTiLeCDCoc.DataReal = tileChuyenDoiCoc;
+            //            bcTiLeCDCoc.Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%";
+            //        }
+            //    }
+            //}
             if (bcList.Any())
                 _unitOfWork.ReportDataRepository.InsertRange(bcList);
             if (rUserWeek_RealList.Any())
@@ -1061,6 +1178,7 @@ namespace OceanEduSlide.DAL
 
             if (bcListNew.Any())
                 _unitOfWork.ReportDataRepository.InsertRange(bcListNew);
+
             _unitOfWork.Save();
         }
 

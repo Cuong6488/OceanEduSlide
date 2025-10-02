@@ -2651,6 +2651,12 @@ namespace OceanEduSlide.Controllers
             phieuthuService.TestSyncPhieuThu(date, month);
             return Content("Đã đồng bộ phiếu thu");
         }
+        public ActionResult SyncPhieuThu()
+        {
+            var phieuthuService = new PhieuThuService();
+            phieuthuService.SyncPhieuThu();
+            return Content("Đã đồng bộ phiếu thu thủ công");
+        }
         public ActionResult SyncUserAsync()
         {
             var userService = new UserService();
