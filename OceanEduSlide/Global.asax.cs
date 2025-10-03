@@ -73,29 +73,11 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(12, 30)
+                s => s.ToRunEvery(1).Days().At(12, 45)
             );
 
             for (int h = 7; h < 24; h++)
             {
-                JobManager.AddJob(
-                    () =>
-                    {
-                        Task.Run(async () =>
-                        {
-                            try
-                            {
-                                var phieuThuService = new PhieuThuService();
-                                await phieuThuService.SyncPhieuThuAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
-                            }
-                        });
-                    },
-                    s => s.ToRunEvery(1).Days().At(h, 30)
-                );
                 JobManager.AddJob(
                     () =>
                     {
@@ -113,6 +95,42 @@ namespace OceanEduSlide
                         });
                     },
                     s => s.ToRunEvery(1).Days().At(h, 0)
+                );
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var userService = new UserService();
+                                await userService.SyncUserAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 15)
+                );
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var phieuThuService = new PhieuThuService();
+                                await phieuThuService.SyncPhieuThuAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ SyncPhieuThu error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 30)
                 );
             }
 

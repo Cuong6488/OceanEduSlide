@@ -182,7 +182,7 @@
                 <li>
                     <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
                 </li>
-                if (Model.User.TypeUser != TypeUser.BM)
+                if (Model.User.TypeUser != TypeUser.BM && Model.User.TypeUser != TypeUser.ASM)
                 {
                     <li>
                         <a href="@Url.Action("ListProposal","Proposal")"> ĐỀ XUẤT </a>

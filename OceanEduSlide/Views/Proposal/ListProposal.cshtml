@@ -202,7 +202,7 @@
                             {
                                 <a target="_blank" href="@item.Url">Link</a>
                             }
-                            @if (item.BMEdit && item.CVSeen && Model.User.TypeUser == TypeUser.BM)
+                            @if (item.BMEdit && item.CVSeen && (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM))
                             {
                                 @: <br /> <br /> <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a>
                             }
@@ -237,22 +237,6 @@
                                 if (item.Note != null)
                                 {
                                     @: <br /> Note: @item.Note
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                 }
                             }
                             @if (item.CVFbName != null)
@@ -270,28 +254,28 @@
                         {
                             <td class="text-center">@Html.DisplayFor(a => item.BMEdit)</td>
                         }
-                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO@*|| Model.User.TypeUser == TypeUser.ASM*@)
-{
-<td>
-    @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
-    {
-        <a href="@Url.Action("UpdateProposal", new {pId = item.Id,notice = Model.Notice})">Phản hồi</a>
-    }
-    else
-    {
-        if (item.CVSeen == false)
-        {
-            <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a> <br /> <br />
-            <a href="javascript:;" onclick="deleteProposal('@item.Id')" style="color: red;">Xóa</a>
-        }
+                        @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
+                        {
+                            <td>
+                                @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+                                {
+                                    <a href="@Url.Action("UpdateProposal", new {pId = item.Id,notice = Model.Notice})">Phản hồi</a>
+                                }
+                                else
+                                {
+                                    if (item.CVSeen == false)
+                                    {
+                                        <a href="@Url.Action("EditProposal", new {pId = item.Id})">Sửa</a> <br /> <br />
+                                        <a href="javascript:;" onclick="deleteProposal('@item.Id')" style="color: red;">Xóa</a>
+                                    }
 
-        else if (Model.Notice == 3)
-        {
-            <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
-        }
-    }
-</td>
-}
+                                    else if (Model.Notice == 3)
+                                    {
+                                        <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
+                                    }
+                                }
+                            </td>
+                        }
                     </tr>
                 }
 
