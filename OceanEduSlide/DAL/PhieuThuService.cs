@@ -2025,7 +2025,7 @@ namespace OceanEduSlide.DAL
 
                     //Tổng tháng đã gộp
 
-                    if (item.HDBH == null)
+                    if (item.HDBH != null)
                     {
                         var bcThangCocDaGopNV = listBCNV.FirstOrDefault(a => a.ReportCategoryId == 113 && a.HistoryUserId == historyUser.Id);
                         if (bcThangCocDaGopNV == null)
@@ -2051,7 +2051,7 @@ namespace OceanEduSlide.DAL
                             if (bcThangCocDaGopNV.DataReal == null)
                                 bcThangCocDaGopNV.DataReal = 0;
                             bcThangCocDaGopNV.DataReal += item.ThangHocDuKienDecimal ?? 0;
-                            bcThangCocDaGopNV.Data = (bcTongThangCocNV.DataReal ?? 0).ToString("N2");
+                            bcThangCocDaGopNV.Data = (bcThangCocDaGopNV.DataReal ?? 0).ToString("N2");
                         }
                         if (bcTongThangCocNV.DataReal > 0)
                         {
@@ -2067,7 +2067,7 @@ namespace OceanEduSlide.DAL
                                     Month = day.Month,
                                     Year = day.Year,
                                     ReportCategoryId = 115,
-                                    Data = (tilethuhoicoc ?? 0).ToString("F2"),
+                                    Data = ((tilethuhoicoc ?? 0) * 100).ToString("F2") + "%",
                                     DataReal = tilethuhoicoc,
                                     UserId = historyUser.UserId,
                                     HistoryUserId = historyUser.Id,
@@ -2078,7 +2078,7 @@ namespace OceanEduSlide.DAL
                             else
                             {
                                 bcTiLeThuHoiCoc.DataReal = tilethuhoicoc;
-                                bcTiLeThuHoiCoc.Data = (tilethuhoicoc ?? 0).ToString("F2");
+                                bcTiLeThuHoiCoc.Data = ((tilethuhoicoc ?? 0) * 100).ToString("F2") + "%";
                             }
                         }
                     }
@@ -2108,7 +2108,36 @@ namespace OceanEduSlide.DAL
                             if (bcThangCocTonNV.DataReal == null)
                                 bcThangCocTonNV.DataReal = 0;
                             bcThangCocTonNV.DataReal += item.ThangHocDuKienDecimal ?? 0;
-                            bcThangCocTonNV.Data = (bcTongThangCocNV.DataReal ?? 0).ToString("N2");
+                            bcThangCocTonNV.Data = (bcThangCocTonNV.DataReal ?? 0).ToString("N2");
+                        }
+
+                        if (bcTongThangCocNV.DataReal > 0)
+                        {
+                            var tilethuhoicoc = 1 - (bcThangCocTonNV.DataReal / bcTongThangCocNV.DataReal);
+                            var bcTiLeThuHoiCoc = listBCNV.FirstOrDefault(a => a.ReportCategoryId == 115 && a.HistoryUserId == historyUser.Id);
+                            if (bcTiLeThuHoiCoc == null)
+                                bcTiLeThuHoiCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 115 && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId == historyUser.Id);
+                            if (bcTiLeThuHoiCoc == null)
+                            {
+                                bcTiLeThuHoiCoc = new ReportData()
+                                {
+                                    Sort = 1,
+                                    Month = day.Month,
+                                    Year = day.Year,
+                                    ReportCategoryId = 115,
+                                    Data = ((tilethuhoicoc ?? 0) * 100).ToString("F2") + "%",
+                                    DataReal = tilethuhoicoc,
+                                    UserId = historyUser.UserId,
+                                    HistoryUserId = historyUser.Id,
+                                    OfficeId = office.Id,
+                                };
+                                bcList.Add(bcTiLeThuHoiCoc);
+                            }
+                            else
+                            {
+                                bcTiLeThuHoiCoc.DataReal = tilethuhoicoc;
+                                bcTiLeThuHoiCoc.Data = ((tilethuhoicoc ?? 0) * 100).ToString("F2") + "%";
+                            }
                         }
                     }
                 }
