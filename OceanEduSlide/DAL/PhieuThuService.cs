@@ -1347,7 +1347,7 @@ namespace OceanEduSlide.DAL
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
             var listbcnvReset = _unitOfWork.ReportDataRepository.Get(a => (a.ReportCategoryId == 88 || a.ReportCategoryId == 96 || a.ReportCategoryId == 103) && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
             var listttWeeks = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
-            var listReportCategoryIdCN = new List<int> { 30, 31, 32, 35, 36, 45, 58, 60, 62, 64, 66, 68, 71, 73, 76, 40, 43, 119 };
+            var listReportCategoryIdCN = new List<int> { 30, 31, 32, 35, 36, 45, 58, 60, 62, 64, 66, 68, 71, 73, 76, 40, 43, 119, 117 };
             var listBCCN = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdCN.Contains(a.ReportCategoryId));
             var listReportCategoryIdNV = new List<int> { 95, 96, 88, 111, 113, 114, 115 };
             var listBCNV = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdNV.Contains(a.ReportCategoryId));
@@ -1858,7 +1858,7 @@ namespace OceanEduSlide.DAL
                 var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
                 if (office == null)
                     continue;
-                var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).GroupBy(a => a.HDBH).Select(g => g.First()).ToList();
+                var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).ToList();
                 var tongThangCoc = phieuCocCN.Sum(s => s.ThangHocDuKienDecimal);
                 var thangCocDaGop = phieuCocCN.Where(a => a.HDBH != null).Sum(s => s.ThangHocDuKienDecimal);
                 var thangCocTon = tongThangCoc - thangCocDaGop;
@@ -1959,6 +1959,31 @@ namespace OceanEduSlide.DAL
                         bcTiLeCDCoc.DataReal = tileChuyenDoiCoc;
                         bcTiLeCDCoc.Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%";
                     }
+                }
+
+                // Doanh thu từ cọc tồn
+                var dThuCocTon = phieuCocCN.Where(a => a.HDBH == null).Sum(a => a.SUD);
+                var bcdThuCocTon = listBCCN.FirstOrDefault(a => a.ReportCategoryId == 117 && a.OfficeId == office.Id);
+                if (bcdThuCocTon == null)
+                    bcdThuCocTon = bcList.FirstOrDefault(a => a.ReportCategoryId == 117 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcdThuCocTon == null)
+                {
+                    bcdThuCocTon = new ReportData()
+                    {
+                        Sort = 1,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 117,
+                        Data = (dThuCocTon ?? 0).ToString("N0"),
+                        OfficeId = office.Id,
+                        DataReal = dThuCocTon,
+                    };
+                    bcList.Add(bcdThuCocTon);
+                }
+                else
+                {
+                    bcdThuCocTon.DataReal = dThuCocTon;
+                    bcdThuCocTon.Data = (dThuCocTon ?? 0).ToString("N0");
                 }
             }
 
