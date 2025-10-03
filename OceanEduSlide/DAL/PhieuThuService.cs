@@ -701,118 +701,118 @@ namespace OceanEduSlide.DAL
 
             // ht phiếu cọc
 
-            //var listPhieuCoc = _unitOfWork.PhieuThuRepository.Get(a => a.NgayThanhToan.HasValue && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && a.Loai == "Đặt cọc" &&
-            //(a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm") && !a.THDB);
-            //var listChiNhanh = listPhieuCoc.Select(a => a.ChiNhanh).Distinct().ToList();
-            //foreach (var cn in listChiNhanh)
-            //{
-            //    var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
-            //    if (office == null)
-            //        continue;
-            //    var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).GroupBy(a => a.HDBH).Select(g => g.First()).ToList();
+            var listPhieuCoc = _unitOfWork.PhieuThuRepository.Get(a => a.NgayThanhToan.HasValue && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && a.Loai == "Đặt cọc" &&
+            (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm") && !a.THDB);
+            var listChiNhanh = listPhieuCoc.Select(a => a.ChiNhanh).Distinct().ToList();
+            foreach (var cn in listChiNhanh)
+            {
+                var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
+                if (office == null)
+                    continue;
+                var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).GroupBy(a => a.HDBH).Select(g => g.First()).ToList();
 
-            //    var tongThangCoc = phieuCocCN.Sum(s => s.ThangHocDuKienDecimal);
-            //    var thangCocDaGop = phieuCocCN.Where(a => a.HDBH != null).Sum(s => s.ThangHocDuKienDecimal);
-            //    var thangCocTon = tongThangCoc - thangCocDaGop;
-            //    // Báo cáo Tổng tháng cọc
-            //    var bctongThangCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
-            //    if (bctongThangCoc == null)
-            //        bctongThangCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
-            //    if (bctongThangCoc == null)
-            //    {
-            //        bctongThangCoc = new ReportData()
-            //        {
-            //            Sort = 1,
-            //            Month = day.Month,
-            //            Year = day.Year,
-            //            ReportCategoryId = 68,
-            //            Data = (tongThangCoc ?? 0).ToString("N2"),
-            //            OfficeId = office.Id,
-            //            DataReal = tongThangCoc,
-            //        };
-            //        bcList.Add(bctongThangCoc);
-            //    }
-            //    else
-            //    {
-            //        bctongThangCoc.DataReal = tongThangCoc;
-            //        bctongThangCoc.Data = (tongThangCoc ?? 0).ToString("N2");
-            //    }
-            //    // Báo cáo tháng cọc đã gộp
-            //    var bcThangCocDaGop = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
-            //    if (bcThangCocDaGop == null)
-            //        bcThangCocDaGop = bcList.FirstOrDefault(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
-            //    if (bcThangCocDaGop == null)
-            //    {
-            //        bcThangCocDaGop = new ReportData()
-            //        {
-            //            Sort = 1,
-            //            Month = day.Month,
-            //            Year = day.Year,
-            //            ReportCategoryId = 71,
-            //            Data = (thangCocDaGop ?? 0).ToString("N2"),
-            //            OfficeId = office.Id,
-            //            DataReal = thangCocDaGop,
-            //        };
-            //        bcList.Add(bcThangCocDaGop);
-            //    }
-            //    else
-            //    {
-            //        bcThangCocDaGop.DataReal = thangCocDaGop;
-            //        bcThangCocDaGop.Data = (thangCocDaGop ?? 0).ToString("N2");
-            //    }
+                var tongThangCoc = phieuCocCN.Sum(s => s.ThangHocDuKienDecimal);
+                var thangCocDaGop = phieuCocCN.Where(a => a.HDBH != null).Sum(s => s.ThangHocDuKienDecimal);
+                var thangCocTon = tongThangCoc - thangCocDaGop;
+                // Báo cáo Tổng tháng cọc
+                var bctongThangCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bctongThangCoc == null)
+                    bctongThangCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 68 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bctongThangCoc == null)
+                {
+                    bctongThangCoc = new ReportData()
+                    {
+                        Sort = 1,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 68,
+                        Data = (tongThangCoc ?? 0).ToString("N2"),
+                        OfficeId = office.Id,
+                        DataReal = tongThangCoc,
+                    };
+                    bcList.Add(bctongThangCoc);
+                }
+                else
+                {
+                    bctongThangCoc.DataReal = tongThangCoc;
+                    bctongThangCoc.Data = (tongThangCoc ?? 0).ToString("N2");
+                }
+                // Báo cáo tháng cọc đã gộp
+                var bcThangCocDaGop = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcThangCocDaGop == null)
+                    bcThangCocDaGop = bcList.FirstOrDefault(a => a.ReportCategoryId == 71 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcThangCocDaGop == null)
+                {
+                    bcThangCocDaGop = new ReportData()
+                    {
+                        Sort = 1,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 71,
+                        Data = (thangCocDaGop ?? 0).ToString("N2"),
+                        OfficeId = office.Id,
+                        DataReal = thangCocDaGop,
+                    };
+                    bcList.Add(bcThangCocDaGop);
+                }
+                else
+                {
+                    bcThangCocDaGop.DataReal = thangCocDaGop;
+                    bcThangCocDaGop.Data = (thangCocDaGop ?? 0).ToString("N2");
+                }
 
-            //    // Báo cáo tháng cọc tồn
-            //    var bcThangCocTon = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
-            //    if (bcThangCocTon == null)
-            //        bcThangCocTon = bcList.FirstOrDefault(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
-            //    if (bcThangCocTon == null)
-            //    {
-            //        bcThangCocTon = new ReportData()
-            //        {
-            //            Sort = 1,
-            //            Month = day.Month,
-            //            Year = day.Year,
-            //            ReportCategoryId = 76,
-            //            Data = (thangCocTon ?? 0).ToString("N2"),
-            //            OfficeId = office.Id,
-            //            DataReal = thangCocTon,
-            //        };
-            //        bcList.Add(bcThangCocTon);
-            //    }
-            //    else
-            //    {
-            //        bcThangCocTon.DataReal = thangCocTon;
-            //        bcThangCocTon.Data = (thangCocTon ?? 0).ToString("N2");
-            //    }
+                // Báo cáo tháng cọc tồn
+                var bcThangCocTon = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                if (bcThangCocTon == null)
+                    bcThangCocTon = bcList.FirstOrDefault(a => a.ReportCategoryId == 76 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                if (bcThangCocTon == null)
+                {
+                    bcThangCocTon = new ReportData()
+                    {
+                        Sort = 1,
+                        Month = day.Month,
+                        Year = day.Year,
+                        ReportCategoryId = 76,
+                        Data = (thangCocTon ?? 0).ToString("N2"),
+                        OfficeId = office.Id,
+                        DataReal = thangCocTon,
+                    };
+                    bcList.Add(bcThangCocTon);
+                }
+                else
+                {
+                    bcThangCocTon.DataReal = thangCocTon;
+                    bcThangCocTon.Data = (thangCocTon ?? 0).ToString("N2");
+                }
 
-            //    if (tongThangCoc > 0 && thangCocDaGop != null)
-            //    {
-            //        var tileChuyenDoiCoc = thangCocDaGop / tongThangCoc;
-            //        // Báo cáo tỉ lệ chuyển đổi cọc
-            //        var bcTiLeCDCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
-            //        if (bcTiLeCDCoc == null)
-            //            bcTiLeCDCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
-            //        if (bcTiLeCDCoc == null)
-            //        {
-            //            bcTiLeCDCoc = new ReportData()
-            //            {
-            //                Sort = 1,
-            //                Month = day.Month,
-            //                Year = day.Year,
-            //                ReportCategoryId = 73,
-            //                Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%",
-            //                OfficeId = office.Id,
-            //                DataReal = tileChuyenDoiCoc,
-            //            };
-            //            bcList.Add(bcTiLeCDCoc);
-            //        }
-            //        else
-            //        {
-            //            bcTiLeCDCoc.DataReal = tileChuyenDoiCoc;
-            //            bcTiLeCDCoc.Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%";
-            //        }
-            //    }
-            //}
+                if (tongThangCoc > 0 && thangCocDaGop != null)
+                {
+                    var tileChuyenDoiCoc = thangCocDaGop / tongThangCoc;
+                    // Báo cáo tỉ lệ chuyển đổi cọc
+                    var bcTiLeCDCoc = _unitOfWork.ReportDataRepository.GetQuery(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id).FirstOrDefault();
+                    if (bcTiLeCDCoc == null)
+                        bcTiLeCDCoc = bcList.FirstOrDefault(a => a.ReportCategoryId == 73 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                    if (bcTiLeCDCoc == null)
+                    {
+                        bcTiLeCDCoc = new ReportData()
+                        {
+                            Sort = 1,
+                            Month = day.Month,
+                            Year = day.Year,
+                            ReportCategoryId = 73,
+                            Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%",
+                            OfficeId = office.Id,
+                            DataReal = tileChuyenDoiCoc,
+                        };
+                        bcList.Add(bcTiLeCDCoc);
+                    }
+                    else
+                    {
+                        bcTiLeCDCoc.DataReal = tileChuyenDoiCoc;
+                        bcTiLeCDCoc.Data = ((tileChuyenDoiCoc ?? 0) * 100).ToString("F2") + "%";
+                    }
+                }
+            }
             if (bcList.Any())
                 _unitOfWork.ReportDataRepository.InsertRange(bcList);
             if (rUserWeek_RealList.Any())

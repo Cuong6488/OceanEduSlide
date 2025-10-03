@@ -33,7 +33,6 @@ namespace OceanEduSlide.Controllers
     [Authorize, AdminRoleFilters]
     public class VcmsController : BaseController
     {
-        //private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private IEnumerable<Admin> Admins => _unitOfWork.AdminRepository.Get();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
         private string Fullname => RouteData.Values["Fullname"].ToString();

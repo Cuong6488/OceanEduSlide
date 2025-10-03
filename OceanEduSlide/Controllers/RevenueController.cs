@@ -1328,7 +1328,6 @@ namespace OceanEduSlide.Controllers
                             // Khởi tạo số ngày làm việc thực tế
                             int workingDayTT = 0;
                             bool nsFullTarget = true;
-
                             if ((startDateReal.Year < yearInt || (startDateReal.Year == yearInt && startDateReal.Month < monthInt)) && (item.DayEnd == null || (item.DayEnd != null && item.DayEnd.Value.Month > monthInt)))
                             {
                                 workingDayTT = workingDayFull;
@@ -1365,6 +1364,7 @@ namespace OceanEduSlide.Controllers
                             workingDayTT = Math.Max(workingDayTT, 0);
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
+                            
                             if (item.DayStart.Month == monthInt && item.DayStart.Year == yearInt)
                             {
                                 nsFullTarget = false;
@@ -1424,10 +1424,14 @@ namespace OceanEduSlide.Controllers
                                 dayLastMonth = Math.Min(dayTotal - dayFree, day50Total);
                                 //Số ngày làm việc tính 50% chỉ tiêu tháng này
                                 var dayThisMonth50 = Math.Min(day50Total - dayLastMonth, workingDayTT);
+                                if(dayThisMonth50 > 0)
+                                {
+                                    nsFullTarget = false;
+                                }
                                 //Số ngày làm việc tính 100% chỉ tiêu tháng này
                                 var dayThisMonthFull = Math.Max(workingDayTT - dayThisMonth50, 0);
-                                if (dayThisMonthFull < workingDayFull)
-                                    nsFullTarget = false;
+                                //if (dayThisMonthFull < workingDayFull)
+                                //    nsFullTarget = false;
                                 decimal targetNS50 = 0;
                                 decimal targetNSFull = 0;
                                 targetNS50 = targetDBCS * dayThisMonth50 / workingDayFull / 2;
@@ -1686,7 +1690,7 @@ namespace OceanEduSlide.Controllers
                         var skipNVKD = countNVKD - nvkdOver;
                         if (skipNVKD < DBKD)
                         {
-                            ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có định biên NVKD là " + DBKD + ", mà hiện tại đang có " + countNVKD + " chỉ tiêu NVKD, không thể giảm trừ chỉ tiêu " + historyOffice.NVKDOver + " NVKD");
+                            ModelState.AddModelError("", @"Chi nhánh " + officeshortname + " có định biên NVKD là " + DBKD + ", mà hiện tại đang có " + countNVKD + " NVKD, không thể giảm trừ chỉ tiêu " + historyOffice.NVKDOver + " NVKD");
                             return View();
                         }
                         var sumTargetDown = mergedList.Skip(skipNVKD).Take(nvkdOver).Sum(a => a.Target);
