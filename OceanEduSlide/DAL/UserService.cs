@@ -791,10 +791,13 @@ namespace OceanEduSlide.DAL
 
             // Tính % HT cuộc gọi CN
             var reportDataList2 = new List<ReportData>();
-            listReportCategoryId.Add(28);
+            listReportCategoryId.AddRange(new List<int> { 28, 22, 23, 24 });
             reportDatas = _unitOfWork.ReportDataRepository.Get(a => a.Month == currentMonth && a.Year == currentYear && listReportCategoryId.Contains(a.ReportCategoryId));
+            var newListHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == currentMonth && a.Year == currentYear);
+
             foreach (var office in allOffice)
             {
+                // Cuộc gọi chi nhánh
                 var callTarget = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                 if (callTarget == null)
                     callTarget = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
@@ -829,6 +832,66 @@ namespace OceanEduSlide.DAL
                         };
 
                         reportDataList2.Add(callHT);
+                    }
+                }
+
+                // Định biên Sale
+
+                var DBSale = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 22);
+                if (DBSale == null)
+                    DBSale = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 22);
+                if (DBSale?.DataReal > 0)
+                {
+                    var countNVKD = newListHistoryUser.Count(a => a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT));
+                    var TDDBSale = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 23);
+                    if (TDDBSale == null)
+                        TDDBSale = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 23);
+                    if (TDDBSale == null)
+                    {
+                        TDDBSale = new ReportData()
+                        {
+                            Data = countNVKD.ToString(),
+                            DataReal = countNVKD,
+                            Month = currentMonth,
+                            Year = currentYear,
+                            ReportCategoryId = 23,
+                            OfficeId = office.Id,
+                            Sort = 5,
+                        };
+
+                        reportDataList2.Add(TDDBSale);
+                    }
+                    else
+                    {
+                        TDDBSale.Data = countNVKD.ToString();
+                        TDDBSale.DataReal = countNVKD;
+                    }
+                    if (TDDBSale?.DataReal != null)
+                    {
+                        var ht = countNVKD / DBSale.DataReal;
+                        var htDBSale = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 24);
+                        if (htDBSale == null)
+                            htDBSale = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 24);
+                        if (htDBSale != null)
+                        {
+                            htDBSale.Data = ((ht ?? 0) * 100).ToString("F2") + "%";
+                            htDBSale.DataReal = ht;
+                        }
+                        else
+                        {
+                            htDBSale = new ReportData()
+                            {
+                                Data = ((ht ?? 0) * 100).ToString("F2") + "%",
+                                DataReal = ht,
+                                Month = currentMonth,
+                                Year = currentYear,
+                                ReportCategoryId = 24,
+                                OfficeId = office.Id,
+                                Sort = 6,
+                            };
+
+                            reportDataList2.Add(htDBSale);
+                        }
                     }
                 }
             }

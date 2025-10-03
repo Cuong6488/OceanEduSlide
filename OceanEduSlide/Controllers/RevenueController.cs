@@ -416,6 +416,8 @@ namespace OceanEduSlide.Controllers
 
                     if (historyOfficeList.Any())
                         _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
+                    if (reportDataList.Any())
+                        _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
                     _unitOfWork.Save();
                 }
 
@@ -1116,10 +1118,19 @@ namespace OceanEduSlide.Controllers
                         }
                     }
 
+                    if (historyUserList.Any())
+                        _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
+                    _unitOfWork.Save();
+
                     //var offices = _unitOfWork.OfficeRepository.GetQuery();
-                    // Tính % HT cuộc gọi CN
+                    var newListHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt);
+                    var listId = new List<int> { 22, 23, 24 };
+                    var reportDataDBSales = _unitOfWork.ReportDataRepository.Get(a => a.Month == monthInt && a.Year == yearInt && listId.Contains(a.ReportCategoryId));
+
+                    // Tính % HT cuộc gọi CN; ĐB Sale
                     foreach (var office in offices)
                     {
+                        // Cuộc gọi CN
                         var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                         if (callTarget == null)
                             callTarget = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
@@ -1156,9 +1167,68 @@ namespace OceanEduSlide.Controllers
                                 reportDataList.Add(callHT);
                             }
                         }
+
+                        //Định biên sale
+
+                        //var DBSale = reportDataDBSales.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 22);
+                        //if (DBSale == null)
+                        //    DBSale = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22);
+                        //if (DBSale?.DataReal > 0)
+                        //{
+                        //    var countNVKD = newListHistoryUser.Count(a => a.OfficeId == office.Id && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT));
+                        //    var TDDBSale = reportDataDBSales.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 23);
+                        //    if (TDDBSale == null)
+                        //        TDDBSale = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 23);
+                        //    if (TDDBSale == null)
+                        //    {
+                        //        TDDBSale = new ReportData()
+                        //        {
+                        //            Data = countNVKD.ToString(),
+                        //            DataReal = countNVKD,
+                        //            Month = monthInt,
+                        //            Year = yearInt,
+                        //            ReportCategoryId = 23,
+                        //            OfficeId = office.Id,
+                        //            Sort = 5,
+                        //        };
+
+                        //        reportDataList.Add(TDDBSale);
+                        //    }
+                        //    else
+                        //    {
+                        //        TDDBSale.Data = countNVKD.ToString();
+                        //        TDDBSale.DataReal = countNVKD;
+                        //    }
+                        //    if (TDDBSale?.DataReal != null)
+                        //    {
+                        //        var ht = countNVKD / DBSale.DataReal;
+                        //        var htDBSale = reportDataDBSales.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 24);
+                        //        if (htDBSale == null)
+                        //            htDBSale = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 24);
+                        //        if (htDBSale != null)
+                        //        {
+                        //            htDBSale.Data = ((ht ?? 0) * 100).ToString("F2") + "%";
+                        //            htDBSale.DataReal = ht;
+                        //        }
+                        //        else
+                        //        {
+                        //            htDBSale = new ReportData()
+                        //            {
+                        //                Data = ((ht ?? 0) * 100).ToString("F2") + "%",
+                        //                DataReal = ht,
+                        //                Month = monthInt,
+                        //                Year = yearInt,
+                        //                ReportCategoryId = 24,
+                        //                OfficeId = office.Id,
+                        //                Sort = 6,
+                        //            };
+
+                        //            reportDataList.Add(htDBSale);
+                        //        }
+                        //    }
+                        //}
+
                     }
-                    if (historyUserList.Any())
-                        _unitOfWork.HistoryUserRepository.InsertRange(historyUserList);
                     if (reportDataList.Any())
                         _unitOfWork.ReportDataRepository.InsertRange(reportDataList);
                     _unitOfWork.Save();
