@@ -44,8 +44,7 @@
                     }
                 </select>
             }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
-
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC) && !string.IsNullOrEmpty(Model.User.OfficeIds)))
             {
                 <select name="OfficeId" class="form-select w-25 me-3">
                     <option>Chọn chi nhánh</option>
@@ -68,7 +67,6 @@
                 <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
                 <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
                 <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
-
             </select>
         </form>
     </div>
