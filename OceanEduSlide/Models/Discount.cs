@@ -33,6 +33,8 @@ namespace OceanEduSlide.Models
         public DateTime? StartDate { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]
         public string Gift { get; set; }
+        [Display(Name = "Phân loại"), UIHint("Textbox")]
+        public string PhanLoai { get; set; }
         [Display(Name = "Chương trình học"), UIHint("Textbox")]
         public string Cth { get; set; }
         public virtual Office Office { get; set; }

@@ -252,6 +252,7 @@ namespace OceanEduSlide.Controllers
                             ModelState.AddModelError("", @"Không tồn tại vùng nào có tên là " + zonename);
                             return View();
                         }
+                        //office.ZoneId = zone.Id;
                         var dbECStr = tbl.Rows[i][7].ToString().Trim();
                         if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
                         {
@@ -412,6 +413,7 @@ namespace OceanEduSlide.Controllers
                             };
                             historyOfficeList.Add(newhistoryOffice);
                         }
+
                     }
 
                     if (historyOfficeList.Any())
@@ -610,7 +612,29 @@ namespace OceanEduSlide.Controllers
                                                 var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
                                                 if (o == null)
                                                 {
-                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
+
+                                            }
+                                            newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                            newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
+                                        }
+
+                                        break;
+                                    case TypeUser.EC:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            newUser.OfficeIds = ",";
+                                            newUser.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
+                                            {
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
                                                     return View();
                                                 }
                                                 newUser.OfficeIds += o.Id + ",";
@@ -632,7 +656,7 @@ namespace OceanEduSlide.Controllers
                                                 var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
                                                 if (zItem == null)
                                                 {
-                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có mã vùng là " + item + ", dòng " + (i + 1));
                                                     return View();
                                                 }
                                             }
@@ -703,7 +727,25 @@ namespace OceanEduSlide.Controllers
 
                                         break;
                                     case TypeUser.EC:
-                                        user.OfficeIds = null;
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            user.OfficeIds = ",";
+                                            user.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
+                                            {
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
+                                                {
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                user.OfficeIds += o.Id + ",";
+                                                user.OfficeNames += o.ShortCode + ",";
+
+                                            }
+                                            user.OfficeNames = user.OfficeNames.Trim(',');
+                                            user.OfficeIds = (user.OfficeIds == "," ? null : user.OfficeIds);
+                                        }
                                         break;
                                     case TypeUser.BM:
                                         if (!string.IsNullOrEmpty(zones))
@@ -715,7 +757,7 @@ namespace OceanEduSlide.Controllers
                                                 var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
                                                 if (o == null)
                                                 {
-                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
                                                     return View();
                                                 }
                                                 user.OfficeIds += o.Id + ",";

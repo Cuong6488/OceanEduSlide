@@ -1348,12 +1348,22 @@ namespace OceanEduSlide.DAL
             var listbcnvReset = _unitOfWork.ReportDataRepository.Get(a => (a.ReportCategoryId == 88 || a.ReportCategoryId == 96 || a.ReportCategoryId == 103) && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
             var listttWeeks = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
             var listReportCategoryIdCN = new List<int> { 30, 31, 32, 35, 36, 45, 58, 60, 62, 64, 66, 68, 71, 73, 76, 40, 43, 119, 117 };
+
+            //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
+            //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
+            //listReportCategoryIdCN.AddRange(listIdChild);
+
             var listBCCN = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdCN.Contains(a.ReportCategoryId));
             var listReportCategoryIdNV = new List<int> { 95, 96, 88, 111, 113, 114, 115 };
             var listBCNV = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdNV.Contains(a.ReportCategoryId));
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year, q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).AsNoTracking().ToList();
             var rUserWeek_Reals = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Year == day.Year && a.Month == day.Month);
-
+            var firstDayOfMonth = new DateTime(day.Year, day.Month, 1).Date;
+            var endDayOfMonth = new DateTime(day.Year, day.Month, DateTime.DaysInMonth(day.Year, day.Month));
+            
+            //var listDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && DbFunctions.TruncateTime(a.StartDate) <= firstDayOfMonth && DbFunctions.TruncateTime(a.EndDate) >= endDayOfMonth).AsNoTracking().ToList();
+            //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
+            //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
             foreach (var mnv in listMaNV)
             {
                 //Reset thực đạt NV về 0
@@ -1372,6 +1382,7 @@ namespace OceanEduSlide.DAL
             }
 
             var listIdReset = new List<int> { 35, 40, 43, 119, 78, 80, 82, 84 };
+            //listIdReset.AddRange(listIdChild);
             var listbccnReset = _unitOfWork.ReportDataRepository.Get(a => listIdReset.Contains(a.ReportCategoryId) && a.Month == day.Month && a.Year == day.Year);
 
             foreach (var cn in listCN)
@@ -1594,6 +1605,7 @@ namespace OceanEduSlide.DAL
                         bcBQUDSDCN.Data = ((bqUDSD ?? 0) * 100).ToString("F2") + "%";
                     }
                 }
+
             }
             //List chứa các mã học viên đã được tính
             var listMaHV = new List<string>();
@@ -1605,7 +1617,7 @@ namespace OceanEduSlide.DAL
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
                     continue;
                 }
-
+                // thực đạt doanh thu CN
                 var bcCN = listBCCN.FirstOrDefault(a => a.ReportCategoryId == 35 && a.OfficeId == office.Id);
                 if (bcCN == null)
                     bcCN = bcList.FirstOrDefault(a => a.ReportCategoryId == 35 && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
@@ -1631,6 +1643,43 @@ namespace OceanEduSlide.DAL
                     bcCN.DataReal += item.SUD ?? 0;
                     bcCN.Data = (bcCN.DataReal ?? 0).ToString("N0");
                 }
+
+                // Phân loại doanh thu theo CT ưu đãi
+
+                //var idCategoryCTUD = 0;
+                //var phanloai = listDiscount.FirstOrDefault(a => a.Username == item.UD_FINAL)?.PhanLoai;
+                //var categoryCTUDChild = listCategoryCTUD.FirstOrDefault(a => a.CategoryParent != null && a.CategoryParent.Name == phanloai);
+
+                //if (categoryCTUDChild != null)
+                //    idCategoryCTUD = categoryCTUDChild.Id;
+                //if (idCategoryCTUD != 0)
+                //{
+                //    var bcPhanLoaiDthu = listBCCN.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.OfficeId == office.Id);
+                //    if (bcPhanLoaiDthu == null)
+                //        bcPhanLoaiDthu = bcList.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                //    if (bcPhanLoaiDthu == null)
+                //    {
+                //        bcPhanLoaiDthu = new ReportData()
+                //        {
+                //            Sort = 1,
+                //            Month = day.Month,
+                //            Year = day.Year,
+                //            ReportCategoryId = idCategoryCTUD,
+                //            Data = (item.SUD ?? 0).ToString("N0"),
+                //            DataReal = item.SUD,
+                //            OfficeId = office.Id,
+                //        };
+                //        bcList.Add(bcPhanLoaiDthu);
+                //    }
+                //    else
+                //    {
+                //        if (bcPhanLoaiDthu.DataReal == null)
+                //            bcPhanLoaiDthu.DataReal = 0;
+                //        bcPhanLoaiDthu.DataReal += item.SUD ?? 0;
+                //        bcPhanLoaiDthu.Data = (bcPhanLoaiDthu.DataReal ?? 0).ToString("N0");
+                //    }
+                //}
+
                 if (!string.IsNullOrEmpty(item.MaNVChotSale))
                 {
                     var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale && a.DayStart.Date <= item.NgayThanhToan.Value.Date
@@ -2216,14 +2265,6 @@ namespace OceanEduSlide.DAL
                     // Cơ cấu DS các bộ phận (Sale, kế toán, đào tạo)
                     if (item.DataReal > 0)
                     {
-                        if (item.Data == "180,450,000")
-                        {
-
-                        }
-                        if (item.Office?.ShortName == "OE Quỳnh Lưu")
-                        {
-
-                        }
                         // Doanh số sale
                         var dataDSSale = datasList.FirstOrDefault(a => a.ReportCategoryId == 40 && a.OfficeId == item.OfficeId);
                         if (dataDSSale == null)

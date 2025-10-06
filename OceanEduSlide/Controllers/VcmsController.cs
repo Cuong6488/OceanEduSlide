@@ -916,7 +916,14 @@ namespace OceanEduSlide.Controllers
                 listRevenueMonth.Delete();
                 var reportCalls = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == item.Id);
                 reportCalls.Delete();
-
+                var listRevenueMonthBM = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                listRevenueMonthBM.Delete();
+                var RevenueUser_Week_Real = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                RevenueUser_Week_Real.Delete();
+                var RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                RevenueUser_Week.Delete();
+                var RevenueUser_DayOfWeek = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.HistoryUserId == item.Id);
+                RevenueUser_DayOfWeek.Delete();
             }
             foreach (var item in list)
             {
@@ -2817,6 +2824,8 @@ namespace OceanEduSlide.Controllers
                 //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
                 var listDiscount = new List<Discount>();
                 int sheet = 0;
+                var listReportCategory = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8 && a.ReportCategoryId == null).AsNoTracking().ToList();
+                int sort = 0;
                 foreach (DataTable tbl in result.Tables)
                 {
                     sheet++;
@@ -2829,7 +2838,7 @@ namespace OceanEduSlide.Controllers
                         var fullname = tbl.Rows[i][0].ToString().Trim();
                         if (string.IsNullOrEmpty(fullname))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Tên ưu đãi: Dòng " + dong + ", Sheet " + sheet);
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã ưu đãi: Dòng " + dong + ", Sheet " + sheet);
                             return View();
                         }
                         int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
@@ -2847,8 +2856,52 @@ namespace OceanEduSlide.Controllers
                         int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
                         int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
                         var cth = tbl.Rows[i][12].ToString().Trim();
-                        //var countDiscount = discounts.Count(a => a.Username == fullname);
-                        //if (countDiscount > 0) continue;
+                        if (string.IsNullOrEmpty(cth))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chương trình học: Dòng " + dong + ", Sheet " + sheet);
+                            return View();
+                        }
+                        var phanloai = tbl.Rows[i][13].ToString().Trim();
+                        if (string.IsNullOrEmpty(phanloai))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Phân loại: Dòng " + dong + ", Sheet " + sheet);
+                            return View();
+                        }
+                        var reportCategory = listReportCategory.FirstOrDefault(a => a.Name.ToLower().Contains(phanloai.ToLower()));
+                        if (reportCategory == null)
+                        {
+                            var name = phanloai;
+                            if (phanloai.Length <= 12)
+                            {
+                                name = "Doanh thu " + phanloai;
+                            }
+                            var newReportCategory = new ReportCategory()
+                            {
+                                Name = name,
+                                Sort = phanloai.ToLower().Contains("khác") ? 20 : sort,
+                                Group = 8,
+                                Active = true,
+                                ReportCategoryId = null,
+                                TypeCat = TypeCat.Type1,
+                                Count = 1,
+                                Auto = false,
+                            };
+                            _unitOfWork.ReportCategoryRepository.Insert(newReportCategory);
+                            _unitOfWork.Save();
+                            sort += 1;
+                            var cateChild = new ReportCategory()
+                            {
+                                Name = "Kết quả",
+                                Sort = 1,
+                                Group = 8,
+                                Active = true,
+                                ReportCategoryId = newReportCategory.Id,
+                                TypeCat = TypeCat.Type1,
+                                Count = null,
+                                Auto = true,
+                            };
+                            _unitOfWork.ReportCategoryRepository.Insert(cateChild);
+                        }
                         var discount = new Discount
                         {
                             Username = fullname,
@@ -2859,20 +2912,19 @@ namespace OceanEduSlide.Controllers
                             Pathway = pathway,
                             PathwayTo = pathwayTo,
                             Cth = cth,
+                            PhanLoai = phanloai,
                             StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
                             EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
                             Active = true
                         };
                         //_unitOfWork.DiscountRepository.Insert(discount);
                         listDiscount.Add(discount);
-
                     }
                 }
                 if (listDiscount.Any())
                 {
                     _unitOfWork.DiscountRepository.InsertRange(listDiscount);
                 }
-
                 _unitOfWork.Save();
 
             }

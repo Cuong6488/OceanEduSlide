@@ -743,7 +743,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult ListReportCategory(int? typeCat, string result = "")
         {
             ViewBag.Result = result;
-            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.ReportCategoryId != null, q => q.OrderBy(a => a.TypeCat).ThenBy(a => a.ReportCategoryId).ThenBy(a => a.Group).ThenBy(a => a.Sort));
+            var reportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.ReportCategoryId != null, q => q.OrderBy(a => a.TypeCat).ThenBy(a => a.Group).ThenBy(a => a.ReportCategoryId).ThenBy(a => a.Sort));
             if (typeCat != null)
             {
                 reportCategories = reportCategories.Where(a => (int)a.TypeCat == typeCat);
@@ -759,6 +759,13 @@ namespace OceanEduSlide.Controllers
         {
             var item = _unitOfWork.ReportCategoryRepository.GetById(Id);
             item.Auto = !item.Auto;
+            _unitOfWork.Save();
+            return RedirectToAction("ListReportCategory", new { result = "add" });
+        }
+        public ActionResult DeleteCategory(int Id)
+        {
+            var item = _unitOfWork.ReportCategoryRepository.GetById(Id);
+            _unitOfWork.ReportCategoryRepository.Delete(item);
             _unitOfWork.Save();
             return RedirectToAction("ListReportCategory", new { result = "add" });
         }

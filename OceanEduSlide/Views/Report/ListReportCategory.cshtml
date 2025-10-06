@@ -19,6 +19,7 @@
             <th>Sort</th>
             <th>Auto</th>
             <th style="width: 150px"></th>
+            <th style="width: 150px"></th>
         </tr>
         @foreach (var item in Model.ReportCategories)
         {
@@ -35,6 +36,9 @@
                 </td>
                 <td>
                     @Html.ActionLink("Auto/ UnAuto", "UpdateAuto", new { Id = item.Id })
+                </td>
+                <td>
+                    @Html.ActionLink("Xóa", "DeleteCategory", new { Id = item.Id })
                 </td>
             </tr>
         }

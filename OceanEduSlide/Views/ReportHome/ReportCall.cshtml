@@ -37,7 +37,7 @@
         </select>
     }
     @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC) && !string.IsNullOrEmpty(Model.User.OfficeIds)))
     {
         if (Model.Offices.Count() > 1)
         {
