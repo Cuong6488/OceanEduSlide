@@ -63,7 +63,6 @@
         </select>
         <input type="hidden" name="categoryid" value="@Model.categoryId" />
         <input type="hidden" name="sort" value="@Model.sort" />
-        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
         @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-3 w-25">
@@ -74,16 +73,6 @@
                 }
             </select>
         }
-        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
-        {
-            <select name="OfficeId" class="form-select w-25 me-3">
-                <option>Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")> @item.Name </option>
-                }
-            </select>
-        }*@
     </form>
 
     <h2>BÁO CÁO KDCN tháng @Model.Month - @Model.Year</h2>
@@ -107,15 +96,6 @@
                             <td class="text-start">@office.ShortName</td>
                         </tr>
                     }
-
-                    @*@foreach (var office in officeNoData)
-                    {
-                        <tr class="tr2">
-                            <td>@Model.Month</td>
-                            <td class="text-start">@(office.Zone?.Name)</td>
-                            <td class="text-start">@office.ShortName</td>
-                        </tr>
-                    }*@
                 </tbody>
             </table>
         </div>
@@ -184,16 +164,6 @@
                                         }
                                     </tr>
                                 }
-
-                                @*@foreach (var office in officeNoData)
-                                {
-                                    <tr class="tr2">
-                                        @for (var j = 0; j < (category.Count ?? 1); j++)
-                                        {
-                                            <td></td>
-                                        }
-                                    </tr>
-                                }*@
                             </tbody>
                         </table>
                         i++;

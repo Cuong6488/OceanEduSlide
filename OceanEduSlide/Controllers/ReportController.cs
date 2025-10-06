@@ -762,6 +762,7 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListReportCategory", new { result = "add" });
         }
+
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

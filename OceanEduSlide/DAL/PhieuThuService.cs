@@ -2216,6 +2216,14 @@ namespace OceanEduSlide.DAL
                     // Cơ cấu DS các bộ phận (Sale, kế toán, đào tạo)
                     if (item.DataReal > 0)
                     {
+                        if (item.Data == "180,450,000")
+                        {
+
+                        }
+                        if (item.Office?.ShortName == "OE Quỳnh Lưu")
+                        {
+
+                        }
                         // Doanh số sale
                         var dataDSSale = datasList.FirstOrDefault(a => a.ReportCategoryId == 40 && a.OfficeId == item.OfficeId);
                         if (dataDSSale == null)

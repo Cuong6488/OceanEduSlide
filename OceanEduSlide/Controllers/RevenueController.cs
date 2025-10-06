@@ -2737,6 +2737,21 @@ namespace OceanEduSlide.Controllers
             userService.SyncUser();
             return Content("Đã đồng bộ nhân sự");
         }
+
+        public ActionResult DeleteDatax2(string listId)
+        {
+
+            var listIdString = listId.Split(',');
+            var listIdInt = new List<int>();
+            foreach(var item in listIdString)
+            {
+                var id = int.Parse(item);
+                listIdInt.Add(id);
+            }
+            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => listIdInt.Contains(a.ReportCategoryId) && a.Month == 10);
+            datas.Delete();
+            return Content("ok");
+        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();
