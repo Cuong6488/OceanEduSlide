@@ -189,20 +189,20 @@ namespace OceanEduSlide.DAL
                     }
                     Office office = null;
                     Zone zone = null;
-                    if (!string.IsNullOrEmpty(item.WorkPlaceName))
+                    if (!string.IsNullOrEmpty(NsDieuchuyen.WorkPlaceName))
                     {
 
-                        if (item.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                        if (NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
                         {
-                            item.WorkPlaceName = "OE BMT";
+                            NsDieuchuyen.WorkPlaceName = "OE BMT";
                         }
-                        office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
                         if (office == null)
                         {
-                            zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == item.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                            zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
                             if (zone == null)
                             {
-                                logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + item.WorkPlaceName);
+                                logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
                                 //continue;
                             }
                         }
@@ -273,10 +273,6 @@ namespace OceanEduSlide.DAL
             }
             foreach (var item in listAllDanglamviec)
             {
-                if (item.IDNhanSuHRM.ToString() == "38DBAD30-D04B-4BBD-A228-DB0D57D71E33")
-                {
-
-                }
                 // Xử lý ns đang làm việc
 
                 if (string.IsNullOrEmpty(item.MaNhanSu))
@@ -366,6 +362,7 @@ namespace OceanEduSlide.DAL
                 }
 
                 var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+
                 if (historyUser != null)
                 {
                     historyUser.Status = StatusUser.Active;
@@ -396,10 +393,6 @@ namespace OceanEduSlide.DAL
             }
             foreach (var item in listAllNghiviec)
             {
-                if (item.IDNhanSuHRM.ToString() == "38DBAD30-D04B-4BBD-A228-DB0D57D71E33")
-                {
-
-                }
                 // Xử lý ns nghỉ việc / TS
                 if (string.IsNullOrEmpty(item.MaNhanSu))
                 {
