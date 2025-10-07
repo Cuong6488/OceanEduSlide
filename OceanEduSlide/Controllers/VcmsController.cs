@@ -930,7 +930,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult DeleteUserx2NgayVaoLam()
         {
-            var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Status == StatusUser.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId }).Where(g => g.Count() >= 2).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
+            var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId, a.Status }).Where(g => g.Count() >= 2).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
             //var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Status == StatusUser.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId }).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
             int i = 0;
             foreach (var l in list)

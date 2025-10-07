@@ -241,12 +241,12 @@ namespace OceanEduSlide.DAL
                         user.CDCM = item.MaChucDanh;
                         user.ZoneId = zone?.Id;
                     }
-                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == nhanSuNguon.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
                     if (historyUser != null)
                     {
                         historyUser.Status = StatusUser.Transfer;
                         historyUser.ZoneId = zone?.Id;
-                        historyUser.CDCM = item.MaChucDanh;
+                        historyUser.CDCM = NsDieuchuyen.MaChucDanh;
                         historyUser.DayEnd = item.NgayApDung;
                         historyUser.Sort = sort;
                     }
@@ -273,6 +273,10 @@ namespace OceanEduSlide.DAL
             }
             foreach (var item in listAllDanglamviec)
             {
+                if (item.IDNhanSuHRM.ToString() == "38DBAD30-D04B-4BBD-A228-DB0D57D71E33")
+                {
+
+                }
                 // Xử lý ns đang làm việc
 
                 if (string.IsNullOrEmpty(item.MaNhanSu))
@@ -361,7 +365,7 @@ namespace OceanEduSlide.DAL
                     }
                 }
 
-                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == item.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
                 if (historyUser != null)
                 {
                     historyUser.Status = StatusUser.Active;
@@ -392,6 +396,10 @@ namespace OceanEduSlide.DAL
             }
             foreach (var item in listAllNghiviec)
             {
+                if (item.IDNhanSuHRM.ToString() == "38DBAD30-D04B-4BBD-A228-DB0D57D71E33")
+                {
+
+                }
                 // Xử lý ns nghỉ việc / TS
                 if (string.IsNullOrEmpty(item.MaNhanSu))
                 {
@@ -506,7 +514,7 @@ namespace OceanEduSlide.DAL
                         user.TypeUser = type;
                     }
                 }
-                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == item.NgayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
                 if (historyUser != null)
                 {
                     historyUser.Status = StatusUser.InActive;
@@ -854,8 +862,8 @@ namespace OceanEduSlide.DAL
                 // Định biên Sale
 
                 var DBSale = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 22);
-                if (DBSale == null)
-                    DBSale = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 22);
+                //if (DBSale == null)
+                //    DBSale = reportDataList2.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 22);
                 if (DBSale?.DataReal > 0)
                 {
                     var countNVKD = newListHistoryUser.Count(a => a.OfficeId == office.Id && a.Status == StatusUser.Active && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT));
