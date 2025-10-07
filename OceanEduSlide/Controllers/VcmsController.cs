@@ -928,6 +928,9 @@ namespace OceanEduSlide.Controllers
             foreach (var item in list)
             {
                 item.Active = false;
+                var listData = _unitOfWork.ProposalRepository.GetQuery(a => a.UserId2 == item.Id);
+                listData.Delete();
+
             }
             _unitOfWork.Save();
             list2.Delete();
