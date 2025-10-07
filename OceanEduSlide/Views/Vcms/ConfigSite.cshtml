@@ -17,77 +17,61 @@
     {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(a => a.Id)
-<table class="form_table">
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Image)</td>
-        <td class="form_text">@Html.TextBoxFor(model => model.Image, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
-    </tr>
-    @if (Model.Image != null)
-    {
-        <tr>
-            <td class="form_name"></td>
-            <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Image)?w=150" /></td>
-        </tr>
-    }
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Favicon)</td>
-        <td class="form_text">@Html.TextBoxFor(model => model.Favicon, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
-    </tr>
-    @if (Model.Favicon != null)
-    {
-        <tr>
-            <td class="form_name"></td>
-            <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Favicon)?w=150" /></td>
-        </tr>
-    }
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Title)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Title)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Password)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Password)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Slogan)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Slogan)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Place)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Place)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Hotline)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Hotline)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Email)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Email)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Facebook)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Facebook)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.Youtube)</td>
-        <td class="form_text">@Html.EditorFor(model => model.Youtube)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.LiveChat)</td>
-        <td class="form_text">@Html.EditorFor(model => model.LiveChat)</td>
-    </tr>
-    <tr>
-        <td class="form_name">@Html.LabelFor(model => model.GoogleMap)</td>
-        <td class="form_text">@Html.EditorFor(model => model.GoogleMap)</td>
-    </tr>
-    @*<tr>
-            <td class="form_name">@Html.LabelFor(model => model.UrlMessenger)</td>
-            <td class="form_text">@Html.EditorFor(model => model.UrlMessenger)</td>
-        </tr>*@
-    <tr>
-        <td class="form_name"></td>
-        <td class="form_text"><input type="submit" class="btn quick-link" value="Cập nhật" /></td>
-    </tr>
-</table>
+        <table class="form_table">
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Image)</td>
+                <td class="form_text">@Html.TextBoxFor(model => model.Image, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
+            </tr>
+            @if (Model.Image != null)
+            {
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Image)?w=150" /></td>
+                </tr>
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Favicon)</td>
+                <td class="form_text">@Html.TextBoxFor(model => model.Favicon, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
+            </tr>
+            @if (Model.Favicon != null)
+            {
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Favicon)?w=150" /></td>
+                </tr>
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Title)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Title)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Password)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Slogan)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Slogan)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Hotline)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Hotline)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Email)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Email)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.AutoUser)</td>
+                <td class="form_text">@Html.CheckBoxFor(model => model.AutoUser)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.AutoRevenue)</td>
+                <td class="form_text">@Html.CheckBoxFor(model => model.AutoRevenue)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text"><input type="submit" class="btn quick-link" value="Cập nhật" /></td>
+            </tr>
+        </table>
     }
 </div>

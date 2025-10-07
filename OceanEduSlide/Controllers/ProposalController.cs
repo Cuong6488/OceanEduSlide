@@ -50,7 +50,7 @@ namespace OceanEduSlide.Controllers
                         offices.AddRange(officeAdd);
                     }
                     model.SelectOffices = new SelectList(offices, "Id", "ShortName");
-                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains(","+a.Office.Zone.ShortCode+","))
+                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","))
                         .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
                 }
                 else
@@ -98,10 +98,14 @@ namespace OceanEduSlide.Controllers
                 if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
                     model.Proposal.Active = true;
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
-                if (office != null)
-                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
+                if (office == null)
+                {
+                    ModelState.AddModelError("", "Không tìm thấy chi nhánh");
+                    return View(model);
+                }
+                model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
 
-                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains("," + model.Proposal.OfficeId + ",")).FirstOrDefault();
+                var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == office.ZoneId).FirstOrDefault();
                 if (z == null)
                 {
                     ModelState.AddModelError("", "Không tìm thấy vùng");

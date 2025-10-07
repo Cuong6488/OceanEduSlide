@@ -63,5 +63,10 @@ namespace OceanEduSlide.Models
         public string Email { get; set; }
         [DisplayName("Mật khẩu mặc định"), StringLength(60, ErrorMessage = "Tối đa 60 ký tự")]
         public string Password { get; set; }
+        [DisplayName("Chạy tự động Nhân sự")]
+        public bool AutoUser { get; set; }
+        [DisplayName("Chạy tự động Doanh thu")]
+        public bool AutoRevenue { get; set; }
+
     }
 }

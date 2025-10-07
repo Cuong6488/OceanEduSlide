@@ -656,6 +656,10 @@
     <Compile Include="Migrations\202510060837049_discountphanloai.Designer.cs">
       <DependentUpon>202510060837049_discountphanloai.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202510070327353_autoconfig.cs" />
+    <Compile Include="Migrations\202510070327353_autoconfig.Designer.cs">
+      <DependentUpon>202510070327353_autoconfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1960,6 +1964,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202510060837049_discountphanloai.resx">
       <DependentUpon>202510060837049_discountphanloai.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202510070327353_autoconfig.resx">
+      <DependentUpon>202510070327353_autoconfig.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

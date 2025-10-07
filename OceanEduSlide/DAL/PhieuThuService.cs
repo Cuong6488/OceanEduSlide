@@ -28,8 +28,11 @@ namespace OceanEduSlide.DAL
 
         public void SyncPhieuThu()
         {
-            // Đồng bộ ngày hôm qua (vào buổi đêm)
-            //var day = DateTime.Today.AddDays(-1);
+            var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
+            if (config == null || !config.AutoRevenue)
+            {
+                return;
+            }
             var day = DateTime.Today;
 
             var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year).AsNoTracking().ToList();

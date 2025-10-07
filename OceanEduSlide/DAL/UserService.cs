@@ -35,6 +35,10 @@ namespace OceanEduSlide.DAL
         public void SyncUser()
         {
             var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
+            if (config == null || !config.AutoUser)
+            {
+                return;
+            }
             var password = HtmlHelpers.ComputeHash(config.Password ?? "AUG2025@#", "SHA256", null);
 
             var allCDCM = _userTypeService.GetAllCDCM();
@@ -112,7 +116,7 @@ namespace OceanEduSlide.DAL
                     break;
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth)) && allCDCM.Contains(a.MaChucDanhChuyenMon)).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh)).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh)).OrderByDescending(a => a.NgayApDung).ToList();
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.ToList();
 
             // List User tháng
@@ -147,7 +151,7 @@ namespace OceanEduSlide.DAL
             //var listNSDieuchuyen = new List<QuaTrinhCongTac>();
             foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
             {
-                var NsDieuchuyen = QuaTrinhCongTacs.Where(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item).OrderByDescending(a => a.NgayApDung).FirstOrDefault(); /*(bản ghi B)*/
+                var NsDieuchuyen = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item); /*(bản ghi B)*/
                 if (NsDieuchuyen != null)
                 {
                     var nhanSuNguon = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
@@ -168,6 +172,10 @@ namespace OceanEduSlide.DAL
                         logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam null");
                         continue;
                     }
+                    var ngayVaoLam = nhanSuNguon.NgayVaoLam;
+                    var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                    if (logVaoLamLai != null)
+                        ngayVaoLam = logVaoLamLai.NgayApDung;
                     if (string.IsNullOrEmpty(nhanSuNguon.MaChucDanhChuyenMon))
                     {
                         logger.Error("Nhan su " + nhanSuNguon.MaChucDanhChuyenMon + ": MaChucDanhChuyenMon null");
@@ -253,7 +261,7 @@ namespace OceanEduSlide.DAL
                             OfficeId = office?.Id,
                             ZoneId = zone?.Id,
                             Status = StatusUser.Transfer,
-                            DayStart = (DateTime)nhanSuNguon.NgayVaoLam,
+                            DayStart = (DateTime)ngayVaoLam,
                             CDCM = NsDieuchuyen.MaChucDanh,
                             DayEnd = item.NgayApDung,
                             Sort = sort,
@@ -277,6 +285,10 @@ namespace OceanEduSlide.DAL
                     logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam null");
                     continue;
                 }
+                var ngayVaoLam = item.NgayVaoLam;
+                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                if (logVaoLamLai != null)
+                    ngayVaoLam = logVaoLamLai.NgayApDung;
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": MaChucDanhChuyenMon null");
@@ -290,7 +302,7 @@ namespace OceanEduSlide.DAL
                 }
                 Office office = null;
                 Zone zone = null;
-                var QTCT = QuaTrinhCongTacs.Where(a => a.IDNhanSuHRM == item.IDNhanSuHRM).OrderByDescending(a => a.NgayApDung).FirstOrDefault();
+                var QTCT = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
                 if (QTCT == null)
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": Khong ton tai QTCT");
@@ -369,7 +381,7 @@ namespace OceanEduSlide.DAL
                         OfficeId = office?.Id,
                         ZoneId = zone?.Id,
                         Status = StatusUser.Active,
-                        DayStart = (DateTime)item.NgayVaoLam,
+                        DayStart = (DateTime)ngayVaoLam,
                         CDCM = item.MaChucDanhChuyenMon,
                         DayEnd = item.NgayNghiViec,
                         Sort = sort,
@@ -391,6 +403,10 @@ namespace OceanEduSlide.DAL
                     logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam null");
                     continue;
                 }
+                var ngayVaoLam = item.NgayVaoLam;
+                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                if (logVaoLamLai != null)
+                    ngayVaoLam = logVaoLamLai.NgayApDung;
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": MaChucDanhChuyenMon null");
@@ -510,7 +526,7 @@ namespace OceanEduSlide.DAL
                         OfficeId = office?.Id,
                         ZoneId = zone?.Id,
                         Status = StatusUser.InActive,
-                        DayStart = (DateTime)item.NgayVaoLam,
+                        DayStart = (DateTime)ngayVaoLam,
                         CDCM = item.MaChucDanhChuyenMon,
                         DayEnd = ngayNghiViec,
                         Sort = sort,

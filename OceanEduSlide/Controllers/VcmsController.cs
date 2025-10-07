@@ -120,19 +120,10 @@ namespace OceanEduSlide.Controllers
                     model.Title = config.Title;
                     model.Password = config.Password;
                     model.Slogan = config.Slogan;
-                    model.Description = config.Description;
-                    model.Place = config.Place;
                     model.Hotline = config.Hotline;
                     model.Email = config.Email;
-                    model.Facebook = config.Facebook;
-                    model.Instagram = config.Instagram;
-                    model.Youtube = config.Youtube;
-                    model.UrlMessenger = config.UrlMessenger;
-                    model.TikTok = config.TikTok;
-                    model.LiveChat = config.LiveChat;
-                    model.GoogleMap = config.GoogleMap;
-                    model.AboutFooter = config.AboutFooter;
-                    //model.Agencies = config.Agencies;
+                    model.AutoRevenue = config.AutoRevenue;
+                    model.AutoUser = config.AutoUser;
                     _unitOfWork.Save();
 
                     HttpContext.Application["ConfigSite"] = model;
@@ -936,6 +927,19 @@ namespace OceanEduSlide.Controllers
             list2.Delete();
             list.Delete();
             return Content("Đã xóa các User chứa ký tự '");
+        }
+        public ActionResult DeleteUserx2NgayVaoLam()
+        {
+            var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Status == StatusUser.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId }).Where(g => g.Count() >= 2).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
+            //var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Status == StatusUser.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId }).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
+            int i = 0;
+            foreach (var l in list)
+            {
+                l.Active = false;
+                i++;
+            }
+            _unitOfWork.Save();
+            return Content("Đã xóa " + i + " User vào làm lại");
         }
         public ActionResult InsertHistoryUser()
         {

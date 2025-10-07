@@ -252,7 +252,7 @@ namespace OceanEduSlide.Controllers
                             ModelState.AddModelError("", @"Không tồn tại vùng nào có tên là " + zonename);
                             return View();
                         }
-                        //office.ZoneId = zone.Id;
+                        office.ZoneId = zone.Id;
                         var dbECStr = tbl.Rows[i][7].ToString().Trim();
                         if (string.IsNullOrEmpty(dbECStr) || !int.TryParse(dbECStr, out var dbECInt))
                         {
