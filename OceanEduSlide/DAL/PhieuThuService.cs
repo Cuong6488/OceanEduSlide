@@ -1357,13 +1357,13 @@ namespace OceanEduSlide.DAL
             //listReportCategoryIdCN.AddRange(listIdChild);
 
             var listBCCN = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdCN.Contains(a.ReportCategoryId));
-            var listReportCategoryIdNV = new List<int> { 95, 96, 88, 111, 113, 114, 115 };
+            var listReportCategoryIdNV = new List<int> { 95, 96, 88, 111, 113, 114, 115, 103 };
             var listBCNV = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdNV.Contains(a.ReportCategoryId));
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year, q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).AsNoTracking().ToList();
             var rUserWeek_Reals = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Year == day.Year && a.Month == day.Month);
             var firstDayOfMonth = new DateTime(day.Year, day.Month, 1).Date;
             var endDayOfMonth = new DateTime(day.Year, day.Month, DateTime.DaysInMonth(day.Year, day.Month));
-            
+
             //var listDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && DbFunctions.TruncateTime(a.StartDate) <= firstDayOfMonth && DbFunctions.TruncateTime(a.EndDate) >= endDayOfMonth).AsNoTracking().ToList();
             //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
             //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
@@ -2226,7 +2226,7 @@ namespace OceanEduSlide.DAL
             var bcListNew = new List<ReportData>();
             var newDataList = _unitOfWork.ReportDataRepository.Get(a => (a.ReportCategoryId == 35 || a.ReportCategoryId == 88 || a.ReportCategoryId == 96) && a.Month == day.Month && a.Year == day.Year);
             var listReportCategoryIdData = new List<int> { 32, 34, 36, 40, 41, 43, 45, 119, 120, 87, 89, 78, 80, 82, 84, 95, 97, 103, 105 };
-            var datasList = _unitOfWork.ReportDataRepository.Get(a => listReportCategoryIdData.Contains(a.ReportCategoryId) && a.Month == day.Month && a.Year == day.Year && a.DataReal > 0);
+            var datasList = _unitOfWork.ReportDataRepository.Get(a => listReportCategoryIdData.Contains(a.ReportCategoryId) && a.Month == day.Month && a.Year == day.Year/* && a.DataReal > 0*/);
 
             // % ht doanh số cn - nv; %ht HVNV; Cơ cấu DS CN
             foreach (var item in newDataList)
@@ -2237,7 +2237,7 @@ namespace OceanEduSlide.DAL
                 {
                     // Chỉ tiêu DS CN
                     var datact = datasList.FirstOrDefault(a => a.ReportCategoryId == 34 && a.OfficeId == item.OfficeId);
-                    if (datact == null)
+                    if (!(datact?.DataReal > 0))
                     {
                         logger.Error("Chua co chi tieu DS chi nhanh: " + item.Office?.ShortName + " - thang " + item.Month);
                         continue;
@@ -2494,6 +2494,8 @@ namespace OceanEduSlide.DAL
                 else if (item.ReportCategoryId == 96)
                 {
                     // % ht báo cáo HV NV
+
+                    //Chỉ tiêu HV NV
                     var reportCTHVNV = datasList.FirstOrDefault(a => a.HistoryUserId == item.HistoryUserId && a.ReportCategoryId == 95);
                     if (reportCTHVNV?.DataReal > 0)
                     {

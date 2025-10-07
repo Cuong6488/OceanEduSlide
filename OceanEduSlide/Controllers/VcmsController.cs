@@ -3146,6 +3146,65 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public void ExportDiscount()
+        {
+            // Bước 1: Lấy dữ liệu cần export, chỉ lấy các cột cần thiết
+            var discounts = _unitOfWork.DiscountRepository
+                .GetQuery()
+                .AsNoTracking()
+                .ToList(); // Truy vấn DB ngay
+
+            // Bước 2: Tạo file Excel và ghi dữ liệu trực tiếp vào worksheet
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Danh sách QĐ ưu đãi");
+
+                // Header (dòng 1)
+                ws.Cells[1, 1].Value = "Tên ưu đãi";
+                ws.Cells[1, 2].Value = "Phần trăm ưu đãi";
+                ws.Cells[1, 3].Value = "Ưu đãi tiền mặt";
+                ws.Cells[1, 4].Value = "Quà tặng";
+                ws.Cells[1, 5].Value = "Số tháng từ";
+                ws.Cells[1, 6].Value = "Số tháng đến";
+                ws.Cells[1, 7].Value = "Ngày hiệu lực";
+                ws.Cells[1, 8].Value = "Ngày hết hạn";
+                ws.Cells[1, 9].Value = "Chi nhánh";
+                ws.Cells[1, 10].Value = "Chương trình học";
+                ws.Cells[1, 11].Value = "Phân loại";
+
+                // Ghi dữ liệu bắt đầu từ dòng 2
+                int row = 2;
+                foreach (var item in discounts)
+                {
+                    ws.Cells[row, 1].Value = item.Username;
+                    ws.Cells[row, 2].Value = item.PercentDiscount;
+                    ws.Cells[row, 3].Value = item.MoneyDiscount;
+                    ws.Cells[row, 4].Value = item.Gift;
+                    ws.Cells[row, 5].Value = item.Pathway;
+                    ws.Cells[row, 6].Value = item.PathwayTo;
+                    ws.Cells[row, 7].Value = item.StartDate?.ToString("dd/MM/yyyy");
+                    ws.Cells[row, 8].Value = item.EndDate?.ToString("dd/MM/yyyy");
+                    ws.Cells[row, 9].Value = item.Offices;
+                    ws.Cells[row, 10].Value = item.Cth;
+                    ws.Cells[row, 11].Value = item.PhanLoai;
+                    row++;
+                }
+
+                // Optional: Tự động căn độ rộng cột
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
+                // Bước 3: Trả về file Excel qua HTTP response
+                var filename = "danh-sach-qdud.xlsx";
+                var excelBytes = pck.GetAsByteArray();
+
+                // Thiết lập headers và gửi file
+                Response.Clear();
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(excelBytes);
+                Response.End();
+            }
+        }
         public void ExportHistoryOffice()
         {
 
