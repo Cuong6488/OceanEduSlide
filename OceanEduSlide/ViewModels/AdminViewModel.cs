@@ -81,6 +81,8 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         [Display(Name = "Các chi nhánh")]
         public string OfficeIds { get; set; }
+        [Display(Name = "Các vùng quản lý")]
+        public string ZoneIds { get; set; }
         [Display(Name = "Các chi nhánh")]
         public string OfficeNames { get; set; }
         [Display(Name = "Vùng")]
@@ -90,6 +92,7 @@ namespace OceanEduSlide.ViewModels
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
         public List<int> CatIds { get; set; }
         public CreateUserViewModel()
         {
@@ -125,11 +128,15 @@ namespace OceanEduSlide.ViewModels
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
         public List<int> CatIds { get; set; }
+        public List<string> CatIds2 { get; set; }
+        [Display(Name = "Các vùng quản lý")]
+        public string ZoneIds { get; set; }
         [Display(Name = "Các chi nhánh")]
         public string OfficeIds { get; set; }
         [Display(Name = "Các chi nhánh")]
         public string OfficeNames { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
         public UpdateUserViewModel()
         {
             Active = true;

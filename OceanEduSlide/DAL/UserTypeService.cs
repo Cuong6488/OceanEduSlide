@@ -25,7 +25,7 @@ namespace OceanEduSlide.DAL
             new Dictionary<string, TypeUser>()
         {
         { "ASM", TypeUser.ASM },
-        { "DCEO", TypeUser.ASM },
+        //{ "DCEO", TypeUser.HO },
         { "NDDM", TypeUser.ASM },
         { "GĐTS", TypeUser.HO },
         { "EC", TypeUser.EC },
@@ -41,7 +41,6 @@ namespace OceanEduSlide.DAL
         { "ATL", TypeUser.ALT },
         { "CM", TypeUser.CM },
         { "TTL", TypeUser.TTL },
-        { "Chuyên viên", TypeUser.CV },
         { "AEC", TypeUser.AEC }
         };
 

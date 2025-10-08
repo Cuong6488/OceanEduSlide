@@ -367,7 +367,9 @@ namespace OceanEduSlide.Controllers
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
-                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active),
+                Zones = _unitOfWork.ZoneRepository.Get(a => a.Active && a.ShortCode != null),
+
                 //Users = Users,
             };
             return View(model);
@@ -381,8 +383,8 @@ namespace OceanEduSlide.Controllers
                 if (exist)
                 {
                     ModelState.AddModelError("", @"Tên đăng nhập này đã tồn tại");
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName");
-                    model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
+                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "ShortName");
+                    model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(a => a.Active), "Id", "Name");
                     return View(model);
                 }
                 var exist2 = _unitOfWork.UserRepository.GetQuery().Any(z => !string.IsNullOrEmpty(model.MaNhanVien) && z.MaNhanVien.Equals(model.MaNhanVien));
@@ -407,7 +409,15 @@ namespace OceanEduSlide.Controllers
                         }
                         model.OfficeIds = "," + model.OfficeIds;
                         model.OfficeNames = model.OfficeNames.Trim(',');
-
+                    }
+                    var catIds2 = fc.GetValues("CatIDs2");
+                    if (catIds2 != null)
+                    {
+                        foreach (var item in catIds2)
+                        {
+                            model.ZoneIds += (item + ",");
+                        }
+                        model.ZoneIds = "," + model.ZoneIds;
                     }
                     _unitOfWork.Save();
                     var m = new User
@@ -422,6 +432,7 @@ namespace OceanEduSlide.Controllers
                         SaleKit = model.SaleKit,
                         TypeUser = model.TypeUser,
                         OfficeIds = model.OfficeIds,
+                        ZoneIds = model.ZoneIds,
                         OfficeNames = model.OfficeNames,
                     };
                     _unitOfWork.UserRepository.Insert(m);
@@ -531,7 +542,8 @@ namespace OceanEduSlide.Controllers
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
                 SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
                 Users = users,
-                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active)
+                Offices = _unitOfWork.OfficeRepository.Get(a => a.Active),
+                Zones = _unitOfWork.ZoneRepository.Get(a => a.Active && a.ShortCode != null)
             };
 
             if (!string.IsNullOrEmpty(user.OfficeIds))
@@ -546,6 +558,16 @@ namespace OceanEduSlide.Controllers
                                         .ToList();
             }
             model.OfficeIds = user.OfficeIds;
+
+            if (!string.IsNullOrEmpty(user.ZoneIds))
+            {
+                model.CatIds2 = user.ZoneIds
+                                        .Split(',')
+                                        .Select(x => x.Trim())
+                                        .ToList();
+            }
+            model.ZoneIds = user.ZoneIds;
+
             var zId = user.ZoneId;
             if (zId != null)
                 model.SelectOffices = OfficeSelectList(zId);
@@ -574,6 +596,15 @@ namespace OceanEduSlide.Controllers
                     model.OfficeNames = model.OfficeNames.Trim(',');
 
                 }
+                var catIds2 = fc.GetValues("CatIDs2");
+                if (catIds2 != null)
+                {
+                    foreach (var item in catIds2)
+                    {
+                        model.ZoneIds += (item + ",");
+                    }
+                    model.ZoneIds = "," + model.ZoneIds;
+                }
                 var user = _unitOfWork.UserRepository.GetQuery(z => z.Username == model.Username).FirstOrDefault();
                 if (user != null)
                 {
@@ -587,6 +618,7 @@ namespace OceanEduSlide.Controllers
                     user.Fullname = model.Fullname;
                     user.MaNhanVien = model.MaNhanVien;
                     user.OfficeIds = model.OfficeIds;
+                    user.ZoneIds = model.ZoneIds;
                     user.OfficeNames = model.OfficeNames;
                     _unitOfWork.Save();
                     return RedirectToAction("ListUser", new { result = "update" });
@@ -939,6 +971,13 @@ namespace OceanEduSlide.Controllers
                 i++;
             }
             _unitOfWork.Save();
+
+            var listUnActive = _unitOfWork.HistoryUserRepository.GetQuery(a => !a.Active && a.Month == 10).Select(a => a.Id).ToList();
+            foreach (var l in listUnActive)
+            {
+                var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == l);
+                listCallLog.Delete();
+            }
             return Content("Đã xóa " + i + " User vào làm lại");
         }
         public ActionResult InsertHistoryUser()

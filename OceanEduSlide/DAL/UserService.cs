@@ -151,7 +151,12 @@ namespace OceanEduSlide.DAL
             //var listNSDieuchuyen = new List<QuaTrinhCongTac>();
             foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
             {
+                if(item.IDNhanSuHRM.ToString() == "14DF96F9-7C96-485A-82B6-9D3F994FA09D")
+                {
+
+                }
                 var NsDieuchuyen = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item); /*(bản ghi B)*/
+
                 if (NsDieuchuyen != null)
                 {
                     var nhanSuNguon = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);

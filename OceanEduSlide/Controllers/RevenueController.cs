@@ -2287,7 +2287,7 @@ namespace OceanEduSlide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult PhieuThuTHDB(FormCollection fc, int Month)
+        public ActionResult PhieuThuTHDB(FormCollection fc, int Month, int Year)
         {
             var file = Request.Files["PhieuThuFile"];
             if (file != null && file.ContentLength > 0)
@@ -2464,7 +2464,8 @@ namespace OceanEduSlide.Controllers
                         Modun = modun,
                         UD_NhomUDFINAL = uD_NhomUDFINAL,
                         THDB = true,
-                        ThangTinhDThu = Month
+                        ThangTinhDThu = Month,
+                        NamTinhDThu = Year
 
                     };
                     _unitOfWork.PhieuThuRepository.Insert(phieuThu);

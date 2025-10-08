@@ -60,6 +60,17 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.ZoneIds)</td>
+                    <td class="form_text">
+                        <select name="CatIDs2" id="categorySelect2" class="form_control" multiple="" style=" height: 200px;">
+                            @foreach (var item in Model.Zones)
+                            {
+                                <option value="@item.ShortCode">@item.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td class="form_name">@Html.LabelFor(model => model.OfficeId)</td>
                     <td class="form_text">
                         @Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "mb-2", data_item = "office" })
@@ -110,6 +121,11 @@
         $(document).ready(function () {
             $('#categorySelect').select2({
                 placeholder: 'Chọn các chi nhánh',
+                allowClear: true,
+                multiple: true
+            }).val(null).trigger('change');
+            $('#categorySelect2').select2({
+                placeholder: 'Chọn các vùng quản lý',
                 allowClear: true,
                 multiple: true
             }).val(null).trigger('change');
