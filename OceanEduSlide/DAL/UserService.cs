@@ -116,19 +116,20 @@ namespace OceanEduSlide.DAL
                     break;
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth)) && allCDCM.Contains(a.MaChucDanhChuyenMon)).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh)).OrderByDescending(a => a.NgayApDung).ToList();
-            var ThaiSans = _dongBoTuyenSinh.ThaiSans.ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
+
+            var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
             // List User tháng
             var listHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == currentMonth && a.Year == currentYear);
             // Nghỉ thai sản
-            var listNSTS = DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" && ThaiSans.Any(t => t.IDNhanSuHRM == a.IDNhanSuHRM && today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan && t.NgayBatDauNghiThaiSan.Month == currentMonth)).ToList();
+            var listNSTS = DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" && ThaiSans.Any(t => t.IDNhanSuHRM == a.IDNhanSuHRM && t.NgayBatDauNghiThaiSan.Month == currentMonth)).ToList();
             // Trạng thái Stop - đã nghỉ
             var listNSStop_danghi = DSNhanSuNguons.Where(a => a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month == currentMonth && a.NgayNghiViec.Value.Year == currentYear && a.TrangThai == "E_STOP" && today > a.NgayNghiViec).ToList();
             // Trạng thái Stop - vẫn đang làm việc
             var listNSStop_danglamviec = DSNhanSuNguons.Where(a => a.NgayNghiViec.HasValue && a.TrangThai == "E_STOP" && today <= a.NgayNghiViec).ToList();
             // Trạng thái E_Hire - đang làm việc
-            var listNSDanglamviec = DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" && !ThaiSans.Any(t => a.IDNhanSuHRM == t.IDNhanSuHRM && today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan)).ToList();
+            var listNSDanglamviec = DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" && !ThaiSans.Any(t => a.IDNhanSuHRM == t.IDNhanSuHRM)).ToList();
 
             // Tổng hợp danh sách NS đang làm việc
             var listAllDanglamviec = listNSDanglamviec.Concat(listNSStop_danglamviec);
@@ -151,10 +152,6 @@ namespace OceanEduSlide.DAL
             //var listNSDieuchuyen = new List<QuaTrinhCongTac>();
             foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
             {
-                if(item.IDNhanSuHRM.ToString() == "14DF96F9-7C96-485A-82B6-9D3F994FA09D")
-                {
-
-                }
                 var NsDieuchuyen = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item); /*(bản ghi B)*/
 
                 if (NsDieuchuyen != null)
