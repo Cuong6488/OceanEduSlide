@@ -948,7 +948,8 @@ namespace OceanEduSlide.Controllers
                     c.CallDate >= startDate &&
                     c.CallDate < endDatePlusOne &&
                     c.HistoryUser.OfficeId == officeId &&
-                    userIds.Contains(c.HistoryUserId)).ToList();
+                    userIds.Contains(c.HistoryUserId))
+                    .Select(c => new { c.HistoryUserId, c.BillSec, c.Disposition }).ToList();
 
                 // Gom lại theo HistoryUserId 
                 var groupedLogs = callLogs.GroupBy(c => c.HistoryUserId)

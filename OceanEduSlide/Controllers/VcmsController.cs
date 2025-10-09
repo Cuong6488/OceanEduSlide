@@ -1819,6 +1819,7 @@ namespace OceanEduSlide.Controllers
 
             return RedirectToAction("Index", "Vcms");
         }
+
         public ActionResult ListHistoryUser(int? page, string username, int? zoneId, int? officeId, int? month, int? year, int? UserType, int? trung, int? active, string result = "")
         {
             ViewBag.Result = result;
@@ -1902,9 +1903,16 @@ namespace OceanEduSlide.Controllers
         public JsonResult DeleteHistoryUser(int userId)
         {
             var user = _unitOfWork.HistoryUserRepository.GetById(userId);
-            user.Active = false;
-            _unitOfWork.Save();
-            return Json(new { status = true, msg = "Xóa thành công" });
+            if (user != null)
+            {
+                user.Active = false;
+                _unitOfWork.Save();
+                var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == user.Id);
+                listCallLog.Delete();
+                return Json(new { status = true, msg = "Xóa thành công" });
+            }
+            return Json(new { status = false, msg = "Có lỗi xảy ra" });
+
         }
         public ActionResult DeleteUserWrong()
         {
