@@ -604,11 +604,18 @@ td.sticky-left {
   background: #eee;
 }
 
+.body-format {
+  max-width: 22vw;
+  overflow: auto;
+}
 .body-format * {
   font-size: 12px !important;
   color: #000000 !important;
   font-family: "Roboto", sans-serif !important;
   background: none !important;
+}
+.body-format table {
+  max-width: 100% !important;
 }
 
 .pheduyet {

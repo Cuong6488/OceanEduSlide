@@ -536,6 +536,11 @@ td.sticky-left {
         font-family: 'Roboto', sans-serif !important;
         background: none !important;
     }
+    max-width:22vw;
+    overflow:auto;
+    table{
+        max-width:100% !important;
+    }
 }
 
 .pheduyet {

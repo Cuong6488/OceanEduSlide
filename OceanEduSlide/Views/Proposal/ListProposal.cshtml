@@ -210,7 +210,9 @@
                                 @(item.Proposal.CVSeen == true?"Đã phản hồi":"Chưa phản hồi")
                             </td>*@
                         @*<td>@Html.DisplayFor(a => item.Proposal.TypeProposal)</td>*@
-                        <td class="body-format">@Html.Raw(item.Proposal.Body)</td>
+
+                        <td class="body-format body-dexuat">@Html.Raw(item.Proposal.Body)</td>
+                        <td><a href="#">content</a></td>
                         <td style="word-break:break-word">
                             @if (!string.IsNullOrEmpty(item.Proposal.Url))
                             {
