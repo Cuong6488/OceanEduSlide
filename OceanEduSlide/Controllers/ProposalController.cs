@@ -16,6 +16,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
 using Helpers;
+using NSec.Cryptography;
+using System.Data.Entity.Core.Metadata.Edm;
+using System.Security.Policy;
+using System.Web.UI;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
@@ -112,19 +116,18 @@ namespace OceanEduSlide.Controllers
                     return View(model);
                 }
                 model.Proposal.ZoneId = z.Id;
-                var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds.Contains(z.ShortCode));
-                model.Proposal.CVName = "";
-                foreach (var item in cvs)
-                {
-                    model.Proposal.CVName += item.Fullname + ", ";
-                }
-                model.Proposal.CVName = model.Proposal.CVName.Trim().Trim(',');
+                //var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds.Contains(z.ShortCode));
+                //model.Proposal.CVName = "";
+                //foreach (var item in cvs)
+                //{
+                //    model.Proposal.CVName += item.Fullname + ", ";
+                //}
+                //model.Proposal.CVName = model.Proposal.CVName.Trim().Trim(',');
                 var idUser2 = model.Proposal.UserId2 ?? model.Proposal.UserId;
                 model.Proposal.User2 = _unitOfWork.UserRepository.GetById(idUser2);
                 _unitOfWork.ProposalRepository.Insert(model.Proposal);
                 _unitOfWork.Save();
                 return RedirectToAction("ListProposal", new { Result = "add" });
-
             }
             if (User.TypeUser == TypeUser.ASM)
             {
@@ -289,7 +292,14 @@ namespace OceanEduSlide.Controllers
             //if (User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.PKT)
             //    proposals = proposals.Where(a => a.UserId == User.Id);
 
-            model.Proposals = proposals;
+            //model.Proposals = proposals;
+            var listCV = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV).AsNoTracking().ToList();
+            var proposalItems = proposals.ToList().Select(x => new ProposalViewModel.ProposalItem
+            {
+                ListCVPhuTrach = listCV.Where(a => a.ZoneIds.Contains("," + x.Zone.ShortCode + ",")).Select(a => a.Fullname).ToList(),
+                Proposal = x,
+            });
+            model.ProposalItems = proposalItems;
             return View(model);
             //}
             //else
@@ -499,18 +509,31 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }
-        public ActionResult UpdateProposal(int pId, int? notice)
+        public ActionResult UpdateProposal(int pId,int Page, int? ZoneId , int? OfficeId,string StartDay, string EndDay, int? Notice,string MaDeXuat,string Type, string Fault)
         {
             if (User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.HO)
                 return RedirectToAction("ListProposal");
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
             if (proposal == null)
                 return RedirectToAction("ListProposal");
+            if (User.TypeUser == TypeUser.CV)
+            {
+                if (!User.ZoneIds.Contains("," + proposal.Zone.ShortCode + ","))
+                    return RedirectToAction("ListProposal");
+            }
             var model = new ApproveViewModel
             {
                 Proposal = proposal,
                 SelectFault = new SelectList(_unitOfWork.TypeFaultRepository.Get(a => a.Active), "Id", "Content"),
-                Notice = notice,
+                Notice = Notice,
+                Page = Page,
+                ZoneId = ZoneId,
+                OfficeId = OfficeId,
+                StartDay = StartDay,
+                EndDay = EndDay,
+                Fault = Fault,
+                Type = Type
+
             };
             return View(model);
         }
@@ -533,7 +556,17 @@ namespace OceanEduSlide.Controllers
                 proposal.CVFbName = User.Fullname;
                 _unitOfWork.Save();
             }
-            return RedirectToAction("ListProposal", new { Result = "add", notice = model.Notice });
+            return RedirectToAction("ListProposal", new { 
+                Result = "add", 
+                Notice = model.Notice,
+                Page = model.Page,
+                ZoneId = model.ZoneId,
+                OfficeId = model.OfficeId,
+                StartDay = model.StartDay,
+                EndDay = model.EndDay,
+                Fault = model.Fault,
+                Type = model.Type
+            });
         }
         [HttpPost]
         public JsonResult UpdateSeen(int id)

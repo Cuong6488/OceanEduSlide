@@ -12,6 +12,13 @@
         <table class="form_table">
             @Html.HiddenFor(a => a.Proposal.Id)
             @Html.HiddenFor(a => a.Notice)
+            @Html.HiddenFor(a => a.ZoneId)
+            @Html.HiddenFor(a => a.OfficeId)
+            @Html.HiddenFor(a => a.MaDeXuat)
+            @Html.HiddenFor(a => a.Type)
+            @Html.HiddenFor(a => a.Fault)
+            @Html.HiddenFor(a => a.EndDay)
+            @Html.HiddenFor(a => a.StartDay)
             <tr>
                 <td class="form_name w-25">Mã đề xuất</td>
                 <td class="form_text"> @Html.DisplayFor(model => model.Proposal.MaDeXuat)</td>
