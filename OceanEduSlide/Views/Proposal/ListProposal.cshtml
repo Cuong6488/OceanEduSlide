@@ -175,7 +175,10 @@
                 {
                     stt++;
                     <tr data-id="@item.Proposal.Id">
-                        <td>@stt</td>
+                        <td>
+                            @stt
+                            @item.Proposal.UserId @item.Proposal.Id
+                        </td>
                         <td style="word-break:break-word">@item.Proposal.MaDeXuat</td>
                         @*<td>@item.Proposal.Zone.Name</td>*@
                         <td>
@@ -194,7 +197,8 @@
                         <td>@(item.Proposal.ProposalType?.Content)</td>
                         <td>
                             <strong>Đề xuất:</strong> <br />
-                            @item.Proposal.User.Fullname <br />
+                            @(item.Proposal.User?.Fullname) <br />
+
                             @if (item.Proposal.User2 != null)
                             {
                                 @: <br />
@@ -288,6 +292,7 @@
                             </td>
                         }
                     </tr>
+
                 }
 
             </tbody>
@@ -354,7 +359,7 @@
                     });
             }
         }
-        $("input[name='item.BMEdit']").on('change', function () {
+        $("input[name='item.Proposal.BMEdit']").on('change', function () {
             const isChecked = $(this).is(':checked');
             var toast = isChecked ? "Bạn chắc chắn muốn cho CN sửa/ bổ sung hồ sơ?" : "Bạn chắc chắn khóa quyền sửa hồ sơ của CN?";
             var id = $(this).closest("tr").data("id");

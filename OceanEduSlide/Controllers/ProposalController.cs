@@ -168,7 +168,6 @@ namespace OceanEduSlide.Controllers
             }
             var model = new ProposalViewModel
             {
-
                 StartDay = startDay,
                 EndDay = endDay,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
