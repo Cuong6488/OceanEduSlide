@@ -177,7 +177,6 @@
                     <tr data-id="@item.Proposal.Id">
                         <td>
                             @stt
-                            @item.Proposal.UserId @item.Proposal.Id
                         </td>
                         <td style="word-break:break-word">@item.Proposal.MaDeXuat</td>
                         @*<td>@item.Proposal.Zone.Name</td>*@
@@ -197,7 +196,7 @@
                         <td>@(item.Proposal.ProposalType?.Content)</td>
                         <td>
                             <strong>Đề xuất:</strong> <br />
-                            @(item.Proposal.User?.Fullname) <br />
+                            @(item.Proposal.User.Fullname) <br />
 
                             @if (item.Proposal.User2 != null)
                             {

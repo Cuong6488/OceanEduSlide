@@ -292,7 +292,7 @@ namespace OceanEduSlide.Controllers
             //    proposals = proposals.Where(a => a.UserId == User.Id);
 
             //model.Proposals = proposals;
-            var listCV = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV).AsNoTracking().ToList();
+            var listCV = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds != null).AsNoTracking().ToList();
             var proposalItems = proposals.ToList().Select(x => new ProposalViewModel.ProposalItem
             {
                 ListCVPhuTrach = listCV.Where(a => a.ZoneIds.Contains("," + x.Zone.ShortCode + ",")).Select(a => a.Fullname).ToList(),
