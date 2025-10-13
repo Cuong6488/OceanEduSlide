@@ -1365,6 +1365,8 @@ namespace OceanEduSlide.DAL
             var endDayOfMonth = new DateTime(day.Year, day.Month, DateTime.DaysInMonth(day.Year, day.Month));
 
             //var listDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && DbFunctions.TruncateTime(a.StartDate) <= firstDayOfMonth && DbFunctions.TruncateTime(a.EndDate) >= endDayOfMonth).AsNoTracking().ToList();
+            //var listgroupDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
+
             //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
             //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
             foreach (var mnv in listMaNV)
@@ -1647,9 +1649,10 @@ namespace OceanEduSlide.DAL
                     bcCN.Data = (bcCN.DataReal ?? 0).ToString("N0");
                 }
 
-                // Phân loại doanh thu theo CT ưu đãi
+                //Phân loại doanh thu theo CT ưu đãi
 
                 //var idCategoryCTUD = 0;
+
                 //var phanloai = listDiscount.FirstOrDefault(a => a.Username == item.UD_FINAL)?.PhanLoai;
                 //var categoryCTUDChild = listCategoryCTUD.FirstOrDefault(a => a.CategoryParent != null && a.CategoryParent.Name == phanloai);
 

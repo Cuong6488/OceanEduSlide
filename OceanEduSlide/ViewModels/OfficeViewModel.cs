@@ -41,4 +41,10 @@ namespace OceanEduSlide.ViewModels
         public string officeId { get; set; }
         public SelectList SelectOffices { get; set; }
     }
+    public class ListGroupDiscountViewModel
+    {
+        public PagedList.IPagedList<GroupDiscount> GroupDiscounts { get; set; }
+        public string Name { get; set; }
+        public int? Year { get; set; }
+    }
 }

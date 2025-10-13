@@ -1,0 +1,127 @@
+﻿@model OceanEduSlide.ViewModels.ListGroupDiscountViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách nhóm ưu đãi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("InsertGroupDiscountExcel")"><i class="fal fa-plus-circle me-1"></i>Cập nhật nhóm ưu đãi</a>
+@*<a class="btn quick-link" href="@Url.Action("ExportDiscount")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
+<div class="box_content">
+    <form action="@Url.Action("ListGroupDiscount")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả ưu đãi", new { @class = "mt-2" })
+                </div>*@
+            <div class="col-lg-3">
+                <label>Tên nhóm QĐ</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg-3">
+                <label>Năm</label>
+                <select name="Year" class="form_control mt-2">
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2020; i <= DateTime.Now.Year + 1; i++)
+                    {
+                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-3 align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.GroupDiscounts.TotalItemCount</strong> nhóm QĐ</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Số QĐ</th>
+                <th>Phân loại</th>
+                <th>Nội dung</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Ghi chú</th>
+                <th>Nhóm QĐ</th>
+            </tr>
+            @foreach (var discount in Model.GroupDiscounts)
+            {
+                <tr data-id="@discount.Id">
+                    <td class="left">@discount.SoQD</td>
+                    <td>@discount.PhanLoai</td>
+                    <td>@discount.Content</td>
+                    <td>@(discount.StartDate?.ToString("dd/MM/yyyy"))</td>
+                    <td>@(discount.EndDate?.ToString("dd/MM/yyyy"))</td>
+                    <td>@discount.Note</td>
+                    <td>@discount.NhomQD</td>
+                </tr>
+            }
+            @if (Model.GroupDiscounts.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="7">@Html.PagedListPager(Model.GroupDiscounts, page => Url.Action("ListGroupDiscount", new { page, name = Model.Name, year = Model.Year }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteDiscount(id) {
+            if (confirm("Bạn có chắc chắn xóa ưu đãi này không?")) {
+                $.post("/Vcms/DeleteDiscount",
+                    { discountId: id },
+                    function (data) {
+                        if (data === "True") {
+                            $.toast({
+                                text: 'Xóa ưu đãi thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+        function clearDiscount() {
+            if (confirm("Hành động này sẽ xóa toàn bộ dữ liệu về QĐ ưu đãi!")) {
+                if (confirm("Bạn có chắc chắn xóa toàn bộ QĐ ưu đãi không?")) {
+                    window.location.href = "/Vcms/ClearDiscount";
+                }
+            }
+        }
+
+        function updateInfo(id) {
+            const elm = $('tr[data-id="' + id + '"]');
+            const sort = elm.find("#discount_Sort").val();
+            const active = elm.find("input#discount_Active").prop("checked");
+            $.post("/Vcms/QuickUpdateDiscount",
+                { discountId: id, sort, active },
+                function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error'
+                        });
+                        window.location.reload();
+                    };
+                });
+        }
+    </script>
+}

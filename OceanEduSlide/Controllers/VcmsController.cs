@@ -1877,7 +1877,6 @@ namespace OceanEduSlide.Controllers
                 }
             }
 
-
             var model = new ListHistoryUserViewModel
             {
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
@@ -1944,9 +1943,9 @@ namespace OceanEduSlide.Controllers
             var users = _unitOfWork.UserRepository.Get();
             foreach (var user in users)
             {
-                //user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
-                //user.OldAcount = true;
-                //user.SaleKit = true;
+                user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
+                user.OldAcount = true;
+                user.SaleKit = true;
             }
             _unitOfWork.Save();
             return RedirectToAction("ListUser");
@@ -2878,8 +2877,6 @@ namespace OceanEduSlide.Controllers
                 //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
                 var listDiscount = new List<Discount>();
                 int sheet = 0;
-                var listReportCategory = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8 && a.ReportCategoryId == null).AsNoTracking().ToList();
-                int sort = 0;
                 foreach (DataTable tbl in result.Tables)
                 {
                     sheet++;
@@ -2892,7 +2889,7 @@ namespace OceanEduSlide.Controllers
                         var fullname = tbl.Rows[i][0].ToString().Trim();
                         if (string.IsNullOrEmpty(fullname))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã ưu đãi: Dòng " + dong + ", Sheet " + sheet);
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã ưu đãi: Dòng " + dong);
                             return View();
                         }
                         int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
@@ -2904,7 +2901,7 @@ namespace OceanEduSlide.Controllers
                         var offices = tbl.Rows[i][9].ToString().Trim();
                         if (string.IsNullOrEmpty(offices))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh: Dòng " + dong + ", Sheet " + sheet);
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh: Dòng " + dong);
                             return View();
                         }
                         int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
@@ -2912,49 +2909,8 @@ namespace OceanEduSlide.Controllers
                         var cth = tbl.Rows[i][12].ToString().Trim();
                         if (string.IsNullOrEmpty(cth))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chương trình học: Dòng " + dong + ", Sheet " + sheet);
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chương trình học: Dòng " + dong);
                             return View();
-                        }
-                        var phanloai = tbl.Rows[i][13].ToString().Trim();
-                        if (string.IsNullOrEmpty(phanloai))
-                        {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Phân loại: Dòng " + dong + ", Sheet " + sheet);
-                            return View();
-                        }
-                        var reportCategory = listReportCategory.FirstOrDefault(a => a.Name.ToLower().Contains(phanloai.ToLower()));
-                        if (reportCategory == null)
-                        {
-                            var name = phanloai;
-                            if (phanloai.Length <= 12)
-                            {
-                                name = "Doanh thu " + phanloai;
-                            }
-                            var newReportCategory = new ReportCategory()
-                            {
-                                Name = name,
-                                Sort = phanloai.ToLower().Contains("khác") ? 20 : sort,
-                                Group = 8,
-                                Active = true,
-                                ReportCategoryId = null,
-                                TypeCat = TypeCat.Type1,
-                                Count = 1,
-                                Auto = false,
-                            };
-                            _unitOfWork.ReportCategoryRepository.Insert(newReportCategory);
-                            _unitOfWork.Save();
-                            sort += 1;
-                            var cateChild = new ReportCategory()
-                            {
-                                Name = "Kết quả",
-                                Sort = 1,
-                                Group = 8,
-                                Active = true,
-                                ReportCategoryId = newReportCategory.Id,
-                                TypeCat = TypeCat.Type1,
-                                Count = null,
-                                Auto = true,
-                            };
-                            _unitOfWork.ReportCategoryRepository.Insert(cateChild);
                         }
                         var discount = new Discount
                         {
@@ -2966,7 +2922,6 @@ namespace OceanEduSlide.Controllers
                             Pathway = pathway,
                             PathwayTo = pathwayTo,
                             Cth = cth,
-                            PhanLoai = phanloai,
                             StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
                             EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
                             Active = true
@@ -2984,7 +2939,218 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListDiscount");
         }
+        public ActionResult InsertGroupDiscountExcel()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertGroupDiscountExcel(FormCollection fc)
+        {
+            var file = Request.Files["DiscountFile"];
+            if (file != null && file.ContentLength > 0)
+            {
+                var stream = file.InputStream;
+                IExcelDataReader reader;
+                if (file.FileName.EndsWith(".xls"))
+                {
+                    reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                }
+                else if (file.FileName.EndsWith(".xlsx"))
+                {
+                    reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", @"This file format is not supported");
+                    return View();
+                }
+                //var docPath = "/documents/logimport/" + DateTime.Now.ToString("yyyy/MM/dd");
+                //HtmlHelpers.CreateFolder(Server.MapPath(docPath));
+                //var docFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(file.FileName);
+                //var logImport = new Models.LogImport
+                //{
+                //    Admin = Fullname,
+                //    Name = Path.GetFileName(file.FileName),
+                //    File = DateTime.Now.ToString("yyyy/MM/dd") + "/" + docFileName,
+                //    TypeImport = TypeImport.Type7,
+                //};
+                //_unitOfWork.LogImportRepository.Insert(logImport);
+                //_unitOfWork.Save();
+                //// Lưu tệp tài liệu
+                //var filePath = Path.Combine(Server.MapPath(docPath), docFileName);
+                //file.SaveAs(filePath);
+                var result = reader.AsDataSet();
+                reader.Close();
 
+                //var tbl = result.Tables[0];
+                //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
+                var listOldGroup = _unitOfWork.GroupDiscountRepository.GetQuery();
+                listOldGroup.Delete();
+                var listGroup = new List<GroupDiscount>();
+                var listReportCategoryAdd = new List<ReportCategory>();
+                var listReportCategory = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8 && a.ReportCategoryId == null).ToList();
+                int sort = 0;
+                var tbl = result.Tables[0];
+                for (var i = 2; i < tbl.Rows.Count; i++)
+                {
+                    var dong = i + 1;
+                    var soQD = tbl.Rows[i][2].ToString().Trim();
+                    if (string.IsNullOrEmpty(soQD))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Số QĐ: Dòng " + dong);
+                        return View();
+                    }
+                    var phanloai = tbl.Rows[i][3].ToString().Trim();
+                    if (string.IsNullOrEmpty(phanloai))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Loại: Dòng " + dong);
+                        return View();
+                    }
+                    var noidung = tbl.Rows[i][4].ToString().Trim();
+                    var startDateStr = tbl.Rows[i][5].ToString().Trim();
+                    DateTime? sDate = null;
+
+                    if (!string.IsNullOrEmpty(startDateStr))
+                    {
+                        DateTime parsedDate;
+                        if (DateTime.TryParse(startDateStr, out parsedDate))
+                        {
+                            if (parsedDate <= new DateTime(1753, 1, 1))
+                            {
+                                ModelState.AddModelError("", @"Ngày bắt đầu không hợp lệ: Dòng " + dong);
+                                return View();
+                            }
+                            sDate = parsedDate;
+                        }
+                    }
+
+                    var endDateStr = tbl.Rows[i][6].ToString().Trim();
+                    DateTime? eDate = null;
+
+                    if (!string.IsNullOrEmpty(endDateStr))
+                    {
+                        DateTime parsedDate;
+                        if (DateTime.TryParse(endDateStr, out parsedDate))
+                        {
+                            if (parsedDate <= new DateTime(1753, 1, 1))
+                            {
+
+                                ModelState.AddModelError("", @"Ngày kết thúc không hợp lệ: Dòng " + dong);
+                                return View();
+                            }
+                            eDate = parsedDate;
+                        }
+                    }
+                    var note = tbl.Rows[i][7].ToString().Trim();
+                    var nhomQD = tbl.Rows[i][8].ToString().Trim();
+                    if (string.IsNullOrEmpty(nhomQD))
+                    {
+                        ModelState.AddModelError("", @"Thiếu dữ liệu cột Tên QĐ: Dòng " + dong);
+                        return View();
+                    }
+                    int year = 0;
+                    if (!nhomQD.Contains("/"))
+                    {
+                        ModelState.AddModelError("", @"Sai định dạng chung cột Tên QĐ (số QĐ/năm): Dòng " + dong);
+                        return View();
+                    }
+                    var yearStr = nhomQD.Split('/')[1];
+                    if (!int.TryParse(yearStr, out year))
+                    {
+                        ModelState.AddModelError("", @"Không thể tách chuỗi để lấy ra năm: Dòng " + dong);
+                        return View();
+                    }
+                    var reportCategory = listReportCategory.FirstOrDefault(a => a.Name.ToLower().Contains(phanloai.ToLower()));
+                    if (reportCategory == null)
+                    {
+                        reportCategory = listReportCategoryAdd.FirstOrDefault(a => a.Name.ToLower().Contains(phanloai.ToLower()));
+                    }
+                    if (reportCategory == null)
+                    {
+                        var name = phanloai;
+                        if (phanloai.Length <= 12)
+                        {
+                            name = "Doanh thu " + phanloai;
+                        }
+                        var newReportCategory = new ReportCategory()
+                        {
+                            Name = name,
+                            Sort = phanloai.ToLower().Contains("khác") ? 20 : sort,
+                            Group = 8,
+                            Active = true,
+                            ReportCategoryId = null,
+                            TypeCat = TypeCat.Type1,
+                            Count = 1,
+                            Auto = false,
+                        };
+                        _unitOfWork.ReportCategoryRepository.Insert(newReportCategory);
+                        _unitOfWork.Save();
+                        listReportCategoryAdd.Add(newReportCategory);
+                        sort += 1;
+                        var cateChild = new ReportCategory()
+                        {
+                            Name = "Kết quả",
+                            Sort = 1,
+                            Group = 8,
+                            Active = true,
+                            ReportCategoryId = newReportCategory.Id,
+                            TypeCat = TypeCat.Type1,
+                            Count = null,
+                            Auto = true,
+                        };
+                        _unitOfWork.ReportCategoryRepository.Insert(cateChild);
+                    }
+                    var groupDiscount = new GroupDiscount
+                    {
+                        SoQD = soQD,
+                        NhomQD = nhomQD,
+                        Year = year,
+                        PhanLoai = phanloai,
+                        StartDate = sDate,
+                        EndDate = eDate,
+                        Content = noidung,
+                        Note = note,
+                    };
+                    listGroup.Add(groupDiscount);
+                }
+
+                if (listGroup.Any())
+                {
+                    _unitOfWork.GroupDiscountRepository.InsertRange(listGroup);
+                }
+                _unitOfWork.Save();
+
+            }
+            return RedirectToAction("ListGroupDiscount", new { result = "add" });
+        }
+
+        public ActionResult ListGroupDiscount(int? page, string name, int? year, string result = "")
+        {
+            ViewBag.Result = result;
+            var pageNumber = page ?? 1;
+            const int pageSize = 15;
+            var groupDiscounts = _unitOfWork.GroupDiscountRepository.GetQuery(orderBy: o => o.OrderByDescending(a => a.Year)).AsNoTracking();
+
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    groupDiscounts = groupDiscounts.Where(l => l.NhomQD.Contains(newkey));
+                }
+            }
+            if (year != null)
+            {
+                groupDiscounts = groupDiscounts.Where(l => l.Year == year);
+            }
+            var model = new ListGroupDiscountViewModel
+            {
+                GroupDiscounts = groupDiscounts.ToPagedList(pageNumber, pageSize),
+                Name = name,
+                Year = year,
+            };
+            return View(model);
+        }
         #endregion
 
         #region Tong_hop_loi

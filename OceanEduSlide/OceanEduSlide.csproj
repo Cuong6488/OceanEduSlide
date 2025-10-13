@@ -660,6 +660,10 @@
     <Compile Include="Migrations\202510070327353_autoconfig.Designer.cs">
       <DependentUpon>202510070327353_autoconfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202510130826064_groupdiscount.cs" />
+    <Compile Include="Migrations\202510130826064_groupdiscount.Designer.cs">
+      <DependentUpon>202510130826064_groupdiscount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1660,6 +1664,8 @@
     <Content Include="Views\Report\ReportAllField.cshtml" />
     <Content Include="Views\Report\ListReportCategory.cshtml" />
     <Content Include="Views\ReportHome\LoadListCallDay.cshtml" />
+    <Content Include="Views\Vcms\InsertGroupDiscountExcel.cshtml" />
+    <Content Include="Views\Vcms\ListGroupDiscount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1969,6 +1975,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202510070327353_autoconfig.resx">
       <DependentUpon>202510070327353_autoconfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202510130826064_groupdiscount.resx">
+      <DependentUpon>202510130826064_groupdiscount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

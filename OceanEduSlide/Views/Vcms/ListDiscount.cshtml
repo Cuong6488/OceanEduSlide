@@ -59,7 +59,6 @@
                 <th>Ngày hết hạn</th>
                 <th>Chi nhánh</th>
                 <th>Chương trình học</th>
-                <th>Phân loại</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
 
                 <th style="width:100px">Hoạt động</th>
@@ -81,7 +80,6 @@
                     <td>@discount.EndDate</td>
                     <td style="max-width:300px;word-break:break-word;text-align:start">@discount.Offices</td>
                     <td>@discount.Cth</td>
-                    <td>@discount.PhanLoai</td>
                     <td>@Html.CheckBoxFor(model => discount.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@discount.Id')">Cập nhật</a> -

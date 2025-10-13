@@ -13,7 +13,7 @@ namespace OceanEduSlide.Models
         public string SoQD { get; set; }
         [Display(Name = "Nhóm QĐ"), Required(ErrorMessage = "Hãy điền tên QĐ"), UIHint("TextBox")]
         public string NhomQD { get; set; }
-        public int? Year { get; set; }
+        public int Year { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         [Display(Name = "Ngày bắt đầu")]
@@ -26,7 +26,6 @@ namespace OceanEduSlide.Models
         public string PhanLoai { get; set; }
         [Display(Name = "Nội dung"), UIHint("Textbox")]
         public string Content { get; set; }
-        public virtual Office Office { get; set; }
         public GroupDiscount()
         {
             Active = true;
