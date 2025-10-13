@@ -663,6 +663,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
+    <Compile Include="Models\GroupDiscount.cs" />
     <Compile Include="Models\LockImport.cs" />
     <Compile Include="Models\TargetGroup.cs" />
     <Compile Include="Models\HistoryOffice.cs" />
