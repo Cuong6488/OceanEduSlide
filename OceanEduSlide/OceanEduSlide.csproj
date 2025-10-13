@@ -1658,6 +1658,7 @@
     <Content Include="Views\Report\ListLockImport.cshtml" />
     <Content Include="Views\Report\ReportAllField.cshtml" />
     <Content Include="Views\Report\ListReportCategory.cshtml" />
+    <Content Include="Views\ReportHome\LoadListCallDay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

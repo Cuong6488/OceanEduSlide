@@ -92,6 +92,7 @@
                     <th rowspan="2">Cuộc gọi <br /> trên 60s</th>
                     <th rowspan="2">Cuộc gọi <br /> trên 30s</th>
                     <th rowspan="2">Tổng <br /> cuộc gọi</th>
+                    <th rowspan="2">Thống kê <br /> theo ngày</th>
                 </tr>
                 <tr class="text-center">
                     <th>@Model.TotalOver120s</th>
@@ -176,6 +177,10 @@
                         <td>@item.TotalOver60s</td>
                         <td>@item.TotalOver30s</td>
                         <td>@item.Total</td>
+                        <td>
+                            <a href="" data-src="@Url.Action("LoadListCallDay", new {userId = item.HistoryUser.Id,startDay = Model.StartDay,endDay = Model.EndDay})"
+                               data-fancybox data-type="ajax" data-touch="false">Xem</a>
+                        </td>
                     </tr>
                 }
 

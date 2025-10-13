@@ -80,6 +80,23 @@ namespace OceanEduSlide.ViewModels
         }
 
     }
+    public class LoadListCallDayViewModel
+    {
+
+        public string StartDay { get; set; }
+        public string EndDay { get; set; }
+        public User User { get; set; }
+        public IEnumerable<DateItem> DateItems { get; set; }
+
+        public class DateItem
+        {
+            public DateTime Date { get; set; }
+            public int Total { get; set; }
+            public int Over60s { get; set; }
+            public int Over30s { get; set; }
+        }
+
+    }
 
     public class LoadListCallViewModel
     {
