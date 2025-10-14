@@ -1351,10 +1351,11 @@ namespace OceanEduSlide.DAL
             var listbcnvReset = _unitOfWork.ReportDataRepository.Get(a => (a.ReportCategoryId == 88 || a.ReportCategoryId == 96 || a.ReportCategoryId == 103) && a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
             var listttWeeks = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Month == day.Month && a.Year == day.Year && a.HistoryUserId != null);
             var listReportCategoryIdCN = new List<int> { 30, 31, 32, 35, 36, 45, 58, 60, 62, 64, 66, 68, 71, 73, 76, 40, 43, 119, 117 };
+            var listgroupDiscount = _unitOfWork.GroupDiscountRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
 
-            //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
-            //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
-            //listReportCategoryIdCN.AddRange(listIdChild);
+            var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
+            var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id).ToList();
+            listReportCategoryIdCN.AddRange(listIdChild);
 
             var listBCCN = _unitOfWork.ReportDataRepository.Get(a => a.Month == day.Month && a.Year == day.Year && listReportCategoryIdCN.Contains(a.ReportCategoryId));
             var listReportCategoryIdNV = new List<int> { 95, 96, 88, 111, 113, 114, 115, 103 };
@@ -1365,10 +1366,7 @@ namespace OceanEduSlide.DAL
             var endDayOfMonth = new DateTime(day.Year, day.Month, DateTime.DaysInMonth(day.Year, day.Month));
 
             //var listDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && DbFunctions.TruncateTime(a.StartDate) <= firstDayOfMonth && DbFunctions.TruncateTime(a.EndDate) >= endDayOfMonth).AsNoTracking().ToList();
-            //var listgroupDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
 
-            //var listCategoryCTUD = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.Group == 8).AsNoTracking().ToList();
-            //var listIdChild = listCategoryCTUD.Where(a => a.ReportCategoryId != null).Select(a => a.Id);
             foreach (var mnv in listMaNV)
             {
                 //Reset thực đạt NV về 0
@@ -1387,6 +1385,7 @@ namespace OceanEduSlide.DAL
             }
 
             var listIdReset = new List<int> { 35, 40, 43, 119, 78, 80, 82, 84 };
+            listIdReset.AddRange(listIdChild);
             //listIdReset.AddRange(listIdChild);
             var listbccnReset = _unitOfWork.ReportDataRepository.Get(a => listIdReset.Contains(a.ReportCategoryId) && a.Month == day.Month && a.Year == day.Year);
 
@@ -1651,40 +1650,43 @@ namespace OceanEduSlide.DAL
 
                 //Phân loại doanh thu theo CT ưu đãi
 
-                //var idCategoryCTUD = 0;
+                var idCategoryCTUD = 0;
+                var phanloai = listgroupDiscount.FirstOrDefault(a => item.UD_NhomUDFINAL != null && item.UD_NhomUDFINAL.Contains(a.Year.ToString()) && item.UD_NhomUDFINAL.Contains(a.SoQD))?.PhanLoai;
+                if (phanloai != null)
+                {
+                    var categoryCTUDChild = listCategoryCTUD.FirstOrDefault(a => a.CategoryParent != null && a.CategoryParent.Name.ToLower().Contains(phanloai.ToLower()));
 
-                //var phanloai = listDiscount.FirstOrDefault(a => a.Username == item.UD_FINAL)?.PhanLoai;
-                //var categoryCTUDChild = listCategoryCTUD.FirstOrDefault(a => a.CategoryParent != null && a.CategoryParent.Name == phanloai);
+                    if (categoryCTUDChild != null)
+                        idCategoryCTUD = categoryCTUDChild.Id;
+                    if (idCategoryCTUD != 0)
+                    {
+                        var bcPhanLoaiDthu = listBCCN.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.OfficeId == office.Id);
+                        if (bcPhanLoaiDthu == null)
+                            bcPhanLoaiDthu = bcList.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
+                        if (bcPhanLoaiDthu == null)
+                        {
+                            bcPhanLoaiDthu = new ReportData()
+                            {
+                                Sort = 1,
+                                Month = day.Month,
+                                Year = day.Year,
+                                ReportCategoryId = idCategoryCTUD,
+                                Data = (item.SUD ?? 0).ToString("N0"),
+                                DataReal = item.SUD,
+                                OfficeId = office.Id,
+                            };
+                            bcList.Add(bcPhanLoaiDthu);
+                        }
+                        else
+                        {
+                            if (bcPhanLoaiDthu.DataReal == null)
+                                bcPhanLoaiDthu.DataReal = 0;
+                            bcPhanLoaiDthu.DataReal += item.SUD ?? 0;
+                            bcPhanLoaiDthu.Data = (bcPhanLoaiDthu.DataReal ?? 0).ToString("N0");
+                        }
+                    }
+                }
 
-                //if (categoryCTUDChild != null)
-                //    idCategoryCTUD = categoryCTUDChild.Id;
-                //if (idCategoryCTUD != 0)
-                //{
-                //    var bcPhanLoaiDthu = listBCCN.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.OfficeId == office.Id);
-                //    if (bcPhanLoaiDthu == null)
-                //        bcPhanLoaiDthu = bcList.FirstOrDefault(a => a.ReportCategoryId == idCategoryCTUD && a.Month == day.Month && a.Year == day.Year && a.OfficeId == office.Id);
-                //    if (bcPhanLoaiDthu == null)
-                //    {
-                //        bcPhanLoaiDthu = new ReportData()
-                //        {
-                //            Sort = 1,
-                //            Month = day.Month,
-                //            Year = day.Year,
-                //            ReportCategoryId = idCategoryCTUD,
-                //            Data = (item.SUD ?? 0).ToString("N0"),
-                //            DataReal = item.SUD,
-                //            OfficeId = office.Id,
-                //        };
-                //        bcList.Add(bcPhanLoaiDthu);
-                //    }
-                //    else
-                //    {
-                //        if (bcPhanLoaiDthu.DataReal == null)
-                //            bcPhanLoaiDthu.DataReal = 0;
-                //        bcPhanLoaiDthu.DataReal += item.SUD ?? 0;
-                //        bcPhanLoaiDthu.Data = (bcPhanLoaiDthu.DataReal ?? 0).ToString("N0");
-                //    }
-                //}
 
                 if (!string.IsNullOrEmpty(item.MaNVChotSale))
                 {

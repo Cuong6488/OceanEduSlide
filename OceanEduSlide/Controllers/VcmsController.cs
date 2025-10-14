@@ -1943,9 +1943,9 @@ namespace OceanEduSlide.Controllers
             var users = _unitOfWork.UserRepository.Get();
             foreach (var user in users)
             {
-                user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
-                user.OldAcount = true;
-                user.SaleKit = true;
+                //user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
+                //user.OldAcount = true;
+                //user.SaleKit = true;
             }
             _unitOfWork.Save();
             return RedirectToAction("ListUser");
