@@ -935,7 +935,6 @@ namespace OceanEduSlide.DAL
             _unitOfWork.Save();
         }
 
-
         public async Task SyncUserAsync()
         {
             await Task.Run(() =>

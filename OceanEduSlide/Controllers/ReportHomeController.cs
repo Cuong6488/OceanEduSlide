@@ -1014,7 +1014,7 @@ namespace OceanEduSlide.Controllers
 
             var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => DbFunctions.TruncateTime(a.CallDate) >= startDate && DbFunctions.TruncateTime(a.CallDate) <= endDate && a.HistoryUserId == userId).AsNoTracking().ToList();
             var listDate = new List<DateTime>();
-            for(var day = startDate; day <= endDate; day = day.AddDays(1))
+            for (var day = startDate; day <= endDate; day = day.AddDays(1))
             {
                 listDate.Add(day);
             }
@@ -1082,139 +1082,75 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-        public ActionResult ChangeCallLogDataCN(int officeId)
-        {
-            var o = _unitOfWork.OfficeRepository.GetById(officeId);
-            if (o == null)
-                return Content("không có CN " + officeId);
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == officeId);
-            var count = 0;
-            foreach (var h in historyUsers)
-            {
-                var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
-                && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
-                foreach (var c in calllogs)
-                {
-                    c.HistoryUserId = h.Id;
-                    count++;
-                }
-            }
-            _unitOfWork.Save();
-            return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name + ": " + count + " cuộc gọi");
+        //public ActionResult ChangeCallLogDataCN(int officeId)
+        //{
+        //    var o = _unitOfWork.OfficeRepository.GetById(officeId);
+        //    if (o == null)
+        //        return Content("không có CN " + officeId);
+        //    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == officeId);
+        //    var count = 0;
+        //    foreach (var h in historyUsers)
+        //    {
+        //        var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+        //        && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+        //        foreach (var c in calllogs)
+        //        {
+        //            c.HistoryUserId = h.Id;
+        //            count++;
+        //        }
+        //    }
+        //    _unitOfWork.Save();
+        //    return Content("Đã chuyển dữ liệu cuộc gọi CN " + o.Name + ": " + count + " cuộc gọi");
 
-        }
-        public ActionResult ChangeCallLogDataAll()
-        {
-            var os = _unitOfWork.OfficeRepository.GetQuery();
-            var count = 0;
-            foreach (var o in os)
-            {
-                var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == o.Id);
-                foreach (var h in historyUsers)
-                {
-                    var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
-                    && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
-                    foreach (var c in calllogs)
-                    {
-                        c.HistoryUserId = h.Id;
-                        count++;
-                    }
-                }
-            }
+        //}
+        //public ActionResult ChangeCallLogDataAll()
+        //{
+        //    var os = _unitOfWork.OfficeRepository.GetQuery();
+        //    var count = 0;
+        //    foreach (var o in os)
+        //    {
+        //        var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.OfficeId == o.Id);
+        //        foreach (var h in historyUsers)
+        //        {
+        //            var calllogs = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUser.UserId == h.UserId && a.HistoryUser.TypeUser == h.TypeUser && a.HistoryUser.Status == h.Status
+        //            && a.HistoryUser.Month == h.Month && a.HistoryUser.Year == h.Year && a.HistoryUser.OfficeId == null);
+        //            foreach (var c in calllogs)
+        //            {
+        //                c.HistoryUserId = h.Id;
+        //                count++;
+        //            }
+        //        }
+        //    }
 
-            _unitOfWork.Save();
-            return Content("Đã chuyển dữ liệu cuộc gọi CN All: " + count + " cuộc gọi");
+        //    _unitOfWork.Save();
+        //    return Content("Đã chuyển dữ liệu cuộc gọi CN All: " + count + " cuộc gọi");
 
-        }
+        //}
 
-        public ActionResult ChangeCallLogData(int day)
-        {
-            for (int i = 0; i < day; i++) // ví dụ 30 ngày gần đây
-            {
-                var date = DateTime.Today.AddDays(-i);
-                string sql = $@"
-    UPDATE CallLogs
-    SET HistoryUserId = (
-        SELECT TOP 1 h.Id
-        FROM HistoryUsers h
-        WHERE h.UserId = CallLogs.UserId
-          AND h.DayStart <= CallLogs.CallDate
-          AND (h.DayEnd IS NULL OR h.DayEnd >= CallLogs.CallDate)
-        ORDER BY 
-CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
-        h.DayEnd ASC  
-    )
-    WHERE HistoryUserId IS NULL AND CAST(CallDate AS DATE) = '{date:yyyy-MM-dd}'";
+        //        public ActionResult ChangeCallLogData(int day)
+        //        {
+        //            for (int i = 0; i < day; i++) // ví dụ 30 ngày gần đây
+        //            {
+        //                var date = DateTime.Today.AddDays(-i);
+        //                string sql = $@"
+        //    UPDATE CallLogs
+        //    SET HistoryUserId = (
+        //        SELECT TOP 1 h.Id
+        //        FROM HistoryUsers h
+        //        WHERE h.UserId = CallLogs.UserId
+        //          AND h.DayStart <= CallLogs.CallDate
+        //          AND (h.DayEnd IS NULL OR h.DayEnd >= CallLogs.CallDate)
+        //        ORDER BY 
+        //CASE WHEN h.DayEnd IS NULL THEN 1 ELSE 0 END,
+        //        h.DayEnd ASC  
+        //    )
+        //    WHERE HistoryUserId IS NULL AND CAST(CallDate AS DATE) = '{date:yyyy-MM-dd}'";
 
-                _unitOfWork.ExecuteSqlCommand(sql);
-            }
-            return Content("Đã chuyển dữ liệu cuộc gọi");
+        //                _unitOfWork.ExecuteSqlCommand(sql);
+        //            }
+        //            return Content("Đã chuyển dữ liệu cuộc gọi");
 
-        }
-        public async Task<ActionResult> TestSync()
-        {
-            var service = new CallLogService();
-            await service.SyncRecentlyAsync();
-            return Content("Đã đồng bộ thủ công.");
-        }
-        public async Task<ActionResult> SyncCustom(int month, int day)
-        {
-            var service = new CallLogService();
-            await service.SyncCusTom(month, day);
-            return Content("Đã đồng bộ 7 ngày. " + day + " - " + month);
-        }
-        public async Task<ActionResult> CheckCountCallLog()
-        {
-            string user = "lvd";
-            string pass = "qazplm123`$%^";
-            string baseUrl = "https://voip.ocean.edu.vn/api/report.php";
-
-            using (var http = new HttpClient()) // dùng một lần
-            {
-
-                for (int i = 17; i <= 31; i++)
-                {
-                    DateTime date = new DateTime(2025, 8, i);
-                    string tbegin = date.ToString("yyyy/MM/dd");
-                    string tend = date.AddDays(1).ToString("yyyy/MM/dd");
-
-                    string url = $"{baseUrl}?user={user}&pass={Uri.EscapeDataString(pass)}&tbegin={tbegin}&tend={tend}&type=1";
-
-                    try
-                    {
-                        var json = await http.GetStringAsync(url);
-
-                        if (string.IsNullOrWhiteSpace(json))
-                        {
-                            continue;
-                        }
-
-                        var allLogs = JsonConvert.DeserializeObject<List<CallLog>>(json);
-
-                        if (allLogs == null || allLogs.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        // Dùng LINQ một lần cho cả hai kết quả
-                        var filteredLogs = allLogs.Where(a => a.Exten == "25050544").ToList();
-                        int totalCount = filteredLogs.Count;
-                        int count60s = filteredLogs.Count(a => a.BillSec >= 60);
-                    }
-                    catch (JsonException jsonEx)
-                    {
-                    }
-                    catch (HttpRequestException httpEx)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-            }
-
-            return Content("Checked");
-        }
+        //        }
 
 
         #endregion

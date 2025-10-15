@@ -28,6 +28,7 @@ using ImageResizer.ExtensionMethods;
 using Microsoft.IdentityModel.Tokens;
 using OceanEduSlide.EnumHelpers;
 using System.Text;
+using System.Threading.Tasks;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
@@ -4222,6 +4223,26 @@ namespace OceanEduSlide.Controllers
         }
         #endregion
 
+        #region CallLogCustom
+        public async Task<ActionResult> TestSync()
+        {
+            var service = new CallLogService();
+            await service.SyncRecentlyAsync();
+            return Content("Đã đồng bộ 7 ngày gần đây");
+        }
+        public async Task<ActionResult> SyncCustom(int month, int day)
+        {
+            var service = new CallLogService();
+            await service.SyncCusTom(month, day);
+            return Content("Đã đồng bộ 7 ngày. " + day + " - " + month);
+        }
+        public async Task<ActionResult> SyncDuplicate()
+        {
+            var service = new CallLogService();
+            await service.SyncDuplicateAsync();
+            return Content("Chuyển thành công cuộc gọi của các nhân sự tháng có cùng mã nhân viên");
+        }
+        #endregion
         public static string GetEnumDisplayName(Enum enumValue)
         {
             var displayAttr = enumValue.GetType()

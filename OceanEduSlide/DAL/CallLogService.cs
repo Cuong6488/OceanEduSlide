@@ -44,8 +44,8 @@ namespace OceanEduSlide.DAL
         }
         public async Task SyncTodayAsync()
         {
-                DateTime day = DateTime.Today;
-                await FetchAndSaveLogsAsync(day);
+            DateTime day = DateTime.Today;
+            await FetchAndSaveLogsAsync(day);
         }
         private async Task FetchAndSaveLogsAsync(DateTime day)
         {
@@ -112,7 +112,7 @@ namespace OceanEduSlide.DAL
                             if (userDict.TryGetValue(log.Exten, out var userId))
                             {
                                 var historyUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == userId && a.Month == day.Month && a.Year == day.Year && a.DayStart <= day && (a.DayEnd == null
-                                || (a.DayEnd != null && a.DayEnd.Value >= day)), q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
+                                || (a.DayEnd != null && a.DayEnd.Value > day)), q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).FirstOrDefault();
 
                                 if (historyUser != null)
                                 {
@@ -155,6 +155,45 @@ namespace OceanEduSlide.DAL
                     logger.Error("Loi xay ra: " + ex.Message + day.ToString("dd/MM/yyyy"));
                 }
             }
+        }
+        public async Task SyncDuplicateAsync()
+        {
+            await Task.Run(() =>
+            {
+                FetchAndSaveLogsDuplicateAsync();
+            });
+        }
+        public void FetchAndSaveLogsDuplicateAsync()
+        {
+            var thisMonth = DateTime.Now.Month;
+            var thisYear = DateTime.Now.Year;
+            var duplicateUserIds = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == thisMonth && a.Year == thisYear).GroupBy(a => a.UserId).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+
+            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == thisMonth && a.Year == thisYear && duplicateUserIds.Contains(a.UserId)).Select(a => new { a.Id, a.DayStart, a.DayEnd, a.UserId, a.OfficeId, a.Status }).ToList();
+            foreach (var item in listHistoryUser)
+            {
+                if (item.Status == StatusUser.Active)
+                {
+                    var oldPosittion = listHistoryUser.Where(a => a.Status == StatusUser.Transfer && a.UserId == item.UserId).OrderByDescending(a => a.DayEnd).FirstOrDefault();
+                    if (oldPosittion != null)
+                    {
+
+                    }
+
+                }
+            }
+            var listDuplicateCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId != null && (DbFunctions.TruncateTime(a.HistoryUser.DayStart) > DbFunctions.TruncateTime(a.CallDate)
+            || (a.HistoryUser.DayEnd != null && (DbFunctions.TruncateTime(a.HistoryUser.DayEnd) <= DbFunctions.TruncateTime(a.CallDate)))) && a.CallDate.Month == thisMonth && a.CallDate.Year == thisYear).ToList();
+            foreach (var callLog in listDuplicateCallLog)
+            {
+                var historyUser = listHistoryUser.Where(a => a.UserId == callLog.HistoryUser.UserId && a.DayStart.Date <= callLog.CallDate.Date && (a.DayEnd == null
+                                || (a.DayEnd != null && a.DayEnd.Value > callLog.CallDate.Date))).OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null).FirstOrDefault();
+                if (historyUser != null)
+                {
+                    callLog.HistoryUserId = historyUser.Id;
+                }
+            }
+            _unitOfWork.Save();
         }
 
         #endregion
