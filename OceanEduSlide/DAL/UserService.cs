@@ -362,36 +362,51 @@ namespace OceanEduSlide.DAL
                         user.TypeUser = type;
                     }
                 }
-
-                var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
-
-                if (historyUser != null)
+                var historyUserOld = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.Status == StatusUser.Active);
+                if (historyUserOld != null)
                 {
-                    historyUser.Status = StatusUser.Active;
-                    historyUser.ZoneId = zone?.Id;
-                    historyUser.CDCM = item.MaChucDanhChuyenMon;
-                    historyUser.DayEnd = item.NgayNghiViec;
-                    historyUser.Sort = sort;
+                    historyUserOld.OfficeId = office?.Id;
+                    historyUserOld.ZoneId = zone?.Id;
+                    historyUserOld.CDCM = item.MaChucDanhChuyenMon;
+                    historyUserOld.TypeUser = (TypeUser)type;
+                    historyUserOld.DayStart = (DateTime)ngayVaoLam;
+                    historyUserOld.DayEnd = item.NgayNghiViec;
+                    historyUserOld.Sort = sort;
+
                 }
                 else
                 {
-                    var newhistoryUser = new HistoryUser
+                    var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.DayStart.Date == ngayVaoLam.Value.Date && a.TypeUser == type && ((office != null && a.OfficeId == office.Id) || (office == null && a.OfficeId == null)));
+
+                    if (historyUser != null)
                     {
-                        UserId = user.Id,
-                        Month = currentMonth,
-                        Year = currentYear,
-                        TypeUser = (TypeUser)type,
-                        OfficeId = office?.Id,
-                        ZoneId = zone?.Id,
-                        Status = StatusUser.Active,
-                        DayStart = (DateTime)ngayVaoLam,
-                        CDCM = item.MaChucDanhChuyenMon,
-                        DayEnd = item.NgayNghiViec,
-                        Sort = sort,
-                        Active = true
-                    };
-                    historyUserList.Add(newhistoryUser);
+                        historyUser.Status = StatusUser.Active;
+                        historyUser.ZoneId = zone?.Id;
+                        historyUser.CDCM = item.MaChucDanhChuyenMon;
+                        historyUser.DayEnd = item.NgayNghiViec;
+                        historyUser.Sort = sort;
+                    }
+                    else
+                    {
+                        var newhistoryUser = new HistoryUser
+                        {
+                            UserId = user.Id,
+                            Month = currentMonth,
+                            Year = currentYear,
+                            TypeUser = (TypeUser)type,
+                            OfficeId = office?.Id,
+                            ZoneId = zone?.Id,
+                            Status = StatusUser.Active,
+                            DayStart = (DateTime)ngayVaoLam,
+                            CDCM = item.MaChucDanhChuyenMon,
+                            DayEnd = item.NgayNghiViec,
+                            Sort = sort,
+                            Active = true
+                        };
+                        historyUserList.Add(newhistoryUser);
+                    }
                 }
+
             }
             foreach (var item in listAllNghiviec)
             {
