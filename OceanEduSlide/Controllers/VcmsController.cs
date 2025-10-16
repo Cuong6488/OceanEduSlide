@@ -4224,11 +4224,17 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region CallLogCustom
-        public async Task<ActionResult> TestSync()
+        public async Task<ActionResult> SyncRecently()
         {
             var service = new CallLogService();
             await service.SyncRecentlyAsync();
             return Content("Đã đồng bộ 7 ngày gần đây");
+        }
+        public async Task<ActionResult> SyncToDay()
+        {
+            var service = new CallLogService();
+            await service.SyncTodayAsync();
+            return Content("Đã đồng bộ ngày hôm nay");
         }
         public async Task<ActionResult> SyncCustom(int month, int day)
         {

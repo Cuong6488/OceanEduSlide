@@ -76,6 +76,7 @@
                             <div>@Html.ActionLink("Danh sách user", "ListUser", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Thêm mới user - Excel", "InsertUserExcel", "Vcms", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Danh sách nhân sự theo tháng", "ListHistoryUser", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Đồng bộ nhân sự HRM", "SyncUserAsync", "Revenue", null, new { @class = "text_link" })</div>
                             @*<div>@Html.ActionLink("Thêm mới chỉ tiêu", "CreateTarget", "Vcms", null, new { @class = "text_link" })</div>*@
                         </div>
                     </li>
@@ -111,7 +112,6 @@
                         <a class="root"><i class="fa-solid fa-money-bill icon"></i><span>Quản lý Doanh thu</span><i class="fas fa-caret-down"></i></a>
                         <div class="sub hidden">
                             <div>@Html.ActionLink("Cập nhật xếp hạng chi nhánh", "RankOffice", "Revenue", null, new { @class = "text_link" })</div>
-                            <div>@Html.ActionLink("Đồng bộ nhân sự", "SyncUserAsync", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Chỉ tiêu CN - NV", "TargetOffice", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Chỉ tiêu các NV đặc biệt - CN kèm theo", "TargetOffice2", "Revenue", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Phiếu thu đặc biệt", "PhieuThuTHDB", "Revenue", null, new { @class = "text_link" })</div>
@@ -133,6 +133,13 @@
                             <div>@Html.ActionLink("Báo cáo KD CN - NV", "Report", "Report", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Báo cáo - Lấy All dữ liệu theo Template", "ReportAllField", "Report", null, new { @class = "text_link" })</div>
                             <div>@Html.ActionLink("Khóa số liệu", "CreateLockImport", "Report", null, new { @class = "text_link" })</div>
+                        </div>
+                    </li>
+                    <li data-id="10">
+                        <a class="root"><i class="fal fa-file-edit icon"></i><span>Đồng bộ cuộc gọi</span><i class="fas fa-caret-down"></i></a>
+                        <div class="sub hidden">
+                            <div>@Html.ActionLink("Đồng bộ CG hôm nay", "SyncToDay", "Vcms", null, new { @class = "text_link" })</div>
+                            <div>@Html.ActionLink("Chuyển CG giữa các NS tháng", "SyncDuplicate", "Vcms", null, new { @class = "text_link" })</div>
                         </div>
                     </li>
                 </ul>

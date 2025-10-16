@@ -37,6 +37,15 @@ namespace OceanEduSlide.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime? CreateDate { get; set; } = DateTime.Now;
     }
+    public class HistoryUserDto
+    {
+        public int Id { get; set; }
+        public DateTime DayStart { get; set; }
+        public DateTime? DayEnd { get; set; }
+        public int UserId { get; set; }
+        public int? OfficeId { get; set; }
+        public StatusUser Status { get; set; }
+    }
     public enum StatusUser
     {
         [Display(Name = "Đang làm việc")]

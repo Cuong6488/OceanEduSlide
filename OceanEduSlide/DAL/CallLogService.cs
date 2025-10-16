@@ -169,17 +169,26 @@ namespace OceanEduSlide.DAL
             var thisYear = DateTime.Now.Year;
             var duplicateUserIds = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == thisMonth && a.Year == thisYear).GroupBy(a => a.UserId).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
 
-            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == thisMonth && a.Year == thisYear && duplicateUserIds.Contains(a.UserId)).Select(a => new { a.Id, a.DayStart, a.DayEnd, a.UserId, a.OfficeId, a.Status }).ToList();
+            var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == thisMonth && a.Year == thisYear && duplicateUserIds.Contains(a.UserId))
+                .Select(a => new HistoryUserDto
+                {
+                    Id = a.Id,
+                    DayStart = a.DayStart,
+                    DayEnd = a.DayEnd,
+                    UserId = a.UserId,
+                    OfficeId = a.OfficeId,
+                    Status = a.Status,
+                }).ToList();
+
             foreach (var item in listHistoryUser)
             {
                 if (item.Status == StatusUser.Active)
                 {
-                    var oldPosittion = listHistoryUser.Where(a => a.Status == StatusUser.Transfer && a.UserId == item.UserId).OrderByDescending(a => a.DayEnd).FirstOrDefault();
+                    var oldPosittion = listHistoryUser.Where(a => a.DayEnd != null && a.Status == StatusUser.Transfer && a.UserId == item.UserId).OrderByDescending(a => a.DayEnd).FirstOrDefault();
                     if (oldPosittion != null)
                     {
-
+                        item.DayStart = (DateTime)oldPosittion.DayEnd;
                     }
-
                 }
             }
             var listDuplicateCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId != null && (DbFunctions.TruncateTime(a.HistoryUser.DayStart) > DbFunctions.TruncateTime(a.CallDate)
