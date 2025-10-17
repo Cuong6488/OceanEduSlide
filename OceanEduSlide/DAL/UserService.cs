@@ -141,7 +141,7 @@ namespace OceanEduSlide.DAL
             var allZone = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
             //var allHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == currentMonth && a.Year == currentYear).AsNoTracking().ToList();
             var users = _unitOfWork.UserRepository.GetQuery().ToList();
-
+            //var usernews = new List<User>();
             var historyUserList = new List<HistoryUser>();
             //var userList = new List<User>();
             //var newRevenueList2 = new List<RevenueUser_Month>();
@@ -212,6 +212,10 @@ namespace OceanEduSlide.DAL
 
                     var sort = _userTypeService.GetSort((TypeUser)type);
                     var user = users.FirstOrDefault(a => a.MaNhanVien == nhanSuNguon.MaNhanSu);
+                    //if (user == null)
+                    //{
+                    //    user = usernews.FirstOrDefault(a => a.MaNhanVien == nhanSuNguon.MaNhanSu);
+                    //}
                     //if (user != null)
                     //{
                     //    user.CDCM = item.MaChucDanh;
@@ -236,6 +240,7 @@ namespace OceanEduSlide.DAL
                         _unitOfWork.UserRepository.Insert(newUser);
                         _unitOfWork.Save();
                         users.Add(newUser);
+
                         user = newUser;
                     }
                     else

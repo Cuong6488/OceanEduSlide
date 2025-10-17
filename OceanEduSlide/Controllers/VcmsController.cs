@@ -639,6 +639,41 @@ namespace OceanEduSlide.Controllers
             return Json(new { status = true, msg = "Xóa tài khoản thành công" });
 
         }
+        public ActionResult DeleteUserx2MNS()
+        {
+            var users = _unitOfWork.UserRepository.GetQuery().GroupBy(a => a.MaNhanVien).Where(g => g.Count() > 1).Select(g => g.OrderByDescending(u => u.Id).FirstOrDefault());
+            var count = users.Count();
+            foreach (var user in users)
+            {
+                var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list0 = _unitOfWork.ReportDataRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list1 = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list2 = _unitOfWork.RevenueUser_DayOfWeek_RealRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list3 = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list4 = _unitOfWork.RevenueUser_Month_BMRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list5 = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list6 = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(a => a.HistoryUserId != null && a.HistoryUser.UserId == user.Id);
+                var list7 = _unitOfWork.ProposalRepository.GetQuery(a => a.UserId2 != null && a.UserId2 == user.Id);
+                var list8 = _unitOfWork.DebtRepository.GetQuery(a => a.UserId == user.Id);
+                var list9 = _unitOfWork.HistoryUserRepository.GetQuery(a => a.UserId == user.Id);
+
+                listCallLog.Delete();
+                list0.Delete();
+                list1.Delete();
+                list2.Delete();
+                list3.Delete();
+                list4.Delete();
+                list5.Delete();
+                list6.Delete();
+                list7.Delete();
+                list8.Delete();
+                list9.Delete();
+                _unitOfWork.UserRepository.Delete(user);
+            }
+            _unitOfWork.Save();
+            return Content("Xóa tài khoản thành công" + count + "TK");
+
+        }
         public ActionResult ChangeZoneIdsASM()
         {
             var users = _unitOfWork.UserRepository.GetQuery(a => a.TypeUser == TypeUser.ASM && a.ZoneId != null);
@@ -1944,9 +1979,9 @@ namespace OceanEduSlide.Controllers
             var users = _unitOfWork.UserRepository.Get();
             foreach (var user in users)
             {
-                //user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
-                //user.OldAcount = true;
-                //user.SaleKit = true;
+                user.Password = HtmlHelpers.ComputeHash("vico", "SHA256", null);
+                user.OldAcount = true;
+                user.SaleKit = true;
             }
             _unitOfWork.Save();
             return RedirectToAction("ListUser");
