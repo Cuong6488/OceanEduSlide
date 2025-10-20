@@ -153,7 +153,6 @@ namespace OceanEduSlide.DAL
             foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
             {
                 var NsDieuchuyen = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a != item); /*(bản ghi B)*/
-
                 if (NsDieuchuyen != null)
                 {
                     var nhanSuNguon = DSNhanSuNguons.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
