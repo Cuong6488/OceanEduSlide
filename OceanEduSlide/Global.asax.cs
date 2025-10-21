@@ -56,7 +56,7 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(3, 30)
+                s => s.ToRunEvery(1).Days().At(22, 40)
             );
             // đồng bộ cuộc gọi 7 ngày trước
             JobManager.AddJob(
@@ -75,7 +75,7 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(12, 30)
+                s => s.ToRunEvery(1).Days().At(12, 40)
             );
             // chuyển cuộc gọi giữa các nhân sự tháng (do cập nhật điều chuyển chậm)
             JobManager.AddJob(
@@ -94,7 +94,7 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(12, 50)
+                s => s.ToRunEvery(1).Days().At(13, 15)
             );
             // chuyển cuộc gọi giữa các nhân sự tháng (do cập nhật điều chuyển chậm)
             JobManager.AddJob(
@@ -113,29 +113,49 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(3, 50)
+                s => s.ToRunEvery(1).Days().At(23, 30)
             );
-            for (int h = 7; h < 24; h++)
+
+            // đồng bộ User
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var userService = new UserService();
+                            await userService.SyncUserAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(12, 20)
+            );
+            // đồng bộ User
+            JobManager.AddJob(
+                () =>
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var userService = new UserService();
+                            await userService.SyncUserAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(22, 20)
+            );
+            for (int h = 7; h < 24; h += 2)
             {
-                // đồng bộ User
-                JobManager.AddJob(
-                    () =>
-                    {
-                        Task.Run(async () =>
-                        {
-                            try
-                            {
-                                var userService = new UserService();
-                                await userService.SyncUserAsync();
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
-                            }
-                        });
-                    },
-                    s => s.ToRunEvery(1).Days().At(h, 0)
-                );
                 // đồng bộ cuộc gọi ngày hôm nay
                 JobManager.AddJob(
                     () =>
@@ -153,7 +173,7 @@ namespace OceanEduSlide
                             }
                         });
                     },
-                    s => s.ToRunEvery(1).Days().At(h, 10)
+                    s => s.ToRunEvery(1).Days().At(h, 30)
                 );
                 // đồng bộ phiếu thu
                 JobManager.AddJob(
@@ -172,7 +192,7 @@ namespace OceanEduSlide
                             }
                         });
                     },
-                    s => s.ToRunEvery(1).Days().At(h, 20)
+                    s => s.ToRunEvery(1).Days().At(h, 35)
                 );
             }
 

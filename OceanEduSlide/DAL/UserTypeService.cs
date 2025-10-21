@@ -41,7 +41,8 @@ namespace OceanEduSlide.DAL
         { "ATL", TypeUser.ALT },
         { "CM", TypeUser.CM },
         { "TTL", TypeUser.TTL },
-        { "AEC", TypeUser.AEC }
+        { "AEC", TypeUser.AEC },
+        { "AAL", TypeUser.AEC },
         };
 
         //private static readonly Dictionary<string, StatusUser> _statusUserMap =

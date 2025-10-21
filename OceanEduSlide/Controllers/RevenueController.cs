@@ -430,7 +430,7 @@ namespace OceanEduSlide.Controllers
                     var tbl2 = result.Tables[1];
                     var historyUserList = new List<HistoryUser>();
                     var listHistoryUser = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt);
-                    var users = _unitOfWork.UserRepository.Get(a => a.Active);
+                    var users = _unitOfWork.UserRepository.GetQuery().ToList();
 
                     var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.HistoryUser).FirstOrDefault();
                     if (lockImport != null && Role != RoleAdmin.Admin)
@@ -676,6 +676,7 @@ namespace OceanEduSlide.Controllers
                                 {
                                     _unitOfWork.UserRepository.Insert(newUser);
                                     _unitOfWork.Save();
+                                    users.Add(newUser);
                                     user = newUser;
                                 }
                                 catch (Exception e)
@@ -837,7 +838,7 @@ namespace OceanEduSlide.Controllers
                                 return View();
                             }
                         var historyUserOld = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.Status == StatusUser.Active);
-
+                        // Ghi đè ngày vào làm
                         if (statusUser == StatusUser.Active && historyUserOld != null)
                         {
                             historyUserOld.OfficeId = office?.Id;

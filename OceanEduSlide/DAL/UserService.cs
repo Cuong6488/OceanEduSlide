@@ -115,9 +115,8 @@ namespace OceanEduSlide.DAL
                 default:
                     break;
             }
-            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth)) && allCDCM.Contains(a.MaChucDanhChuyenMon)).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
-
+            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth))/* && allCDCM.Contains(a.MaChucDanhChuyenMon)*/).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => /*allCDCM.Contains(a.MaChucDanh) ||*/ a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
             // List User tháng
@@ -136,6 +135,8 @@ namespace OceanEduSlide.DAL
 
             // Tổng hợp danh sách NS đã nghỉ
             var listAllNghiviec = listNSStop_danghi.Concat(listNSTS);
+
+
 
             var allOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
             var allZone = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
@@ -168,6 +169,16 @@ namespace OceanEduSlide.DAL
                         logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                         continue;
                     }
+                    var type = _userTypeService.GetTypeUser(NsDieuchuyen.MaChucDanh);
+                    if (type == null)
+                    {
+                        logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Khong ton tai CDCM: " + nhanSuNguon.MaChucDanhChuyenMon);
+                        var historyUserWrongTypeUser = listHistoryUser.FirstOrDefault(a => a.Status == StatusUser.Transfer && a.User.MaNhanVien == nhanSuNguon.MaNhanSu);
+                        if (historyUserWrongTypeUser != null)
+                            historyUserWrongTypeUser.Active = false;
+
+                        continue;
+                    }
                     if (nhanSuNguon.NgayVaoLam == null)
                     {
                         logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam null");
@@ -180,12 +191,6 @@ namespace OceanEduSlide.DAL
                     if (string.IsNullOrEmpty(nhanSuNguon.MaChucDanhChuyenMon))
                     {
                         logger.Error("Nhan su " + nhanSuNguon.MaChucDanhChuyenMon + ": MaChucDanhChuyenMon null");
-                        continue;
-                    }
-                    var type = _userTypeService.GetTypeUser(NsDieuchuyen.MaChucDanh);
-                    if (type == null)
-                    {
-                        logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Khong ton tai CDCM: " + nhanSuNguon.MaChucDanhChuyenMon);
                         continue;
                     }
                     Office office = null;
@@ -280,10 +285,20 @@ namespace OceanEduSlide.DAL
             foreach (var item in listAllDanglamviec)
             {
                 // Xử lý ns đang làm việc
-
                 if (string.IsNullOrEmpty(item.MaNhanSu))
                 {
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
+                    continue;
+                }
+                var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
+                if (type == null)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Khong ton tai CDCM: " + item.MaChucDanhChuyenMon);
+                    // xóa các ns đang làm việc do sai phân quyền
+                    var historyUserWrongTypeUser = listHistoryUser.FirstOrDefault(a => a.Status == StatusUser.Active && a.User.MaNhanVien == item.MaNhanSu);
+                    if (historyUserWrongTypeUser != null)
+                        historyUserWrongTypeUser.Active = false;
+
                     continue;
                 }
                 if (item.NgayVaoLam == null)
@@ -298,12 +313,6 @@ namespace OceanEduSlide.DAL
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": MaChucDanhChuyenMon null");
-                    continue;
-                }
-                var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
-                if (type == null)
-                {
-                    logger.Error("Nhan su " + item.MaNhanSu + ": Khong ton tai CDCM: " + item.MaChucDanhChuyenMon);
                     continue;
                 }
                 Office office = null;
@@ -376,7 +385,6 @@ namespace OceanEduSlide.DAL
                     historyUserOld.DayStart = (DateTime)ngayVaoLam;
                     historyUserOld.DayEnd = item.NgayNghiViec;
                     historyUserOld.Sort = sort;
-
                 }
                 else
                 {
@@ -420,6 +428,15 @@ namespace OceanEduSlide.DAL
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                     continue;
                 }
+                var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
+                if (type == null)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Khong ton tai CDCM: " + item.MaChucDanhChuyenMon);
+                    var historyUserWrongTypeUser = listHistoryUser.FirstOrDefault(a => a.Status == StatusUser.InActive && a.User.MaNhanVien == item.MaNhanSu);
+                    if (historyUserWrongTypeUser != null)
+                        historyUserWrongTypeUser.Active = false;
+                    continue;
+                }
                 if (item.NgayVaoLam == null)
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam null");
@@ -432,12 +449,6 @@ namespace OceanEduSlide.DAL
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
                 {
                     logger.Error("Nhan su " + item.MaNhanSu + ": MaChucDanhChuyenMon null");
-                    continue;
-                }
-                var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
-                if (type == null)
-                {
-                    logger.Error("Nhan su " + item.MaNhanSu + ": Khong ton tai CDCM: " + item.MaChucDanhChuyenMon);
                     continue;
                 }
                 DateTime? ngayNghiViec = null;
