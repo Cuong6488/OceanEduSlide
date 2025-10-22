@@ -41,7 +41,9 @@ namespace OceanEduSlide.DAL
             }
             var password = HtmlHelpers.ComputeHash(config.Password ?? "AUG2025@#", "SHA256", null);
 
-            var allCDCM = _userTypeService.GetAllCDCM();
+            //var allCDCM = _userTypeService.GetAllCDCM();
+            //var allCDCM = new HashSet<string>(_userTypeService.GetAllCDCM());
+
             var today = DateTime.Now.Date;
             var currentMonth = today.Month;
             var currentYear = today.Year;
@@ -116,7 +118,9 @@ namespace OceanEduSlide.DAL
                     break;
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth))/* && allCDCM.Contains(a.MaChucDanhChuyenMon)*/).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => /*allCDCM.Contains(a.MaChucDanh) ||*/ a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
+            //var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.OrderByDescending(a => a.NgayApDung).ToList();
+
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
             // List User tháng
