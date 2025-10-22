@@ -29,6 +29,8 @@ namespace OceanEduSlide.DAL
         { "NDDM", TypeUser.ASM },
         { "GĐTS", TypeUser.HO },
         { "EC", TypeUser.EC },
+        { "TELES", TypeUser.EC },
+        { "APrO", TypeUser.EC },
         { "BM", TypeUser.BM },
         { "BDM", TypeUser.BM },
         { "ABM", TypeUser.BM },
