@@ -388,10 +388,10 @@ namespace OceanEduSlide.Controllers
             && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
             && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
 
-            if (User.TypeUser != TypeUser.ASM)
-            {
-                historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
-            }
+            //if (User.TypeUser != TypeUser.ASM)
+            //{
+            //    historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
+            //}
             if (UserType != null)
             {
                 historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
