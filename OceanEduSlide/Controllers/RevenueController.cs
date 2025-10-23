@@ -811,7 +811,6 @@ namespace OceanEduSlide.Controllers
                                 }
                             }
                         }
-
                         var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                         if (string.IsNullOrEmpty(dayStart))
                         {
