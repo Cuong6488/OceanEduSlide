@@ -845,6 +845,7 @@ namespace OceanEduSlide.Controllers
                                 historyUser.OfficeId = office?.Id;
                                 historyUser.ZoneId = zone?.Id;
                                 historyUser.CDCM = cdcm;
+                                historyUser.DayReduce = dayReduce;
                                 historyUser.TypeUser = type;
                                 historyUser.DayStart = startDate;
                                 historyUser.Sort = sortValue;
