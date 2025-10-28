@@ -1619,7 +1619,7 @@ namespace OceanEduSlide.Controllers
                                 if (oldPosittion != null)
                                 {
                                     var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
-                                    var oldDayWork = oldDayFull - (oldDayFull / 7);
+                                    var oldDayWork = oldDayFull - (oldDayFull / 6);
                                     workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
                                 }
                                 else
@@ -1631,7 +1631,7 @@ namespace OceanEduSlide.Controllers
                                         ModelState.AddModelError("", @"Nhân viên " + historyUser.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
                                         return View();
                                     }
-                                    int soNgayNghi = soNgayLamViec / 7;
+                                    int soNgayNghi = soNgayLamViec / 6;
                                     workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
                                 }
 

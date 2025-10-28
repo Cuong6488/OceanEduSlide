@@ -699,7 +699,7 @@ namespace OceanEduSlide.DAL
                         if (oldPosittion != null)
                         {
                             var oldDayFull = (oldPosittion.DayEnd.Value - ngayBatDau).Days;
-                            var oldDayWork = oldDayFull - (oldDayFull / 7);
+                            var oldDayWork = oldDayFull - (oldDayFull / 6);
                             workingDayTT = Math.Max(workingDayFull - oldDayWork, 0);
                         }
                         else
@@ -711,7 +711,7 @@ namespace OceanEduSlide.DAL
                                 logger.Error("Nhan vien " + historyUser.User?.MaNhanVien + " co ngay vao lam > ngay nghi viec");
                                 continue;
                             }
-                            int soNgayNghi = soNgayLamViec / 7;
+                            int soNgayNghi = soNgayLamViec / 6;
                             workingDayTT = Math.Min(soNgayLamViec - soNgayNghi, workingDayFull);
                         }
                     }
