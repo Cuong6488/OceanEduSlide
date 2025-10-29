@@ -20,5 +20,6 @@ namespace OceanEduSlide.OEDongBo
         public string MaChucDanh { get; set; }
         public string Loai { get; set; }
         public string WorkPlaceName { get; set; }
+        public string PositionOld { get; set; }
     }
 }

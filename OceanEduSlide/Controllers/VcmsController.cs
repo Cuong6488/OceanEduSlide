@@ -1624,7 +1624,7 @@ namespace OceanEduSlide.Controllers
                                 }
                                 else
                                 {
-                                    DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                    DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
                                     int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                                     if (soNgayLamViec < 0)
                                     {

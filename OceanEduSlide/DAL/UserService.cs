@@ -189,7 +189,7 @@ namespace OceanEduSlide.DAL
                         continue;
                     }
                     var ngayVaoLam = nhanSuNguon.NgayVaoLam;
-                    var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                    var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                     if (logVaoLamLai != null)
                         ngayVaoLam = logVaoLamLai.NgayApDung;
                     if (string.IsNullOrEmpty(nhanSuNguon.MaChucDanhChuyenMon))
@@ -316,7 +316,7 @@ namespace OceanEduSlide.DAL
                     continue;
                 }
                 var ngayVaoLam = item.NgayVaoLam;
-                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
@@ -458,7 +458,7 @@ namespace OceanEduSlide.DAL
                     continue;
                 }
                 var ngayVaoLam = item.NgayVaoLam;
-                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && a.Loai == "VaoLamlai");
+                var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
                 if (string.IsNullOrEmpty(item.MaChucDanhChuyenMon))
@@ -704,7 +704,7 @@ namespace OceanEduSlide.DAL
                         }
                         else
                         {
-                            DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(currentYear, currentMonth, DateTime.DaysInMonth(currentYear, currentMonth));
+                            DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value : new DateTime(currentYear, currentMonth, DateTime.DaysInMonth(currentYear, currentMonth));
                             int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                             if (soNgayLamViec < 0)
                             {

@@ -636,10 +636,10 @@ namespace OceanEduSlide.Controllers
                 a.TypeUser != TypeUser.ASM
             );
 
-            if (User.TypeUser != TypeUser.ASM)
-            {
-                historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
-            }
+            //if (User.TypeUser != TypeUser.ASM)
+            //{
+            //    historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
+            //}
 
             if (UserType != null)
             {
@@ -688,7 +688,7 @@ namespace OceanEduSlide.Controllers
                     ZoneId = User.ZoneId;
                 }
             }
-            else
+            else if(User.TypeUser != TypeUser.HO)
             {
                 if (string.IsNullOrEmpty(User.OfficeIds))
                 {

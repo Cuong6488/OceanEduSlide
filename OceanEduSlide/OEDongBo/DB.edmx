@@ -72,6 +72,7 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.QuaTrinhCongTac' does not have
           <Property Name="MaChucDanh" Type="nvarchar" MaxLength="100" />
           <Property Name="Loai" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="WorkPlaceName" Type="nvarchar" MaxLength="500" />
+          <Property Name="PositionOld" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -107,7 +108,8 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a prima
     [QuaTrinhCongTac].[NgayApDung] AS [NgayApDung], 
     [QuaTrinhCongTac].[MaChucDanh] AS [MaChucDanh], 
     [QuaTrinhCongTac].[Loai] AS [Loai], 
-    [QuaTrinhCongTac].[WorkPlaceName] AS [WorkPlaceName]
+    [QuaTrinhCongTac].[WorkPlaceName] AS [WorkPlaceName], 
+    [QuaTrinhCongTac].[PositionOld] AS [PositionOld]
     FROM [dbo].[QuaTrinhCongTac] AS [QuaTrinhCongTac]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="ThaiSan" EntityType="Self.ThaiSan" store:Type="Tables" store:Schema="dbo">
@@ -191,6 +193,7 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a prima
           <Property Name="MaChucDanh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Loai" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="WorkPlaceName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PositionOld" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ThaiSan">
           <Key>
@@ -263,6 +266,7 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a prima
           <EntitySetMapping Name="QuaTrinhCongTacs">
             <EntityTypeMapping TypeName="DongBoTuyenSinhModel.QuaTrinhCongTac">
               <MappingFragment StoreEntitySet="QuaTrinhCongTac">
+                <ScalarProperty Name="PositionOld" ColumnName="PositionOld" />
                 <ScalarProperty Name="WorkPlaceName" ColumnName="WorkPlaceName" />
                 <ScalarProperty Name="Loai" ColumnName="Loai" />
                 <ScalarProperty Name="MaChucDanh" ColumnName="MaChucDanh" />

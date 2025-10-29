@@ -1031,7 +1031,7 @@ namespace OceanEduSlide.Controllers
                                     }
                                     else
                                     {
-                                        DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                        DateTime ngayKetThuc = historyUser.DayEnd != null ? historyUser.DayEnd.Value : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
                                         int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                                         if (soNgayLamViec < 0)
                                         {
@@ -1480,7 +1480,7 @@ namespace OceanEduSlide.Controllers
                                 }
                                 else
                                 {
-                                    DateTime ngayKetThuc = item.DayEnd != null ? item.DayEnd.Value.AddDays(-1) : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
+                                    DateTime ngayKetThuc = item.DayEnd != null ? item.DayEnd.Value : new DateTime(yearInt, monthInt, DateTime.DaysInMonth(yearInt, monthInt));
                                     // Số ngày làm việc + nghỉ
                                     int soNgayLamViec = (ngayKetThuc - ngayBatDau).Days + 1;
                                     if (soNgayLamViec < 0)
