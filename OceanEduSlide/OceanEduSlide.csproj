@@ -1572,7 +1572,6 @@
     <Content Include="Views\Home\Race.cshtml" />
     <Content Include="Views\Home\CourseOutline.cshtml" />
     <Content Include="Views\Vcms\UpdateUser.cshtml" />
-    <Content Include="Views\Vcms\ListFaceId.cshtml" />
     <Content Include="Views\Vcms\InsertOfficeExcel.cshtml" />
     <Content Include="Views\Vcms\ListDiscount.cshtml" />
     <Content Include="Views\Vcms\InsertDiscountExcel.cshtml" />
@@ -1632,16 +1631,13 @@
     <Content Include="Views\Revenue\ListRevenueOffice.cshtml" />
     <Content Include="Views\Revenue\TargetUser.cshtml" />
     <Content Include="Views\Revenue\ListRevenueUser.cshtml" />
-    <Content Include="Views\Revenue\RevenueUserWeek_Real.cshtml" />
     <Content Include="Views\Vcms\CreateProposalType.cshtml" />
     <Content Include="Views\Vcms\ListProposalType.cshtml" />
     <Content Include="Views\Vcms\UpdateProposalType.cshtml" />
     <Content Include="Views\Home\ChangePasswordRequired.cshtml" />
-    <Content Include="Views\Vcms\UnActiveUserExcel.cshtml" />
     <Content Include="Views\Event\LoadHistoryDedt.cshtml" />
     <Content Include="Views\Event\LoadHistoryEvent.cshtml" />
     <Content Include="Views\Home\BackToSchool.cshtml" />
-    <Content Include="Views\Vcms\InsertHistoryUser.cshtml" />
     <Content Include="Views\Vcms\ListHistoryUser.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueManager.cshtml" />
     <Content Include="Views\Event\EventManager.cshtml" />
@@ -1653,7 +1649,6 @@
     <Content Include="Views\Revenue\CreateWorkingDay.cshtml" />
     <Content Include="Views\Revenue\ListWorkingDay.cshtml" />
     <Content Include="Views\Revenue\UpdateWorkingDay.cshtml" />
-    <Content Include="Views\Vcms\InsertHistoryOfficeExcel.cshtml" />
     <Content Include="Views\Vcms\ListHistoryOffice.cshtml" />
     <Content Include="Views\TuyenSinh\ListTest.cshtml" />
     <Content Include="Views\Revenue\TargetOffice2.cshtml" />
