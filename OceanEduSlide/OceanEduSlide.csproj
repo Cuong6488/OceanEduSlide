@@ -664,6 +664,10 @@
     <Compile Include="Migrations\202510130826064_groupdiscount.Designer.cs">
       <DependentUpon>202510130826064_groupdiscount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202510310355532_dayreduceCG.cs" />
+    <Compile Include="Migrations\202510310355532_dayreduceCG.Designer.cs">
+      <DependentUpon>202510310355532_dayreduceCG.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1973,6 +1977,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202510130826064_groupdiscount.resx">
       <DependentUpon>202510130826064_groupdiscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202510310355532_dayreduceCG.resx">
+      <DependentUpon>202510310355532_dayreduceCG.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

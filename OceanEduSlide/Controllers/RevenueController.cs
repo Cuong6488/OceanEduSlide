@@ -559,6 +559,13 @@ namespace OceanEduSlide.Controllers
                             ModelState.AddModelError("", @"Sai định dạng cột Số ngày công giảm, dòng " + (i + 1));
                             return View();
                         }
+                        var dayReduceCGStr = tbl2.Rows[i][14].ToString().Trim();
+                        int dayReduceCG = 0;
+                        if (!string.IsNullOrEmpty(dayReduceCGStr) && !int.TryParse(dayReduceCGStr, out dayReduceCG))
+                        {
+                            ModelState.AddModelError("", @"Sai định dạng cột Số ngày giảm cuộc gọi, dòng " + (i + 1));
+                            return View();
+                        }
                         var sort = tbl2.Rows[i][11].ToString().Trim();
                         int sortValue = 0;
                         if (!string.IsNullOrEmpty(sort))
@@ -846,6 +853,7 @@ namespace OceanEduSlide.Controllers
                                 historyUser.ZoneId = zone?.Id;
                                 historyUser.CDCM = cdcm;
                                 historyUser.DayReduce = dayReduce;
+                                historyUser.DayReduceCG = dayReduceCG;
                                 historyUser.TypeUser = type;
                                 historyUser.DayStart = startDate;
                                 historyUser.Sort = sortValue;
@@ -863,6 +871,7 @@ namespace OceanEduSlide.Controllers
                                 historyUser.ZoneId = zone?.Id;
                                 historyUser.CDCM = cdcm;
                                 historyUser.DayReduce = dayReduce;
+                                historyUser.DayReduceCG = dayReduceCG;
                                 historyUser.Sort = sortValue;
                                 //historyUser.DayStart = startDate;
                                 if (!string.IsNullOrEmpty(dayEnd))
@@ -884,6 +893,7 @@ namespace OceanEduSlide.Controllers
                                     DayStart = startDate,
                                     CDCM = cdcm,
                                     DayReduce = dayReduce,
+                                    DayReduceCG = dayReduceCG,
                                     Active = true
                                 };
 
@@ -1045,6 +1055,10 @@ namespace OceanEduSlide.Controllers
                                 if (historyUser.DayReduce > 0)
                                 {
                                     workingDayTT -= historyUser.DayReduce ?? 0;
+                                }
+                                if (historyUser.DayReduceCG > 0)
+                                {
+                                    workingDayTT -= historyUser.DayReduceCG ?? 0;
                                 }
                                 int callTarget = 0;
                                 if (historyUser.DayStart.Month == monthInt || historyUser.DayStart.Month == lastMonth)

@@ -127,10 +127,7 @@
             <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
             <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
             <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
-            @if (Model.User.TypeUser == TypeUser.ASM)
-            {
-                <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
-            }
+            <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
             <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
             <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
             <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
@@ -248,14 +245,14 @@
                                     </tr>
                                 }
                                 @*@foreach (var _ in usersNoData)
-                                {
-                                    <tr class="tr-2">
-                                        @for (int j = 0; j < (cat.Count ?? 1); j++)
-                                        {
-                                            <td></td>
-                                        }
-                                    </tr>
-                                }*@
+                                    {
+                                        <tr class="tr-2">
+                                            @for (int j = 0; j < (cat.Count ?? 1); j++)
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+                                    }*@
                             </tbody>
                         </table>
                         i++;

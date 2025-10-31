@@ -15,6 +15,7 @@ using System.Data.Entity;
 using FluentScheduler;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using OceanEduSlide.Migrations;
 
 namespace OceanEduSlide.DAL
 {
@@ -164,6 +165,7 @@ namespace OceanEduSlide.DAL
                 FetchAndSaveLogsDuplicateAsync();
             });
         }
+
         public void FetchAndSaveLogsDuplicateAsync()
         {
             var thisMonth = DateTime.Now.Month;
@@ -180,7 +182,7 @@ namespace OceanEduSlide.DAL
                     OfficeId = a.OfficeId,
                     Status = a.Status,
                 }).ToList();
-
+            // lấy ngày làm việc thực tế từ vị trí cũ (điều chuyển)
             foreach (var item in listHistoryUser)
             {
                 if (item.Status == StatusUser.Active)
@@ -192,10 +194,32 @@ namespace OceanEduSlide.DAL
                     }
                 }
             }
-            var listDuplicateCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId != null && (DbFunctions.TruncateTime(a.HistoryUser.DayStart) > DbFunctions.TruncateTime(a.CallDate)
-            || (a.HistoryUser.DayEnd != null && (DbFunctions.TruncateTime(a.HistoryUser.DayEnd) <= DbFunctions.TruncateTime(a.CallDate)))) && a.CallDate.Month == thisMonth && a.CallDate.Year == thisYear).ToList();
+            // lấy ra những cuộc gọi có calldate lệch với ngày vào làm/ nghỉ việc của nhân viên
+            //var listDuplicateCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId != null && (DbFunctions.TruncateTime(a.HistoryUser.DayStart) > DbFunctions.TruncateTime(a.CallDate)
+            //|| (a.HistoryUser.DayEnd != null && (DbFunctions.TruncateTime(a.HistoryUser.DayEnd) <= DbFunctions.TruncateTime(a.CallDate)))) && a.CallDate.Month == thisMonth && a.CallDate.Year == thisYear).ToList();
+
+            var callLogs = _unitOfWork.CallLogRepository
+                .GetQuery(a => a.HistoryUserId != null
+                    && duplicateUserIds.Contains(a.HistoryUser.UserId)
+                    && a.CallDate.Month == thisMonth
+                    && a.CallDate.Year == thisYear)
+                .ToList();
+
+            // lọc các calllog bị lệch theo dữ liệu đã hiệu chỉnh
+            var listDuplicateCallLog = callLogs
+                .Where(a =>
+                {
+                    var history = listHistoryUser.FirstOrDefault(h => h.Id == a.HistoryUserId);
+                    if (history == null) return false;
+
+                    return history.DayStart.Date > a.CallDate.Date
+                        || (history.DayEnd != null && history.DayEnd.Value.Date <= a.CallDate.Date);
+                })
+                .ToList();
+
             foreach (var callLog in listDuplicateCallLog)
             {
+                // select historyuser chuẩn cho cuộc gọi
                 var historyUser = listHistoryUser.Where(a => a.UserId == callLog.HistoryUser.UserId && a.DayStart.Date <= callLog.CallDate.Date && (a.DayEnd == null
                                 || (a.DayEnd != null && a.DayEnd.Value > callLog.CallDate.Date))).OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null).FirstOrDefault();
                 if (historyUser != null)

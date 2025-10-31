@@ -29,6 +29,7 @@ namespace OceanEduSlide.Models
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
         public int? DayReduce { get; set; }
+        public int? DayReduceCG { get; set; }
         //[Display(Name = "Các vùng quản lý")]
         //public string ZoneIds { get; set; }
         public virtual User User { get; set; }

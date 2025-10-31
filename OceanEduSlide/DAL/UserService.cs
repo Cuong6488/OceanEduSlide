@@ -719,6 +719,10 @@ namespace OceanEduSlide.DAL
                     {
                         workingDayTT -= historyUser.DayReduce ?? 0;
                     }
+                    if (historyUser.DayReduceCG > 0)
+                    {
+                        workingDayTT -= historyUser.DayReduceCG ?? 0;
+                    }
                     int callTarget = 0;
                     if (historyUser.DayStart.Month == currentMonth || historyUser.DayStart.Month == lastMonth)
                     {
