@@ -2810,7 +2810,7 @@ namespace OceanEduSlide.Controllers
             return Content("Đã đồng bộ nhân sự");
         }
 
-        public ActionResult DeleteDatax2(string listId)
+        public ActionResult DeleteDatax2(string listId, int month)
         {
 
             var listIdString = listId.Split(',');
@@ -2820,7 +2820,7 @@ namespace OceanEduSlide.Controllers
                 var id = int.Parse(item);
                 listIdInt.Add(id);
             }
-            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => listIdInt.Contains(a.ReportCategoryId) && a.Month == 10);
+            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => listIdInt.Contains(a.ReportCategoryId) && a.Month == month);
             datas.Delete();
             return Content("ok");
         }

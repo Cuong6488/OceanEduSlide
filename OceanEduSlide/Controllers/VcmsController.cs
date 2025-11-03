@@ -941,9 +941,9 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("ListUser");
         }
-        public ActionResult DeleteUserx2NgayVaoLam()
+        public ActionResult DeleteUserx2NgayVaoLam(int month)
         {
-            var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId, a.Status }).Where(g => g.Count() >= 2).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
+            var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == month).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId, a.Status }).Where(g => g.Count() >= 2).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
             //var list = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Status == StatusUser.Active && a.Month == 10).GroupBy(a => new { a.User.MaNhanVien, a.TypeUser, a.OfficeId }).Select(g => g.OrderBy(x => x.DayStart).FirstOrDefault()).ToList();
             int i = 0;
             foreach (var l in list)
@@ -953,7 +953,7 @@ namespace OceanEduSlide.Controllers
             }
             _unitOfWork.Save();
 
-            var listUnActive = _unitOfWork.HistoryUserRepository.GetQuery(a => !a.Active && a.Month == 10).Select(a => a.Id).ToList();
+            var listUnActive = _unitOfWork.HistoryUserRepository.GetQuery(a => !a.Active && a.Month == month).Select(a => a.Id).ToList();
             foreach (var l in listUnActive)
             {
                 var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == l);

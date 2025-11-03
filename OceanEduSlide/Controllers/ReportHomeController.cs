@@ -688,7 +688,7 @@ namespace OceanEduSlide.Controllers
                     ZoneId = User.ZoneId;
                 }
             }
-            else if(User.TypeUser != TypeUser.HO)
+            else if (User.TypeUser != TypeUser.HO)
             {
                 if (string.IsNullOrEmpty(User.OfficeIds))
                 {
@@ -1151,7 +1151,6 @@ namespace OceanEduSlide.Controllers
         //            return Content("Đã chuyển dữ liệu cuộc gọi");
 
         //        }
-
 
         #endregion
     }
