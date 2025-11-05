@@ -117,12 +117,15 @@ namespace OceanEduSlide.ViewModels
             var listgroup = new Dictionary<int, string>
             {
                 { 0, "Báo cáo TH CN - NV" },
-                { 1, "Chỉ tiêu CN - NV - DS hoàn thành thực tế tuần" },
+                { 1, "Chỉ tiêu CN - NV" },
+                { 10, "Chỉ tiêu CN - NV; Nhân sự theo tháng" },
+                { 11, "Chỉ tiêu CN - NV; Chi nhánh theo tháng" },
+                { 12, "Chỉ tiêu CN - NV; CN tháng; NS tháng" },
                 { 2, "Vùng" },
                 { 3, "Chi nhánh" },
-                { 8, "Chi nhánh theo tháng" },
+                //{ 8, "Chi nhánh theo tháng" },
                 { 4, "Tài khoản nhân sự" },
-                { 5, "Nhân sự theo tháng" },
+                //{ 5, "Nhân sự theo tháng" },
                 { 6, "QĐ ưu đãi" },
                 { 7, "Quy định chung/ QĐ PTS" },
                 { 9, "Phiếu thu đặc biệt" },

@@ -1515,7 +1515,10 @@ namespace OceanEduSlide.Controllers
                             workingDayTT = Math.Max(workingDayTT, 0);
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
+                            if(item.User.MaNhanVien == "25050647")
+                            {
 
+                            }
                             if (item.DayStart.Month == monthInt && item.DayStart.Year == yearInt)
                             {
                                 nsFullTarget = false;
