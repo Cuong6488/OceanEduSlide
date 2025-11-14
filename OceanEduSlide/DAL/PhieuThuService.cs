@@ -2294,7 +2294,7 @@ namespace OceanEduSlide.DAL
                         var dataTiTrongSale = datasList.FirstOrDefault(a => a.ReportCategoryId == 41 && a.OfficeId == item.OfficeId);
                         if (dataTiTrongSale != null)
                         {
-                            dataTiTrongSale.Data = (tiTrongSale ?? 0).ToString("N2");
+                            dataTiTrongSale.Data = ((tiTrongSale ?? 0) * 100).ToString("F2") + "%";
                             dataTiTrongSale.DataReal = tiTrongSale;
                         }
                         else
@@ -2305,7 +2305,7 @@ namespace OceanEduSlide.DAL
                                 Month = day.Month,
                                 Year = day.Year,
                                 ReportCategoryId = 41,
-                                Data = (tiTrongSale ?? 0).ToString("N2"),
+                                Data = ((tiTrongSale ?? 0) * 100).ToString("F2") + "%",
                                 DataReal = tiTrongSale,
                                 OfficeId = item.OfficeId,
                             };
@@ -2334,7 +2334,7 @@ namespace OceanEduSlide.DAL
                         var dataTiTrongHV = datasList.FirstOrDefault(a => a.ReportCategoryId == 45 && a.OfficeId == item.OfficeId);
                         if (dataTiTrongHV != null)
                         {
-                            dataTiTrongHV.Data = (tiTrongHV ?? 0).ToString("N2");
+                            dataTiTrongHV.Data = ((tiTrongHV ?? 0) * 100).ToString("F2") + "%";
                             dataTiTrongHV.DataReal = tiTrongHV;
                         }
                         else
@@ -2345,7 +2345,7 @@ namespace OceanEduSlide.DAL
                                 Month = day.Month,
                                 Year = day.Year,
                                 ReportCategoryId = 45,
-                                Data = (tiTrongHV ?? 0).ToString("N2"),
+                                Data = ((tiTrongHV ?? 0) * 100).ToString("F2") + "%",
                                 DataReal = tiTrongHV,
                                 OfficeId = item.OfficeId,
                             };
@@ -2374,7 +2374,7 @@ namespace OceanEduSlide.DAL
                         var dataTiTrongKT = datasList.FirstOrDefault(a => a.ReportCategoryId == 120 && a.OfficeId == item.OfficeId);
                         if (dataTiTrongKT != null)
                         {
-                            dataTiTrongKT.Data = (tiTrongKT ?? 0).ToString("N2");
+                            dataTiTrongKT.Data = ((tiTrongKT ?? 0) * 100).ToString("F2") + "%";
                             dataTiTrongKT.DataReal = tiTrongKT;
                         }
                         else
@@ -2385,7 +2385,7 @@ namespace OceanEduSlide.DAL
                                 Month = day.Month,
                                 Year = day.Year,
                                 ReportCategoryId = 120,
-                                Data = (tiTrongKT ?? 0).ToString("N2"),
+                                Data = ((tiTrongKT ?? 0) * 100).ToString("F2") + "%",
                                 DataReal = tiTrongKT,
                                 OfficeId = item.OfficeId,
                             };
