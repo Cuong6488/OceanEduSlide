@@ -265,7 +265,12 @@ namespace OceanEduSlide.Controllers
                             ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột định biên ATL, hoặc không thể chuyển thành dạng số");
                             return View();
                         }
-
+                        var baseTargetStr = tbl.Rows[i][10].ToString().Trim();
+                        if (string.IsNullOrEmpty(baseTargetStr) || !decimal.TryParse(baseTargetStr, out var baseTargetStrDec))
+                        {
+                            ModelState.AddModelError("", @"Chi nhánh " + shortname + " không có dữ liệu cột Chỉ tiêu Doanh số cơ sở, hoặc không thể chuyển thành dạng số");
+                            return View();
+                        }
                         var dayOpen = tbl.Rows[i][3].ToString().Trim().Replace("'", "");
                         if (string.IsNullOrEmpty(dayOpen))
                         {
@@ -395,6 +400,7 @@ namespace OceanEduSlide.Controllers
                             historyOffice.QD156 = string.IsNullOrEmpty(qd156) ? false : true;
                             historyOffice.NVKDOver = nvkdDown;
                             historyOffice.TargetReduce = moneyDown;
+                            historyOffice.BaseTarget = baseTargetStrDec;
                         }
                         else
                         {
@@ -409,6 +415,7 @@ namespace OceanEduSlide.Controllers
                                 DBEC = dbECInt,
                                 NVKDOver = nvkdDown,
                                 TargetReduce = moneyDown,
+                                BaseTarget = baseTargetStrDec,
                                 QD156 = string.IsNullOrEmpty(qd156) ? false : true
                             };
                             historyOfficeList.Add(newhistoryOffice);
@@ -1515,10 +1522,6 @@ namespace OceanEduSlide.Controllers
                             workingDayTT = Math.Max(workingDayTT, 0);
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
-                            if(item.User.MaNhanVien == "25050647")
-                            {
-
-                            }
                             if (item.DayStart.Month == monthInt && item.DayStart.Year == yearInt)
                             {
                                 nsFullTarget = false;

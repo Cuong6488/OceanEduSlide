@@ -67,6 +67,7 @@
             <tr>
                 <th>Chi nhánh</th>
                 <th>Vùng</th>
+                <th>Định biên Cơ sở</th>
                 <th>Định biên ATL</th>
                 <th>Định biên EC</th>
                 <th>Nhóm chi nhánh</th>
@@ -78,13 +79,14 @@
                 <tr data-id="@item.Id">
                     <td>@item.Office.ShortName</td>
                     <td>@item.Zone.Name</td>
+                    <td>@item.BaseTarget.ToString("N0")</td>
                     <td>@item.DBATL</td>
                     <td>@item.DBEC</td>
                     <td>@Html.DisplayFor(model => item.GroupOffice)</td>
                     <td>@Html.DisplayFor(model => item.QD156)</td>
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
-                            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
+            @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
                         <a href="javascript:;" onclick="deleteOffice('@item.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>
