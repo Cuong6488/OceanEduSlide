@@ -22,6 +22,7 @@ using ImageResizer.ExtensionMethods;
 using Microsoft.IdentityModel.Tokens;
 using System.Web.Services.Description;
 using System.Text;
+using System.Xml.Linq;
 namespace OceanEduSlide.DAL
 {
     public class UserService
@@ -207,15 +208,15 @@ namespace OceanEduSlide.DAL
                             NsDieuchuyen.WorkPlaceName = "OE BMT";
                         }
                         office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                        if (office == null)
+                        //if (office == null)
+                        //{
+                        zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        if (zone == null && office == null)
                         {
-                            zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                            if (zone == null)
-                            {
-                                logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
-                                //continue;
-                            }
+                            logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
+                            //continue;
                         }
+                        //}
                     }
 
                     var sort = _userTypeService.GetSort((TypeUser)type);
@@ -339,15 +340,15 @@ namespace OceanEduSlide.DAL
                         QTCT.WorkPlaceName = "OE BMT";
                     }
                     office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                    if (office == null)
+                    //if (office == null)
+                    //{
+                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    if (zone == null && office == null)
                     {
-                        zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                        if (zone == null)
-                        {
-                            logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
-                            //continue;
-                        }
+                        logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
+                        //continue;
                     }
+                    //}
                 }
 
                 var sort = _userTypeService.GetSort((TypeUser)type);
@@ -502,15 +503,15 @@ namespace OceanEduSlide.DAL
                         QTCT.WorkPlaceName = "OE BMT";
                     }
                     office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                    if (office == null)
+                    //if (office == null)
+                    //{
+                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    if (zone == null && office == null)
                     {
-                        zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
-                        if (zone == null)
-                        {
-                            logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
-                            //continue;
-                        }
+                        logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
+                        //continue;
                     }
+                    //}
                 }
                 var sort = _userTypeService.GetSort((TypeUser)type);
                 var user = users.FirstOrDefault(a => a.MaNhanVien == item.MaNhanSu);
@@ -804,7 +805,6 @@ namespace OceanEduSlide.DAL
                         if (reportCallOfficeTarget == null)
                             reportCallOfficeTarget = reportDataList.FirstOrDefault(a => a.OfficeId == historyUser.OfficeId && a.ReportCategoryId == 26);
 
-
                         if (reportCallOfficeTarget == null)
                         {
                             reportCallOfficeTarget = new ReportData()
@@ -853,6 +853,57 @@ namespace OceanEduSlide.DAL
                                 reportCallOfficeTD.DataReal = 0;
                             reportCallOfficeTD.DataReal += countTD;
                             reportCallOfficeTD.Data = (reportCallOfficeTD.DataReal ?? 0).ToString("N0");
+                        }
+
+                    }
+                    if (historyUser.TypeUser == TypeUser.AEC)
+                    {
+                        var zone = _unitOfWork.ZoneRepository.GetById(historyUser.ZoneId);
+                        if (zone != null)
+                        {
+                            var office = _unitOfWork.OfficeRepository.GetQuery(a => a.Name == zone.Name).FirstOrDefault();
+                            if (office == null)
+                            {
+                                office = new Office()
+                                {
+                                    Name = zone.Name,
+                                    ZoneId = zone.Id,
+                                    ShortCode = zone.ShortCode,
+                                    ShortName = zone.Name
+                                };
+                                _unitOfWork.OfficeRepository.Insert(office);
+                                _unitOfWork.Save();
+                            }
+                            else
+                            {
+                                office.ZoneId = zone.Id;
+                                office.ShortCode = zone.ShortCode;
+                                office.ShortName = zone.Name;
+                            }
+                            var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear).FirstOrDefault();
+                            if (historyOffice == null)
+                            {
+                                historyOffice = new HistoryOffice()
+                                {
+                                    OfficeId = office.Id,
+                                    ZoneId = zone.Id,
+                                    Year = currentYear,
+                                    Month = currentMonth,
+                                    DBATL = 0,
+                                    DBEC = 0,
+                                    BaseTarget = 0,
+                                    GroupOffice = GroupOffice.A,
+                                    QD156 = false,
+                                };
+                                _unitOfWork.HistoryOfficeRepository.Insert(historyOffice);
+                                //_unitOfWork.Save();
+                            }
+                            else
+                            {
+                                historyOffice.ZoneId = zone.Id;
+                            }
+                            historyUser.OfficeId = office.Id;
+                            //_unitOfWork.Save();
                         }
                     }
                 }
@@ -909,15 +960,7 @@ namespace OceanEduSlide.DAL
 
             foreach (var office in allOffice)
             {
-                if (office.Id == 1020)
-                {
-
-                }
-                if (office.ShortCode == "HD")
-                {
-
-                }
-                #region chỉ tiêu
+                #region chỉ tiêu doanh số
 
                 var historyOffice = historyOffices.FirstOrDefault(a => a.OfficeId == office.Id);
                 if (historyOffice == null)
@@ -969,10 +1012,6 @@ namespace OceanEduSlide.DAL
                 var DBKD = historyOffice.DBEC + historyOffice.DBATL;
                 foreach (var item in historyUserMonths)
                 {
-                    if(item.User.MaNhanVien == "25050709")
-                    {
-
-                    }
                     // Khởi tạo chỉ tiêu DS nhân viên
                     decimal targetNS = 0;
                     if (item.TypeUser == TypeUser.EC || item.TypeUser == TypeUser.ALT)

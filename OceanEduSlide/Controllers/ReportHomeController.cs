@@ -473,10 +473,7 @@ namespace OceanEduSlide.Controllers
                 model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
                 //filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
                 //if (User.TypeUser != TypeUser.ASM)
-                //{
                 //    historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
-                //    //var k = historyQuery.ToList();
-                //}    
                 //else
                 historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
                 || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
