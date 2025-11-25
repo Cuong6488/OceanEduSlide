@@ -395,6 +395,7 @@ namespace OceanEduSlide.Controllers
             if (UserType != null)
             {
                 historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
+                //var h = historyQuery.ToList();
             }
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
             var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -471,11 +472,14 @@ namespace OceanEduSlide.Controllers
             {
                 model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
                 //filteredUsers = filteredUsers.Where(a => a.Office.ZoneId == model.ZoneId);
-                if (User.TypeUser != TypeUser.ASM)
-                    historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
-                else
-                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
-                    || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
+                //if (User.TypeUser != TypeUser.ASM)
+                //{
+                //    historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
+                //    //var k = historyQuery.ToList();
+                //}    
+                //else
+                historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
+                || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
             }
 
             if (model.OfficeId != null)
