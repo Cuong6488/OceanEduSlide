@@ -672,6 +672,10 @@
     <Compile Include="Migrations\202511200838325_targerbase.Designer.cs">
       <DependentUpon>202511200838325_targerbase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511280310495_groupe.cs" />
+    <Compile Include="Migrations\202511280310495_groupe.Designer.cs">
+      <DependentUpon>202511280310495_groupe.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
@@ -1987,6 +1991,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202511200838325_targerbase.resx">
       <DependentUpon>202511200838325_targerbase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511280310495_groupe.resx">
+      <DependentUpon>202511280310495_groupe.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

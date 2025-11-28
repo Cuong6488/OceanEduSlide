@@ -310,6 +310,9 @@ namespace OceanEduSlide.Controllers
                             case "D":
                                 groupOffice = GroupOffice.D;
                                 break;
+                            case "E":
+                                groupOffice = GroupOffice.E;
+                                break;
                             default:
                                 ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai dữ liệu cột phân nhóm đào tạo");
                                 return View();
@@ -1721,6 +1724,9 @@ namespace OceanEduSlide.Controllers
                                 case GroupOffice.D:
                                     targetNS = targetGroup.Target_D;
                                     break;
+                                case GroupOffice.E:
+                                    targetNS = targetGroup.Target_E;
+                                    break;
                                 default:
                                     break;
                             }
@@ -2713,6 +2719,7 @@ namespace OceanEduSlide.Controllers
                     Target_B = Convert.ToDecimal(model.Target_B.Replace(",", "")),
                     Target_C = Convert.ToDecimal(model.Target_C.Replace(",", "")),
                     Target_D = Convert.ToDecimal(model.Target_D.Replace(",", "")),
+                    Target_E = Convert.ToDecimal(model.Target_E.Replace(",", "")),
 
                 };
                 _unitOfWork.TargetGroupRepository.Insert(targetGroup);
@@ -2733,6 +2740,7 @@ namespace OceanEduSlide.Controllers
                 Target_B = target.Target_B.ToString("N0"),
                 Target_C = target.Target_C.ToString("N0"),
                 Target_D = target.Target_D.ToString("N0"),
+                Target_E = target.Target_E.ToString("N0"),
                 Month = target.Month,
                 Year = target.Year,
                 TargetGroupId = target.Id,
@@ -2751,6 +2759,7 @@ namespace OceanEduSlide.Controllers
                 targetGroup.Target_B = Convert.ToDecimal(model.Target_B.Replace(",", ""));
                 targetGroup.Target_C = Convert.ToDecimal(model.Target_C.Replace(",", ""));
                 targetGroup.Target_D = Convert.ToDecimal(model.Target_D.Replace(",", ""));
+                targetGroup.Target_E = Convert.ToDecimal(model.Target_E.Replace(",", ""));
                 _unitOfWork.Save();
                 return RedirectToAction("ListTargetGroup", new { result = "update" });
             }

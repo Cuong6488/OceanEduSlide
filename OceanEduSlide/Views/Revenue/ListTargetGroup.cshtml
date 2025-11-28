@@ -52,6 +52,7 @@
                 <th>Chỉ tiêu NVĐT nhóm B</th>
                 <th>Chỉ tiêu NVĐT nhóm C</th>
                 <th>Chỉ tiêu NVĐT nhóm D</th>
+                <th>Chỉ tiêu NVĐT nhóm E</th>
                 <th style="width: 130px"></th>
             </tr>
             @foreach (var target in Model.TargetGroups)
@@ -63,9 +64,10 @@
                     <td>@Html.DisplayFor(model => target.Target_B)</td>
                     <td>@Html.DisplayFor(model => target.Target_C)</td>
                     <td>@Html.DisplayFor(model => target.Target_D)</td>
+                    <td>@Html.DisplayFor(model => target.Target_E)</td>
                     <td>
-                        <a href="@Url.Action("UpdateTargetGroup", new {targetId = target.Id})">Sửa</a> @*- 
-                        <a href="javascript:;" onclick="deleteTarget('@target.Id')" style="color: red;">Xóa</a>*@
+                        <a href="@Url.Action("UpdateTargetGroup", new {targetId = target.Id})">Sửa</a> @*-
+            <a href="javascript:;" onclick="deleteTarget('@target.Id')" style="color: red;">Xóa</a>*@
                     </td>
                 </tr>
             }

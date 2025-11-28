@@ -21,6 +21,8 @@ namespace OceanEduSlide.Models
         public decimal Target_C { get; set; }
         [Display(Name = "Chỉ tiêu NVĐT nhóm D"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal Target_D { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm E"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public decimal Target_E { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; } = true;
     }

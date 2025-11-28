@@ -149,6 +149,8 @@ namespace OceanEduSlide.ViewModels
         public string Target_C { get; set; }
         [Display(Name = "Chỉ tiêu NVĐT nhóm D"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public string Target_D { get; set; }
+        [Display(Name = "Chỉ tiêu NVĐT nhóm E"), UIHint("MoneyBox"), Required(ErrorMessage = "Hãy nhập mục này"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string Target_E { get; set; }
 
     }
 

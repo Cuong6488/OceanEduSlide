@@ -10,59 +10,63 @@
     @using (Html.BeginForm("CreateTargetGroup", "Revenue", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary(true)
-        <table class="form_table">
-            <tr>
-                <td class="form_name w-25">Năm</td>
-                <td class="form_text">
-                    <select name="Year" class="w100" required>
-                        <option value="">Chọn năm</option>
-                        @for (int i = 2025; i <= DateTime.Now.Year + 1; i++)
-                        {
-                            <option @(Model.Year == i?"selected":"") value="@i">@i</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(a => a.Year)
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name">Tháng</td>
-                <td class="form_text">
-                    <select name="Month" class="w100" required>
-                        <option value="">Chọn tháng</option>
-                        @for (int i = 1; i <= 12; i++)
-                        {
-                            <option @(Model.Month == i?"selected":"") value="@i">@i</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(a => a.Month)
-                </td>
-            </tr>
-            <tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Target_A) (đ)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Target_A)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Target_B) (đ)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Target_B)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Target_C) (đ)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Target_C)</td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Target_D) (đ)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Target_D)</td>
-            </tr>
+    <table class="form_table">
+        <tr>
+            <td class="form_name w-25">Năm</td>
+            <td class="form_text">
+                <select name="Year" class="w100" required>
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2025; i <= DateTime.Now.Year + 1; i++)
+                    {
+                        <option @(Model.Year == i ? "selected" : "") value="@i">@i</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(a => a.Year)
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">Tháng</td>
+            <td class="form_text">
+                <select name="Month" class="w100" required>
+                    <option value="">Chọn tháng</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option @(Model.Month == i ? "selected" : "") value="@i">@i</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(a => a.Month)
+            </td>
+        </tr>
+        <tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Target_A) (đ)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Target_A)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Target_B) (đ)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Target_B)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Target_C) (đ)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Target_C)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Target_D) (đ)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Target_D)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Target_E) (đ)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Target_E)</td>
+        </tr>
 
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Thêm mới" />
-                </td>
-            </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Thêm mới" />
+            </td>
+        </tr>
 
-        </table>
+    </table>
     }
 </div>
 @section scripts{

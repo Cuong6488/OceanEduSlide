@@ -43,5 +43,7 @@ namespace OceanEduSlide.Models
         C,
         [Display(Name = "Nhóm D")]
         D,
+        [Display(Name = "Nhóm E")]
+        E,
     }
 }

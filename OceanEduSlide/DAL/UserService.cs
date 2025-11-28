@@ -120,7 +120,7 @@ namespace OceanEduSlide.DAL
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth))/* && allCDCM.Contains(a.MaChucDanhChuyenMon)*/).ToList();
             //var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.OrderByDescending(a => a.NgayApDung).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => a.NgayApDung.Date <= today).OrderByDescending(a => a.NgayApDung).ToList();
 
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
@@ -892,7 +892,7 @@ namespace OceanEduSlide.DAL
                                     DBATL = 0,
                                     DBEC = 0,
                                     BaseTarget = 0,
-                                    GroupOffice = GroupOffice.A,
+                                    GroupOffice = GroupOffice.E,
                                     QD156 = false,
                                 };
                                 _unitOfWork.HistoryOfficeRepository.Insert(historyOffice);
@@ -924,7 +924,6 @@ namespace OceanEduSlide.DAL
             var historyUserMonthList = _unitOfWork.HistoryUserRepository.Get(a => a.Active && a.Year == currentYear && a.Month == currentMonth
                 && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.SAB)
                 && (a.DayEnd == null || (a.DayEnd != null && a.DayEnd.Value.Month != currentMonth || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == currentMonth))));
-            var u = historyUserMonthList.FirstOrDefault(a => a.User.MaNhanVien == "25050709" && a.OfficeId == 1020);
             var revenueOffices = _unitOfWork.RevenueOfficeRepository.Get(a => a.Month == currentMonth && a.Year == currentYear);
             var reportDatas87 = _unitOfWork.ReportDataRepository.Get(a => a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 87);
             var revenueUsers = _unitOfWork.RevenueUser_MonthRepository.Get(a => a.Month == currentMonth && a.Year == currentYear);
@@ -1271,6 +1270,9 @@ namespace OceanEduSlide.DAL
                                 break;
                             case GroupOffice.D:
                                 targetNS = targetGroup.Target_D;
+                                break;
+                            case GroupOffice.E:
+                                targetNS = targetGroup.Target_E;
                                 break;
                             default:
                                 break;
