@@ -1,26 +1,15 @@
-﻿using Antlr.Runtime.Misc;
-using Helpers;
-using NSec.Cryptography;
-using OceanEduSlide.DAL;
+﻿using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
-using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
-using OfficeOpenXml.Style;
 using OfficeOpenXml;
-using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
-using System.Windows.Media;
 using Z.EntityFramework.Plus;
 using OceanEduSlide.EnumHelpers;
 

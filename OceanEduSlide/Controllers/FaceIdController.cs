@@ -12,7 +12,6 @@ using Fido2NetLib.Development;
 using Fido2NetLib.Objects;
 using Newtonsoft.Json;
 using OceanEduSlide.DAL;
-using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
 
 namespace OceanEduSlide.Controllers

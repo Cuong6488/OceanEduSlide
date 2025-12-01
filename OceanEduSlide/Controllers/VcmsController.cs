@@ -1,9 +1,7 @@
-﻿using Antlr.Runtime.Misc;
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
-using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
@@ -16,18 +14,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using System.Web.Services.Description;
 using Z.EntityFramework.Plus;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using static System.Data.Entity.Infrastructure.Design.Executor;
 using System.Data.Entity;
-using System.Globalization;
 using System.ComponentModel.DataAnnotations;
-using ImageResizer.ExtensionMethods;
-using Microsoft.IdentityModel.Tokens;
-using OceanEduSlide.EnumHelpers;
-using System.Text;
 using System.Threading.Tasks;
 namespace OceanEduSlide.Controllers
 {

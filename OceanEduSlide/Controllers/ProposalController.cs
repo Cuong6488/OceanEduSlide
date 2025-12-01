@@ -1,25 +1,18 @@
 ﻿using OceanEduSlide.DAL;
 using OceanEduSlide.EnumHelpers;
 using OceanEduSlide.Filters;
-using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using OfficeOpenXml;
-using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 using Helpers;
-using NSec.Cryptography;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Security.Policy;
-using System.Web.UI;
+
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]

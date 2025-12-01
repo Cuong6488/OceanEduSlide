@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using OceanEduSlide.Models;
-using PagedList;
-using OceanEduSlide.DAL;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace OceanEduSlide.ViewModels
 {

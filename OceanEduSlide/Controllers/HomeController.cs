@@ -1,14 +1,11 @@
 ﻿using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
-using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
-using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Web;

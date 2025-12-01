@@ -1,26 +1,18 @@
-﻿using Antlr.Runtime.Misc;
-using ExcelDataReader;
-using FluentScheduler;
+﻿using ExcelDataReader;
 using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
-using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
-using Z.EntityFramework.Plus;
 
 namespace OceanEduSlide.Controllers
 {
