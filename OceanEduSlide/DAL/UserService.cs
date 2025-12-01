@@ -880,7 +880,7 @@ namespace OceanEduSlide.DAL
                                 office.ShortCode = zone.ShortCode;
                                 office.ShortName = zone.Name;
                             }
-                            var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear).FirstOrDefault();
+                            var historyOffice = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Active && a.OfficeId == office.Id && a.Month == currentMonth && a.Year == currentYear).FirstOrDefault();
                             if (historyOffice == null)
                             {
                                 historyOffice = new HistoryOffice()
@@ -903,7 +903,7 @@ namespace OceanEduSlide.DAL
                                 historyOffice.ZoneId = zone.Id;
                             }
                             historyUser.OfficeId = office.Id;
-                            //_unitOfWork.Save();
+                            _unitOfWork.Save();
                         }
                     }
                 }
