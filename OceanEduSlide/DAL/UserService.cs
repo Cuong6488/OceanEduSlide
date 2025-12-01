@@ -120,7 +120,7 @@ namespace OceanEduSlide.DAL
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth))/* && allCDCM.Contains(a.MaChucDanhChuyenMon)*/).ToList();
             //var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => a.NgayApDung.Date <= today).OrderByDescending(a => a.NgayApDung).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today).OrderByDescending(a => a.NgayApDung).ToList();
 
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
