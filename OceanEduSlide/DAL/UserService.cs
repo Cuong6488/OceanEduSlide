@@ -118,8 +118,8 @@ namespace OceanEduSlide.DAL
                 default:
                     break;
             }
-            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month >= currentMonth))/* && allCDCM.Contains(a.MaChucDanhChuyenMon)*/).ToList();
-            //var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => allCDCM.Contains(a.MaChucDanh) || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
+            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && 
+            DbFunctions.TruncateTime(a.NgayNghiViec.Value) > DbFunctions.TruncateTime(endDayLastMonth))).ToList();
             var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today).OrderByDescending(a => a.NgayApDung).ToList();
 
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
@@ -141,6 +141,8 @@ namespace OceanEduSlide.DAL
             // Tổng hợp danh sách NS đã nghỉ
             var listAllNghiviec = listNSStop_danghi.Concat(listNSTS);
 
+            //Danh sách nhân sự đã nghỉ việc từ tháng trước 
+            var DSNhanSuDelete = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.NgayNghiViec.HasValue && a.NgayNghiViec.Value.Month == lastMonth && a.NgayNghiViec.Value.Year == yearLastMonth).ToList();
 
 
             var allOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
@@ -587,6 +589,25 @@ namespace OceanEduSlide.DAL
                         Active = true
                     };
                     historyUserList.Add(newhistoryUser);
+                }
+            }
+            // Quay lại xử lý ns đã nghỉ việc tháng trước - cập nhật muộn
+            foreach (var item in DSNhanSuDelete)
+            {
+                if (string.IsNullOrEmpty(item.MaNhanSu))
+                {
+                    logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
+                    continue;
+                }
+                var user = users.FirstOrDefault(a => a.MaNhanVien == item.MaNhanSu);
+                if (user != null)
+                {
+                    user.Active = false;
+                    var historyUsers = listHistoryUser.Where(a => a.UserId == user.Id);
+                    foreach (var h in historyUsers)
+                    {
+                        h.Active = false;
+                    }
                 }
             }
 
