@@ -911,8 +911,8 @@ namespace OceanEduSlide.DAL
                                     Year = currentYear,
                                     Month = currentMonth,
                                     DBATL = 0,
-                                    DBEC = 0,
-                                    BaseTarget = 0,
+                                    DBEC = 1,
+                                    BaseTarget = 1,
                                     GroupOffice = GroupOffice.E,
                                     QD156 = false,
                                 };
@@ -922,6 +922,7 @@ namespace OceanEduSlide.DAL
                             else
                             {
                                 historyOffice.ZoneId = zone.Id;
+                                historyOffice.DBEC = 1;
                             }
                             historyUser.OfficeId = office.Id;
                             _unitOfWork.Save();
@@ -991,7 +992,7 @@ namespace OceanEduSlide.DAL
                 if (historyOffice.DBEC + historyOffice.DBATL <= 0)
                 {
                     logger.Error("Định biên NVKD chi nhánh " + office.ShortName + " không hợp lệ");
-                    return;
+                    continue;
                 }
                 if (historyOffice.BaseTarget == 0)
                 {
@@ -1078,7 +1079,7 @@ namespace OceanEduSlide.DAL
                                 if (soNgayLamViec < 0)
                                 {
                                     logger.Error("Nhân viên " + item.User.MaNhanVien + " có ngày vào làm > ngày nghỉ việc");
-                                    return;
+                                    continue;
                                 }
                                 // edit
                                 int soNgayNghi = soNgayLamViec / 6;
