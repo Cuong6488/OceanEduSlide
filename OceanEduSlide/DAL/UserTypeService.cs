@@ -45,15 +45,9 @@ namespace OceanEduSlide.DAL
         { "TTL", TypeUser.TTL },
         { "AEC", TypeUser.AEC },
         { "AAL", TypeUser.AEC },
+        { "BDO", TypeUser.AEC },
         };
 
-        //private static readonly Dictionary<string, StatusUser> _statusUserMap =
-        //    new Dictionary<string, StatusUser>(StringComparer.OrdinalIgnoreCase)
-        //{
-        //{ "BoNhiem", StatusUser.Active },
-        //{ "DCEO", StatusUser.Transfer },
-        //{ "NDDM", StatusUser.InActive },
-        //};
 
 
         public TypeUser? GetTypeUser(string maChucDanh)
