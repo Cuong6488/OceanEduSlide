@@ -1191,7 +1191,7 @@ namespace OceanEduSlide.Controllers
                         var index = tbl.Rows[i][0].ToString().Trim();
                         var month = tbl.Rows[i][1].ToString().Trim();
                         int monthInt = 0;
-                        if (!string.IsNullOrEmpty(month) && !int.TryParse(month, out monthInt))
+                        if (string.IsNullOrEmpty(month) || !int.TryParse(month, out monthInt))
                         {
                             ModelState.AddModelError("", @"Dòng " + row + ": Cột tháng không thể chuyển thành dạng số");
                             return View();
