@@ -1188,12 +1188,14 @@ namespace OceanEduSlide.Controllers
                     int row = 1;
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
+                        row++;
                         var index = tbl.Rows[i][0].ToString().Trim();
                         var month = tbl.Rows[i][1].ToString().Trim();
                         int monthInt = 0;
                         if (string.IsNullOrEmpty(month) || !int.TryParse(month, out monthInt))
                         {
                             ModelState.AddModelError("", @"Dòng " + row + ": Cột tháng không thể chuyển thành dạng số");
+                            ViewBag.Type = 3;
                             return View();
                         }
                         var zone = tbl.Rows[i][2].ToString().Trim();
@@ -1202,7 +1204,7 @@ namespace OceanEduSlide.Controllers
                         var qdNumber = tbl.Rows[i][5].ToString().Trim();
                         var qdLink = tbl.Rows[i][6].ToString().Trim();
                         var note = tbl.Rows[i][7].ToString().Trim();
-                       
+
                         var category = new Category
                         {
                             TypeCategory = TypeCategory.Type3,
@@ -1217,7 +1219,6 @@ namespace OceanEduSlide.Controllers
                         };
                         _unitOfWork.CategoryRepository.Insert(category);
                         _unitOfWork.Save();
-                        row++;
                     }
                 }
             }
