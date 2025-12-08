@@ -20,6 +20,7 @@ using OfficeOpenXml.Style;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
@@ -1184,16 +1185,24 @@ namespace OceanEduSlide.Controllers
                 {
                     var categories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3);
                     categories.Delete();
+                    int row = 1;
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
                         var index = tbl.Rows[i][0].ToString().Trim();
                         var month = tbl.Rows[i][1].ToString().Trim();
+                        int monthInt = 0;
+                        if (!string.IsNullOrEmpty(month) && !int.TryParse(month, out monthInt))
+                        {
+                            ModelState.AddModelError("", @"Dòng " + row + ": Cột tháng không thể chuyển thành dạng số");
+                            return View();
+                        }
                         var zone = tbl.Rows[i][2].ToString().Trim();
                         var officescode = tbl.Rows[i][3].ToString().Trim();
                         var content = tbl.Rows[i][4].ToString().Trim();
                         var qdNumber = tbl.Rows[i][5].ToString().Trim();
                         var qdLink = tbl.Rows[i][6].ToString().Trim();
                         var note = tbl.Rows[i][7].ToString().Trim();
+                       
                         var category = new Category
                         {
                             TypeCategory = TypeCategory.Type3,
@@ -1202,12 +1211,13 @@ namespace OceanEduSlide.Controllers
                             QDNumber = qdNumber,
                             QDLink = qdLink,
                             Note = note,
-                            Month = int.Parse(month),
+                            Month = monthInt,
                             Zone = zone,
                             Offices = officescode
                         };
                         _unitOfWork.CategoryRepository.Insert(category);
                         _unitOfWork.Save();
+                        row++;
                     }
                 }
             }
