@@ -210,6 +210,11 @@ namespace OceanEduSlide.Controllers
                 // CN theo tháng
                 if (TypeUpdate == 3 || TypeUpdate == 4)
                 {
+                    //foreach (var zone in listZone)
+                    //{
+                    //    zone.OfficeIds = "";
+                    //    zone.ShortName = "";
+                    //}
                     var reportDataList = new List<ReportData>();
                     var historyOfficeList = new List<HistoryOffice>();
                     for (var i = 1; i < tbl.Rows.Count; i++)
@@ -241,9 +246,15 @@ namespace OceanEduSlide.Controllers
                         if (monthInt == DateTime.Now.Month && yearInt == DateTime.Now.Year)
                         {
                             office.ZoneId = zone.Id;
-                            if (zone.OfficeIds != null && !zone.OfficeIds.Contains("," + office.Id + ","))
+                            if (zone.OfficeIds[0] == ',')
+                            {
+                                zone.OfficeIds = "";
+                                zone.ShortName = "";
+                            }
+                            if (!zone.OfficeIds.Contains("," + office.Id + ","))
                             {
                                 zone.OfficeIds += office.Id + ",";
+                                zone.ShortName += office.ShortCode + ",";
                             }
                         }
 
@@ -420,6 +431,12 @@ namespace OceanEduSlide.Controllers
 
                     }
 
+                    foreach (var zone in listZone)
+                    {
+                        zone.ShortName = zone.ShortName.Trim(',');
+                        if (!string.IsNullOrEmpty(zone.OfficeIds) && zone.OfficeIds[0] != ',')
+                            zone.OfficeIds = "," + zone.OfficeIds;
+                    }
                     if (historyOfficeList.Any())
                         _unitOfWork.HistoryOfficeRepository.InsertRange(historyOfficeList);
                     if (reportDataList.Any())
@@ -578,133 +595,133 @@ namespace OceanEduSlide.Controllers
                                 ModelState.AddModelError("", @"Lỗi định dạng cột Thứ tự, dòng " + (i + 1));
                                 return View();
                             }
-                        if (yearInt == DateTime.Now.Year && monthInt == DateTime.Now.Month)
+
+                        if (user == null)
                         {
-                            if (user == null)
+                            if (statusUser == StatusUser.Active)
                             {
-                                if (statusUser == StatusUser.Active)
+                                var newUser = new User
                                 {
-                                    var newUser = new User
-                                    {
-                                        Username = manhanvien,
-                                        MaNhanVien = manhanvien,
-                                        Password = password,
-                                        Active = true,
-                                        OfficeId = office?.Id,
-                                        ZoneId = zone?.Id,
-                                        Fullname = fullname,
-                                        SaleKit = true,
-                                        TypeUser = type,
-                                        CDCM = cdcm,
-                                        //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
-                                    };
-                                    switch (type)
-                                    {
-                                        case TypeUser.ASM:
-                                            if (!string.IsNullOrEmpty(zones))
+                                    Username = manhanvien,
+                                    MaNhanVien = manhanvien,
+                                    Password = password,
+                                    Active = true,
+                                    OfficeId = office?.Id,
+                                    ZoneId = zone?.Id,
+                                    Fullname = fullname,
+                                    SaleKit = true,
+                                    TypeUser = type,
+                                    CDCM = cdcm,
+                                    //ZoneIds = type == TypeUser.CV ? "," + zones + "," : null,
+                                };
+                                switch (type)
+                                {
+                                    case TypeUser.ASM:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            newUser.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
                                             {
-                                                newUser.ZoneIds = "," + zones + ",";
-                                                var listZ = zones.Split(',');
-                                                foreach (var item in listZ)
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
                                                 {
-                                                    var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                                    if (zItem == null)
-                                                    {
-                                                        ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
-                                                        return View();
-                                                    }
-                                                    if (item == listZ[0])
-                                                    {
-                                                        newUser.ZoneId = zItem.Id;
-                                                        newUser.Zone = zItem;
-                                                    }
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có tên viết tắt là " + item + ", dòng " + (i + 1));
+                                                    return View();
+                                                }
+                                                if (item == listZ[0])
+                                                {
+                                                    newUser.ZoneId = zItem.Id;
+                                                    newUser.Zone = zItem;
                                                 }
                                             }
+                                        }
 
-                                            break;
-                                        case TypeUser.BM:
-                                            if (!string.IsNullOrEmpty(zones))
+                                        break;
+                                    case TypeUser.BM:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            newUser.OfficeIds = ",";
+                                            newUser.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
                                             {
-                                                newUser.OfficeIds = ",";
-                                                newUser.OfficeNames = "";
-                                                foreach (var item in zones.Split(','))
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
                                                 {
-                                                    var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                                    if (o == null)
-                                                    {
-                                                        ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
-                                                        return View();
-                                                    }
-                                                    newUser.OfficeIds += o.Id + ",";
-                                                    newUser.OfficeNames += o.ShortCode + ",";
-
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
+                                                    return View();
                                                 }
-                                                newUser.OfficeNames = newUser.OfficeNames.Trim(',');
-                                                newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
-                                            }
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
 
-                                            break;
-                                        case TypeUser.EC:
-                                            if (!string.IsNullOrEmpty(zones))
+                                            }
+                                            newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                            newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
+                                        }
+
+                                        break;
+                                    case TypeUser.EC:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            newUser.OfficeIds = ",";
+                                            newUser.OfficeNames = "";
+                                            foreach (var item in zones.Split(','))
                                             {
-                                                newUser.OfficeIds = ",";
-                                                newUser.OfficeNames = "";
-                                                foreach (var item in zones.Split(','))
+                                                var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
+                                                if (o == null)
                                                 {
-                                                    var o = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item && a.Active).FirstOrDefault();
-                                                    if (o == null)
-                                                    {
-                                                        ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
-                                                        return View();
-                                                    }
-                                                    newUser.OfficeIds += o.Id + ",";
-                                                    newUser.OfficeNames += o.ShortCode + ",";
-
+                                                    ModelState.AddModelError("", @"Không tồn tại CN nào có mã CN là " + item + ", dòng " + (i + 1));
+                                                    return View();
                                                 }
-                                                newUser.OfficeNames = newUser.OfficeNames.Trim(',');
-                                                newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
-                                            }
+                                                newUser.OfficeIds += o.Id + ",";
+                                                newUser.OfficeNames += o.ShortCode + ",";
 
-                                            break;
-                                        case TypeUser.CV:
-                                            if (!string.IsNullOrEmpty(zones))
+                                            }
+                                            newUser.OfficeNames = newUser.OfficeNames.Trim(',');
+                                            newUser.OfficeIds = (newUser.OfficeIds == "," ? null : newUser.OfficeIds);
+                                        }
+
+                                        break;
+                                    case TypeUser.CV:
+                                        if (!string.IsNullOrEmpty(zones))
+                                        {
+                                            user.ZoneIds = "," + zones + ",";
+                                            var listZ = zones.Split(',');
+                                            foreach (var item in listZ)
                                             {
-                                                user.ZoneIds = "," + zones + ",";
-                                                var listZ = zones.Split(',');
-                                                foreach (var item in listZ)
+                                                var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                                if (zItem == null)
                                                 {
-                                                    var zItem = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
-                                                    if (zItem == null)
-                                                    {
-                                                        ModelState.AddModelError("", @"Không tồn tại vùng nào có mã vùng là " + item + ", dòng " + (i + 1));
-                                                        return View();
-                                                    }
+                                                    ModelState.AddModelError("", @"Không tồn tại vùng nào có mã vùng là " + item + ", dòng " + (i + 1));
+                                                    return View();
                                                 }
                                             }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    try
-                                    {
-                                        _unitOfWork.UserRepository.Insert(newUser);
-                                        _unitOfWork.Save();
-                                        users.Add(newUser);
-                                        user = newUser;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        continue;
-                                    }
+                                        }
+                                        break;
+                                    default:
+                                        break;
                                 }
-                                else
+                                try
+                                {
+                                    _unitOfWork.UserRepository.Insert(newUser);
+                                    _unitOfWork.Save();
+                                    users.Add(newUser);
+                                    user = newUser;
+                                }
+                                catch (Exception e)
                                 {
                                     continue;
                                 }
                             }
                             else
                             {
-
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (yearInt == DateTime.Now.Year && monthInt == DateTime.Now.Month)
+                            {
                                 user.CDCM = cdcm;
                                 user.ZoneId = zone?.Id;
                                 if (statusUser == StatusUser.Active)
@@ -826,6 +843,7 @@ namespace OceanEduSlide.Controllers
                                 }
                             }
                         }
+
 
                         var dayStart = tbl2.Rows[i][6].ToString().Trim().Replace("'", "");
                         if (string.IsNullOrEmpty(dayStart))
