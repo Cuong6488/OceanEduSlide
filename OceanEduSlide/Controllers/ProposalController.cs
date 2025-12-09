@@ -208,7 +208,7 @@ namespace OceanEduSlide.Controllers
                 if (model.ZoneId == null)
                 {
                     model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
+                    proposals = proposals.Where(a => (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || a.CVFbName == User.Fullname) && a.Active);
                 }
                 if (Notice == 2)
                     proposals = proposals.Where(a => a.CVSeen);
@@ -501,7 +501,7 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }
-        public ActionResult UpdateProposal(int pId,int Page, int? ZoneId , int? OfficeId,string StartDay, string EndDay, int? Notice,string MaDeXuat,string Type, string Fault)
+        public ActionResult UpdateProposal(int pId, int Page, int? ZoneId, int? OfficeId, string StartDay, string EndDay, int? Notice, string MaDeXuat, string Type, string Fault)
         {
             if (User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.HO)
                 return RedirectToAction("ListProposal");
@@ -548,8 +548,9 @@ namespace OceanEduSlide.Controllers
                 proposal.CVFbName = User.Fullname;
                 _unitOfWork.Save();
             }
-            return RedirectToAction("ListProposal", new { 
-                Result = "add", 
+            return RedirectToAction("ListProposal", new
+            {
+                Result = "add",
                 Notice = model.Notice,
                 Page = model.Page,
                 ZoneId = model.ZoneId,

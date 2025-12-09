@@ -272,7 +272,7 @@
                         @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
                         {
                             <td>
-                                @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO)
+                                @if ((Model.User.TypeUser == TypeUser.CV && Model.User.ZoneIds.Contains("," + item.Proposal.Zone.ShortCode + ",")) || Model.User.TypeUser == TypeUser.HO)
                                 {
                                     <a href="@Url.Action("UpdateProposal", new {pId = item.Proposal.Id,Page = Model.Page, ZoneId = Model.ZoneId, OfficeId = Model.OfficeId, StartDay = Model.StartDay, EndDay = Model.EndDay, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type, Fault = Model.Fault})">Phản hồi</a>
                                 }

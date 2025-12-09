@@ -2264,6 +2264,20 @@ namespace OceanEduSlide.Controllers
             //};
             return View(new ProposalType());
         }
+        public ActionResult SyncZoneProposal(string result = "")
+        {
+            var thisMonth = DateTime.Now.Month;
+            var thisYear = DateTime.Now.Year;
+            var dexuats = _unitOfWork.ProposalRepository.GetQuery(a => a.CreateDate.Month == thisMonth && a.CreateDate.Year == thisYear);
+            foreach (var item in dexuats)
+            {
+                if (item.Office.ZoneId != null)
+                    item.ZoneId = item.Office.ZoneId ?? 0;
+            }
+            _unitOfWork.Save();
+            return Content("Đã sync lại vùng đề xuất");
+        }
+
         [HttpPost]
         public ActionResult CreateProposalType(ProposalType model)
         {
