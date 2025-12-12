@@ -508,10 +508,6 @@ namespace OceanEduSlide.Controllers
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
             if (proposal == null)
                 return RedirectToAction("ListProposal");
-            if (!User.ZoneIds.Contains("," + proposal.Zone.ShortCode + ","))
-            {
-                return RedirectToAction("ListProposal");
-            }
             if (User.TypeUser == TypeUser.CV)
             {
                 if (!User.ZoneIds.Contains("," + proposal.Zone.ShortCode + ","))
