@@ -162,6 +162,17 @@ namespace OceanEduSlide.Controllers
                 var tbl = result.Tables[0];
                 var offices = _unitOfWork.OfficeRepository.Get(a => a.Active);
                 var listZone = _unitOfWork.ZoneRepository.Get(a => a.Active);
+                foreach(var item in listZone)
+                {
+                    if(item.ShortName == null)
+                    {
+                        item.ShortName = "";
+                    }
+                    if (item.OfficeIds == null)
+                    {
+                        item.OfficeIds = "";
+                    }
+                }
                 var monthStr = tbl.Rows[1][4].ToString().Trim();
                 if (string.IsNullOrEmpty(monthStr) || !int.TryParse(monthStr, out var monthInt))
                 {
@@ -246,7 +257,7 @@ namespace OceanEduSlide.Controllers
                         if (monthInt == DateTime.Now.Month && yearInt == DateTime.Now.Year)
                         {
                             office.ZoneId = zone.Id;
-                            if (zone.OfficeIds[0] == ',')
+                            if (!string.IsNullOrEmpty(zone.OfficeIds) && zone.OfficeIds[0] == ',')
                             {
                                 zone.OfficeIds = "";
                                 zone.ShortName = "";
