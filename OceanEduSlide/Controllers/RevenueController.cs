@@ -433,7 +433,10 @@ namespace OceanEduSlide.Controllers
 
                     foreach (var zone in listZone)
                     {
-                        zone.ShortName = zone.ShortName.Trim(',');
+                        if (!string.IsNullOrEmpty(zone.ShortName))
+                        {
+                            zone.ShortName = zone.ShortName.Trim(',');
+                        }
                         if (!string.IsNullOrEmpty(zone.OfficeIds) && zone.OfficeIds[0] != ',')
                             zone.OfficeIds = "," + zone.OfficeIds;
                     }
