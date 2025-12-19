@@ -151,7 +151,9 @@ namespace OceanEduSlide.Controllers
         {
             if (!User.SaleKit && User.TypeUser != null)
                 return RedirectToAction("Index");
-            return View();
+
+            var banner = _unitOfWork.BannerRepository.GetQuery(a => a.GroupId == 1 && a.Active && a.Image != null).FirstOrDefault();
+            return View(banner);
         }
         public JsonResult GetDiscount(string cth, double pathway)
         {
@@ -496,7 +498,9 @@ namespace OceanEduSlide.Controllers
 
                 return View("IndexBM", model);
             }
-            return View("IndexHO");
+            var banner = _unitOfWork.BannerRepository.GetQuery(a => a.GroupId == 1 && a.Active && a.Image != null).FirstOrDefault();
+
+            return View("IndexHO",banner);
         }
         public PartialViewResult LoadDebt(int debtId)
         {
@@ -642,7 +646,8 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("IndexSaleKit");
             else if (!User.SaleKit)
                 return RedirectToAction("Index");
-            return View();
+            var banner = _unitOfWork.BannerRepository.GetQuery(a => a.GroupId == 1 && a.Active && a.Image != null).FirstOrDefault();
+            return View(banner);
         }
 
         //public JsonResult GetOffice(int? zoneId)

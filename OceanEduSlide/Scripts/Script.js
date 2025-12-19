@@ -909,7 +909,7 @@ function text_title(text) {
 
 //    $('.banner').slick({
 //        autoplay: true,
-//        dots: true,
+//        dots: false,
 //        infinite: true,
 //        speed: 1000,
 //        slidesToShow: 1,

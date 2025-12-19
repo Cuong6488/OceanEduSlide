@@ -1,9 +1,18 @@
-﻿@{
+﻿@model OceanEduSlide.Models.Banner
+
+@{
     ViewBag.Title = "Trang chủ";
 }
 
 <div class="banner">
-    <img src="~/Content/images/banner-index.png" alt="banner">
+    @if (Model != null)
+    {
+        <img src="@Path.Combine("/images/banners/",Model.Image)?w=1900" alt="banner">
+    }
+    else
+    {
+        <img src="~/Content/images/banner-index.png" alt="banner">
+    }
 </div>
 @section scripts
     {

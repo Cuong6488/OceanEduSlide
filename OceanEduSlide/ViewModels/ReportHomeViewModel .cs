@@ -31,8 +31,10 @@ namespace OceanEduSlide.ViewModels
         public IEnumerable<ReportCategory> ReportCategories { get; set; }
         public IEnumerable<ReportData> ReportDatas { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
+        public IEnumerable<HistoryUser> ListHistoryUser { get; set; }
         public int? Year { get; set; }
         public int? Month { get; set; }
+        public int? UserId { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public int? categoryId { get; set; }

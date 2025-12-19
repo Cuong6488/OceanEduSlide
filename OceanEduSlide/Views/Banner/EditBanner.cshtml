@@ -1,0 +1,85 @@
+﻿@model OceanEduSlide.ViewModels.BannerViewModel
+@{
+    ViewBag.Title = "Cập nhật banner";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .form_name {
+        width: 150px;
+    }
+
+    .note {
+        font-weight: normal;
+    }
+</style>
+<h2 class="mt-0">Cập nhật banner</h2>
+<a class="btn quick-link" href="@Url.Action("ListBanner","Banner")"><i class="far fa-list me-1"></i> Danh sách banner</a>
+<div class="box_content px-300">
+    @using (Html.BeginForm("EditBanner", "Banner", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Banner.Id)
+    <table class="form_table">
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.GroupId)</td>
+            <td class="form_text">
+                @Html.DropDownListFor(model => model.Banner.GroupId, Model.SelectGroup, "Chọn vị trí banner", new { @class = "form_control w300" })
+                @Html.ValidationMessageFor(model => model.Banner.GroupId)
+            </td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Name)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Banner.Name)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Image)</td>
+            <td class="form_text">@Html.TextBoxFor(model => model.Banner.Image, new { type = "file" }) <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span></td>
+        </tr>
+        @if (Model.Banner.Image != null)
+        {
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text"><img class="img-border" src="@Path.Combine("/images/banners/",  Model.Banner.Image)" /></td>
+            </tr>
+        }
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.ImageMobile)</td>
+            <td class="form_text">@Html.TextBoxFor(model => model.Banner.ImageMobile, new { type = "file" }) <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span></td>
+        </tr>
+        @if (Model.Banner.ImageMobile != null)
+        {
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text"><img class="img-border" src="@Path.Combine("/images/banners/",  Model.Banner.ImageMobile)" /></td>
+            </tr>
+        }
+
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Slogan)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Banner.Slogan)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Description)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Banner.Description)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Url)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Banner.Url)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Sort)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Banner.Sort)</td>
+        </tr>
+        <tr>
+            <td class="form_name">@Html.LabelFor(model => model.Banner.Active)</td>
+            <td class="form_text">@Html.CheckBoxFor(model => model.Banner.Active)</td>
+        </tr>
+        <tr>
+            <td class="form_name"></td>
+            <td class="form_text">
+                <input type="submit" class="btn quick-link" value="Cập nhật" />
+            </td>
+        </tr>
+    </table>
+    }
+</div>

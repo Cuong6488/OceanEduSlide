@@ -1,0 +1,106 @@
+﻿@model OceanEduSlide.ViewModels.ListBannerViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách banner";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">Danh sách banner</h2>
+@if (ViewBag.Banner == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới quảng cáo thành công</strong></div>
+}
+@if (ViewBag.Banner == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật quảng cáo thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("Banner","Banner")"><i class="fal fa-plus-circle me-1"></i> Thêm mới banner</a>
+<div class="box_content">
+    <p class="w-25 d-flex align-items-center"><span class="d-block pb-2 w-50">Vị trí quảng cáo</span> @Html.DropDownListFor(model => model.GroupId, Model.SelectGroup, "Tất cả vị trí", new { @class = "form_control w300", onchange = "window.location.href='/Banner/ListBanner?groupId='+this.value" })</p>
+    <table class="list_table tablecenter table-striped">
+        <tr>
+            <th style="width: 50px">STT</th>
+            <th style="width: 150px">Hình ảnh</th>
+            <th>Tên quảng cáo</th>
+            <th>Vị trí</th>
+            <th>Hoạt động</th>
+            <th style="width: 80px"></th>
+        </tr>
+        @foreach (var banner in Model.Banners)
+        {
+            <tr data-id="@banner.Id">
+                <td style="width: 100px;">
+                    <input type="number" name="Sort" value="@banner.Sort" class="form_control w100" />
+                </td>
+                <td>
+                    @if (banner.Image != null)
+                    {
+                        <img class="img-border" src="@Path.Combine("/images/banners/", banner.Image)" /> }
+                    else
+                    {
+                        @:NO PICTURE
+                    }
+                </td>
+                <td>
+                    <strong>@banner.Name</strong><br /><br />
+                </td>
+                <td>@Html.DisplayFor(model => banner.GroupId)</td>
+                <td>@Html.EditorFor(a => banner.Active, new { htmlAttributes = new { id = "Active" } })</td>
+                <td style="width: 160px;">
+                    <a style="color: #079AA6" href="javascript:;" onclick="updateBanner('@banner.Id')">Cập nhật - </a>
+                    @Html.ActionLink("Sửa", "EditBanner", new { bannerId = banner.Id }) - <a style="color:red" href="javascript:;" onclick="deleteBanner('@banner.Id')">Xóa</a>
+                </td>
+            </tr>
+        }
+        @if (Model.Banners.PageCount > 1)
+        {
+            <tr>
+                <td colspan="8">@Html.PagedListPager(Model.Banners, page => Url.Action("ListBanner", new { page }))</td>
+            </tr>
+        }
+    </table>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+function deleteBanner(id) {
+            if (confirm("Bạn có chắc chắn xóa banner này không?")) {
+                $.post("/Banner/DeleteBanner", { bannerId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa banner thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+        function updateBanner(id) {
+            var divId = $("tr[data-id='" + id + "']");
+            var sort = divId.find("input[name=Sort]").val();
+            var active = divId.find("input#Active").prop("checked");
+            if (sort == "") {
+                alert("Bạn hãy nhập số thứ tự");
+            }
+            $.post("/Banner/UpdateBannerQuick", { bannerId: id, sort, active }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Cập nhật thành công',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }</script>
+}

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model OceanEduSlide.Models.Banner
+
+@{
     ViewBag.Title = "Trang chủ";
     Layout = "~/Views/Shared/_LayoutSaleKit.cshtml";
 }
@@ -73,7 +75,14 @@
     </div>
 </div>
 <div class="banner">
-    <img src="~/Content/images/banner-index.png" alt="banner">
+    @if (Model != null)
+    {
+        <img src="@Path.Combine("/images/banners/",Model.Image)?w=1900" alt="banner">
+    }
+    else
+    {
+        <img src="~/Content/images/banner-index.png" alt="banner">
+    }
 </div>
 <div class="change-password-form">
     <form action="/" method="post">

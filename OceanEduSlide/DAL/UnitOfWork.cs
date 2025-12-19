@@ -41,6 +41,9 @@ namespace OceanEduSlide.DAL
         private GenericRepository<BC_PhieuThu_DB> _phieuThuRepository;
         private GenericRepository<LockImport> _lockImportRepository;
         private GenericRepository<GroupDiscount> _groupDiscounttRepository;
+        private GenericRepository<Banner> _bannerRepository;
+        public GenericRepository<Banner> BannerRepository =>
+            _bannerRepository ?? (_bannerRepository = new GenericRepository<Banner>(_context));
         public GenericRepository<GroupDiscount> GroupDiscountRepository =>
            _groupDiscounttRepository ?? (_groupDiscounttRepository = new GenericRepository<GroupDiscount>(_context));
         public GenericRepository<LockImport> LockImportRepository =>

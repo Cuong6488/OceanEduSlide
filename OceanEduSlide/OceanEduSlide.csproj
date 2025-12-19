@@ -338,6 +338,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FaceIdController.cs" />
     <Compile Include="Controllers\EventController.cs" />
@@ -711,7 +712,12 @@
     <Compile Include="Migrations\202511280310495_groupe.Designer.cs">
       <DependentUpon>202511280310495_groupe.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202512190829259_banner.cs" />
+    <Compile Include="Migrations\202512190829259_banner.Designer.cs">
+      <DependentUpon>202512190829259_banner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
     <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\GroupDiscount.cs" />
@@ -778,6 +784,7 @@
     <Compile Include="Utils\ExcelHelpers.cs" />
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
+    <Compile Include="ViewModels\BannerViewModel.cs" />
     <Compile Include="ViewModels\EventViewModel.cs" />
     <Compile Include="ViewModels\ReportHomeViewModel .cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
@@ -1603,16 +1610,11 @@
     <Content Include="Views\Vcms\CreateUser.cshtml" />
     <Content Include="Views\Vcms\ListUser.cshtml" />
     <Content Include="Views\Vcms\CreateDiscount.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DisplayOrderStatus.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Enum.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\GroupId.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\GroupVideoId.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ImageArticle.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ImageArticleCat.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\ImageBrand.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ImagePerson.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\ImageProductCat.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\Payment.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTimePicker.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditorBox.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\MoneyBox.cshtml" />
@@ -1714,6 +1716,9 @@
     <Content Include="Views\ReportHome\LoadListCallDay.cshtml" />
     <Content Include="Views\Vcms\InsertGroupDiscountExcel.cshtml" />
     <Content Include="Views\Vcms\ListGroupDiscount.cshtml" />
+    <Content Include="Views\Banner\Banner.cshtml" />
+    <Content Include="Views\Banner\EditBanner.cshtml" />
+    <Content Include="Views\Banner\ListBanner.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2029,6 +2034,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202511280310495_groupe.resx">
       <DependentUpon>202511280310495_groupe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202512190829259_banner.resx">
+      <DependentUpon>202512190829259_banner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

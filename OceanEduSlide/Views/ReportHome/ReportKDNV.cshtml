@@ -77,6 +77,10 @@
         .columnGroup:hover {
             box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
         }
+
+    .select2-container {
+        margin: 0 8px;
+    }
 </style>
 
 <div class="container py-3">
@@ -99,7 +103,7 @@
         @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
         @if (Model.Zones?.Count() > 1)
         {
-            <select name="ZoneId" class="form-select me-3 w-25">
+            <select name="ZoneId" class="form-select me-2 w-25">
                 <option value="">Chọn vùng</option>
                 @foreach (var z in Model.Zones)
                 {
@@ -118,11 +122,19 @@
                 }
             </select>
         }
+        <select name="UserId" class="form-select w-25 select2">
+            <option>Chọn nhân sự</option>
+            @foreach (var user in Model.ListHistoryUser)
+            {
+                <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien</option>
+            }
+        </select>
+
         @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
         {
             <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
         }
-        <select name="UserType" class="form-select w-25 ms-3">
+        <select name="UserType" class="form-select w-25 ms-2">
             <option value="">Tất cả chức danh</option>
             <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
             <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
@@ -299,6 +311,8 @@
                 );
             }
         });
+        $('.select2').select2({ allowClear: true });
+
         $(".btn-filter li").on("click", function (data) {
             //$(this).siblings("ul").removeClass("active");
             var categoryid = $(this).closest('th').data("categoryid");
