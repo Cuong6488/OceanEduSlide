@@ -71,31 +71,31 @@ namespace OceanEduSlide.Controllers
                         }
                     }
                 }
-                var fileMobile = Request.Files["Banner.ImageMobile"];
-                if (fileMobile != null && fileMobile.ContentLength > 0)
-                {
-                    if (!HtmlHelpers.CheckFileExt(fileMobile.FileName, "jpg|jpeg|png|gif|svg"))
-                    {
-                        ModelState.AddModelError("", @"Chỉ chấp nhận định dạng jpg, png, gif, jpeg, svg");
-                        isPost = false;
-                    }
-                    else
-                    {
-                        if (fileMobile.ContentLength > 4000 * 1024)
-                        {
-                            ModelState.AddModelError("", @"Dung lượng lớn hơn 4MB. Hãy thử lại");
-                            isPost = false;
-                        }
-                        else
-                        {
-                            var imgPath = "/images/banners/" + DateTime.Now.ToString("yyyy/MM/dd");
-                            HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
-                            var imgFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(fileMobile.FileName);
-                            model.Banner.ImageMobile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
-                            fileMobile.SaveAs(Server.MapPath(Path.Combine(imgPath, imgFileName)));
-                        }
-                    }
-                }
+                //var fileMobile = Request.Files["Banner.ImageMobile"];
+                //if (fileMobile != null && fileMobile.ContentLength > 0)
+                //{
+                //    if (!HtmlHelpers.CheckFileExt(fileMobile.FileName, "jpg|jpeg|png|gif|svg"))
+                //    {
+                //        ModelState.AddModelError("", @"Chỉ chấp nhận định dạng jpg, png, gif, jpeg, svg");
+                //        isPost = false;
+                //    }
+                //    else
+                //    {
+                //        if (fileMobile.ContentLength > 4000 * 1024)
+                //        {
+                //            ModelState.AddModelError("", @"Dung lượng lớn hơn 4MB. Hãy thử lại");
+                //            isPost = false;
+                //        }
+                //        else
+                //        {
+                //            var imgPath = "/images/banners/" + DateTime.Now.ToString("yyyy/MM/dd");
+                //            HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
+                //            var imgFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(fileMobile.FileName);
+                //            model.Banner.ImageMobile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
+                //            fileMobile.SaveAs(Server.MapPath(Path.Combine(imgPath, imgFileName)));
+                //        }
+                //    }
+                //}
                 if (isPost)
                 {
                     _unitOfWork.BannerRepository.Insert(model.Banner);
@@ -151,31 +151,31 @@ namespace OceanEduSlide.Controllers
                         }
                     }
                 }
-                var fileMobile = Request.Files["Banner.ImageMobile"];
-                if (fileMobile != null && fileMobile.ContentLength > 0)
-                {
-                    if (!HtmlHelpers.CheckFileExt(fileMobile.FileName, "jpg|jpeg|png|gif|svg"))
-                    {
-                        ModelState.AddModelError("", @"Chỉ chấp nhận định dạng jpg, png, gif, jpeg, svg");
-                        isPost = false;
-                    }
-                    else
-                    {
-                        if (fileMobile.ContentLength > 4000 * 1024)
-                        {
-                            ModelState.AddModelError("", @"Dung lượng lớn hơn 4MB. Hãy thử lại");
-                            isPost = false;
-                        }
-                        else
-                        {
-                            var imgPath = "/images/banners/" + DateTime.Now.ToString("yyyy/MM/dd");
-                            HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
-                            var imgFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(fileMobile.FileName);
-                            banner.ImageMobile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
-                            fileMobile.SaveAs(Server.MapPath(Path.Combine(imgPath, imgFileName)));
-                        }
-                    }
-                }
+                //var fileMobile = Request.Files["Banner.ImageMobile"];
+                //if (fileMobile != null && fileMobile.ContentLength > 0)
+                //{
+                //    if (!HtmlHelpers.CheckFileExt(fileMobile.FileName, "jpg|jpeg|png|gif|svg"))
+                //    {
+                //        ModelState.AddModelError("", @"Chỉ chấp nhận định dạng jpg, png, gif, jpeg, svg");
+                //        isPost = false;
+                //    }
+                //    else
+                //    {
+                //        if (fileMobile.ContentLength > 4000 * 1024)
+                //        {
+                //            ModelState.AddModelError("", @"Dung lượng lớn hơn 4MB. Hãy thử lại");
+                //            isPost = false;
+                //        }
+                //        else
+                //        {
+                //            var imgPath = "/images/banners/" + DateTime.Now.ToString("yyyy/MM/dd");
+                //            HtmlHelpers.CreateFolder(Server.MapPath(imgPath));
+                //            var imgFileName = DateTime.Now.ToFileTimeUtc() + Path.GetExtension(fileMobile.FileName);
+                //            banner.ImageMobile = DateTime.Now.ToString("yyyy/MM/dd") + "/" + imgFileName;
+                //            fileMobile.SaveAs(Server.MapPath(Path.Combine(imgPath, imgFileName)));
+                //        }
+                //    }
+                //}
                 if (isPost)
                 {
                     banner.GroupId = model.Banner.GroupId;

@@ -42,17 +42,17 @@
                 <td class="form_text"><img class="img-border" src="@Path.Combine("/images/banners/",  Model.Banner.Image)" /></td>
             </tr>
         }
-        <tr>
+        @*<tr>
             <td class="form_name">@Html.LabelFor(model => model.Banner.ImageMobile)</td>
             <td class="form_text">@Html.TextBoxFor(model => model.Banner.ImageMobile, new { type = "file" }) <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span></td>
-        </tr>
-        @if (Model.Banner.ImageMobile != null)
+        </tr>*@
+        @*@if (Model.Banner.ImageMobile != null)
         {
             <tr>
                 <td class="form_name"></td>
                 <td class="form_text"><img class="img-border" src="@Path.Combine("/images/banners/",  Model.Banner.ImageMobile)" /></td>
             </tr>
-        }
+        }*@
 
         <tr>
             <td class="form_name">@Html.LabelFor(model => model.Banner.Slogan)</td>

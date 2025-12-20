@@ -304,7 +304,19 @@ h2 {
             background-color: white;
             border-radius: 5px;
             border: 1px solid #dbdbdb;
+            height: 35px;
+            overflow: auto;
         }
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        padding: 0 2px;
+        height: 20px;
+        line-height: 1.5;
+    }
+
+    .select2-container .select2-search--inline .select2-search__field{
+        height:19px;
     }
 }
 

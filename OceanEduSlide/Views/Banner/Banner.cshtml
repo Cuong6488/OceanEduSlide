@@ -30,10 +30,10 @@
             <td class="form_name">@Html.LabelFor(model => model.Banner.Image)</td>
             <td class="form_text">@Html.TextBoxFor(model => model.Banner.Image, new { type = "file" }) <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span></td>
         </tr>
-        <tr>
+        @*<tr>
             <td class="form_name">@Html.LabelFor(model => model.Banner.ImageMobile)</td>
             <td class="form_text">@Html.TextBoxFor(model => model.Banner.ImageMobile, new { type = "file" }) <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span></td>
-        </tr>
+        </tr>*@
         <tr>
             <td class="form_name">@Html.LabelFor(model => model.Banner.Slogan)</td>
             <td class="form_text">@Html.EditorFor(model => model.Banner.Slogan)</td>

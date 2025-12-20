@@ -41,6 +41,7 @@ namespace OceanEduSlide.ViewModels
         public int sort { get; set; }
         public User User { get; set; }
         public int? UserType { get; set; }
+        public List<int> ListMonth { get; set; }
     }
     public class ListCallViewModel
     {

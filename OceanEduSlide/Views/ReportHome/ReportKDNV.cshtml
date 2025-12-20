@@ -85,7 +85,7 @@
 
 <div class="container py-3">
     <form action="@Url.Action("ReportKDNV")" method="get" class="d-flex form-filter mb-5">
-        <select name="Year" class="form-select me-3 w-25" required>
+        <select name="Year" class="form-select me-2 w-25" required>
             <option value="">Chọn năm</option>
             @for (int i = 2024; i <= DateTime.Now.Year; i++)
             {
@@ -99,7 +99,22 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
+        <!--<div class="month-select-wrapper w-25 me-4" style="position: relative; display: inline-block">
+        <select name="ListMonth" class="form-select select2-month" multiple="multiple">
+            <option value="all">Cả năm</option>
+            <option value="q1">Quý 1</option>
+            <option value="q2">Quý 2</option>
+            <option value="q3">Quý 3</option>
+            <option value="q4">Quý 4</option>
 
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" @(Model.ListMonth.Contains(i) ? "selected" : "")>Tháng @i</option>
+            }
+        </select>-->
+        <!-- Dấu × -->
+        <!--<span class="clear-month" title="Clear" style="position: absolute; top: 10px; right: 2px; cursor: pointer; font-weight: bold; font-size: 16px; color: #555;">×</span>
+    </div>-->
         @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
         @if (Model.Zones?.Count() > 1)
         {
@@ -114,6 +129,7 @@
 
         @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
         {
+
             <select name="OfficeId" class="form-select w-25">
                 <option>Chọn chi nhánh</option>
                 @foreach (var office in Model.Offices)
@@ -279,11 +295,11 @@
         <div class="text-center">
             @if (Model.OfficeId != null)
             {
-                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort, listMonth = Model.ListMonth }))
             }
             else
             {
-                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+                @Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort, listMonth = Model.ListMonth }))
             }
         </div>
     }
@@ -312,19 +328,74 @@
             }
         });
         $('.select2').select2({ allowClear: true });
+        const $monthSelect = $('.select2-month');
+
+        $monthSelect.select2({
+            placeholder: "Chọn tháng",
+            width: '100%'
+        });
+
+        // Clear bằng dấu ×
+        $('.clear-month').on('click', function () {
+            $monthSelect.val(null).trigger('change');
+        });
+
+        // Xử lý Quý / Cả năm
+        $monthSelect.on('select2:select', function (e) {
+            const val = e.params.data.id;
+            let months = [];
+            switch (val) {
+                case 'all': months = Array.from({ length: 12 }, (_, i) => (i + 1).toString()); break;
+                case 'q1': months = ['1', '2', '3']; break;
+                case 'q2': months = ['4', '5', '6']; break;
+                case 'q3': months = ['7', '8', '9']; break;
+                case 'q4': months = ['10', '11', '12']; break;
+                default: return;
+            }
+            $monthSelect.val(months).trigger('change');
+
+            // Bỏ chọn option đặc biệt
+            setTimeout(() => {
+                $monthSelect.find('option[value="' + val + '"]').prop('selected', false);
+            }, 0);
+        });
+
+
 
         $(".btn-filter li").on("click", function (data) {
             //$(this).siblings("ul").removeClass("active");
-            var categoryid = $(this).closest('th').data("categoryid");
-            var sort = $(this).data("sort");
-            var zoneId = $('select[name="ZoneId"]').val();
-            var officeId = $('select[name="OfficeId"]').val();
-            var userType = $('select[name="UserType"]').val();
-            var month = $('select[name="Month"]').val();
-            var year = $('select[name="Year"]').val();
-            var page = $('input[name="page"]').val();
-            window.location.href = `/ReportHome/ReportKDNV?page=${page}&Year=${year}&Month=${month}&ZoneId=${zoneId}&categoryid=${categoryid}&sort=${sort}&OfficeId=${officeId}&UserType=${userType}`;
+            ////var categoryid = @Model.categoryId;
+            var sort = @Model.sort.ToString();
+            @*var zoneId = @Model.ZoneId;
+          var officeId = @Model.OfficeId;
+          var userType = @Model.UserType;
+          var userId = @Model.UserId;*@
+          var year = @Model.Year.ToString();
+            //window.location.href = `/ReportHome/ReportKDNV?Year=${year}&ZoneId=${zoneId}&categoryid=${categoryid}&sort=${sort}userIdd=${userId}&OfficeId=${officeId}&UserType=${userType}`;
+    var zoneId   = @(Model.ZoneId.HasValue ? Model.ZoneId.Value.ToString() : "undefined");
+    var officeId = @(Model.OfficeId.HasValue ? Model.OfficeId.Value.ToString() : "undefined");
+    var userType = @(Model.UserType.HasValue ? Model.UserType.Value.ToString() : "undefined");
+    var userId   = @(Model.UserId.HasValue ? Model.UserId.Value.ToString() : "undefined");
 
+    // Giả sử categoryid là biến JS khác
+    // var categoryid = ...;
+
+    // Build URL động
+    var url = '/ReportHome/ReportKDNV?';
+
+    if(sort !== undefined) url += `sort=${sort}&`;
+    if(zoneId !== undefined) url += `ZoneId=${zoneId}&`;
+    if(officeId !== undefined) url += `OfficeId=${officeId}&`;
+    if(userType !== undefined) url += `UserType=${userType}&`;
+    if(userId !== undefined) url += `userIdd=${userId}&`;
+    if(year !== undefined) url += `Year=${year}&`;
+    // if(categoryid !== undefined) url += `categoryid=${categoryid}&`;
+
+    // Loại bỏ ký tự & thừa
+    url = url.replace(/&$/, '');
+
+    // Chuyển hướng
+    window.location.href = url;
         });
     </script>
 }

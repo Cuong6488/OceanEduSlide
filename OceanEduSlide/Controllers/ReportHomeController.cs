@@ -357,7 +357,7 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Month, int? Year, int? categoryid, int sort = 1)
+        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Month, int? Year, int? categoryid, List<int> ListMonth, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -367,7 +367,7 @@ namespace OceanEduSlide.Controllers
             //categoryid = categoryid ?? 88;
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
-
+            ListMonth = ListMonth?? new List<int>() { DateTime.Now.Month };
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == selectedMonth && h.Year == selectedYear).Select(h => new
             {
                 h.OfficeId,
@@ -404,6 +404,7 @@ namespace OceanEduSlide.Controllers
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
                 OfficeId = OfficeId,
                 UserId = UserId,
+                ListMonth = ListMonth
             };
 
             if (User.TypeUser == TypeUser.HO)
@@ -483,7 +484,6 @@ namespace OceanEduSlide.Controllers
                         historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
                                                 || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
                 }
-
             }
 
             if (model.OfficeId != null)
