@@ -43,6 +43,40 @@ namespace OceanEduSlide.ViewModels
         public int? UserType { get; set; }
         public List<int> ListMonth { get; set; }
     }
+
+    public class BCTHCNViewModel
+    {
+        public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<ReportData> ReportDatas { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
+        public int Year { get; set; }
+        public int? OfficeId { get; set; }
+        public int? ZoneId { get; set; }
+        public User User { get; set; }
+        public List<int> SoSale { get; set; }
+        public List<int> DinhBien { get; set; }
+        public List<decimal> ChiTieuDS { get; set; }
+        public List<decimal> ThucDatDS { get; set; }
+        public List<decimal> HTDS { get; set; }
+        public List<decimal> TiTrongSale { get; set; }
+        public List<decimal> TiTrongDaoTao { get; set; }
+        public List<decimal> TiTrongKeToan { get; set; }
+        public List<decimal> UuDaiBinhQuan { get; set; }
+        public List<int> TongSoHocVien { get; set; }
+        public List<int> HVGhiDanhLai { get; set; }
+        public List<int> HVGhiDanhMoi { get; set; }
+        public List<decimal> HTCuocGoi { get; set; }
+        public List<decimal> HTHocVien { get; set; }
+        public List<decimal> SaleOver100 { get; set; }
+        public List<decimal> Sale30To50 { get; set; }
+        public List<decimal> Sale20To30 { get; set; }
+        public List<decimal> SaleUnder20 { get; set; }
+        public List<decimal> DoanhThuNen { get; set; }
+        public List<decimal> DoanhThuHocBong { get; set; }
+        public List<decimal> DoanhThuVang { get; set; }
+        public List<decimal> DoanhThuSuKien { get; set; }
+    }
+
     public class ListCallViewModel
     {
         public IEnumerable<Office> Offices { get; set; }
