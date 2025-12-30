@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OceanEduSlide.Models
@@ -29,9 +30,17 @@ namespace OceanEduSlide.Models
         public int? DayReduceCG { get; set; }
         //[Display(Name = "Các vùng quản lý")]
         //public string ZoneIds { get; set; }
+        //[Display(Name = "Các chi nhánh quản lý")]
+        //public string OfficeIds { get; set; }
         public virtual User User { get; set; }
         public virtual Office Office { get; set; }
         public virtual Zone Zone { get; set; }
+
+        [Display(Name = "Các vùng quản lý")]
+        public string ZoneIds { get; set; }
+        [Display(Name = "Các chi nhánh quản lý")]
+        public string OfficeIds { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime? CreateDate { get; set; } = DateTime.Now;
     }

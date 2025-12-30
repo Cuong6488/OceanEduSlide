@@ -24,6 +24,7 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; }
         public virtual ICollection<Office> Offices { get; set; }
         public virtual ICollection<HistoryOffice> HistoryOffices { get; set; }
+
         public Zone()
         {
             Active = true;

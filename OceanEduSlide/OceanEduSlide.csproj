@@ -716,6 +716,10 @@
     <Compile Include="Migrations\202512190829259_banner.Designer.cs">
       <DependentUpon>202512190829259_banner.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202512290717548_historyzone.cs" />
+    <Compile Include="Migrations\202512290717548_historyzone.Designer.cs">
+      <DependentUpon>202512290717548_historyzone.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
@@ -1720,6 +1724,7 @@
     <Content Include="Views\Banner\Banner.cshtml" />
     <Content Include="Views\Banner\EditBanner.cshtml" />
     <Content Include="Views\Banner\ListBanner.cshtml" />
+    <Content Include="Views\ReportHome\ReportTHCN.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2038,6 +2043,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202512190829259_banner.resx">
       <DependentUpon>202512190829259_banner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202512290717548_historyzone.resx">
+      <DependentUpon>202512290717548_historyzone.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

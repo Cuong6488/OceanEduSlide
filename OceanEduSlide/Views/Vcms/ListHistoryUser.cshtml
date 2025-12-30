@@ -94,6 +94,7 @@
                 <th>Ngày công giảm</th>
                 <th>Chi nhánh</th>
                 <th>Vùng</th>
+                <th>Các vùng quản lý</th>
                 <th>CDCM</th>
                 <th>Phân quyền</th>
                 <th>Ngày tạo</th>
@@ -116,6 +117,7 @@
                     <td>
                         @(user.Zone?.Name)
                     </td>
+                    <td>@(user.ZoneIds?.Trim(','))</td>
                     <td>@user.CDCM</td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
                     <td>@Html.DisplayFor(model => user.CreateDate)</td>

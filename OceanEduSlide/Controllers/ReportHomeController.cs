@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using NLog;
 using OfficeOpenXml;
 using System.Data;
+using OceanEduSlide.Migrations;
 
 namespace OceanEduSlide.Controllers
 {
@@ -357,17 +358,20 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Month, int? Year, int? categoryid, List<int> ListMonth, int sort = 1)
+        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Month, int? Year, int? categoryid/*, List<int> ListMonth*/, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-
+            //var allHistoryZoneIds = new HashSet<string>(
+            //    historyUsers.Where(hu => !string.IsNullOrEmpty(hu.ZoneIds)).SelectMany(hu => hu.ZoneIds.Split(',', (char)StringSplitOptions.RemoveEmptyEntries)));
             var pageNumber = page ?? 1;
             ViewBag.Page = pageNumber;
             //categoryid = categoryid ?? 88;
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
-            ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
+            //ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == selectedMonth && a.Year == selectedYear).AsNoTracking();
+
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == selectedMonth && h.Year == selectedYear).Select(h => new
             {
                 h.OfficeId,
@@ -404,7 +408,7 @@ namespace OceanEduSlide.Controllers
                 ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
                 OfficeId = OfficeId,
                 UserId = UserId,
-                ListMonth = ListMonth
+                //ListMonth = ListMonth
             };
 
             if (User.TypeUser == TypeUser.HO)
@@ -413,43 +417,59 @@ namespace OceanEduSlide.Controllers
             }
             else if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
+                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
                 if (model.ZoneId == null)
                 {
-                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
                     if (model.OfficeId == null)
                     {
-                        listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                        listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
                         if (model.UserId == null)
-                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
                     }
                 }
             }
             else
             {
                 //model.ZoneId = User.ZoneId;
-
                 if (User.TypeUser == TypeUser.ASM)
                 {
                     if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
                     {
-                        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ","));
+                        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
                         if (model.ZoneId == null)
                         {
-                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+
                             if (model.OfficeId == null)
                             {
-                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && User.ZoneIds.Contains("," + a.Zone.ShortCode + ",")));
+                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
                                 if (model.UserId == null)
-                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && User.ZoneIds.Contains("," + a.Zone.ShortCode + ",")));
+                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
                             }
                         }
                     }
-                    else
+                    else if (User.ZoneId != null)
                     {
-                        model.ZoneId = User.ZoneId;
+                        model.Zones = zones.Where(a => a.Id == User.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                        if (model.ZoneId == null)
+                        {
+                            //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+
+                            if (model.OfficeId == null)
+                            {
+                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                                if (model.UserId == null)
+                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                            }
+                        }
+                        //model.ZoneId = User.ZoneId;
                     }
                     //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
                 }
@@ -457,16 +477,29 @@ namespace OceanEduSlide.Controllers
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                     {
-                        model.OfficeId = User.OfficeId;
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+                        if (model.OfficeId == null)
+                        {
+                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                            if (model.UserId == null)
+                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+                        }
+
+                        //model.OfficeId = User.OfficeId;
+
+
                     }
                     else
                     {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
                         if (model.OfficeId == null)
                         {
-                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                             if (model.UserId == null)
-                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
+                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
 
                         }
                     }
@@ -475,6 +508,7 @@ namespace OceanEduSlide.Controllers
 
             if (model.ZoneId != null)
             {
+                //var zone = zones.FirstOrDefault(a => a.Id == ZoneId);
                 model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
                 if (model.OfficeId == null)
                 {
@@ -597,6 +631,7 @@ namespace OceanEduSlide.Controllers
             }
             return View(model);
         }
+
         public void ExportKDNV(int Year, int Month, int? ZoneId, int? OfficeId, int? UserType)
         {
             // Lấy thông tin HistoryOffice trước
@@ -818,178 +853,593 @@ namespace OceanEduSlide.Controllers
             }
         }
 
+        public ActionResult ReportTHCN(int? ZoneId, int? OfficeId, int? Year)
+        {
+            if (User.TypeUser == null)
+                return HttpNotFound();
+            //var allHistoryZoneIds = new HashSet<string>(
+            //    historyUsers.Where(hu => !string.IsNullOrEmpty(hu.ZoneIds)).SelectMany(hu => hu.ZoneIds.Split(',', (char)StringSplitOptions.RemoveEmptyEntries)));
+            var selectedYear = Year ?? DateTime.Now.Year;
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear).AsNoTracking();
 
-        //public ActionResult ReportTHCN(int? ZoneId, int? OfficeId, int? Year)
-        //{
-        //    if (User.TypeUser == null)
-        //        return HttpNotFound();
-        //    int currentYear = Year ?? DateTime.Now.Year;
-        //    var listMonth = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-        //    var zones = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
-        //    var offices = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == selectedYear).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId,
+                h.Month,
+            });
+            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
+            var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+            //var users = _unitOfWork.UserRepository.Get(a => a.Active && listHistoryUser.Contains(a.Id));
+            var model = new BCTHCNViewModel
+            {
+                Year = selectedYear,
+                Offices = offices,
+                User = User,
+                ZoneId = ZoneId,
+                OfficeId = OfficeId,
+            };
 
-        //    var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == currentMonth && h.Year == currentYear).Select(h => new
-        //    {
-        //        h.OfficeId,
-        //        ZoneShortCode = h.Zone.ShortCode,
-        //        h.ZoneId
-        //    });
-        //    // 1. Truy vấn danh sách Office theo quyền truy cập
-        //    var officeQuery = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsQueryable();
+            if (User.TypeUser == TypeUser.HO)
+            {
+                model.Zones = zones;
+            }
+            else if (User.TypeUser == TypeUser.CV)
+            {
+                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                if (model.ZoneId == null)
+                {
+                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+                    if (model.OfficeId == null)
+                    {
 
-        //    if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        if (!ZoneId.HasValue)
-        //            officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-        //    }
-        //    else if (User.TypeUser == TypeUser.ASM)
-        //    {
-        //        if (!ZoneId.HasValue)
-        //        {
-        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-        //            {
-        //                officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-        //            }
-        //            else
-        //            {
-        //                officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.Zone.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-        //            }
-        //        }
-        //    }
-        //    else if (User.TypeUser != TypeUser.HO)
-        //    {
-        //        if (string.IsNullOrEmpty(User.OfficeIds))
-        //            officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
-        //        else
-        //        {
-        //            officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-        //        }
-        //    }
+                    }
+                }
+            }
+            else
+            {
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
 
-        //    if (ZoneId.HasValue)
-        //    {
-        //        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
-        //    }
-        //    //if (OfficeId.HasValue)
-        //    //{
-        //    //    officeQuery = officeQuery.Where(a =>  a.Id == OfficeId.Value);
-        //    //}
+                            if (model.OfficeId == null)
+                            {
 
-        //    var allOffices = officeQuery.AsNoTracking().ToList();
-        //    var officeIds = allOffices.Select(o => o.Id).ToList();
+                            }
+                        }
+                    }
+                    else if (User.ZoneId != null)
+                    {
+                        model.Zones = zones.Where(a => a.Id == User.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                        if (model.ZoneId == null)
+                        {
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
 
-        //    // 2. Truy vấn ReportData cho chỉ ReportCategoryId
-        //    var reportDataRaw = _unitOfWork.ReportDataRepository
-        //        .GetQuery(a =>
-        //            a.Active &&
-        //            a.Month == currentMonth &&
-        //            a.Year == currentYear &&
-        //            a.ReportCategory.TypeCat == TypeCat.Type1 &&
-        //            a.ReportCategoryId == categoryid &&
-        //            officeIds.Contains(a.OfficeId ?? 0)) // giới hạn trong office được truy cập
-        //        .Select(a => new { a.OfficeId, a.Data })
-        //        .AsNoTracking()
-        //        .ToList();
+                            if (model.OfficeId == null)
+                            {
 
-        //    // 3. Tính tổng theo OfficeId
-        //    var officeDataDict = reportDataRaw
-        //        .GroupBy(r => r.OfficeId)
-        //        .ToDictionary(
-        //            g => g.Key,
-        //            g => g.Sum(r =>
-        //            {
-        //                decimal val;
-        //                var cleaned = r.Data?.Replace(".", "").Replace(",", "").Replace("%", "") ?? "0";
-        //                return decimal.TryParse(cleaned, out val) ? val : 0;
-        //            })
-        //        );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
 
-        //    // 4. Tách offices có và không có data
-        //    var officeHasData = allOffices.Where(o => officeDataDict.ContainsKey(o.Id)).ToList();
-        //    var officeNoData = allOffices.Where(o => !officeDataDict.ContainsKey(o.Id)).ToList();
-        //    List<Office> sortedAllOffices;
-        //    // 5. Sắp xếp officeHasData
-        //    if (sort == 1)
-        //    {
-        //        officeHasData = officeHasData
-        //                        .OrderByDescending(o => officeDataDict[o.Id])
-        //                        .ToList();
-        //        sortedAllOffices = officeHasData.Concat(officeNoData).ToList();
-        //    }
-        //    else
-        //    {
-        //        officeHasData = officeHasData
-        //                        .OrderBy(o => officeDataDict[o.Id])
-        //                        .ToList();
-        //        sortedAllOffices = officeNoData.Concat(officeHasData).ToList();
-        //    }
+                        if (model.OfficeId == null)
+                        {
 
-        //    // Gộp lại: officeHasData lên trước, officeNoData ở sau
-        //    // Phân trang
-        //    var sortedOffices = sortedAllOffices.ToPagedList(pageNumber, 15);
+                        }
+                    }
+                    else
+                    {
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
 
-        //    var pagedOfficeIds = sortedOffices.Select(o => o.Id).ToList();
+                        if (model.OfficeId == null)
+                        {
 
-        //    // 5. Truy vấn ReportData (đầy đủ) cho các Office trong trang hiện tại
-        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
-        //        a.Active &&
-        //        a.Month == currentMonth &&
-        //        a.Year == currentYear &&
-        //        a.ReportCategory.TypeCat == TypeCat.Type1 &&
-        //        pagedOfficeIds.Contains(a.OfficeId ?? 0))
-        //        .AsNoTracking()
-        //        .ToList();
+                        }
+                    }
+                }
+            }
 
-        //    // 6. Chuẩn bị ViewModel
-        //    var model = new ListReportHomeViewModel
-        //    {
-        //        Month = currentMonth,
-        //        Year = currentYear,
-        //        User = User,
-        //        ZoneId = ZoneId,
-        //        categoryId = categoryid,
-        //        sort = sort,
-        //        Offices = sortedOffices,
-        //        ReportCategories = _unitOfWork.ReportCategoryRepository
-        //            .GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1,
-        //                      q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort))
-        //            .AsNoTracking(),
-        //        ReportDatas = reportDatas
-        //    };
 
-        //    // 7. Gán zone cho model theo quyền
-        //    if (User.TypeUser == TypeUser.HO)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-        //    }
-        //    else if (User.TypeUser == TypeUser.CV)
-        //    {
-        //        model.Zones = _unitOfWork.ZoneRepository
-        //            .Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-        //    }
-        //    else
-        //    {
-        //        //model.ZoneId = User.ZoneId;
-        //        if (User.TypeUser == TypeUser.ASM)
-        //        {
-        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-        //            {
-        //                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+            List<decimal> SoSale = new List<decimal>();
+            List<decimal> DinhBien = new List<decimal>();
+            List<decimal> ChiTieuDS = new List<decimal>();
+            List<decimal> ThucDatDS = new List<decimal>();
+            List<decimal> HTDS = new List<decimal>();
+            List<decimal> TiTrongSale = new List<decimal>();
+            List<decimal> TiTrongDaoTao = new List<decimal>();
+            List<decimal> TiTrongKeToan = new List<decimal>();
+            List<decimal> UuDaiBinhQuan = new List<decimal>();
+            List<decimal> TongSoHocVien = new List<decimal>();
+            List<decimal> HVGhiDanhLai = new List<decimal>();
+            List<decimal> HVGhiDanhMoi = new List<decimal>();
+            List<decimal> HTCuocGoi = new List<decimal>();
+            List<decimal> HTHocVien = new List<decimal>();
+            List<decimal> ThangChotBinhQuan = new List<decimal>();
+            List<decimal> SaleOver100 = new List<decimal>();
+            List<decimal> Sale30To50 = new List<decimal>();
+            List<decimal> Sale20To30 = new List<decimal>();
+            List<decimal> SaleUnder20 = new List<decimal>();
+            List<decimal> TiLeDoanhThuNen = new List<decimal>();
+            List<decimal> TiLeDoanhThuHocBong = new List<decimal>();
+            List<decimal> TiLeDoanhThuVang = new List<decimal>();
+            List<decimal> TiLeDoanhThuSuKien = new List<decimal>();
 
-        //            }
-        //            else
-        //            {
-        //                model.ZoneId = User.ZoneId;
-        //            }
+            if (model.ZoneId != null)
+            {
+                var zone = zones.FirstOrDefault(a => a.Id == model.ZoneId);
+                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId)).ToList();
+                if (model.OfficeId == null)
+                {
+                    // Nếu chọn vùng - show các tháng đã từng quản lý / hoặc show all nếu đang quản lý
+                    var allOfficeIds = new HashSet<string>(model.Offices.Select(o => o.Id.ToString()));
+                    //lọc thêm theo ReportCategoryId
+                    var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type1 && allOfficeIds.Contains(a.OfficeId.ToString())).AsNoTracking().ToList();
 
-        //        }
-        //    }
+                    var listMonth = new List<int>();
+                    if (User.TypeUser == TypeUser.HO)
+                    {
+                        listMonth.AddRange(Enumerable.Range(1, 12));
+                    }
+                    else if (User.TypeUser == TypeUser.CV)
+                    {
+                        if (User.ZoneIds.Contains("," + zone.ShortCode + ","))
+                        {
+                            listMonth.AddRange(Enumerable.Range(1, 12));
+                        }
+                        else
+                        {
+                            foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
+                            {
+                                if (!listMonth.Contains(item.Month))
+                                    listMonth.Add(item.Month);
+                            }
+                        }
+                    }
+                    else if (User.TypeUser == TypeUser.ASM)
+                    {
+                        if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                        {
+                            if (User.ZoneIds.Contains("," + zone.ShortCode + ","))
+                            {
+                                listMonth.AddRange(Enumerable.Range(1, 12));
+                            }
+                            else
+                            {
+                                foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
+                                {
+                                    if (!listMonth.Contains(item.Month))
+                                        listMonth.Add(item.Month);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (User.ZoneId == model.ZoneId)
+                            {
+                                listMonth.AddRange(Enumerable.Range(1, 12));
+                            }
+                            else
+                            {
+                                foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
+                                {
+                                    if (!listMonth.Contains(item.Month))
+                                        listMonth.Add(item.Month);
+                                }
+                            }
+                        }
+                    }
+                    foreach (var month in listMonth)
+                    {
+                        decimal soSale = 0;
+                        decimal dinhBien = 0;
+                        decimal chiTieuDS = 0;
+                        decimal thucDatDS = 0;
+                        decimal hTDS = 0;
 
-        //    // 8. OfficeIds cho ViewBag
-        //    ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
+                        decimal DSSale = 0;
+                        decimal DSDaoTao = 0;
+                        decimal DSKeToan = 0;
+                        decimal tiTrongSale = 0;
+                        decimal tiTrongDaoTao = 0;
+                        decimal tiTrongKeToan = 0;
+                        decimal uuDaiBinhQuan = 0;
+                        decimal hVGhiDanhLai = 0;
+                        decimal hVGhiDanhMoi = 0;
+                        decimal tileHVGDM = 0;
+                        decimal tileHVGDL = 0;
+                        decimal chiTieuCuocGoi = 0;
+                        decimal chiTieuHocVien = 0;
+                        decimal tongSoHocVien = 0; // hoàn thành
+                        decimal hoanThanhCuocGoi = 0;
+                        decimal thangChotBinhQuan = 0;
+                        decimal hTCuocGoi = 0;
+                        decimal hTHocVien = 0;
+                        decimal saleOver100 = 0;
+                        decimal sale30To50 = 0;
+                        decimal sale20To30 = 0;
+                        decimal saleUnder20 = 0;
+                        decimal doanhThuNen = 0;
+                        decimal doanhThuHocBong = 0;
+                        decimal doanhThuVang = 0;
+                        decimal doanhThuSuKien = 0;
+                        decimal tiLeDoanhThuNen = 0;
+                        decimal tiLeDoanhThuHocBong = 0;
+                        decimal tiLeDoanhThuVang = 0;
+                        decimal tiLeDoanhThuSuKien = 0;
+                        foreach (var office in model.Offices)
+                        {
+                            var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
+                            soSale += saleTT?.DataReal ?? 0;
 
-        //    return View(model);
-        //}
+                            var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
+                            dinhBien += saleDB?.DataReal ?? 0;
+
+                            var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
+                            chiTieuDS += chitieuDS?.DataReal ?? 0;
+
+                            var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
+                            thucDatDS += thucdatDS?.DataReal ?? 0;
+
+                            var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
+                            DSSale += dsSale?.DataReal ?? 0;
+
+                            var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
+                            DSDaoTao += dsDaoTao?.DataReal ?? 0;
+
+                            var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
+                            DSKeToan += dsKeToan?.DataReal ?? 0;
+
+                            var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
+                            tongSoHocVien += tongSoHV?.DataReal ?? 0;
+
+                            var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
+                            chiTieuHocVien += chiTieuHV?.DataReal ?? 0;
+
+                            var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
+                            hVGhiDanhLai += hVGDL?.DataReal ?? 0;
+
+                            var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
+                            hVGhiDanhMoi += hVGDM?.DataReal ?? 0;
+
+                            var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
+                            chiTieuCuocGoi += chiTieuCG?.DataReal ?? 0;
+
+                            var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
+                            hoanThanhCuocGoi += hoanThanhCG?.DataReal ?? 0;
+
+                            var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
+                            thangChotBinhQuan += thangChotBQ?.DataReal ?? 0;
+
+                            var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
+                            saleOver100 += thucdatDS?.DataReal ?? 0;
+
+                            var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
+                            sale30To50 += sale30T50?.DataReal ?? 0;
+
+                            var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
+                            sale20To30 += sale20T30?.DataReal ?? 0;
+
+                            var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
+                            saleUnder20 += saleU20?.DataReal ?? 0;
+
+                            var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
+                            doanhThuNen += dthuNen?.DataReal ?? 0;
+
+                            var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
+                            doanhThuHocBong += dthuHocBong?.DataReal ?? 0;
+
+                            var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
+                            doanhThuVang += dthuVang?.DataReal ?? 0;
+
+                            var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
+                            doanhThuSuKien += dthuSuKien?.DataReal ?? 0;
+
+                        }
+
+                        // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
+
+                        //ht dthu
+                        if (chiTieuDS > 0)
+                            hTDS = (thucDatDS / chiTieuDS) * 100;
+
+                        // tỉ trọng sale, đào tạo, kế toán
+                        // % dthu nền,vàng
+                        if (thucDatDS > 0)
+                        {
+                            tiTrongSale = (DSSale / thucDatDS) * 100;
+                            tiTrongDaoTao = (DSDaoTao / thucDatDS) * 100;
+                            tiTrongKeToan = (DSKeToan / thucDatDS) * 100;
+                            tiLeDoanhThuHocBong = (doanhThuHocBong / thucDatDS) * 100;
+                            tiLeDoanhThuNen = (doanhThuNen / thucDatDS) * 100;
+                            tiLeDoanhThuSuKien = (doanhThuSuKien / thucDatDS) * 100;
+                            tiLeDoanhThuVang = (doanhThuVang / thucDatDS) * 100;
+                        }
+
+                        //% hv gd mới, gd lại
+                        if (tongSoHocVien > 0)
+                        {
+                            tileHVGDM = (hVGhiDanhMoi / tongSoHocVien) * 100;
+                            tileHVGDL = (hVGhiDanhLai / tongSoHocVien) * 100;
+                        }
+
+                        // ht cuộc gọi
+                        if (chiTieuCuocGoi > 0)
+                            hTCuocGoi = (hoanThanhCuocGoi / chiTieuCuocGoi) * 100;
+
+                        // ht học viên
+                        if (chiTieuHocVien > 0)
+                            hTHocVien = (tongSoHocVien / chiTieuHocVien) * 100;
+
+                        //add item từng list
+                        SoSale.Add(soSale);
+                        DinhBien.Add(dinhBien);
+                        ChiTieuDS.Add(chiTieuDS);
+                        ThucDatDS.Add(thucDatDS);
+                        HTDS.Add(hTDS);
+                        TiTrongSale.Add(tiTrongSale);
+                        TiTrongDaoTao.Add(tiTrongDaoTao);
+                        TiTrongKeToan.Add(tiTrongKeToan);
+                        TongSoHocVien.Add(tongSoHocVien);
+                        HVGhiDanhLai.Add(hVGhiDanhLai);
+                        HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                        HTCuocGoi.Add(hTCuocGoi);
+                        HTHocVien.Add(hTHocVien);
+                        ThangChotBinhQuan.Add(thangChotBinhQuan);
+                        SaleOver100.Add(saleOver100);
+                        Sale30To50.Add(sale30To50);
+                        Sale20To30.Add(sale20To30);
+                        SaleUnder20.Add(saleUnder20);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNen);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBong);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
+                    }
+                }
+            }
+
+            if (model.OfficeId != null)
+            {
+                // Nếu chọn CN - show các tháng đã từng quản lý / hoặc show all nếu đang quản lý
+                var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
+                var hOffices = historyOffices.Where(a => a.OfficeId == model.OfficeId);
+                //lọc thêm theo ReportCategoryId
+                var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type1 && model.OfficeId == a.OfficeId).AsNoTracking().ToList();
+
+                var listMonth = new List<int>();
+                if (User.TypeUser == TypeUser.HO)
+                {
+                    listMonth.AddRange(Enumerable.Range(1, 12));
+                }
+                else if (User.TypeUser == TypeUser.CV)
+                {
+                    if (User.ZoneIds.Contains("," + office.Zone.ShortCode + ","))
+                    {
+                        listMonth.AddRange(Enumerable.Range(1, 12));
+                    }
+                    else
+                    {
+                        foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
+                        {
+                            if (!listMonth.Contains(item.Month))
+                                listMonth.Add(item.Month);
+                        }
+                    }
+                }
+                //else if (User.TypeUser == TypeUser.ASM)
+                //{
+                //    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                //    {
+                //        if (User.ZoneIds.Contains("," + zone.ShortCode + ","))
+                //        {
+                //            listMonth.AddRange(Enumerable.Range(1, 12));
+                //        }
+                //        else
+                //        {
+                //            foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
+                //            {
+                //                if (!listMonth.Contains(item.Month))
+                //                    listMonth.Add(item.Month);
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        if (User.ZoneId == model.ZoneId)
+                //        {
+                //            listMonth.AddRange(Enumerable.Range(1, 12));
+                //        }
+                //        else
+                //        {
+                //            foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
+                //            {
+                //                if (!listMonth.Contains(item.Month))
+                //                    listMonth.Add(item.Month);
+                //            }
+                //        }
+                //    }
+                //}
+                //foreach (var month in listMonth)
+                //{
+                //    decimal soSale = 0;
+                //    decimal dinhBien = 0;
+                //    decimal chiTieuDS = 0;
+                //    decimal thucDatDS = 0;
+                //    decimal hTDS = 0;
+
+                //    decimal DSSale = 0;
+                //    decimal DSDaoTao = 0;
+                //    decimal DSKeToan = 0;
+                //    decimal tiTrongSale = 0;
+                //    decimal tiTrongDaoTao = 0;
+                //    decimal tiTrongKeToan = 0;
+                //    decimal uuDaiBinhQuan = 0;
+                //    decimal hVGhiDanhLai = 0;
+                //    decimal hVGhiDanhMoi = 0;
+                //    decimal tileHVGDM = 0;
+                //    decimal tileHVGDL = 0;
+                //    decimal chiTieuCuocGoi = 0;
+                //    decimal chiTieuHocVien = 0;
+                //    decimal tongSoHocVien = 0; // hoàn thành
+                //    decimal hoanThanhCuocGoi = 0;
+                //    decimal thangChotBinhQuan = 0;
+                //    decimal hTCuocGoi = 0;
+                //    decimal hTHocVien = 0;
+                //    decimal saleOver100 = 0;
+                //    decimal sale30To50 = 0;
+                //    decimal sale20To30 = 0;
+                //    decimal saleUnder20 = 0;
+                //    decimal doanhThuNen = 0;
+                //    decimal doanhThuHocBong = 0;
+                //    decimal doanhThuVang = 0;
+                //    decimal doanhThuSuKien = 0;
+                //    decimal tiLeDoanhThuNen = 0;
+                //    decimal tiLeDoanhThuHocBong = 0;
+                //    decimal tiLeDoanhThuVang = 0;
+                //    decimal tiLeDoanhThuSuKien = 0;
+                //    foreach (var office in model.Offices)
+                //    {
+                //        var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
+                //        soSale += saleTT?.DataReal ?? 0;
+
+                //        var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
+                //        dinhBien += saleDB?.DataReal ?? 0;
+
+                //        var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
+                //        chiTieuDS += chitieuDS?.DataReal ?? 0;
+
+                //        var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
+                //        thucDatDS += thucdatDS?.DataReal ?? 0;
+
+                //        var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
+                //        DSSale += dsSale?.DataReal ?? 0;
+
+                //        var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
+                //        DSDaoTao += dsDaoTao?.DataReal ?? 0;
+
+                //        var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
+                //        DSKeToan += dsKeToan?.DataReal ?? 0;
+
+                //        var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
+                //        tongSoHocVien += tongSoHV?.DataReal ?? 0;
+
+                //        var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
+                //        chiTieuHocVien += chiTieuHV?.DataReal ?? 0;
+
+                //        var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
+                //        hVGhiDanhLai += hVGDL?.DataReal ?? 0;
+
+                //        var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
+                //        hVGhiDanhMoi += hVGDM?.DataReal ?? 0;
+
+                //        var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
+                //        chiTieuCuocGoi += chiTieuCG?.DataReal ?? 0;
+
+                //        var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
+                //        hoanThanhCuocGoi += hoanThanhCG?.DataReal ?? 0;
+
+                //        var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
+                //        thangChotBinhQuan += thangChotBQ?.DataReal ?? 0;
+
+                //        var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
+                //        saleOver100 += thucdatDS?.DataReal ?? 0;
+
+                //        var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
+                //        sale30To50 += sale30T50?.DataReal ?? 0;
+
+                //        var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
+                //        sale20To30 += sale20T30?.DataReal ?? 0;
+
+                //        var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
+                //        saleUnder20 += saleU20?.DataReal ?? 0;
+
+                //        var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
+                //        doanhThuNen += dthuNen?.DataReal ?? 0;
+
+                //        var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
+                //        doanhThuHocBong += dthuHocBong?.DataReal ?? 0;
+
+                //        var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
+                //        doanhThuVang += dthuVang?.DataReal ?? 0;
+
+                //        var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
+                //        doanhThuSuKien += dthuSuKien?.DataReal ?? 0;
+
+                //    }
+
+                //    // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
+
+                //    //ht dthu
+                //    if (chiTieuDS > 0)
+                //        hTDS = (thucDatDS / chiTieuDS) * 100;
+
+                //    // tỉ trọng sale, đào tạo, kế toán
+                //    // % dthu nền,vàng
+                //    if (thucDatDS > 0)
+                //    {
+                //        tiTrongSale = (DSSale / thucDatDS) * 100;
+                //        tiTrongDaoTao = (DSDaoTao / thucDatDS) * 100;
+                //        tiTrongKeToan = (DSKeToan / thucDatDS) * 100;
+                //        tiLeDoanhThuHocBong = (doanhThuHocBong / thucDatDS) * 100;
+                //        tiLeDoanhThuNen = (doanhThuNen / thucDatDS) * 100;
+                //        tiLeDoanhThuSuKien = (doanhThuSuKien / thucDatDS) * 100;
+                //        tiLeDoanhThuVang = (doanhThuVang / thucDatDS) * 100;
+                //    }
+
+                //    //% hv gd mới, gd lại
+                //    if (tongSoHocVien > 0)
+                //    {
+                //        tileHVGDM = (hVGhiDanhMoi / tongSoHocVien) * 100;
+                //        tileHVGDL = (hVGhiDanhLai / tongSoHocVien) * 100;
+                //    }
+
+                //    // ht cuộc gọi
+                //    if (chiTieuCuocGoi > 0)
+                //        hTCuocGoi = (hoanThanhCuocGoi / chiTieuCuocGoi) * 100;
+
+                //    // ht học viên
+                //    if (chiTieuHocVien > 0)
+                //        hTHocVien = (tongSoHocVien / chiTieuHocVien) * 100;
+
+                //    //add item từng list
+                //    SoSale.Add(soSale);
+                //    DinhBien.Add(dinhBien);
+                //    ChiTieuDS.Add(chiTieuDS);
+                //    ThucDatDS.Add(thucDatDS);
+                //    HTDS.Add(hTDS);
+                //    TiTrongSale.Add(tiTrongSale);
+                //    TiTrongDaoTao.Add(tiTrongDaoTao);
+                //    TiTrongKeToan.Add(tiTrongKeToan);
+                //    TongSoHocVien.Add(tongSoHocVien);
+                //    HVGhiDanhLai.Add(hVGhiDanhLai);
+                //    HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                //    HTCuocGoi.Add(hTCuocGoi);
+                //    HTHocVien.Add(hTHocVien);
+                //    ThangChotBinhQuan.Add(thangChotBinhQuan);
+                //    SaleOver100.Add(saleOver100);
+                //    Sale30To50.Add(sale30To50);
+                //    Sale20To30.Add(sale20To30);
+                //    SaleUnder20.Add(saleUnder20);
+                //    TiLeDoanhThuNen.Add(tiLeDoanhThuNen);
+                //    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBong);
+                //    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
+                //    TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
+                //}
+            }
+
+            return View(model);
+        }
         #region CallLogs
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {

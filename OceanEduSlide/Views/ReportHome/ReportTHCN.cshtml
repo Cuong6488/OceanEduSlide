@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "Báo cáo Tổng hợp Vùng - Chi nhánh";
+}
+
+@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@model BCTHCNViewModel
+
+<style>
+    #OfficeId-error, #Month-error, #ZoneId-error {
+        display: none !important;
+    }
+
+    .form-filter .select2 {
+         width: 100% !important; 
+    }
+</style>
+
+<div class="container py-3">
+    <form action="@Url.Action("ReportTHCN")" method="get" class="d-flex form-filter mb-5">
+        <div class="row w-100">
+            <div class="col-lg-3">
+                <select name="Year" class="form-select" required>
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2024; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            @if (Model.Zones?.Count() > 1)
+            {
+                <div class="col-lg-3">
+                    <select name="ZoneId" class="form-select">
+                        <option value="">Chọn vùng</option>
+                        @foreach (var z in Model.Zones)
+                        {
+                            <option value="@z.Id" @(Model.ZoneId == z.Id ? "selected" : "")>@z.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+            {
+
+                <div class="col-lg-3">
+                    <select name="OfficeId" class="form-select">
+                        <option>Chọn chi nhánh</option>
+                        @foreach (var office in Model.Offices)
+                        {
+                            <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
+            {
+                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
+            }
+        </div>
+    </form>
+
+    <h2>BÁO CÁO Tổng hợp năm @Model.Year</h2>
+    <a class="btn quick-link" href="@Url.Action("ExportTHCN", new {Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+
+    <div class="box_content">
+        
+    </div>
+
+</div>
+
+@section scripts {
+    <script>
+        $('.select2').select2({ allowClear: true });
+    </script>
+}

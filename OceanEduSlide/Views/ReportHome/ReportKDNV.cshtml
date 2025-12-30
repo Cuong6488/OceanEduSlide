@@ -99,23 +99,6 @@
                 <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
             }
         </select>
-        <!--<div class="month-select-wrapper w-25 me-4" style="position: relative; display: inline-block">
-        <select name="ListMonth" class="form-select select2-month" multiple="multiple">
-            <option value="all">Cả năm</option>
-            <option value="q1">Quý 1</option>
-            <option value="q2">Quý 2</option>
-            <option value="q3">Quý 3</option>
-            <option value="q4">Quý 4</option>
-
-            @for (int i = 1; i <= 12; i++)
-            {
-                <option value="@i" @(Model.ListMonth.Contains(i) ? "selected" : "")>Tháng @i</option>
-            }
-        </select>-->
-        <!-- Dấu × -->
-        <!--<span class="clear-month" title="Clear" style="position: absolute; top: 10px; right: 2px; cursor: pointer; font-weight: bold; font-size: 16px; color: #555;">×</span>
-    </div>-->
-        @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.ASM))*@
         @if (Model.Zones?.Count() > 1)
         {
             <select name="ZoneId" class="form-select me-2 w-25">

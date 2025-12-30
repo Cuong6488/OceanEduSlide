@@ -53,8 +53,9 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
         public User User { get; set; }
-        public List<int> SoSale { get; set; }
-        public List<int> DinhBien { get; set; }
+        public List<int> Months { get; set; }
+        public List<decimal> SoSale { get; set; }
+        public List<decimal> DinhBien { get; set; }
         public List<decimal> ChiTieuDS { get; set; }
         public List<decimal> ThucDatDS { get; set; }
         public List<decimal> HTDS { get; set; }
@@ -62,19 +63,20 @@ namespace OceanEduSlide.ViewModels
         public List<decimal> TiTrongDaoTao { get; set; }
         public List<decimal> TiTrongKeToan { get; set; }
         public List<decimal> UuDaiBinhQuan { get; set; }
-        public List<int> TongSoHocVien { get; set; }
-        public List<int> HVGhiDanhLai { get; set; }
-        public List<int> HVGhiDanhMoi { get; set; }
+        public List<decimal> TongSoHocVien { get; set; }
+        public List<decimal> HVGhiDanhLai { get; set; }
+        public List<decimal> HVGhiDanhMoi { get; set; }
         public List<decimal> HTCuocGoi { get; set; }
         public List<decimal> HTHocVien { get; set; }
+        public List<decimal> ThangChotBinhQuan { get; set; }
         public List<decimal> SaleOver100 { get; set; }
         public List<decimal> Sale30To50 { get; set; }
         public List<decimal> Sale20To30 { get; set; }
         public List<decimal> SaleUnder20 { get; set; }
-        public List<decimal> DoanhThuNen { get; set; }
-        public List<decimal> DoanhThuHocBong { get; set; }
-        public List<decimal> DoanhThuVang { get; set; }
-        public List<decimal> DoanhThuSuKien { get; set; }
+        public List<decimal> TiLeDoanhThuNen { get; set; }
+        public List<decimal> TiLeDoanhThuHocBong { get; set; }
+        public List<decimal> TiLeDoanhThuVang { get; set; }
+        public List<decimal> TiLeDoanhThuSuKien { get; set; }
     }
 
     public class ListCallViewModel
