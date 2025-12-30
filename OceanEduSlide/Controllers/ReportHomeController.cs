@@ -862,7 +862,7 @@ namespace OceanEduSlide.Controllers
             var selectedYear = Year ?? DateTime.Now.Year;
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear).AsNoTracking();
 
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == selectedYear).Select(h => new
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Active && h.Year == selectedYear).Select(h => new
             {
                 h.OfficeId,
                 ZoneShortCode = h.Zone.ShortCode,
@@ -1078,72 +1078,73 @@ namespace OceanEduSlide.Controllers
                         decimal tiLeDoanhThuHocBong = 0;
                         decimal tiLeDoanhThuVang = 0;
                         decimal tiLeDoanhThuSuKien = 0;
-                        foreach (var office in model.Offices)
+                        var officeIds = historyOffices.Where(h => h.Month == month && h.ZoneId == model.ZoneId).Select(h => h.OfficeId).Distinct().ToList();
+                        foreach (var officeId in officeIds)
                         {
-                            var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
+                            var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 23);
                             soSale += saleTT?.DataReal ?? 0;
 
-                            var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
+                            var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 22);
                             dinhBien += saleDB?.DataReal ?? 0;
 
-                            var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
+                            var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 34);
                             chiTieuDS += chitieuDS?.DataReal ?? 0;
 
-                            var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
+                            var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 35);
                             thucDatDS += thucdatDS?.DataReal ?? 0;
 
-                            var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
+                            var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 40);
                             DSSale += dsSale?.DataReal ?? 0;
 
-                            var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
+                            var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 43);
                             DSDaoTao += dsDaoTao?.DataReal ?? 0;
 
-                            var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
+                            var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 119);
                             DSKeToan += dsKeToan?.DataReal ?? 0;
 
-                            var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
+                            var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 31);
                             tongSoHocVien += tongSoHV?.DataReal ?? 0;
 
-                            var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
+                            var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 30);
                             chiTieuHocVien += chiTieuHV?.DataReal ?? 0;
 
-                            var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
+                            var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 58);
                             hVGhiDanhLai += hVGDL?.DataReal ?? 0;
 
-                            var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
+                            var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 60);
                             hVGhiDanhMoi += hVGDM?.DataReal ?? 0;
 
-                            var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
+                            var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 26);
                             chiTieuCuocGoi += chiTieuCG?.DataReal ?? 0;
 
-                            var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
+                            var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 27);
                             hoanThanhCuocGoi += hoanThanhCG?.DataReal ?? 0;
 
-                            var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
+                            var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 64);
                             thangChotBinhQuan += thangChotBQ?.DataReal ?? 0;
 
-                            var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
+                            var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 78);
                             saleOver100 += thucdatDS?.DataReal ?? 0;
 
-                            var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
+                            var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 80);
                             sale30To50 += sale30T50?.DataReal ?? 0;
 
-                            var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
+                            var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 82);
                             sale20To30 += sale20T30?.DataReal ?? 0;
 
-                            var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
+                            var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 84);
                             saleUnder20 += saleU20?.DataReal ?? 0;
 
-                            var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
+                            var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 53);
                             doanhThuNen += dthuNen?.DataReal ?? 0;
 
-                            var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
+                            var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 54);
                             doanhThuHocBong += dthuHocBong?.DataReal ?? 0;
 
-                            var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
+                            var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 55);
                             doanhThuVang += dthuVang?.DataReal ?? 0;
 
-                            var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
+                            var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 56);
                             doanhThuSuKien += dthuSuKien?.DataReal ?? 0;
 
                         }
@@ -1230,212 +1231,197 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
-                        {
-                            if (!listMonth.Contains(item.Month))
-                                listMonth.Add(item.Month);
-                        }
+                        var listMonthManaged = historyUsers.Where(hu => hOffices.Any(ho => hu.ZoneIds != null && hu.ZoneIds.Contains("," + ho.ZoneShortCode + ","))).Select(hu => hu.Month).ToList();
+                        listMonth.AddRange(listMonthManaged);
                     }
                 }
-                //else if (User.TypeUser == TypeUser.ASM)
-                //{
-                //    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                //    {
-                //        if (User.ZoneIds.Contains("," + zone.ShortCode + ","))
-                //        {
-                //            listMonth.AddRange(Enumerable.Range(1, 12));
-                //        }
-                //        else
-                //        {
-                //            foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
-                //            {
-                //                if (!listMonth.Contains(item.Month))
-                //                    listMonth.Add(item.Month);
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        if (User.ZoneId == model.ZoneId)
-                //        {
-                //            listMonth.AddRange(Enumerable.Range(1, 12));
-                //        }
-                //        else
-                //        {
-                //            foreach (var item in historyUsers.Where(hu => hu.ZoneIds.Contains("," + zone.ShortCode + ",")))
-                //            {
-                //                if (!listMonth.Contains(item.Month))
-                //                    listMonth.Add(item.Month);
-                //            }
-                //        }
-                //    }
-                //}
-                //foreach (var month in listMonth)
-                //{
-                //    decimal soSale = 0;
-                //    decimal dinhBien = 0;
-                //    decimal chiTieuDS = 0;
-                //    decimal thucDatDS = 0;
-                //    decimal hTDS = 0;
+                else if (User.TypeUser == TypeUser.ASM)
+                {
+                    if ((!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2 && User.ZoneIds.Contains("," + office.Zone.ShortCode + ",")) || (User.ZoneId != null && User.ZoneId == office.ZoneId))
+                    {
+                        listMonth.AddRange(Enumerable.Range(1, 12));
+                    }
+                    else
+                    {
+                        var listMonthManaged = historyUsers.Where(hu => hOffices.Any(ho => hu.ZoneIds != null && hu.ZoneIds.Contains("," + ho.ZoneShortCode + ","))).Select(hu => hu.Month).ToList();
+                        listMonth.AddRange(listMonthManaged);
+                    }
+                }
+                else if (User.TypeUser == TypeUser.BM)
+                {
+                    if ((!string.IsNullOrEmpty(User.OfficeIds) && User.OfficeIds.Contains("," + office.Id + ",")) || (model.OfficeId == User.OfficeId))
+                    {
+                        listMonth.AddRange(Enumerable.Range(1, 12));
+                    }
+                    else
+                    {
+                        var listMonthManaged = historyUsers.Where(hu => hOffices.Any(ho => (hu.OfficeIds != null && hu.OfficeIds.Contains("," + ho.OfficeId + ",")) || (hu.OfficeId == ho.OfficeId))).Select(hu => hu.Month).ToList();
+                        listMonth.AddRange(listMonthManaged);
+                    }
+                }
+                foreach (var month in listMonth)
+                {
+                    decimal soSale = 0;
+                    decimal dinhBien = 0;
+                    decimal chiTieuDS = 0;
+                    decimal thucDatDS = 0;
+                    decimal hTDS = 0;
 
-                //    decimal DSSale = 0;
-                //    decimal DSDaoTao = 0;
-                //    decimal DSKeToan = 0;
-                //    decimal tiTrongSale = 0;
-                //    decimal tiTrongDaoTao = 0;
-                //    decimal tiTrongKeToan = 0;
-                //    decimal uuDaiBinhQuan = 0;
-                //    decimal hVGhiDanhLai = 0;
-                //    decimal hVGhiDanhMoi = 0;
-                //    decimal tileHVGDM = 0;
-                //    decimal tileHVGDL = 0;
-                //    decimal chiTieuCuocGoi = 0;
-                //    decimal chiTieuHocVien = 0;
-                //    decimal tongSoHocVien = 0; // hoàn thành
-                //    decimal hoanThanhCuocGoi = 0;
-                //    decimal thangChotBinhQuan = 0;
-                //    decimal hTCuocGoi = 0;
-                //    decimal hTHocVien = 0;
-                //    decimal saleOver100 = 0;
-                //    decimal sale30To50 = 0;
-                //    decimal sale20To30 = 0;
-                //    decimal saleUnder20 = 0;
-                //    decimal doanhThuNen = 0;
-                //    decimal doanhThuHocBong = 0;
-                //    decimal doanhThuVang = 0;
-                //    decimal doanhThuSuKien = 0;
-                //    decimal tiLeDoanhThuNen = 0;
-                //    decimal tiLeDoanhThuHocBong = 0;
-                //    decimal tiLeDoanhThuVang = 0;
-                //    decimal tiLeDoanhThuSuKien = 0;
-                //    foreach (var office in model.Offices)
-                //    {
-                //        var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
-                //        soSale += saleTT?.DataReal ?? 0;
+                    decimal DSSale = 0;
+                    decimal DSDaoTao = 0;
+                    decimal DSKeToan = 0;
+                    decimal tiTrongSale = 0;
+                    decimal tiTrongDaoTao = 0;
+                    decimal tiTrongKeToan = 0;
+                    decimal uuDaiBinhQuan = 0;
+                    decimal hVGhiDanhLai = 0;
+                    decimal hVGhiDanhMoi = 0;
+                    decimal tileHVGDM = 0;
+                    decimal tileHVGDL = 0;
+                    decimal chiTieuCuocGoi = 0;
+                    decimal chiTieuHocVien = 0;
+                    decimal tongSoHocVien = 0; // hoàn thành
+                    decimal hoanThanhCuocGoi = 0;
+                    decimal thangChotBinhQuan = 0;
+                    decimal hTCuocGoi = 0;
+                    decimal hTHocVien = 0;
+                    decimal saleOver100 = 0;
+                    decimal sale30To50 = 0;
+                    decimal sale20To30 = 0;
+                    decimal saleUnder20 = 0;
+                    decimal doanhThuNen = 0;
+                    decimal doanhThuHocBong = 0;
+                    decimal doanhThuVang = 0;
+                    decimal doanhThuSuKien = 0;
+                    decimal tiLeDoanhThuNen = 0;
+                    decimal tiLeDoanhThuHocBong = 0;
+                    decimal tiLeDoanhThuVang = 0;
+                    decimal tiLeDoanhThuSuKien = 0;
 
-                //        var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
-                //        dinhBien += saleDB?.DataReal ?? 0;
+                    var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
+                    soSale = saleTT?.DataReal ?? 0;
 
-                //        var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
-                //        chiTieuDS += chitieuDS?.DataReal ?? 0;
+                    var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
+                    dinhBien = saleDB?.DataReal ?? 0;
 
-                //        var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
-                //        thucDatDS += thucdatDS?.DataReal ?? 0;
+                    var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
+                    chiTieuDS = chitieuDS?.DataReal ?? 0;
 
-                //        var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
-                //        DSSale += dsSale?.DataReal ?? 0;
+                    var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
+                    thucDatDS = thucdatDS?.DataReal ?? 0;
 
-                //        var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
-                //        DSDaoTao += dsDaoTao?.DataReal ?? 0;
+                    var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
+                    DSSale = dsSale?.DataReal ?? 0;
 
-                //        var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
-                //        DSKeToan += dsKeToan?.DataReal ?? 0;
+                    var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
+                    DSDaoTao = dsDaoTao?.DataReal ?? 0;
 
-                //        var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
-                //        tongSoHocVien += tongSoHV?.DataReal ?? 0;
+                    var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
+                    DSKeToan = dsKeToan?.DataReal ?? 0;
 
-                //        var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
-                //        chiTieuHocVien += chiTieuHV?.DataReal ?? 0;
+                    var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
+                    tongSoHocVien = tongSoHV?.DataReal ?? 0;
 
-                //        var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
-                //        hVGhiDanhLai += hVGDL?.DataReal ?? 0;
+                    var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
+                    chiTieuHocVien = chiTieuHV?.DataReal ?? 0;
 
-                //        var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
-                //        hVGhiDanhMoi += hVGDM?.DataReal ?? 0;
+                    var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
+                    hVGhiDanhLai = hVGDL?.DataReal ?? 0;
 
-                //        var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
-                //        chiTieuCuocGoi += chiTieuCG?.DataReal ?? 0;
+                    var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
+                    hVGhiDanhMoi = hVGDM?.DataReal ?? 0;
 
-                //        var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
-                //        hoanThanhCuocGoi += hoanThanhCG?.DataReal ?? 0;
+                    var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
+                    chiTieuCuocGoi = chiTieuCG?.DataReal ?? 0;
 
-                //        var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
-                //        thangChotBinhQuan += thangChotBQ?.DataReal ?? 0;
+                    var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
+                    hoanThanhCuocGoi = hoanThanhCG?.DataReal ?? 0;
 
-                //        var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
-                //        saleOver100 += thucdatDS?.DataReal ?? 0;
+                    var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
+                    thangChotBinhQuan = thangChotBQ?.DataReal ?? 0;
 
-                //        var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
-                //        sale30To50 += sale30T50?.DataReal ?? 0;
+                    var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
+                    saleOver100 = thucdatDS?.DataReal ?? 0;
 
-                //        var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
-                //        sale20To30 += sale20T30?.DataReal ?? 0;
+                    var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
+                    sale30To50 = sale30T50?.DataReal ?? 0;
 
-                //        var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
-                //        saleUnder20 += saleU20?.DataReal ?? 0;
+                    var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
+                    sale20To30 = sale20T30?.DataReal ?? 0;
 
-                //        var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
-                //        doanhThuNen += dthuNen?.DataReal ?? 0;
+                    var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
+                    saleUnder20 = saleU20?.DataReal ?? 0;
 
-                //        var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
-                //        doanhThuHocBong += dthuHocBong?.DataReal ?? 0;
+                    var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
+                    doanhThuNen = dthuNen?.DataReal ?? 0;
 
-                //        var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
-                //        doanhThuVang += dthuVang?.DataReal ?? 0;
+                    var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
+                    doanhThuHocBong = dthuHocBong?.DataReal ?? 0;
 
-                //        var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
-                //        doanhThuSuKien += dthuSuKien?.DataReal ?? 0;
+                    var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
+                    doanhThuVang = dthuVang?.DataReal ?? 0;
 
-                //    }
+                    var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
+                    doanhThuSuKien = dthuSuKien?.DataReal ?? 0;
 
-                //    // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
+                    // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
 
-                //    //ht dthu
-                //    if (chiTieuDS > 0)
-                //        hTDS = (thucDatDS / chiTieuDS) * 100;
+                    //ht dthu
+                    if (chiTieuDS > 0)
+                        hTDS = (thucDatDS / chiTieuDS) * 100;
 
-                //    // tỉ trọng sale, đào tạo, kế toán
-                //    // % dthu nền,vàng
-                //    if (thucDatDS > 0)
-                //    {
-                //        tiTrongSale = (DSSale / thucDatDS) * 100;
-                //        tiTrongDaoTao = (DSDaoTao / thucDatDS) * 100;
-                //        tiTrongKeToan = (DSKeToan / thucDatDS) * 100;
-                //        tiLeDoanhThuHocBong = (doanhThuHocBong / thucDatDS) * 100;
-                //        tiLeDoanhThuNen = (doanhThuNen / thucDatDS) * 100;
-                //        tiLeDoanhThuSuKien = (doanhThuSuKien / thucDatDS) * 100;
-                //        tiLeDoanhThuVang = (doanhThuVang / thucDatDS) * 100;
-                //    }
+                    // tỉ trọng sale, đào tạo, kế toán
+                    // % dthu nền,vàng
+                    if (thucDatDS > 0)
+                    {
+                        tiTrongSale = (DSSale / thucDatDS) * 100;
+                        tiTrongDaoTao = (DSDaoTao / thucDatDS) * 100;
+                        tiTrongKeToan = (DSKeToan / thucDatDS) * 100;
+                        tiLeDoanhThuHocBong = (doanhThuHocBong / thucDatDS) * 100;
+                        tiLeDoanhThuNen = (doanhThuNen / thucDatDS) * 100;
+                        tiLeDoanhThuSuKien = (doanhThuSuKien / thucDatDS) * 100;
+                        tiLeDoanhThuVang = (doanhThuVang / thucDatDS) * 100;
+                    }
 
-                //    //% hv gd mới, gd lại
-                //    if (tongSoHocVien > 0)
-                //    {
-                //        tileHVGDM = (hVGhiDanhMoi / tongSoHocVien) * 100;
-                //        tileHVGDL = (hVGhiDanhLai / tongSoHocVien) * 100;
-                //    }
+                    //% hv gd mới, gd lại
+                    if (tongSoHocVien > 0)
+                    {
+                        tileHVGDM = (hVGhiDanhMoi / tongSoHocVien) * 100;
+                        tileHVGDL = (hVGhiDanhLai / tongSoHocVien) * 100;
+                    }
 
-                //    // ht cuộc gọi
-                //    if (chiTieuCuocGoi > 0)
-                //        hTCuocGoi = (hoanThanhCuocGoi / chiTieuCuocGoi) * 100;
+                    // ht cuộc gọi
+                    if (chiTieuCuocGoi > 0)
+                        hTCuocGoi = (hoanThanhCuocGoi / chiTieuCuocGoi) * 100;
 
-                //    // ht học viên
-                //    if (chiTieuHocVien > 0)
-                //        hTHocVien = (tongSoHocVien / chiTieuHocVien) * 100;
+                    // ht học viên
+                    if (chiTieuHocVien > 0)
+                        hTHocVien = (tongSoHocVien / chiTieuHocVien) * 100;
 
-                //    //add item từng list
-                //    SoSale.Add(soSale);
-                //    DinhBien.Add(dinhBien);
-                //    ChiTieuDS.Add(chiTieuDS);
-                //    ThucDatDS.Add(thucDatDS);
-                //    HTDS.Add(hTDS);
-                //    TiTrongSale.Add(tiTrongSale);
-                //    TiTrongDaoTao.Add(tiTrongDaoTao);
-                //    TiTrongKeToan.Add(tiTrongKeToan);
-                //    TongSoHocVien.Add(tongSoHocVien);
-                //    HVGhiDanhLai.Add(hVGhiDanhLai);
-                //    HVGhiDanhMoi.Add(hVGhiDanhMoi);
-                //    HTCuocGoi.Add(hTCuocGoi);
-                //    HTHocVien.Add(hTHocVien);
-                //    ThangChotBinhQuan.Add(thangChotBinhQuan);
-                //    SaleOver100.Add(saleOver100);
-                //    Sale30To50.Add(sale30To50);
-                //    Sale20To30.Add(sale20To30);
-                //    SaleUnder20.Add(saleUnder20);
-                //    TiLeDoanhThuNen.Add(tiLeDoanhThuNen);
-                //    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBong);
-                //    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
-                //    TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
-                //}
+                    //add item từng list
+                    SoSale.Add(soSale);
+                    DinhBien.Add(dinhBien);
+                    ChiTieuDS.Add(chiTieuDS);
+                    ThucDatDS.Add(thucDatDS);
+                    HTDS.Add(hTDS);
+                    TiTrongSale.Add(tiTrongSale);
+                    TiTrongDaoTao.Add(tiTrongDaoTao);
+                    TiTrongKeToan.Add(tiTrongKeToan);
+                    TongSoHocVien.Add(tongSoHocVien);
+                    HVGhiDanhLai.Add(hVGhiDanhLai);
+                    HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                    HTCuocGoi.Add(hTCuocGoi);
+                    HTHocVien.Add(hTHocVien);
+                    ThangChotBinhQuan.Add(thangChotBinhQuan);
+                    SaleOver100.Add(saleOver100);
+                    Sale30To50.Add(sale30To50);
+                    Sale20To30.Add(sale20To30);
+                    SaleUnder20.Add(saleUnder20);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNen);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBong);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
+                }
             }
 
             return View(model);
