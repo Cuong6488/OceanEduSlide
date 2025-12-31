@@ -13,7 +13,7 @@
     }
 
     .form-filter .select2 {
-         width: 100% !important; 
+        width: 100% !important;
     }
 </style>
 
@@ -64,11 +64,68 @@
     </form>
 
     <h2>BÁO CÁO Tổng hợp năm @Model.Year</h2>
-    <a class="btn quick-link" href="@Url.Action("ExportTHCN", new {Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
-
-    <div class="box_content">
-        
-    </div>
+    @if (Model.ZoneId == null && Model.OfficeId == null)
+    {
+        <p class="alert alert-success mt-3 w-25">Vui lòng chọn vùng/ chi nhánh</p>
+    }
+    else
+    {
+        <a class="btn quick-link" href="@Url.Action("ExportTHCN", new {Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+        <div class="box_content">
+            <table class="table table-bordered">
+                <tr>
+                    <th colspan="2" class="bg-info text-white text-center"><strong>Chỉ số</strong></th>
+                    @foreach (var item in Model.Months)
+                    {
+                        <th class="bg-pink">Tháng @item</th>
+                    }
+                    @if (Model.Months.Any(a => a == 1 || a == 2 || a == 3))
+                    {
+                        <th class="bg-pink-purple">Quý I</th>
+                    }
+                    @if (Model.Months.Any(a => a == 4 || a == 5 || a == 6))
+                    {
+                        <th class="bg-pink-purple">Quý II</th>
+                    }
+                    @if (Model.Months.Any(a => a == 7 || a == 8 || a == 9))
+                    {
+                        <th class="bg-pink-purple">Quý III</th>
+                    }
+                    @if (Model.Months.Any(a => a == 10 || a == 11 || a == 12))
+                    {
+                        <th class="bg-pink-purple">Quý IV</th>
+                    }
+                    <th class="bg-orange">
+                        @if (Model.Months.Count == 12)
+                        {
+                            @: Năm
+                        }
+                        else
+                        {
+                            @: Tổng
+                        }
+                    </th>
+                </tr>
+                <tr>
+                    <td rowspan="2" class="text-primary"><strong>Nhân sự</strong></td>
+                    <td><strong>Số Sale</strong></td>
+                    @foreach (var item in Model.SoSale)
+                    {
+                        var valuetext = item == 0 ? "_" : item.ToString("N0");
+                        <td>@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td><strong>Định biên</strong></td>
+                    @foreach (var item in Model.DinhBien)
+                    {
+                        var valuetext = item == 0 ? "_" : item.ToString("N0");
+                        <td>@valuetext</td>
+                    }
+                </tr>
+            </table>
+        </div>
+    }
 
 </div>
 

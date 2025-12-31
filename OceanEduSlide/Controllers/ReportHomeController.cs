@@ -868,6 +868,7 @@ namespace OceanEduSlide.Controllers
                 ZoneShortCode = h.Zone.ShortCode,
                 h.ZoneId,
                 h.Month,
+                Name = h.Office.Name
             });
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
             var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
@@ -951,7 +952,6 @@ namespace OceanEduSlide.Controllers
                 }
             }
 
-
             List<decimal> SoSale = new List<decimal>();
             List<decimal> DinhBien = new List<decimal>();
             List<decimal> ChiTieuDS = new List<decimal>();
@@ -961,6 +961,7 @@ namespace OceanEduSlide.Controllers
             List<decimal> TiTrongDaoTao = new List<decimal>();
             List<decimal> TiTrongKeToan = new List<decimal>();
             List<decimal> UuDaiBinhQuan = new List<decimal>();
+            List<decimal> ChiTieuHocVien = new List<decimal>();
             List<decimal> TongSoHocVien = new List<decimal>();
             List<decimal> HVGhiDanhLai = new List<decimal>();
             List<decimal> HVGhiDanhMoi = new List<decimal>();
@@ -976,6 +977,121 @@ namespace OceanEduSlide.Controllers
             List<decimal> TiLeDoanhThuVang = new List<decimal>();
             List<decimal> TiLeDoanhThuSuKien = new List<decimal>();
 
+
+            // Tạo các biến cho quý
+
+            decimal soSaleQuy1 = 0;
+            decimal dinhBienQuy1 = 0;
+            decimal chiTieuDSQuy1 = 0;
+            decimal thucDatDSQuy1 = 0;
+            decimal DSSaleQuy1 = 0;
+            decimal DSDaoTaoQuy1 = 0;
+            decimal DSKeToanQuy1 = 0;
+            decimal tongSoHocVienQuy1 = 0; // hoàn thành hv
+            decimal hVGhiDanhLaiQuy1 = 0;
+            decimal hVGhiDanhMoiQuy1 = 0;
+            decimal chiTieuHocVienQuy1 = 0;
+            decimal chiTieuCuocGoiQuy1 = 0;
+            decimal hoanThanhCuocGoiQuy1 = 0;
+            decimal saleOver100Quy1 = 0;
+            decimal sale30To50Quy1 = 0;
+            decimal sale20To30Quy1 = 0;
+            decimal saleUnder20Quy1 = 0;
+            decimal doanhThuNenQuy1 = 0;
+            decimal doanhThuHocBongQuy1 = 0;
+            decimal doanhThuVangQuy1 = 0;
+            decimal doanhThuSuKienQuy1 = 0;
+
+            decimal soSaleQuy2 = 0;
+            decimal dinhBienQuy2 = 0;
+            decimal chiTieuDSQuy2 = 0;
+            decimal thucDatDSQuy2 = 0;
+            decimal DSSaleQuy2 = 0;
+            decimal DSDaoTaoQuy2 = 0;
+            decimal DSKeToanQuy2 = 0;
+            decimal tongSoHocVienQuy2 = 0; // hoàn thành hv
+            decimal hVGhiDanhLaiQuy2 = 0;
+            decimal hVGhiDanhMoiQuy2 = 0;
+            decimal chiTieuHocVienQuy2 = 0;
+            decimal chiTieuCuocGoiQuy2 = 0;
+            decimal hoanThanhCuocGoiQuy2 = 0;
+            decimal saleOver100Quy2 = 0;
+            decimal sale30To50Quy2 = 0;
+            decimal sale20To30Quy2 = 0;
+            decimal saleUnder20Quy2 = 0;
+            decimal doanhThuNenQuy2 = 0;
+            decimal doanhThuHocBongQuy2 = 0;
+            decimal doanhThuVangQuy2 = 0;
+            decimal doanhThuSuKienQuy2 = 0;
+
+            decimal soSaleQuy3 = 0;
+            decimal dinhBienQuy3 = 0;
+            decimal chiTieuDSQuy3 = 0;
+            decimal thucDatDSQuy3 = 0;
+            decimal DSSaleQuy3 = 0;
+            decimal DSDaoTaoQuy3 = 0;
+            decimal DSKeToanQuy3 = 0;
+            decimal tongSoHocVienQuy3 = 0; // hoàn thành hv
+            decimal hVGhiDanhLaiQuy3 = 0;
+            decimal hVGhiDanhMoiQuy3 = 0;
+            decimal chiTieuHocVienQuy3 = 0;
+            decimal chiTieuCuocGoiQuy3 = 0;
+            decimal hoanThanhCuocGoiQuy3 = 0;
+            decimal saleOver100Quy3 = 0;
+            decimal sale30To50Quy3 = 0;
+            decimal sale20To30Quy3 = 0;
+            decimal saleUnder20Quy3 = 0;
+            decimal doanhThuNenQuy3 = 0;
+            decimal doanhThuHocBongQuy3 = 0;
+            decimal doanhThuVangQuy3 = 0;
+            decimal doanhThuSuKienQuy3 = 0;
+
+            decimal soSaleQuy4 = 0;
+            decimal dinhBienQuy4 = 0;
+            decimal chiTieuDSQuy4 = 0;
+            decimal thucDatDSQuy4 = 0;
+            decimal DSSaleQuy4 = 0;
+            decimal DSDaoTaoQuy4 = 0;
+            decimal DSKeToanQuy4 = 0;
+            decimal tongSoHocVienQuy4 = 0; // hoàn thành hv
+            decimal hVGhiDanhLaiQuy4 = 0;
+            decimal hVGhiDanhMoiQuy4 = 0;
+            decimal chiTieuHocVienQuy4 = 0;
+            decimal chiTieuCuocGoiQuy4 = 0;
+            decimal hoanThanhCuocGoiQuy4 = 0;
+            decimal saleOver100Quy4 = 0;
+            decimal sale30To50Quy4 = 0;
+            decimal sale20To30Quy4 = 0;
+            decimal saleUnder20Quy4 = 0;
+            decimal doanhThuNenQuy4 = 0;
+            decimal doanhThuHocBongQuy4 = 0;
+            decimal doanhThuVangQuy4 = 0;
+            decimal doanhThuSuKienQuy4 = 0;
+
+            decimal soSaleNam = 0;
+            decimal dinhBienNam = 0;
+            decimal chiTieuDSNam = 0;
+            decimal thucDatDSNam = 0;
+            decimal DSSaleNam = 0;
+            decimal DSDaoTaoNam = 0;
+            decimal DSKeToanNam = 0;
+            decimal tongSoHocVienNam = 0; // hoàn thành hv
+            decimal hVGhiDanhLaiNam = 0;
+            decimal hVGhiDanhMoiNam = 0;
+            decimal chiTieuHocVienNam = 0;
+            decimal chiTieuCuocGoiNam = 0;
+            decimal hoanThanhCuocGoiNam = 0;
+            decimal saleOver100Nam = 0;
+            decimal sale30To50Nam = 0;
+            decimal sale20To30Nam = 0;
+            decimal saleUnder20Nam = 0;
+            decimal doanhThuNenNam = 0;
+            decimal doanhThuHocBongNam = 0;
+            decimal doanhThuVangNam = 0;
+            decimal doanhThuSuKienNam = 0;
+
+
+            var listMonth = new List<int>();
             if (model.ZoneId != null)
             {
                 var zone = zones.FirstOrDefault(a => a.Id == model.ZoneId);
@@ -987,7 +1103,6 @@ namespace OceanEduSlide.Controllers
                     //lọc thêm theo ReportCategoryId
                     var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type1 && allOfficeIds.Contains(a.OfficeId.ToString())).AsNoTracking().ToList();
 
-                    var listMonth = new List<int>();
                     if (User.TypeUser == TypeUser.HO)
                     {
                         listMonth.AddRange(Enumerable.Range(1, 12));
@@ -1040,6 +1155,8 @@ namespace OceanEduSlide.Controllers
                             }
                         }
                     }
+
+                    listMonth.OrderBy(a => a);
                     foreach (var month in listMonth)
                     {
                         decimal soSale = 0;
@@ -1047,7 +1164,6 @@ namespace OceanEduSlide.Controllers
                         decimal chiTieuDS = 0;
                         decimal thucDatDS = 0;
                         decimal hTDS = 0;
-
                         decimal DSSale = 0;
                         decimal DSDaoTao = 0;
                         decimal DSKeToan = 0;
@@ -1081,72 +1197,189 @@ namespace OceanEduSlide.Controllers
                         var officeIds = historyOffices.Where(h => h.Month == month && h.ZoneId == model.ZoneId).Select(h => h.OfficeId).Distinct().ToList();
                         foreach (var officeId in officeIds)
                         {
-                            var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 23);
+                            var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 23);
                             soSale += saleTT?.DataReal ?? 0;
 
-                            var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 22);
+                            var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 22);
                             dinhBien += saleDB?.DataReal ?? 0;
 
-                            var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 34);
+                            var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 34);
                             chiTieuDS += chitieuDS?.DataReal ?? 0;
 
-                            var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 35);
+                            var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 35);
                             thucDatDS += thucdatDS?.DataReal ?? 0;
 
-                            var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 40);
+                            var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 40);
                             DSSale += dsSale?.DataReal ?? 0;
 
-                            var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 43);
+                            var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 43);
                             DSDaoTao += dsDaoTao?.DataReal ?? 0;
 
-                            var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 119);
+                            var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 119);
                             DSKeToan += dsKeToan?.DataReal ?? 0;
 
-                            var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 31);
+                            var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 31);
                             tongSoHocVien += tongSoHV?.DataReal ?? 0;
 
-                            var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 30);
+                            var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 30);
                             chiTieuHocVien += chiTieuHV?.DataReal ?? 0;
 
-                            var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 58);
+                            var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 58);
                             hVGhiDanhLai += hVGDL?.DataReal ?? 0;
 
-                            var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 60);
+                            var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 60);
                             hVGhiDanhMoi += hVGDM?.DataReal ?? 0;
 
-                            var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 26);
+                            var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 26);
                             chiTieuCuocGoi += chiTieuCG?.DataReal ?? 0;
 
-                            var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 27);
+                            var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 27);
                             hoanThanhCuocGoi += hoanThanhCG?.DataReal ?? 0;
 
-                            var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 64);
+                            var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 64);
                             thangChotBinhQuan += thangChotBQ?.DataReal ?? 0;
 
-                            var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 78);
-                            saleOver100 += thucdatDS?.DataReal ?? 0;
+                            var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 78);
+                            saleOver100 += saleO100?.DataReal ?? 0;
 
-                            var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 80);
+                            var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 80);
                             sale30To50 += sale30T50?.DataReal ?? 0;
 
-                            var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 82);
+                            var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 82);
                             sale20To30 += sale20T30?.DataReal ?? 0;
 
-                            var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 84);
+                            var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 84);
                             saleUnder20 += saleU20?.DataReal ?? 0;
 
-                            var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 53);
+                            var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 53);
                             doanhThuNen += dthuNen?.DataReal ?? 0;
 
-                            var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 54);
+                            var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 54);
                             doanhThuHocBong += dthuHocBong?.DataReal ?? 0;
 
-                            var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 55);
+                            var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 55);
                             doanhThuVang += dthuVang?.DataReal ?? 0;
 
-                            var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.Id == 56);
+                            var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == officeId && a.ReportCategoryId == 56);
                             doanhThuSuKien += dthuSuKien?.DataReal ?? 0;
 
+                            soSaleNam += saleTT?.DataReal ?? 0;
+                            dinhBienNam += saleDB?.DataReal ?? 0;
+                            chiTieuDSNam += chitieuDS?.DataReal ?? 0;
+                            thucDatDSNam += thucdatDS?.DataReal ?? 0;
+                            DSSaleNam += dsSale?.DataReal ?? 0;
+                            DSDaoTaoNam += dsDaoTao?.DataReal ?? 0;
+                            DSKeToanNam += dsKeToan?.DataReal ?? 0;
+                            tongSoHocVienNam += tongSoHV?.DataReal ?? 0;
+                            hVGhiDanhLaiNam += hVGDL?.DataReal ?? 0;
+                            hVGhiDanhMoiNam += hVGDM?.DataReal ?? 0;
+                            chiTieuHocVienNam += chiTieuHV?.DataReal ?? 0;
+                            chiTieuCuocGoiNam += chiTieuCG?.DataReal ?? 0;
+                            hoanThanhCuocGoiNam += hoanThanhCG?.DataReal ?? 0;
+                            saleOver100Nam += saleO100?.DataReal ?? 0;
+                            sale30To50Nam += sale30T50?.DataReal ?? 0;
+                            sale20To30Nam += sale20T30?.DataReal ?? 0;
+                            saleUnder20Nam += saleU20?.DataReal ?? 0;
+                            doanhThuNenNam += dthuNen?.DataReal ?? 0;
+                            doanhThuHocBongNam += dthuHocBong?.DataReal ?? 0;
+                            doanhThuVangNam += dthuVang?.DataReal ?? 0;
+                            doanhThuSuKienNam += dthuSuKien?.DataReal ?? 0;
+                            if (month == 1 || month == 2 || month == 3)
+                            {
+                                soSaleQuy1 += saleTT?.DataReal ?? 0;
+                                dinhBienQuy1 += saleDB?.DataReal ?? 0;
+                                chiTieuDSQuy1 += chitieuDS?.DataReal ?? 0;
+                                thucDatDSQuy1 += thucdatDS?.DataReal ?? 0;
+                                DSSaleQuy1 += dsSale?.DataReal ?? 0;
+                                DSDaoTaoQuy1 += dsDaoTao?.DataReal ?? 0;
+                                DSKeToanQuy1 += dsKeToan?.DataReal ?? 0;
+                                tongSoHocVienQuy1 += tongSoHV?.DataReal ?? 0;
+                                hVGhiDanhLaiQuy1 += hVGDL?.DataReal ?? 0;
+                                hVGhiDanhMoiQuy1 += hVGDM?.DataReal ?? 0;
+                                chiTieuHocVienQuy1 += chiTieuHV?.DataReal ?? 0;
+                                chiTieuCuocGoiQuy1 += chiTieuCG?.DataReal ?? 0;
+                                hoanThanhCuocGoiQuy1 += hoanThanhCG?.DataReal ?? 0;
+                                saleOver100Quy1 += saleO100?.DataReal ?? 0;
+                                sale30To50Quy1 += sale30T50?.DataReal ?? 0;
+                                sale20To30Quy1 += sale20T30?.DataReal ?? 0;
+                                saleUnder20Quy1 += saleU20?.DataReal ?? 0;
+                                doanhThuNenQuy1 += dthuNen?.DataReal ?? 0;
+                                doanhThuHocBongQuy1 += dthuHocBong?.DataReal ?? 0;
+                                doanhThuVangQuy1 += dthuVang?.DataReal ?? 0;
+                                doanhThuSuKienQuy1 += dthuSuKien?.DataReal ?? 0;
+                            }
+                            if (month == 4 || month == 5 || month == 6)
+                            {
+                                soSaleQuy2 += saleTT?.DataReal ?? 0;
+                                dinhBienQuy2 += saleDB?.DataReal ?? 0;
+                                chiTieuDSQuy2 += chitieuDS?.DataReal ?? 0;
+                                thucDatDSQuy2 += thucdatDS?.DataReal ?? 0;
+                                DSSaleQuy2 += dsSale?.DataReal ?? 0;
+                                DSDaoTaoQuy2 += dsDaoTao?.DataReal ?? 0;
+                                DSKeToanQuy2 += dsKeToan?.DataReal ?? 0;
+                                tongSoHocVienQuy2 += tongSoHV?.DataReal ?? 0;
+                                hVGhiDanhLaiQuy2 += hVGDL?.DataReal ?? 0;
+                                hVGhiDanhMoiQuy2 += hVGDM?.DataReal ?? 0;
+                                chiTieuHocVienQuy2 += chiTieuHV?.DataReal ?? 0;
+                                chiTieuCuocGoiQuy2 += chiTieuCG?.DataReal ?? 0;
+                                hoanThanhCuocGoiQuy2 += hoanThanhCG?.DataReal ?? 0;
+                                saleOver100Quy2 += saleO100?.DataReal ?? 0;
+                                sale30To50Quy2 += sale30T50?.DataReal ?? 0;
+                                sale20To30Quy2 += sale20T30?.DataReal ?? 0;
+                                saleUnder20Quy2 += saleU20?.DataReal ?? 0;
+                                doanhThuNenQuy2 += dthuNen?.DataReal ?? 0;
+                                doanhThuHocBongQuy2 += dthuHocBong?.DataReal ?? 0;
+                                doanhThuVangQuy2 += dthuVang?.DataReal ?? 0;
+                                doanhThuSuKienQuy2 += dthuSuKien?.DataReal ?? 0;
+                            }
+                            if (month == 7 || month == 8 || month == 9)
+                            {
+                                soSaleQuy3 += saleTT?.DataReal ?? 0;
+                                dinhBienQuy3 += saleDB?.DataReal ?? 0;
+                                chiTieuDSQuy3 += chitieuDS?.DataReal ?? 0;
+                                thucDatDSQuy3 += thucdatDS?.DataReal ?? 0;
+                                DSSaleQuy3 += dsSale?.DataReal ?? 0;
+                                DSDaoTaoQuy3 += dsDaoTao?.DataReal ?? 0;
+                                DSKeToanQuy3 += dsKeToan?.DataReal ?? 0;
+                                tongSoHocVienQuy3 += tongSoHV?.DataReal ?? 0;
+                                hVGhiDanhLaiQuy3 += hVGDL?.DataReal ?? 0;
+                                hVGhiDanhMoiQuy3 += hVGDM?.DataReal ?? 0;
+                                chiTieuHocVienQuy3 += chiTieuHV?.DataReal ?? 0;
+                                chiTieuCuocGoiQuy3 += chiTieuCG?.DataReal ?? 0;
+                                hoanThanhCuocGoiQuy3 += hoanThanhCG?.DataReal ?? 0;
+                                saleOver100Quy3 += saleO100?.DataReal ?? 0;
+                                sale30To50Quy3 += sale30T50?.DataReal ?? 0;
+                                sale20To30Quy3 += sale20T30?.DataReal ?? 0;
+                                saleUnder20Quy3 += saleU20?.DataReal ?? 0;
+                                doanhThuNenQuy3 += dthuNen?.DataReal ?? 0;
+                                doanhThuHocBongQuy3 += dthuHocBong?.DataReal ?? 0;
+                                doanhThuVangQuy3 += dthuVang?.DataReal ?? 0;
+                                doanhThuSuKienQuy3 += dthuSuKien?.DataReal ?? 0;
+                            }
+                            if (month == 10 || month == 11 || month == 12)
+                            {
+                                soSaleQuy4 += saleTT?.DataReal ?? 0;
+                                dinhBienQuy4 += saleDB?.DataReal ?? 0;
+                                chiTieuDSQuy4 += chitieuDS?.DataReal ?? 0;
+                                thucDatDSQuy4 += thucdatDS?.DataReal ?? 0;
+                                DSSaleQuy4 += dsSale?.DataReal ?? 0;
+                                DSDaoTaoQuy4 += dsDaoTao?.DataReal ?? 0;
+                                DSKeToanQuy4 += dsKeToan?.DataReal ?? 0;
+                                tongSoHocVienQuy4 += tongSoHV?.DataReal ?? 0;
+                                hVGhiDanhLaiQuy4 += hVGDL?.DataReal ?? 0;
+                                hVGhiDanhMoiQuy4 += hVGDM?.DataReal ?? 0;
+                                chiTieuHocVienQuy4 += chiTieuHV?.DataReal ?? 0;
+                                chiTieuCuocGoiQuy4 += chiTieuCG?.DataReal ?? 0;
+                                hoanThanhCuocGoiQuy4 += hoanThanhCG?.DataReal ?? 0;
+                                saleOver100Quy4 += saleO100?.DataReal ?? 0;
+                                sale30To50Quy4 += sale30T50?.DataReal ?? 0;
+                                sale20To30Quy4 += sale20T30?.DataReal ?? 0;
+                                saleUnder20Quy4 += saleU20?.DataReal ?? 0;
+                                doanhThuNenQuy4 += dthuNen?.DataReal ?? 0;
+                                doanhThuHocBongQuy4 += dthuHocBong?.DataReal ?? 0;
+                                doanhThuVangQuy4 += dthuVang?.DataReal ?? 0;
+                                doanhThuSuKienQuy4 += dthuSuKien?.DataReal ?? 0;
+                            }
                         }
 
                         // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
@@ -1192,6 +1425,7 @@ namespace OceanEduSlide.Controllers
                         TiTrongSale.Add(tiTrongSale);
                         TiTrongDaoTao.Add(tiTrongDaoTao);
                         TiTrongKeToan.Add(tiTrongKeToan);
+                        ChiTieuHocVien.Add(chiTieuHocVien);
                         TongSoHocVien.Add(tongSoHocVien);
                         HVGhiDanhLai.Add(hVGhiDanhLai);
                         HVGhiDanhMoi.Add(hVGhiDanhMoi);
@@ -1207,6 +1441,356 @@ namespace OceanEduSlide.Controllers
                         TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
                         TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
                     }
+
+                    // Tinh toán các quý, năm;
+
+                    // Quý:
+                    var countMonthQuy1 = listMonth.Count(a => a == 1 || a == 2 || a == 3);
+                    if (countMonthQuy1 > 0)
+                    {
+                        var averageSoSaleQuy1 = soSaleQuy1 / countMonthQuy1;
+                        SoSale.Add(averageSoSaleQuy1);
+                        var averageDinhBienQuy1 = dinhBienQuy1 / countMonthQuy1;
+                        DinhBien.Add(averageDinhBienQuy1);
+                        ChiTieuDS.Add(chiTieuDSQuy1);
+                        ThucDatDS.Add(thucDatDSQuy1);
+                        decimal htDSQuy1 = 0;
+                        decimal tiTrongSaleQuy1 = 0;
+                        decimal tiTrongDaoTaoQuy1 = 0;
+                        decimal tiTrongKeToanQuy1 = 0;
+                        decimal tiLeDoanhThuHocBongQuy1 = 0;
+                        decimal tiLeDoanhThuVangQuy1 = 0;
+                        decimal tiLeDoanhThuSuKienQuy1 = 0;
+                        decimal tiLeDoanhThuNenQuy1 = 0;
+                        if (chiTieuDSQuy1 > 0)
+                        {
+                            htDSQuy1 = thucDatDSQuy1 / chiTieuDSQuy1 * 100;
+                        }
+                        HTDS.Add(htDSQuy1);
+                        if (thucDatDSQuy1 > 0)
+                        {
+                            tiTrongSaleQuy1 = DSSaleQuy1 / thucDatDSQuy1 * 100;
+                            tiTrongDaoTaoQuy1 = DSDaoTaoQuy1 / thucDatDSQuy1 * 100;
+                            tiTrongKeToanQuy1 = DSKeToanQuy1 / thucDatDSQuy1 * 100;
+                            tiLeDoanhThuHocBongQuy1 = (doanhThuHocBongQuy1 / thucDatDSQuy1) * 100;
+                            tiLeDoanhThuVangQuy1 = (doanhThuVangQuy1 / thucDatDSQuy1) * 100;
+                            tiLeDoanhThuSuKienQuy1 = (doanhThuSuKienQuy1 / thucDatDSQuy1) * 100;
+                            tiLeDoanhThuNenQuy1 = (doanhThuNenQuy1 / thucDatDSQuy1) * 100;
+                        }
+                        TiTrongSale.Add(tiTrongSaleQuy1);
+                        TiTrongDaoTao.Add(tiTrongDaoTaoQuy1);
+                        TiTrongKeToan.Add(tiTrongKeToanQuy1);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy1);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy1);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy1);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy1);
+
+                        //% hv gd mới, gd lại
+                        decimal tileHVGDLQuy1 = 0;
+                        decimal tileHVGDMQuy1 = 0;
+                        if (tongSoHocVienQuy1 > 0)
+                        {
+                            tileHVGDLQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
+                            tileHVGDMQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
+                        }
+                        HVGhiDanhLai.Add(tileHVGDLQuy1);
+                        HVGhiDanhMoi.Add(tileHVGDMQuy1);
+
+                        // ht cuộc gọi
+                        decimal htCGQuy1 = 0;
+                        if (chiTieuCuocGoiQuy1 > 0)
+                            htCGQuy1 = (hoanThanhCuocGoiQuy1 / chiTieuCuocGoiQuy1) * 100;
+                        HTCuocGoi.Add(htCGQuy1);
+
+                        // ht học viên
+
+                        decimal htHVQuy1 = 0;
+                        if (chiTieuHocVienQuy1 > 0)
+                            htHVQuy1 = (tongSoHocVienQuy1 / chiTieuHocVienQuy1) * 100;
+                        // Năng lực Sale
+                        SaleOver100.Add(saleOver100Quy1);
+                        Sale30To50.Add(sale30To50Quy1);
+                        Sale20To30.Add(sale20To30Quy1);
+                        SaleUnder20.Add(saleUnder20Quy1);
+                    }
+
+                    var countMonthQuy2 = listMonth.Count(a => a == 4 || a == 5 || a == 6);
+                    if (countMonthQuy2 > 0)
+                    {
+                        var averageSoSaleQuy2 = soSaleQuy2 / countMonthQuy2;
+                        SoSale.Add(averageSoSaleQuy2);
+                        var averageDinhBienQuy2 = dinhBienQuy2 / countMonthQuy2;
+                        DinhBien.Add(averageDinhBienQuy2);
+                        ChiTieuDS.Add(chiTieuDSQuy2);
+                        ThucDatDS.Add(thucDatDSQuy2);
+                        decimal htDSQuy2 = 0;
+                        decimal tiTrongSaleQuy2 = 0;
+                        decimal tiTrongDaoTaoQuy2 = 0;
+                        decimal tiTrongKeToanQuy2 = 0;
+                        decimal tiLeDoanhThuHocBongQuy2 = 0;
+                        decimal tiLeDoanhThuVangQuy2 = 0;
+                        decimal tiLeDoanhThuSuKienQuy2 = 0;
+                        decimal tiLeDoanhThuNenQuy2 = 0;
+                        if (chiTieuDSQuy2 > 0)
+                        {
+                            htDSQuy2 = thucDatDSQuy2 / chiTieuDSQuy2 * 100;
+                        }
+                        HTDS.Add(htDSQuy2);
+                        if (thucDatDSQuy2 > 0)
+                        {
+                            tiTrongSaleQuy2 = DSSaleQuy2 / thucDatDSQuy2 * 100;
+                            tiTrongDaoTaoQuy2 = DSDaoTaoQuy2 / thucDatDSQuy2 * 100;
+                            tiTrongKeToanQuy2 = DSKeToanQuy2 / thucDatDSQuy2 * 100;
+                            tiLeDoanhThuHocBongQuy2 = (doanhThuHocBongQuy2 / thucDatDSQuy2) * 100;
+                            tiLeDoanhThuVangQuy2 = (doanhThuVangQuy2 / thucDatDSQuy2) * 100;
+                            tiLeDoanhThuSuKienQuy2 = (doanhThuSuKienQuy2 / thucDatDSQuy2) * 100;
+                            tiLeDoanhThuNenQuy2 = (doanhThuNenQuy2 / thucDatDSQuy2) * 100;
+                        }
+                        TiTrongSale.Add(tiTrongSaleQuy2);
+                        TiTrongDaoTao.Add(tiTrongDaoTaoQuy2);
+                        TiTrongKeToan.Add(tiTrongKeToanQuy2);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy2);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy2);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy2);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy2);
+
+                        //% hv gd mới, gd lại
+                        decimal tileHVGDLQuy2 = 0;
+                        decimal tileHVGDMQuy2 = 0;
+                        if (tongSoHocVienQuy2 > 0)
+                        {
+                            tileHVGDLQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
+                            tileHVGDMQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
+                        }
+                        HVGhiDanhLai.Add(tileHVGDLQuy2);
+                        HVGhiDanhMoi.Add(tileHVGDMQuy2);
+
+                        // ht cuộc gọi
+                        decimal htCGQuy2 = 0;
+                        if (chiTieuCuocGoiQuy2 > 0)
+                            htCGQuy2 = (hoanThanhCuocGoiQuy2 / chiTieuCuocGoiQuy2) * 100;
+                        HTCuocGoi.Add(htCGQuy2);
+
+                        // ht học viên
+
+                        decimal htHVQuy2 = 0;
+                        if (chiTieuHocVienQuy2 > 0)
+                            htHVQuy2 = (tongSoHocVienQuy2 / chiTieuHocVienQuy2) * 100;
+                        // Năng lực Sale
+                        SaleOver100.Add(saleOver100Quy2);
+                        Sale30To50.Add(sale30To50Quy2);
+                        Sale20To30.Add(sale20To30Quy2);
+                        SaleUnder20.Add(saleUnder20Quy2);
+                    }
+
+                    var countMonthQuy3 = listMonth.Count(a => a == 7 || a == 8 || a == 9);
+                    if (countMonthQuy3 > 0)
+                    {
+                        var averageSoSaleQuy3 = soSaleQuy3 / countMonthQuy3;
+                        SoSale.Add(averageSoSaleQuy3);
+                        var averageDinhBienQuy3 = dinhBienQuy3 / countMonthQuy3;
+                        DinhBien.Add(averageDinhBienQuy3);
+                        ChiTieuDS.Add(chiTieuDSQuy3);
+                        ThucDatDS.Add(thucDatDSQuy3);
+                        decimal htDSQuy3 = 0;
+                        decimal tiTrongSaleQuy3 = 0;
+                        decimal tiTrongDaoTaoQuy3 = 0;
+                        decimal tiTrongKeToanQuy3 = 0;
+                        decimal tiLeDoanhThuHocBongQuy3 = 0;
+                        decimal tiLeDoanhThuVangQuy3 = 0;
+                        decimal tiLeDoanhThuSuKienQuy3 = 0;
+                        decimal tiLeDoanhThuNenQuy3 = 0;
+                        if (chiTieuDSQuy3 > 0)
+                        {
+                            htDSQuy3 = thucDatDSQuy3 / chiTieuDSQuy3 * 100;
+                        }
+                        HTDS.Add(htDSQuy3);
+                        if (thucDatDSQuy3 > 0)
+                        {
+                            tiTrongSaleQuy3 = DSSaleQuy3 / thucDatDSQuy3 * 100;
+                            tiTrongDaoTaoQuy3 = DSDaoTaoQuy3 / thucDatDSQuy3 * 100;
+                            tiTrongKeToanQuy3 = DSKeToanQuy3 / thucDatDSQuy3 * 100;
+                            tiLeDoanhThuHocBongQuy3 = (doanhThuHocBongQuy3 / thucDatDSQuy3) * 100;
+                            tiLeDoanhThuVangQuy3 = (doanhThuVangQuy3 / thucDatDSQuy3) * 100;
+                            tiLeDoanhThuSuKienQuy3 = (doanhThuSuKienQuy3 / thucDatDSQuy3) * 100;
+                            tiLeDoanhThuNenQuy3 = (doanhThuNenQuy3 / thucDatDSQuy3) * 100;
+                        }
+                        TiTrongSale.Add(tiTrongSaleQuy3);
+                        TiTrongDaoTao.Add(tiTrongDaoTaoQuy3);
+                        TiTrongKeToan.Add(tiTrongKeToanQuy3);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy3);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy3);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy3);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy3);
+
+                        //% hv gd mới, gd lại
+                        decimal tileHVGDLQuy3 = 0;
+                        decimal tileHVGDMQuy3 = 0;
+                        if (tongSoHocVienQuy3 > 0)
+                        {
+                            tileHVGDLQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
+                            tileHVGDMQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
+                        }
+                        HVGhiDanhLai.Add(tileHVGDLQuy3);
+                        HVGhiDanhMoi.Add(tileHVGDMQuy3);
+
+                        // ht cuộc gọi
+                        decimal htCGQuy3 = 0;
+                        if (chiTieuCuocGoiQuy3 > 0)
+                            htCGQuy3 = (hoanThanhCuocGoiQuy3 / chiTieuCuocGoiQuy3) * 100;
+                        HTCuocGoi.Add(htCGQuy3);
+
+                        // ht học viên
+
+                        decimal htHVQuy3 = 0;
+                        if (chiTieuHocVienQuy3 > 0)
+                            htHVQuy3 = (tongSoHocVienQuy3 / chiTieuHocVienQuy3) * 100;
+                        // Năng lực Sale
+                        SaleOver100.Add(saleOver100Quy3);
+                        Sale30To50.Add(sale30To50Quy3);
+                        Sale20To30.Add(sale20To30Quy3);
+                        SaleUnder20.Add(saleUnder20Quy3);
+                    }
+
+                    var countMonthQuy4 = listMonth.Count(a => a == 10 || a == 11 || a == 12);
+                    if (countMonthQuy4 > 0)
+                    {
+                        var averageSoSaleQuy4 = soSaleQuy4 / countMonthQuy4;
+                        SoSale.Add(averageSoSaleQuy4);
+                        var averageDinhBienQuy4 = dinhBienQuy4 / countMonthQuy4;
+                        DinhBien.Add(averageDinhBienQuy4);
+                        ChiTieuDS.Add(chiTieuDSQuy4);
+                        ThucDatDS.Add(thucDatDSQuy4);
+                        decimal htDSQuy4 = 0;
+                        decimal tiTrongSaleQuy4 = 0;
+                        decimal tiTrongDaoTaoQuy4 = 0;
+                        decimal tiTrongKeToanQuy4 = 0;
+                        decimal tiLeDoanhThuHocBongQuy4 = 0;
+                        decimal tiLeDoanhThuVangQuy4 = 0;
+                        decimal tiLeDoanhThuSuKienQuy4 = 0;
+                        decimal tiLeDoanhThuNenQuy4 = 0;
+                        if (chiTieuDSQuy4 > 0)
+                        {
+                            htDSQuy4 = thucDatDSQuy4 / chiTieuDSQuy4 * 100;
+                        }
+                        HTDS.Add(htDSQuy4);
+                        if (thucDatDSQuy4 > 0)
+                        {
+                            tiTrongSaleQuy4 = DSSaleQuy4 / thucDatDSQuy4 * 100;
+                            tiTrongDaoTaoQuy4 = DSDaoTaoQuy4 / thucDatDSQuy4 * 100;
+                            tiTrongKeToanQuy4 = DSKeToanQuy4 / thucDatDSQuy4 * 100;
+                            tiLeDoanhThuHocBongQuy4 = (doanhThuHocBongQuy4 / thucDatDSQuy4) * 100;
+                            tiLeDoanhThuVangQuy4 = (doanhThuVangQuy4 / thucDatDSQuy4) * 100;
+                            tiLeDoanhThuSuKienQuy4 = (doanhThuSuKienQuy4 / thucDatDSQuy4) * 100;
+                            tiLeDoanhThuNenQuy4 = (doanhThuNenQuy4 / thucDatDSQuy4) * 100;
+                        }
+                        TiTrongSale.Add(tiTrongSaleQuy4);
+                        TiTrongDaoTao.Add(tiTrongDaoTaoQuy4);
+                        TiTrongKeToan.Add(tiTrongKeToanQuy4);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy4);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy4);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy4);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy4);
+
+                        //% hv gd mới, gd lại
+                        decimal tileHVGDLQuy4 = 0;
+                        decimal tileHVGDMQuy4 = 0;
+                        if (tongSoHocVienQuy4 > 0)
+                        {
+                            tileHVGDLQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
+                            tileHVGDMQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
+                        }
+                        HVGhiDanhLai.Add(tileHVGDLQuy4);
+                        HVGhiDanhMoi.Add(tileHVGDMQuy4);
+
+                        // ht cuộc gọi
+                        decimal htCGQuy4 = 0;
+                        if (chiTieuCuocGoiQuy4 > 0)
+                            htCGQuy4 = (hoanThanhCuocGoiQuy4 / chiTieuCuocGoiQuy4) * 100;
+                        HTCuocGoi.Add(htCGQuy4);
+
+                        // ht học viên
+
+                        decimal htHVQuy4 = 0;
+                        if (chiTieuHocVienQuy4 > 0)
+                            htHVQuy4 = (tongSoHocVienQuy4 / chiTieuHocVienQuy4) * 100;
+                        // Năng lực Sale
+                        SaleOver100.Add(saleOver100Quy4);
+                        Sale30To50.Add(sale30To50Quy4);
+                        Sale20To30.Add(sale20To30Quy4);
+                        SaleUnder20.Add(saleUnder20Quy4);
+                    }
+
+                    // Năm:
+
+                    var countMonthNam = listMonth.Count();
+                    if (countMonthNam > 0)
+                    {
+                        var averageSoSaleNam = soSaleNam / countMonthNam;
+                        SoSale.Add(averageSoSaleNam);
+                        var averageDinhBienNam = dinhBienNam / countMonthNam;
+                        DinhBien.Add(averageDinhBienNam);
+                        ChiTieuDS.Add(chiTieuDSNam);
+                        ThucDatDS.Add(thucDatDSNam);
+                        decimal htDSNam = 0;
+                        decimal tiTrongSaleNam = 0;
+                        decimal tiTrongDaoTaoNam = 0;
+                        decimal tiTrongKeToanNam = 0;
+                        decimal tiLeDoanhThuHocBongNam = 0;
+                        decimal tiLeDoanhThuVangNam = 0;
+                        decimal tiLeDoanhThuSuKienNam = 0;
+                        decimal tiLeDoanhThuNenNam = 0;
+                        if (chiTieuDSNam > 0)
+                        {
+                            htDSNam = thucDatDSNam / chiTieuDSNam * 100;
+                        }
+                        HTDS.Add(htDSNam);
+                        if (thucDatDSNam > 0)
+                        {
+                            tiTrongSaleNam = DSSaleNam / thucDatDSNam * 100;
+                            tiTrongDaoTaoNam = DSDaoTaoNam / thucDatDSNam * 100;
+                            tiTrongKeToanNam = DSKeToanNam / thucDatDSNam * 100;
+                            tiLeDoanhThuHocBongNam = (doanhThuHocBongNam / thucDatDSNam) * 100;
+                            tiLeDoanhThuVangNam = (doanhThuVangNam / thucDatDSNam) * 100;
+                            tiLeDoanhThuSuKienNam = (doanhThuSuKienNam / thucDatDSNam) * 100;
+                            tiLeDoanhThuNenNam = (doanhThuNenNam / thucDatDSNam) * 100;
+                        }
+                        TiTrongSale.Add(tiTrongSaleNam);
+                        TiTrongDaoTao.Add(tiTrongDaoTaoNam);
+                        TiTrongKeToan.Add(tiTrongKeToanNam);
+                        TiLeDoanhThuNen.Add(tiLeDoanhThuNenNam);
+                        TiLeDoanhThuVang.Add(tiLeDoanhThuVangNam);
+                        TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienNam);
+                        TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongNam);
+
+                        //% hv gd mới, gd lại
+                        decimal tileHVGDLNam = 0;
+                        decimal tileHVGDMNam = 0;
+                        if (tongSoHocVienNam > 0)
+                        {
+                            tileHVGDLNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
+                            tileHVGDMNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
+                        }
+                        HVGhiDanhLai.Add(tileHVGDLNam);
+                        HVGhiDanhMoi.Add(tileHVGDMNam);
+
+                        // ht cuộc gọi
+                        decimal htCGNam = 0;
+                        if (chiTieuCuocGoiNam > 0)
+                            htCGNam = (hoanThanhCuocGoiNam / chiTieuCuocGoiNam) * 100;
+                        HTCuocGoi.Add(htCGNam);
+
+                        // ht học viên
+
+                        decimal htHVNam = 0;
+                        if (chiTieuHocVienNam > 0)
+                            htHVNam = (tongSoHocVienNam / chiTieuHocVienNam) * 100;
+                        // Năng lực Sale
+                        SaleOver100.Add(saleOver100Nam);
+                        Sale30To50.Add(sale30To50Nam);
+                        Sale20To30.Add(sale20To30Nam);
+                        SaleUnder20.Add(saleUnder20Nam);
+                    }
                 }
             }
 
@@ -1218,7 +1802,6 @@ namespace OceanEduSlide.Controllers
                 //lọc thêm theo ReportCategoryId
                 var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type1 && model.OfficeId == a.OfficeId).AsNoTracking().ToList();
 
-                var listMonth = new List<int>();
                 if (User.TypeUser == TypeUser.HO)
                 {
                     listMonth.AddRange(Enumerable.Range(1, 12));
@@ -1259,14 +1842,16 @@ namespace OceanEduSlide.Controllers
                         listMonth.AddRange(listMonthManaged);
                     }
                 }
+
+                listMonth.OrderBy(a => a);
                 foreach (var month in listMonth)
                 {
+
                     decimal soSale = 0;
                     decimal dinhBien = 0;
                     decimal chiTieuDS = 0;
                     decimal thucDatDS = 0;
                     decimal hTDS = 0;
-
                     decimal DSSale = 0;
                     decimal DSDaoTao = 0;
                     decimal DSKeToan = 0;
@@ -1297,72 +1882,191 @@ namespace OceanEduSlide.Controllers
                     decimal tiLeDoanhThuHocBong = 0;
                     decimal tiLeDoanhThuVang = 0;
                     decimal tiLeDoanhThuSuKien = 0;
-
-                    var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 23);
+                    var saleTT = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 23);
                     soSale = saleTT?.DataReal ?? 0;
 
-                    var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 22);
+                    var saleDB = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 22);
                     dinhBien = saleDB?.DataReal ?? 0;
 
-                    var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 34);
+                    var chitieuDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 34);
                     chiTieuDS = chitieuDS?.DataReal ?? 0;
 
-                    var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 35);
+                    var thucdatDS = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 35);
                     thucDatDS = thucdatDS?.DataReal ?? 0;
 
-                    var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 40);
+                    var dsSale = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 40);
                     DSSale = dsSale?.DataReal ?? 0;
 
-                    var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 43);
+                    var dsDaoTao = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 43);
                     DSDaoTao = dsDaoTao?.DataReal ?? 0;
 
-                    var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 119);
+                    var dsKeToan = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 119);
                     DSKeToan = dsKeToan?.DataReal ?? 0;
 
-                    var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 31);
+                    var tongSoHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 31);
                     tongSoHocVien = tongSoHV?.DataReal ?? 0;
 
-                    var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 30);
+                    var chiTieuHV = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 30);
                     chiTieuHocVien = chiTieuHV?.DataReal ?? 0;
 
-                    var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 58);
+                    var hVGDL = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 58);
                     hVGhiDanhLai = hVGDL?.DataReal ?? 0;
 
-                    var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 60);
+                    var hVGDM = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 60);
                     hVGhiDanhMoi = hVGDM?.DataReal ?? 0;
 
-                    var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 26);
+                    var chiTieuCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 26);
                     chiTieuCuocGoi = chiTieuCG?.DataReal ?? 0;
 
-                    var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 27);
+                    var hoanThanhCG = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 27);
                     hoanThanhCuocGoi = hoanThanhCG?.DataReal ?? 0;
 
-                    var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 64);
+                    var thangChotBQ = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 64);
                     thangChotBinhQuan = thangChotBQ?.DataReal ?? 0;
 
-                    var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 78);
+                    var saleO100 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 78);
                     saleOver100 = thucdatDS?.DataReal ?? 0;
 
-                    var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 80);
+                    var sale30T50 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 80);
                     sale30To50 = sale30T50?.DataReal ?? 0;
 
-                    var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 82);
+                    var sale20T30 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 82);
                     sale20To30 = sale20T30?.DataReal ?? 0;
 
-                    var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 84);
+                    var saleU20 = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 84);
                     saleUnder20 = saleU20?.DataReal ?? 0;
 
-                    var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 53);
+                    var dthuNen = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 53);
                     doanhThuNen = dthuNen?.DataReal ?? 0;
 
-                    var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 54);
+                    var dthuHocBong = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 54);
                     doanhThuHocBong = dthuHocBong?.DataReal ?? 0;
 
-                    var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 55);
+                    var dthuVang = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 55);
                     doanhThuVang = dthuVang?.DataReal ?? 0;
 
-                    var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.Id == 56);
+                    var dthuSuKien = listReportData.FirstOrDefault(a => a.Month == month && a.OfficeId == office.Id && a.ReportCategoryId == 56);
                     doanhThuSuKien = dthuSuKien?.DataReal ?? 0;
+
+
+                    soSaleNam += saleTT?.DataReal ?? 0;
+                    dinhBienNam += saleDB?.DataReal ?? 0;
+                    chiTieuDSNam += chitieuDS?.DataReal ?? 0;
+                    thucDatDSNam += thucdatDS?.DataReal ?? 0;
+                    DSSaleNam += dsSale?.DataReal ?? 0;
+                    DSDaoTaoNam += dsDaoTao?.DataReal ?? 0;
+                    DSKeToanNam += dsKeToan?.DataReal ?? 0;
+                    tongSoHocVienNam += tongSoHV?.DataReal ?? 0;
+                    hVGhiDanhLaiNam += hVGDL?.DataReal ?? 0;
+                    hVGhiDanhMoiNam += hVGDM?.DataReal ?? 0;
+                    chiTieuHocVienNam += chiTieuHV?.DataReal ?? 0;
+                    chiTieuCuocGoiNam += chiTieuCG?.DataReal ?? 0;
+                    hoanThanhCuocGoiNam += hoanThanhCG?.DataReal ?? 0;
+                    saleOver100Nam += saleO100?.DataReal ?? 0;
+                    sale30To50Nam += sale30T50?.DataReal ?? 0;
+                    sale20To30Nam += sale20T30?.DataReal ?? 0;
+                    saleUnder20Nam += saleU20?.DataReal ?? 0;
+                    doanhThuNenNam += dthuNen?.DataReal ?? 0;
+                    doanhThuHocBongNam += dthuHocBong?.DataReal ?? 0;
+                    doanhThuVangNam += dthuVang?.DataReal ?? 0;
+                    doanhThuSuKienNam += dthuSuKien?.DataReal ?? 0;
+                    if (month == 1 || month == 2 || month == 3)
+                    {
+                        soSaleQuy1 += saleTT?.DataReal ?? 0;
+                        dinhBienQuy1 += saleDB?.DataReal ?? 0;
+                        chiTieuDSQuy1 += chitieuDS?.DataReal ?? 0;
+                        thucDatDSQuy1 += thucdatDS?.DataReal ?? 0;
+                        DSSaleQuy1 += dsSale?.DataReal ?? 0;
+                        DSDaoTaoQuy1 += dsDaoTao?.DataReal ?? 0;
+                        DSKeToanQuy1 += dsKeToan?.DataReal ?? 0;
+                        tongSoHocVienQuy1 += tongSoHV?.DataReal ?? 0;
+                        hVGhiDanhLaiQuy1 += hVGDL?.DataReal ?? 0;
+                        hVGhiDanhMoiQuy1 += hVGDM?.DataReal ?? 0;
+                        chiTieuHocVienQuy1 += chiTieuHV?.DataReal ?? 0;
+                        chiTieuCuocGoiQuy1 += chiTieuCG?.DataReal ?? 0;
+                        hoanThanhCuocGoiQuy1 += hoanThanhCG?.DataReal ?? 0;
+                        saleOver100Quy1 += saleO100?.DataReal ?? 0;
+                        sale30To50Quy1 += sale30T50?.DataReal ?? 0;
+                        sale20To30Quy1 += sale20T30?.DataReal ?? 0;
+                        saleUnder20Quy1 += saleU20?.DataReal ?? 0;
+                        doanhThuNenQuy1 += dthuNen?.DataReal ?? 0;
+                        doanhThuHocBongQuy1 += dthuHocBong?.DataReal ?? 0;
+                        doanhThuVangQuy1 += dthuVang?.DataReal ?? 0;
+                        doanhThuSuKienQuy1 += dthuSuKien?.DataReal ?? 0;
+                    }
+                    if (month == 4 || month == 5 || month == 6)
+                    {
+                        soSaleQuy2 += saleTT?.DataReal ?? 0;
+                        dinhBienQuy2 += saleDB?.DataReal ?? 0;
+                        chiTieuDSQuy2 += chitieuDS?.DataReal ?? 0;
+                        thucDatDSQuy2 += thucdatDS?.DataReal ?? 0;
+                        DSSaleQuy2 += dsSale?.DataReal ?? 0;
+                        DSDaoTaoQuy2 += dsDaoTao?.DataReal ?? 0;
+                        DSKeToanQuy2 += dsKeToan?.DataReal ?? 0;
+                        tongSoHocVienQuy2 += tongSoHV?.DataReal ?? 0;
+                        hVGhiDanhLaiQuy2 += hVGDL?.DataReal ?? 0;
+                        hVGhiDanhMoiQuy2 += hVGDM?.DataReal ?? 0;
+                        chiTieuHocVienQuy2 += chiTieuHV?.DataReal ?? 0;
+                        chiTieuCuocGoiQuy2 += chiTieuCG?.DataReal ?? 0;
+                        hoanThanhCuocGoiQuy2 += hoanThanhCG?.DataReal ?? 0;
+                        saleOver100Quy2 += saleO100?.DataReal ?? 0;
+                        sale30To50Quy2 += sale30T50?.DataReal ?? 0;
+                        sale20To30Quy2 += sale20T30?.DataReal ?? 0;
+                        saleUnder20Quy2 += saleU20?.DataReal ?? 0;
+                        doanhThuNenQuy2 += dthuNen?.DataReal ?? 0;
+                        doanhThuHocBongQuy2 += dthuHocBong?.DataReal ?? 0;
+                        doanhThuVangQuy2 += dthuVang?.DataReal ?? 0;
+                        doanhThuSuKienQuy2 += dthuSuKien?.DataReal ?? 0;
+                    }
+                    if (month == 7 || month == 8 || month == 9)
+                    {
+                        soSaleQuy3 += saleTT?.DataReal ?? 0;
+                        dinhBienQuy3 += saleDB?.DataReal ?? 0;
+                        chiTieuDSQuy3 += chitieuDS?.DataReal ?? 0;
+                        thucDatDSQuy3 += thucdatDS?.DataReal ?? 0;
+                        DSSaleQuy3 += dsSale?.DataReal ?? 0;
+                        DSDaoTaoQuy3 += dsDaoTao?.DataReal ?? 0;
+                        DSKeToanQuy3 += dsKeToan?.DataReal ?? 0;
+                        tongSoHocVienQuy3 += tongSoHV?.DataReal ?? 0;
+                        hVGhiDanhLaiQuy3 += hVGDL?.DataReal ?? 0;
+                        hVGhiDanhMoiQuy3 += hVGDM?.DataReal ?? 0;
+                        chiTieuHocVienQuy3 += chiTieuHV?.DataReal ?? 0;
+                        chiTieuCuocGoiQuy3 += chiTieuCG?.DataReal ?? 0;
+                        hoanThanhCuocGoiQuy3 += hoanThanhCG?.DataReal ?? 0;
+                        saleOver100Quy3 += saleO100?.DataReal ?? 0;
+                        sale30To50Quy3 += sale30T50?.DataReal ?? 0;
+                        sale20To30Quy3 += sale20T30?.DataReal ?? 0;
+                        saleUnder20Quy3 += saleU20?.DataReal ?? 0;
+                        doanhThuNenQuy3 += dthuNen?.DataReal ?? 0;
+                        doanhThuHocBongQuy3 += dthuHocBong?.DataReal ?? 0;
+                        doanhThuVangQuy3 += dthuVang?.DataReal ?? 0;
+                        doanhThuSuKienQuy3 += dthuSuKien?.DataReal ?? 0;
+                    }
+                    if (month == 10 || month == 11 || month == 12)
+                    {
+                        soSaleQuy4 += saleTT?.DataReal ?? 0;
+                        dinhBienQuy4 += saleDB?.DataReal ?? 0;
+                        chiTieuDSQuy4 += chitieuDS?.DataReal ?? 0;
+                        thucDatDSQuy4 += thucdatDS?.DataReal ?? 0;
+                        DSSaleQuy4 += dsSale?.DataReal ?? 0;
+                        DSDaoTaoQuy4 += dsDaoTao?.DataReal ?? 0;
+                        DSKeToanQuy4 += dsKeToan?.DataReal ?? 0;
+                        tongSoHocVienQuy4 += tongSoHV?.DataReal ?? 0;
+                        hVGhiDanhLaiQuy4 += hVGDL?.DataReal ?? 0;
+                        hVGhiDanhMoiQuy4 += hVGDM?.DataReal ?? 0;
+                        chiTieuHocVienQuy4 += chiTieuHV?.DataReal ?? 0;
+                        chiTieuCuocGoiQuy4 += chiTieuCG?.DataReal ?? 0;
+                        hoanThanhCuocGoiQuy4 += hoanThanhCG?.DataReal ?? 0;
+                        saleOver100Quy4 += saleO100?.DataReal ?? 0;
+                        sale30To50Quy4 += sale30T50?.DataReal ?? 0;
+                        sale20To30Quy4 += sale20T30?.DataReal ?? 0;
+                        saleUnder20Quy4 += saleU20?.DataReal ?? 0;
+                        doanhThuNenQuy4 += dthuNen?.DataReal ?? 0;
+                        doanhThuHocBongQuy4 += dthuHocBong?.DataReal ?? 0;
+                        doanhThuVangQuy4 += dthuVang?.DataReal ?? 0;
+                        doanhThuSuKienQuy4 += dthuSuKien?.DataReal ?? 0;
+                    }
+
 
                     // Tính các % hoàn thành: ht dthu, tỉ trọng sale, đào tạo, kế toán; % hv gd mới, gd lại; ht cuộc gọi, ht học viên; % dthu nền,vàng,...
 
@@ -1421,9 +2125,385 @@ namespace OceanEduSlide.Controllers
                     TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBong);
                     TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKien);
                     TiLeDoanhThuVang.Add(tiLeDoanhThuVang);
+
+
+
+                }
+                // Tinh toán các quý, năm;
+
+                // Quý:
+                var countMonthQuy1 = listMonth.Count(a => a == 1 || a == 2 || a == 3);
+                if (countMonthQuy1 > 0)
+                {
+                    var averageSoSaleQuy1 = soSaleQuy1 / countMonthQuy1;
+                    SoSale.Add(averageSoSaleQuy1);
+                    var averageDinhBienQuy1 = dinhBienQuy1 / countMonthQuy1;
+                    DinhBien.Add(averageDinhBienQuy1);
+                    ChiTieuDS.Add(chiTieuDSQuy1);
+                    ThucDatDS.Add(thucDatDSQuy1);
+                    decimal htDSQuy1 = 0;
+                    decimal tiTrongSaleQuy1 = 0;
+                    decimal tiTrongDaoTaoQuy1 = 0;
+                    decimal tiTrongKeToanQuy1 = 0;
+                    decimal tiLeDoanhThuHocBongQuy1 = 0;
+                    decimal tiLeDoanhThuVangQuy1 = 0;
+                    decimal tiLeDoanhThuSuKienQuy1 = 0;
+                    decimal tiLeDoanhThuNenQuy1 = 0;
+                    if (chiTieuDSQuy1 > 0)
+                    {
+                        htDSQuy1 = thucDatDSQuy1 / chiTieuDSQuy1 * 100;
+                    }
+                    HTDS.Add(htDSQuy1);
+                    if (thucDatDSQuy1 > 0)
+                    {
+                        tiTrongSaleQuy1 = DSSaleQuy1 / thucDatDSQuy1 * 100;
+                        tiTrongDaoTaoQuy1 = DSDaoTaoQuy1 / thucDatDSQuy1 * 100;
+                        tiTrongKeToanQuy1 = DSKeToanQuy1 / thucDatDSQuy1 * 100;
+                        tiLeDoanhThuHocBongQuy1 = (doanhThuHocBongQuy1 / thucDatDSQuy1) * 100;
+                        tiLeDoanhThuVangQuy1 = (doanhThuVangQuy1 / thucDatDSQuy1) * 100;
+                        tiLeDoanhThuSuKienQuy1 = (doanhThuSuKienQuy1 / thucDatDSQuy1) * 100;
+                        tiLeDoanhThuNenQuy1 = (doanhThuNenQuy1 / thucDatDSQuy1) * 100;
+                    }
+                    TiTrongSale.Add(tiTrongSaleQuy1);
+                    TiTrongDaoTao.Add(tiTrongDaoTaoQuy1);
+                    TiTrongKeToan.Add(tiTrongKeToanQuy1);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy1);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy1);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy1);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy1);
+
+                    //% hv gd mới, gd lại
+                    decimal tileHVGDLQuy1 = 0;
+                    decimal tileHVGDMQuy1 = 0;
+                    if (tongSoHocVienQuy1 > 0)
+                    {
+                        tileHVGDLQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
+                        tileHVGDMQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
+                    }
+                    HVGhiDanhLai.Add(tileHVGDLQuy1);
+                    HVGhiDanhMoi.Add(tileHVGDMQuy1);
+
+                    // ht cuộc gọi
+                    decimal htCGQuy1 = 0;
+                    if (chiTieuCuocGoiQuy1 > 0)
+                        htCGQuy1 = (hoanThanhCuocGoiQuy1 / chiTieuCuocGoiQuy1) * 100;
+                    HTCuocGoi.Add(htCGQuy1);
+
+                    // ht học viên
+
+                    decimal htHVQuy1 = 0;
+                    if (chiTieuHocVienQuy1 > 0)
+                        htHVQuy1 = (tongSoHocVienQuy1 / chiTieuHocVienQuy1) * 100;
+                    // Năng lực Sale
+                    SaleOver100.Add(saleOver100Quy1);
+                    Sale30To50.Add(sale30To50Quy1);
+                    Sale20To30.Add(sale20To30Quy1);
+                    SaleUnder20.Add(saleUnder20Quy1);
+                }
+
+                var countMonthQuy2 = listMonth.Count(a => a == 4 || a == 5 || a == 6);
+                if (countMonthQuy2 > 0)
+                {
+                    var averageSoSaleQuy2 = soSaleQuy2 / countMonthQuy2;
+                    SoSale.Add(averageSoSaleQuy2);
+                    var averageDinhBienQuy2 = dinhBienQuy2 / countMonthQuy2;
+                    DinhBien.Add(averageDinhBienQuy2);
+                    ChiTieuDS.Add(chiTieuDSQuy2);
+                    ThucDatDS.Add(thucDatDSQuy2);
+                    decimal htDSQuy2 = 0;
+                    decimal tiTrongSaleQuy2 = 0;
+                    decimal tiTrongDaoTaoQuy2 = 0;
+                    decimal tiTrongKeToanQuy2 = 0;
+                    decimal tiLeDoanhThuHocBongQuy2 = 0;
+                    decimal tiLeDoanhThuVangQuy2 = 0;
+                    decimal tiLeDoanhThuSuKienQuy2 = 0;
+                    decimal tiLeDoanhThuNenQuy2 = 0;
+                    if (chiTieuDSQuy2 > 0)
+                    {
+                        htDSQuy2 = thucDatDSQuy2 / chiTieuDSQuy2 * 100;
+                    }
+                    HTDS.Add(htDSQuy2);
+                    if (thucDatDSQuy2 > 0)
+                    {
+                        tiTrongSaleQuy2 = DSSaleQuy2 / thucDatDSQuy2 * 100;
+                        tiTrongDaoTaoQuy2 = DSDaoTaoQuy2 / thucDatDSQuy2 * 100;
+                        tiTrongKeToanQuy2 = DSKeToanQuy2 / thucDatDSQuy2 * 100;
+                        tiLeDoanhThuHocBongQuy2 = (doanhThuHocBongQuy2 / thucDatDSQuy2) * 100;
+                        tiLeDoanhThuVangQuy2 = (doanhThuVangQuy2 / thucDatDSQuy2) * 100;
+                        tiLeDoanhThuSuKienQuy2 = (doanhThuSuKienQuy2 / thucDatDSQuy2) * 100;
+                        tiLeDoanhThuNenQuy2 = (doanhThuNenQuy2 / thucDatDSQuy2) * 100;
+                    }
+                    TiTrongSale.Add(tiTrongSaleQuy2);
+                    TiTrongDaoTao.Add(tiTrongDaoTaoQuy2);
+                    TiTrongKeToan.Add(tiTrongKeToanQuy2);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy2);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy2);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy2);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy2);
+
+                    //% hv gd mới, gd lại
+                    decimal tileHVGDLQuy2 = 0;
+                    decimal tileHVGDMQuy2 = 0;
+                    if (tongSoHocVienQuy2 > 0)
+                    {
+                        tileHVGDLQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
+                        tileHVGDMQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
+                    }
+                    HVGhiDanhLai.Add(tileHVGDLQuy2);
+                    HVGhiDanhMoi.Add(tileHVGDMQuy2);
+
+                    // ht cuộc gọi
+                    decimal htCGQuy2 = 0;
+                    if (chiTieuCuocGoiQuy2 > 0)
+                        htCGQuy2 = (hoanThanhCuocGoiQuy2 / chiTieuCuocGoiQuy2) * 100;
+                    HTCuocGoi.Add(htCGQuy2);
+
+                    // ht học viên
+
+                    decimal htHVQuy2 = 0;
+                    if (chiTieuHocVienQuy2 > 0)
+                        htHVQuy2 = (tongSoHocVienQuy2 / chiTieuHocVienQuy2) * 100;
+                    // Năng lực Sale
+                    SaleOver100.Add(saleOver100Quy2);
+                    Sale30To50.Add(sale30To50Quy2);
+                    Sale20To30.Add(sale20To30Quy2);
+                    SaleUnder20.Add(saleUnder20Quy2);
+                }
+
+                var countMonthQuy3 = listMonth.Count(a => a == 7 || a == 8 || a == 9);
+                if (countMonthQuy3 > 0)
+                {
+                    var averageSoSaleQuy3 = soSaleQuy3 / countMonthQuy3;
+                    SoSale.Add(averageSoSaleQuy3);
+                    var averageDinhBienQuy3 = dinhBienQuy3 / countMonthQuy3;
+                    DinhBien.Add(averageDinhBienQuy3);
+                    ChiTieuDS.Add(chiTieuDSQuy3);
+                    ThucDatDS.Add(thucDatDSQuy3);
+                    decimal htDSQuy3 = 0;
+                    decimal tiTrongSaleQuy3 = 0;
+                    decimal tiTrongDaoTaoQuy3 = 0;
+                    decimal tiTrongKeToanQuy3 = 0;
+                    decimal tiLeDoanhThuHocBongQuy3 = 0;
+                    decimal tiLeDoanhThuVangQuy3 = 0;
+                    decimal tiLeDoanhThuSuKienQuy3 = 0;
+                    decimal tiLeDoanhThuNenQuy3 = 0;
+                    if (chiTieuDSQuy3 > 0)
+                    {
+                        htDSQuy3 = thucDatDSQuy3 / chiTieuDSQuy3 * 100;
+                    }
+                    HTDS.Add(htDSQuy3);
+                    if (thucDatDSQuy3 > 0)
+                    {
+                        tiTrongSaleQuy3 = DSSaleQuy3 / thucDatDSQuy3 * 100;
+                        tiTrongDaoTaoQuy3 = DSDaoTaoQuy3 / thucDatDSQuy3 * 100;
+                        tiTrongKeToanQuy3 = DSKeToanQuy3 / thucDatDSQuy3 * 100;
+                        tiLeDoanhThuHocBongQuy3 = (doanhThuHocBongQuy3 / thucDatDSQuy3) * 100;
+                        tiLeDoanhThuVangQuy3 = (doanhThuVangQuy3 / thucDatDSQuy3) * 100;
+                        tiLeDoanhThuSuKienQuy3 = (doanhThuSuKienQuy3 / thucDatDSQuy3) * 100;
+                        tiLeDoanhThuNenQuy3 = (doanhThuNenQuy3 / thucDatDSQuy3) * 100;
+                    }
+                    TiTrongSale.Add(tiTrongSaleQuy3);
+                    TiTrongDaoTao.Add(tiTrongDaoTaoQuy3);
+                    TiTrongKeToan.Add(tiTrongKeToanQuy3);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy3);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy3);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy3);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy3);
+
+                    //% hv gd mới, gd lại
+                    decimal tileHVGDLQuy3 = 0;
+                    decimal tileHVGDMQuy3 = 0;
+                    if (tongSoHocVienQuy3 > 0)
+                    {
+                        tileHVGDLQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
+                        tileHVGDMQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
+                    }
+                    HVGhiDanhLai.Add(tileHVGDLQuy3);
+                    HVGhiDanhMoi.Add(tileHVGDMQuy3);
+
+                    // ht cuộc gọi
+                    decimal htCGQuy3 = 0;
+                    if (chiTieuCuocGoiQuy3 > 0)
+                        htCGQuy3 = (hoanThanhCuocGoiQuy3 / chiTieuCuocGoiQuy3) * 100;
+                    HTCuocGoi.Add(htCGQuy3);
+
+                    // ht học viên
+
+                    decimal htHVQuy3 = 0;
+                    if (chiTieuHocVienQuy3 > 0)
+                        htHVQuy3 = (tongSoHocVienQuy3 / chiTieuHocVienQuy3) * 100;
+                    // Năng lực Sale
+                    SaleOver100.Add(saleOver100Quy3);
+                    Sale30To50.Add(sale30To50Quy3);
+                    Sale20To30.Add(sale20To30Quy3);
+                    SaleUnder20.Add(saleUnder20Quy3);
+                }
+
+                var countMonthQuy4 = listMonth.Count(a => a == 10 || a == 11 || a == 12);
+                if (countMonthQuy4 > 0)
+                {
+                    var averageSoSaleQuy4 = soSaleQuy4 / countMonthQuy4;
+                    SoSale.Add(averageSoSaleQuy4);
+                    var averageDinhBienQuy4 = dinhBienQuy4 / countMonthQuy4;
+                    DinhBien.Add(averageDinhBienQuy4);
+                    ChiTieuDS.Add(chiTieuDSQuy4);
+                    ThucDatDS.Add(thucDatDSQuy4);
+                    decimal htDSQuy4 = 0;
+                    decimal tiTrongSaleQuy4 = 0;
+                    decimal tiTrongDaoTaoQuy4 = 0;
+                    decimal tiTrongKeToanQuy4 = 0;
+                    decimal tiLeDoanhThuHocBongQuy4 = 0;
+                    decimal tiLeDoanhThuVangQuy4 = 0;
+                    decimal tiLeDoanhThuSuKienQuy4 = 0;
+                    decimal tiLeDoanhThuNenQuy4 = 0;
+                    if (chiTieuDSQuy4 > 0)
+                    {
+                        htDSQuy4 = thucDatDSQuy4 / chiTieuDSQuy4 * 100;
+                    }
+                    HTDS.Add(htDSQuy4);
+                    if (thucDatDSQuy4 > 0)
+                    {
+                        tiTrongSaleQuy4 = DSSaleQuy4 / thucDatDSQuy4 * 100;
+                        tiTrongDaoTaoQuy4 = DSDaoTaoQuy4 / thucDatDSQuy4 * 100;
+                        tiTrongKeToanQuy4 = DSKeToanQuy4 / thucDatDSQuy4 * 100;
+                        tiLeDoanhThuHocBongQuy4 = (doanhThuHocBongQuy4 / thucDatDSQuy4) * 100;
+                        tiLeDoanhThuVangQuy4 = (doanhThuVangQuy4 / thucDatDSQuy4) * 100;
+                        tiLeDoanhThuSuKienQuy4 = (doanhThuSuKienQuy4 / thucDatDSQuy4) * 100;
+                        tiLeDoanhThuNenQuy4 = (doanhThuNenQuy4 / thucDatDSQuy4) * 100;
+                    }
+                    TiTrongSale.Add(tiTrongSaleQuy4);
+                    TiTrongDaoTao.Add(tiTrongDaoTaoQuy4);
+                    TiTrongKeToan.Add(tiTrongKeToanQuy4);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNenQuy4);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVangQuy4);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienQuy4);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongQuy4);
+
+                    //% hv gd mới, gd lại
+                    decimal tileHVGDLQuy4 = 0;
+                    decimal tileHVGDMQuy4 = 0;
+                    if (tongSoHocVienQuy4 > 0)
+                    {
+                        tileHVGDLQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
+                        tileHVGDMQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
+                    }
+                    HVGhiDanhLai.Add(tileHVGDLQuy4);
+                    HVGhiDanhMoi.Add(tileHVGDMQuy4);
+
+                    // ht cuộc gọi
+                    decimal htCGQuy4 = 0;
+                    if (chiTieuCuocGoiQuy4 > 0)
+                        htCGQuy4 = (hoanThanhCuocGoiQuy4 / chiTieuCuocGoiQuy4) * 100;
+                    HTCuocGoi.Add(htCGQuy4);
+
+                    // ht học viên
+
+                    decimal htHVQuy4 = 0;
+                    if (chiTieuHocVienQuy4 > 0)
+                        htHVQuy4 = (tongSoHocVienQuy4 / chiTieuHocVienQuy4) * 100;
+                    // Năng lực Sale
+                    SaleOver100.Add(saleOver100Quy4);
+                    Sale30To50.Add(sale30To50Quy4);
+                    Sale20To30.Add(sale20To30Quy4);
+                    SaleUnder20.Add(saleUnder20Quy4);
+                }
+
+                // Năm:
+
+                var countMonthNam = listMonth.Count();
+                if (countMonthNam > 0)
+                {
+                    var averageSoSaleNam = soSaleNam / countMonthNam;
+                    SoSale.Add(averageSoSaleNam);
+                    var averageDinhBienNam = dinhBienNam / countMonthNam;
+                    DinhBien.Add(averageDinhBienNam);
+                    ChiTieuDS.Add(chiTieuDSNam);
+                    ThucDatDS.Add(thucDatDSNam);
+                    decimal htDSNam = 0;
+                    decimal tiTrongSaleNam = 0;
+                    decimal tiTrongDaoTaoNam = 0;
+                    decimal tiTrongKeToanNam = 0;
+                    decimal tiLeDoanhThuHocBongNam = 0;
+                    decimal tiLeDoanhThuVangNam = 0;
+                    decimal tiLeDoanhThuSuKienNam = 0;
+                    decimal tiLeDoanhThuNenNam = 0;
+                    if (chiTieuDSNam > 0)
+                    {
+                        htDSNam = thucDatDSNam / chiTieuDSNam * 100;
+                    }
+                    HTDS.Add(htDSNam);
+                    if (thucDatDSNam > 0)
+                    {
+                        tiTrongSaleNam = DSSaleNam / thucDatDSNam * 100;
+                        tiTrongDaoTaoNam = DSDaoTaoNam / thucDatDSNam * 100;
+                        tiTrongKeToanNam = DSKeToanNam / thucDatDSNam * 100;
+                        tiLeDoanhThuHocBongNam = (doanhThuHocBongNam / thucDatDSNam) * 100;
+                        tiLeDoanhThuVangNam = (doanhThuVangNam / thucDatDSNam) * 100;
+                        tiLeDoanhThuSuKienNam = (doanhThuSuKienNam / thucDatDSNam) * 100;
+                        tiLeDoanhThuNenNam = (doanhThuNenNam / thucDatDSNam) * 100;
+                    }
+                    TiTrongSale.Add(tiTrongSaleNam);
+                    TiTrongDaoTao.Add(tiTrongDaoTaoNam);
+                    TiTrongKeToan.Add(tiTrongKeToanNam);
+                    TiLeDoanhThuNen.Add(tiLeDoanhThuNenNam);
+                    TiLeDoanhThuVang.Add(tiLeDoanhThuVangNam);
+                    TiLeDoanhThuSuKien.Add(tiLeDoanhThuSuKienNam);
+                    TiLeDoanhThuHocBong.Add(tiLeDoanhThuHocBongNam);
+
+                    //% hv gd mới, gd lại
+                    decimal tileHVGDLNam = 0;
+                    decimal tileHVGDMNam = 0;
+                    if (tongSoHocVienNam > 0)
+                    {
+                        tileHVGDLNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
+                        tileHVGDMNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
+                    }
+                    HVGhiDanhLai.Add(tileHVGDLNam);
+                    HVGhiDanhMoi.Add(tileHVGDMNam);
+
+                    // ht cuộc gọi
+                    decimal htCGNam = 0;
+                    if (chiTieuCuocGoiNam > 0)
+                        htCGNam = (hoanThanhCuocGoiNam / chiTieuCuocGoiNam) * 100;
+                    HTCuocGoi.Add(htCGNam);
+
+                    // ht học viên
+
+                    decimal htHVNam = 0;
+                    if (chiTieuHocVienNam > 0)
+                        htHVNam = (tongSoHocVienNam / chiTieuHocVienNam) * 100;
+                    // Năng lực Sale
+                    SaleOver100.Add(saleOver100Nam);
+                    Sale30To50.Add(sale30To50Nam);
+                    Sale20To30.Add(sale20To30Nam);
+                    SaleUnder20.Add(saleUnder20Nam);
                 }
             }
-
+            model.Months = listMonth.ToList();
+            model.SoSale = SoSale;
+            model.DinhBien = DinhBien;
+            model.ChiTieuDS = ChiTieuDS;
+            model.ThucDatDS = ThucDatDS;
+            model.HTDS = HTDS;
+            model.TiTrongSale = TiTrongSale;
+            model.TiTrongDaoTao = TiTrongDaoTao;
+            model.TiTrongKeToan = TiTrongKeToan;
+            model.UuDaiBinhQuan = UuDaiBinhQuan;
+            model.TongSoHocVien = TongSoHocVien;
+            model.TongSoHocVien = TongSoHocVien;
+            model.HVGhiDanhLai = HVGhiDanhLai;
+            model.HVGhiDanhMoi = HVGhiDanhMoi;
+            model.HTCuocGoi = HTCuocGoi;
+            model.HTHocVien = HTHocVien;
+            model.ThangChotBinhQuan = ThangChotBinhQuan;
+            model.SaleOver100 = SaleOver100;
+            model.Sale30To50 = Sale30To50;
+            model.Sale20To30 = Sale20To30;
+            model.SaleUnder20 = SaleUnder20;
+            model.TiLeDoanhThuNen = TiLeDoanhThuNen;
+            model.TiLeDoanhThuHocBong = TiLeDoanhThuHocBong;
+            model.TiLeDoanhThuVang = TiLeDoanhThuVang;
+            model.TiLeDoanhThuSuKien = TiLeDoanhThuSuKien;
             return View(model);
         }
         #region CallLogs

@@ -63,6 +63,7 @@ namespace OceanEduSlide.ViewModels
         public List<decimal> TiTrongDaoTao { get; set; }
         public List<decimal> TiTrongKeToan { get; set; }
         public List<decimal> UuDaiBinhQuan { get; set; }
+        public List<decimal> ChiTieuHocVien { get; set; }
         public List<decimal> TongSoHocVien { get; set; }
         public List<decimal> HVGhiDanhLai { get; set; }
         public List<decimal> HVGhiDanhMoi { get; set; }
