@@ -1374,6 +1374,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy1);
                         HVGhiDanhMoi.Add(tileHVGDMQuy1);
+                        TongSoHocVien.Add(tongSoHocVienQuy1);
 
                         // ht cuộc gọi
                         decimal htCGQuy1 = 0;
@@ -1444,6 +1445,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy2);
                         HVGhiDanhMoi.Add(tileHVGDMQuy2);
+                        TongSoHocVien.Add(tongSoHocVienQuy2);
 
                         // ht cuộc gọi
                         decimal htCGQuy2 = 0;
@@ -1514,6 +1516,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy3);
                         HVGhiDanhMoi.Add(tileHVGDMQuy3);
+                        TongSoHocVien.Add(tongSoHocVienQuy3);
 
                         // ht cuộc gọi
                         decimal htCGQuy3 = 0;
@@ -1584,6 +1587,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy4);
                         HVGhiDanhMoi.Add(tileHVGDMQuy4);
+                        TongSoHocVien.Add(tongSoHocVienQuy4);
 
                         // ht cuộc gọi
                         decimal htCGQuy4 = 0;
@@ -1656,6 +1660,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLNam);
                         HVGhiDanhMoi.Add(tileHVGDMNam);
+                        TongSoHocVien.Add(tongSoHocVienNam);
 
                         // ht cuộc gọi
                         decimal htCGNam = 0;
@@ -2127,6 +2132,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy1);
                         HVGhiDanhMoi.Add(tileHVGDMQuy1);
+                        TongSoHocVien.Add(tongSoHocVienQuy1);
 
                         // ht cuộc gọi
                         decimal htCGQuy1 = 0;
@@ -2197,6 +2203,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy2);
                         HVGhiDanhMoi.Add(tileHVGDMQuy2);
+                        TongSoHocVien.Add(tongSoHocVienQuy2);
 
                         // ht cuộc gọi
                         decimal htCGQuy2 = 0;
@@ -2267,6 +2274,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy3);
                         HVGhiDanhMoi.Add(tileHVGDMQuy3);
+                        TongSoHocVien.Add(tongSoHocVienQuy3);
 
                         // ht cuộc gọi
                         decimal htCGQuy3 = 0;
@@ -2337,6 +2345,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLQuy4);
                         HVGhiDanhMoi.Add(tileHVGDMQuy4);
+                        TongSoHocVien.Add(tongSoHocVienQuy4);
 
                         // ht cuộc gọi
                         decimal htCGQuy4 = 0;
@@ -2409,6 +2418,7 @@ namespace OceanEduSlide.Controllers
                         }
                         HVGhiDanhLai.Add(tileHVGDLNam);
                         HVGhiDanhMoi.Add(tileHVGDMNam);
+                        TongSoHocVien.Add(tongSoHocVienNam);
 
                         // ht cuộc gọi
                         decimal htCGNam = 0;
@@ -2796,6 +2806,7 @@ namespace OceanEduSlide.Controllers
                     }
                     HVGhiDanhLai.Add(tileHVGDLQuy1);
                     HVGhiDanhMoi.Add(tileHVGDMQuy1);
+                    TongSoHocVien.Add(tongSoHocVienQuy1);
 
                     // ht cuộc gọi
                     decimal htCGQuy1 = 0;
@@ -2866,6 +2877,7 @@ namespace OceanEduSlide.Controllers
                     }
                     HVGhiDanhLai.Add(tileHVGDLQuy2);
                     HVGhiDanhMoi.Add(tileHVGDMQuy2);
+                    TongSoHocVien.Add(tongSoHocVienQuy2);
 
                     // ht cuộc gọi
                     decimal htCGQuy2 = 0;
@@ -2936,6 +2948,7 @@ namespace OceanEduSlide.Controllers
                     }
                     HVGhiDanhLai.Add(tileHVGDLQuy3);
                     HVGhiDanhMoi.Add(tileHVGDMQuy3);
+                    TongSoHocVien.Add(tongSoHocVienQuy3);
 
                     // ht cuộc gọi
                     decimal htCGQuy3 = 0;
@@ -3006,6 +3019,7 @@ namespace OceanEduSlide.Controllers
                     }
                     HVGhiDanhLai.Add(tileHVGDLQuy4);
                     HVGhiDanhMoi.Add(tileHVGDMQuy4);
+                    TongSoHocVien.Add(tongSoHocVienQuy4);
 
                     // ht cuộc gọi
                     decimal htCGQuy4 = 0;
@@ -3078,6 +3092,7 @@ namespace OceanEduSlide.Controllers
                     }
                     HVGhiDanhLai.Add(tileHVGDLNam);
                     HVGhiDanhMoi.Add(tileHVGDMNam);
+                    TongSoHocVien.Add(tongSoHocVienNam);
 
                     // ht cuộc gọi
                     decimal htCGNam = 0;

@@ -723,6 +723,7 @@ td.sticky-left {
 }
 .table-thcn th, .table-thcn td, .table-thcn tr {
   border: 1px dashed #2b2b2b !important;
+  white-space: nowrap;
 }
 .table-thcn tr {
   border-right: 2px solid black !important;
@@ -730,6 +731,22 @@ td.sticky-left {
 }
 .table-thcn tr:last-child {
   border-bottom: 2px solid black !important;
+}
+.table-thcn tr.tr-first td:nth-child(2) {
+  position: sticky;
+  left: 73px;
+  z-index: 10;
+  background: white;
+  border-left: 1px dashed !important;
+  background: #ccc !important;
+}
+.table-thcn tr:not(.tr-first) td:nth-child(1) {
+  position: sticky;
+  left: 73px;
+  z-index: 10;
+  background: white;
+  border-left: 1px dashed !important;
+  background: #ccc !important;
 }
 .table-thcn .border-solid-top {
   border-top: 2px solid black !important;
@@ -742,4 +759,13 @@ td.sticky-left {
 }
 .table-thcn .border-solid-left {
   border-left: 2px solid black !important;
+}
+.table-thcn .text-primary, .table-thcn .bg-info {
+  position: sticky;
+  left: -16px;
+  z-index: 10;
+}
+.table-thcn .text-primary {
+  background: #ccc !important;
+  max-width: 89px !important;
 }
