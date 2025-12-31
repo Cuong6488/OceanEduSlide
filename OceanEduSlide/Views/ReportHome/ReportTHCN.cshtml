@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "Báo cáo Tổng hợp Vùng - Chi nhánh";
+    int countItem = 0;
 }
 
 @using OceanEduSlide.ViewModels
@@ -14,6 +15,10 @@
 
     .form-filter .select2 {
         width: 100% !important;
+    }
+
+    .box_content td {
+        height: unset;
     }
 </style>
 
@@ -29,7 +34,7 @@
                     }
                 </select>
             </div>
-            @if (Model.Zones?.Count() > 1)
+            @if (Model.Zones?.Count() >= 1)
             {
                 <div class="col-lg-3">
                     <select name="ZoneId" class="form-select">
@@ -64,20 +69,19 @@
     </form>
 
     <h2>BÁO CÁO Tổng hợp năm @Model.Year</h2>
-    @if (Model.ZoneId == null && Model.OfficeId == null)
+    @if (Model.ZoneId == null && Model.OfficeId == null && Model.User.TypeUser != TypeUser.HO)
     {
         <p class="alert alert-success mt-3 w-25">Vui lòng chọn vùng/ chi nhánh</p>
     }
     else
     {
-        <a class="btn quick-link" href="@Url.Action("ExportTHCN", new {Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
-        <div class="box_content">
-            <table class="table table-bordered">
-                <tr>
-                    <th colspan="2" class="bg-info text-white text-center"><strong>Chỉ số</strong></th>
+        <div class="box_content mt-0">
+            <table class="table table-bordered table-thcn">
+                <tr class="border-solid-top border-solid-right border-solid-bot border-solid-left">
+                    <th colspan="2" class="bg-info text-white text-center border-solid-right"><strong>Chỉ số</strong></th>
                     @foreach (var item in Model.Months)
                     {
-                        <th class="bg-pink">Tháng @item</th>
+                        <th class="bg-pink @(item == Model.Months.Last()?"border-solid-right":"")">Tháng @item</th>
                     }
                     @if (Model.Months.Any(a => a == 1 || a == 2 || a == 3))
                     {
@@ -95,7 +99,7 @@
                     {
                         <th class="bg-pink-purple">Quý IV</th>
                     }
-                    <th class="bg-orange">
+                    <th class="bg-orange  border-solid-left">
                         @if (Model.Months.Count == 12)
                         {
                             @: Năm
@@ -106,21 +110,277 @@
                         }
                     </th>
                 </tr>
+
                 <tr>
-                    <td rowspan="2" class="text-primary"><strong>Nhân sự</strong></td>
-                    <td><strong>Số Sale</strong></td>
+                    <td rowspan="2" class="text-primary align-middle text-center"><strong>Nhân sự</strong></td>
+                    <td class="border-solid-right"><strong>Số Sale</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
                     @foreach (var item in Model.SoSale)
                     {
-                        var valuetext = item == 0 ? "_" : item.ToString("N0");
-                        <td>@valuetext</td>
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Định biên</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.DinhBien)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+
+                <tr>
+                    <td rowspan="6" class="text-primary align-middle text-center"><strong>Doanh số</strong></td>
+                    <td class="border-solid-right"><strong>Chỉ tiêu</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.ChiTieuDS)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
                     }
                 </tr>
                 <tr>
-                    <td><strong>Định biên</strong></td>
-                    @foreach (var item in Model.DinhBien)
+                    <td class="border-solid-right"><strong>Thực đạt</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.ThucDatDS)
                     {
-                        var valuetext = item == 0 ? "_" : item.ToString("N0");
-                        <td>@valuetext</td>
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>% HT Doanh số</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.HTDS)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Tỉ trọng Sale</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.TiTrongSale)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Tỉ trọng Đào tạo</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.TiTrongDaoTao)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Tỉ trọng Kế toán</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.TiTrongKeToan)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+
+                <tr>
+                    <td rowspan="3" class="text-primary align-middle text-center"><strong>Học viên</strong></td>
+                    <td class="border-solid-right"><strong>Tổng số học viên</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.TongSoHocVien)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Ghi danh lại</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.HVGhiDanhLai)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Ghi danh mới</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.HVGhiDanhMoi)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+
+                <tr>
+                    <td rowspan="2" class="text-primary align-middle text-center"><strong>Chỉ số</strong></td>
+                    <td class="border-solid-right"><strong>Cuộc gọi</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.HTCuocGoi)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") +"%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Học viên</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.HTHocVien)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") + "%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+
+                <tr>
+                    <td rowspan="4" class="text-primary align-middle text-center"><strong>Năng lực Sale</strong></td>
+                    <td class="border-solid-right"><strong>≥ 100%</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.SaleOver100)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>30% - 50%</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.Sale30To50)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>20% - 30%</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.Sale20To30)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Dưới 20%</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in Model.SaleUnder20)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N0");
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+
+                <tr>
+                    <td rowspan="4" class="text-primary align-middle text-center"><strong>Nguồn doanh thu</strong></td>
+                    <td class="border-solid-right"><strong>Doanh thu Nền</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.TiLeDoanhThuNen)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") +"%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Doanh thu Học bổng</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.TiLeDoanhThuHocBong)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") +"%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Doanh thu Vàng</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.TiLeDoanhThuVang)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") +"%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Doanh thu Sự kiện</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in Model.TiLeDoanhThuSuKien)
+                    {
+                        countItem++;
+                        var valuetext = item == 0 ? "-" : item.ToString("N2") +"%";
+                        <td class="@(countItem == Model.Months.Count()?"border-solid-right":"") @(countItem == Model.SoSale.Count()?"border-solid-left":"")">@valuetext</td>
                     }
                 </tr>
             </table>

@@ -705,3 +705,41 @@ td.sticky-left {
 .th-filter .btn-filter .icon-order.active {
   display: flex;
 }
+
+.bg-pink {
+  background-color: #fac8c9 !important;
+}
+
+.bg-orange {
+  background-color: #f77102 !important;
+}
+
+.bg-pink-purple {
+  background-color: #c2539b !important;
+}
+
+.table-thcn > :not(caption) > * > * {
+  padding: 4px;
+}
+.table-thcn th, .table-thcn td, .table-thcn tr {
+  border: 1px dashed #2b2b2b !important;
+}
+.table-thcn tr {
+  border-right: 2px solid black !important;
+  border-left: 2px solid black !important;
+}
+.table-thcn tr:last-child {
+  border-bottom: 2px solid black !important;
+}
+.table-thcn .border-solid-top {
+  border-top: 2px solid black !important;
+}
+.table-thcn .border-solid-bot {
+  border-bottom: 2px solid black !important;
+}
+.table-thcn .border-solid-right {
+  border-right: 2px solid black !important;
+}
+.table-thcn .border-solid-left {
+  border-left: 2px solid black !important;
+}

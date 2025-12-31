@@ -197,9 +197,12 @@
                 <li>
                     <a href="javascript:;">BÁO CÁO</a>
                     <ul class="ul-reset" style="top:150%">
-                        <li style="padding:7px 15px">
-                            <a href="@Url.Action("ReportTHCN","ReportHome")">Báo cáo TH Vùng - CN</a>
-                        </li>
+                        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
+                        {
+                            <li style="padding:7px 15px">
+                                <a href="@Url.Action("ReportTHCN","ReportHome")">Báo cáo TH Vùng - CN</a>
+                            </li>
+                        }
                         <li style="padding:7px 15px">
                             <a href="@Url.Action("ReportKDCN","ReportHome")">Báo cáo KDCN</a>
                         </li>

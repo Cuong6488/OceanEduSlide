@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using FluentScheduler;
 using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
@@ -163,6 +164,16 @@ namespace OceanEduSlide.Controllers
                         if (existing != null)
                         {
                             existing.Data = valueReal;
+                            try
+                            {
+                                existing.DataReal = string.IsNullOrEmpty(value) ? (decimal?)null : decimal.Parse(value);
+
+                            }
+                            catch (Exception e)
+                            {
+                                ModelState.AddModelError("", "Đầu vào không hợp lệ: " + value + " (Sheet 2, Dòng " + (i + 1) + ")");
+                                return View();
+                            }
                         }
                         else
                         {
@@ -314,6 +325,16 @@ namespace OceanEduSlide.Controllers
                         if (existing != null)
                         {
                             existing.Data = valueReal;
+                            try
+                            {
+                                existing.DataReal = string.IsNullOrEmpty(value) ? (decimal?)null : decimal.Parse(value);
+
+                            }
+                            catch (Exception e)
+                            {
+                                ModelState.AddModelError("", "Đầu vào không hợp lệ: " + value + " (Sheet 2, Dòng " + (i + 1) + ")");
+                                return View();
+                            }
                         }
                         else
                         {
@@ -342,9 +363,9 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.ReportDataRepository.InsertRange(reportDataList2);
 
                 _unitOfWork.Save();
-                return RedirectToAction("Report", new { result = "add" });
+                return RedirectToAction("ReportAllField", new { result = "add" });
             }
-            return RedirectToAction("Report");
+            return RedirectToAction("ReportAllField");
         }
         public ActionResult ReportAllField(string result = "")
         {
@@ -455,6 +476,7 @@ namespace OceanEduSlide.Controllers
                         // Tìm danh mục
                         var category = allCategories
                             .FirstOrDefault(a => a.Sort == cChildSort && a.CategoryParent?.Sort == group && a.TypeCat == TypeCat.Type1);
+
                         if (category == null) continue;
                         // Xử lý dữ liệu hiển thị
                         if (!string.IsNullOrEmpty(value))
@@ -485,6 +507,16 @@ namespace OceanEduSlide.Controllers
                         if (existing != null)
                         {
                             existing.Data = valueReal;
+                            try
+                            {
+                                existing.DataReal = string.IsNullOrEmpty(value) ? (decimal?)null : decimal.Parse(value);
+
+                            }
+                            catch (Exception e)
+                            {
+                                ModelState.AddModelError("", "Đầu vào không hợp lệ: " + value + " (Sheet 2, Dòng " + (i + 1) + ")");
+                                return View();
+                            }
                         }
                         else
                         {
@@ -635,6 +667,16 @@ namespace OceanEduSlide.Controllers
                         if (existing != null)
                         {
                             existing.Data = valueReal;
+                            try
+                            {
+                                existing.DataReal = string.IsNullOrEmpty(value) ? (decimal?)null : decimal.Parse(value);
+
+                            }
+                            catch (Exception e)
+                            {
+                                ModelState.AddModelError("", "Đầu vào không hợp lệ: " + value + " (Sheet 2, Dòng " + (i + 1) + ")");
+                                return View();
+                            }
                         }
                         else
                         {
