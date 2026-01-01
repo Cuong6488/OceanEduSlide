@@ -240,7 +240,6 @@ h2 {
   border-radius: 5px;
   border: 1px solid #dbdbdb;
   height: 35px;
-  overflow: auto;
 }
 .form-filter .select2-container--default .select2-selection--multiple .select2-selection__choice {
   padding: 0 2px;

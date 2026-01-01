@@ -3141,6 +3141,276 @@ namespace OceanEduSlide.Controllers
             model.TiLeDoanhThuSuKien = TiLeDoanhThuSuKien;
             return View(model);
         }
+
+        //public ActionResult ReportTHNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Year)
+        //{
+        //    if (User.TypeUser == null)
+        //        return HttpNotFound();
+        //    var pageNumber = page ?? 1;
+        //    ViewBag.Page = pageNumber;
+        //    var selectedYear = Year ?? DateTime.Now.Year;
+        //    //ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
+        //    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear).AsNoTracking();
+
+        //    var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == selectedYear).Select(h => new
+        //    {
+        //        h.OfficeId,
+        //        ZoneShortCode = h.Zone.ShortCode,
+        //        h.ZoneId
+        //    });
+        //    var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == selectedYear
+        //    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1) || a.DayEnd.Value.Month != selectedMonth)))
+        //    && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
+        //    var listHistoryUser = historyQuery;
+        //    //if (User.TypeUser != TypeUser.ASM)
+        //    //{
+        //    //    historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
+        //    //}
+        //    if (UserType != null)
+        //    {
+        //        if (UserId == null)
+        //            historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
+        //        //listHistoryUser = listHistoryUser.Where(a => (int)a.TypeUser == UserType);
+        //    }
+        //    var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
+        //    var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
+        //    //var users = _unitOfWork.UserRepository.Get(a => a.Active && listHistoryUser.Contains(a.Id));
+        //    var model = new ListReportNVHomeViewModel
+        //    {
+        //        Month = selectedMonth,
+        //        Year = selectedYear,
+        //        Offices = offices,
+        //        User = User,
+        //        ZoneId = ZoneId,
+        //        categoryId = categoryid,
+        //        sort = sort,
+        //        UserType = UserType,
+        //        ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
+        //        OfficeId = OfficeId,
+        //        UserId = UserId,
+        //        //ListMonth = ListMonth
+        //    };
+
+        //    if (User.TypeUser == TypeUser.HO)
+        //    {
+        //        model.Zones = zones;
+        //    }
+        //    else if (User.TypeUser == TypeUser.CV)
+        //    {
+        //        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+        //        if (model.ZoneId == null)
+        //        {
+        //            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+        //            if (model.OfficeId == null)
+        //            {
+        //                listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+        //                if (model.UserId == null)
+        //                    historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //model.ZoneId = User.ZoneId;
+        //        if (User.TypeUser == TypeUser.ASM)
+        //        {
+        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+        //            {
+        //                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+        //                if (model.ZoneId == null)
+        //                {
+        //                    //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+
+        //                    if (model.OfficeId == null)
+        //                    {
+        //                        listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
+        //                                                       || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+        //                        if (model.UserId == null)
+        //                            historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
+        //                                                       || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+        //                    }
+        //                }
+        //            }
+        //            else if (User.ZoneId != null)
+        //            {
+        //                model.Zones = zones.Where(a => a.Id == User.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+        //                if (model.ZoneId == null)
+        //                {
+        //                    //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+        //                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+
+        //                    if (model.OfficeId == null)
+        //                    {
+        //                        listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
+        //                                                       || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+        //                        if (model.UserId == null)
+        //                            historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
+        //                                                       || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+        //                    }
+        //                }
+        //                //model.ZoneId = User.ZoneId;
+        //            }
+        //            //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
+        //        }
+        //        else
+        //        {
+        //            if (string.IsNullOrEmpty(User.OfficeIds))
+        //            {
+        //                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+        //                if (model.OfficeId == null)
+        //                {
+        //                    listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    if (model.UserId == null)
+        //                        historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+        //                }
+
+        //                //model.OfficeId = User.OfficeId;
+
+
+        //            }
+        //            else
+        //            {
+        //                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+        //                if (model.OfficeId == null)
+        //                {
+        //                    listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    if (model.UserId == null)
+        //                        historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    if (model.ZoneId != null)
+        //    {
+        //        //var zone = zones.FirstOrDefault(a => a.Id == ZoneId);
+        //        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
+        //        if (model.OfficeId == null)
+        //        {
+        //            listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
+        //                                    || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
+        //            if (model.UserId == null)
+        //                historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
+        //                                        || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
+        //        }
+        //    }
+
+        //    if (model.OfficeId != null)
+        //    {
+        //        listHistoryUser = listHistoryUser.Where(a => a.OfficeId == model.OfficeId);
+
+        //        if (model.UserId == null)
+        //            historyQuery = historyQuery.Where(a => a.OfficeId == model.OfficeId);
+        //    }
+        //    model.ListHistoryUser = listHistoryUser.ToList();
+        //    if (model.UserId != null)
+        //    {
+        //        historyQuery = historyQuery.Where(a => a.Id == model.UserId);
+        //    }
+        //    IEnumerable<HistoryUser> filteredHistoryUsers = historyQuery.OrderBy(a => a.OfficeId).ToList();
+
+        //    // LẤY ReportData CHỈ CHO categoryid (dùng để sort user)
+        //    //var userIds = filteredUsers.Select(u => u.Id).ToList();
+        //    var historyUserIds = filteredHistoryUsers.Select(h => h.Id).ToList();
+        //    var reportData88 = _unitOfWork.ReportDataRepository.GetQuery(a =>
+        //        a.Active &&
+        //        a.Month == selectedMonth &&
+        //        a.Year == selectedYear &&
+        //        a.ReportCategory.TypeCat == TypeCat.Type2 &&
+        //        a.ReportCategoryId == categoryid &&
+        //        historyUserIds.Contains(a.HistoryUserId ?? 0)).ToList();
+
+        //    // Tính tổng
+        //    var userDataDict = reportData88
+        //        .GroupBy(r => r.HistoryUserId)
+        //        .ToDictionary(
+        //            g => g.Key,
+        //            g => g.Sum(r =>
+        //            {
+        //                int val;
+        //                var cleanedData = r.Data?.Replace(",", "").Replace(".", "").Replace("%", "");
+        //                return int.TryParse(cleanedData, out val) ? val : 0;
+        //            })
+        //        );
+
+        //    List<HistoryUser> sortedUsers;
+        //    if (categoryid == null)
+        //    {
+        //        // categoryid == null => sắp xếp theo HistoryUser.Sort
+        //        sortedUsers = filteredHistoryUsers
+        //            .OrderBy(u => u.Sort)
+        //            .ThenBy(u => u.OfficeId)
+        //            .ToList();
+        //    }
+        //    else
+        //    {
+        //        // Có categoryid => sắp xếp theo tổng report data
+        //        var usersHasData = filteredHistoryUsers
+        //            .Where(u => userDataDict.ContainsKey(u.Id))
+        //            .ToList();
+
+        //        var usersNoData = filteredHistoryUsers
+        //            .Where(u => !userDataDict.ContainsKey(u.Id))
+        //            .ToList();
+
+        //        if (sort == 1)
+        //        {
+        //            // Giảm dần theo tổng
+        //            usersHasData = usersHasData
+        //                .OrderByDescending(u => userDataDict[u.Id])
+        //                .ThenBy(u => u.OfficeId)
+        //                .ToList();
+
+        //            sortedUsers = usersHasData.Concat(usersNoData.OrderBy(u => u.OfficeId)).ToList();
+        //        }
+        //        else
+        //        {
+        //            // Tăng dần theo tổng
+        //            usersHasData = usersHasData
+        //                .OrderBy(u => userDataDict[u.Id])
+        //                .ThenBy(u => u.OfficeId)
+        //                .ToList();
+
+        //            sortedUsers = usersNoData.OrderBy(u => u.OfficeId).Concat(usersHasData).ToList();
+        //        }
+        //    }
+
+        //    filteredHistoryUsers = sortedUsers;
+
+
+        //    // PHÂN TRANG
+        //    var pagedUsers = filteredHistoryUsers.ToPagedList(pageNumber, 15);
+        //    //model.Users = pagedUsers;
+        //    model.HistoryUsers = pagedUsers;
+
+        //    var userIdsInPage = pagedUsers.Select(u => u.Id).ToList();
+
+        //    // Lấy reportData của user trong trang hiện tại (tất cả category)
+        //    var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
+        //            a.Active &&
+        //            a.Month == selectedMonth &&
+        //            a.Year == selectedYear &&
+        //            a.ReportCategory.TypeCat == TypeCat.Type2 &&
+        //            userIdsInPage.Contains(a.HistoryUserId ?? 0),
+        //        q => q.OrderBy(a => a.Sort)).ToList();
+
+        //    model.ReportDatas = reportDatas;
+
+        //    // Tạo MaNhanViens
+        //    var maNhanViens = "," + string.Join(",", reportDatas.Select(d => d.User?.MaNhanVien).Where(x => !string.IsNullOrEmpty(x)).Distinct()) + ",";
+        //    ViewBag.MaNhanViens = maNhanViens;
+
+        //    if (model.OfficeId != null)
+        //    {
+        //        ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
+        //    }
+        //    return View(model);
+        //}
         #region CallLogs
         public ActionResult ReportCall(int? page, int? ZoneId, int? OfficeId, string startDay, string endDay)
         {

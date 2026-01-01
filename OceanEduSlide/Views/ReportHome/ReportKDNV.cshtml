@@ -125,7 +125,7 @@
             <option>Chọn nhân sự</option>
             @foreach (var user in Model.ListHistoryUser)
             {
-                <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien</option>
+                <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien - @user.CDCM</option>
             }
         </select>
 

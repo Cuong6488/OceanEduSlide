@@ -81,12 +81,9 @@ namespace OceanEduSlide.ViewModels
     }
     public class BCTHNVViewModel
     {
+        public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
         public IPagedList<UserItem> UserItems { get; set; }
-        public IEnumerable<ReportCategory> ReportCategories { get; set; }
-        public IEnumerable<ReportData> ReportDatas { get; set; }
-        public IEnumerable<Zone> Zones { get; set; }
-        public IEnumerable<HistoryUser> ListHistoryUser { get; set; }
         public int Year { get; set; }
         public int? UserId { get; set; }
         public int? OfficeId { get; set; }
@@ -96,11 +93,24 @@ namespace OceanEduSlide.ViewModels
         public List<int> ListMonth { get; set; }
         public class UserItem
         {
-            public HistoryUser HistoryUser { get; set; }
+            public User User { get; set; }
+            public List<int> ListMonthOfUser { get; set; }
             public List<string> ListHTDSs { get; set; }
             public List<string> ListHTCGs { get; set; }
             public List<string> ListHTHVs { get; set; }
             public List<string> ListTCBQs { get; set; }
+            //public IEnumerable<ListData> ListHTDSs { get; set; }
+            //public IEnumerable<ListData> ListHTCGs { get; set; }
+            //public IEnumerable<ListData> ListHTHVs { get; set; }
+            //public IEnumerable<ListData> ListTCBQs { get; set; }
+
+            public class ListData
+            {
+                public int? Month { get; set; }
+                public int? Quy { get; set; }
+                public decimal Data {  get; set; }
+            }
+
         }
     }
 
