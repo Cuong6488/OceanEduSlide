@@ -1306,8 +1306,8 @@ namespace OceanEduSlide.Controllers
                         TiTrongKeToan.Add(tiTrongKeToan);
                         ChiTieuHocVien.Add(chiTieuHocVien);
                         TongSoHocVien.Add(tongSoHocVien);
-                        HVGhiDanhLai.Add(hVGhiDanhLai);
-                        HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                        HVGhiDanhLai.Add(tileHVGDL);
+                        HVGhiDanhMoi.Add(tileHVGDM);
                         HTCuocGoi.Add(hTCuocGoi);
                         HTHocVien.Add(hTHocVien);
                         ThangChotBinhQuan.Add(thangChotBinhQuan);
@@ -2064,8 +2064,8 @@ namespace OceanEduSlide.Controllers
                         TiTrongKeToan.Add(tiTrongKeToan);
                         ChiTieuHocVien.Add(chiTieuHocVien);
                         TongSoHocVien.Add(tongSoHocVien);
-                        HVGhiDanhLai.Add(hVGhiDanhLai);
-                        HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                        HVGhiDanhLai.Add(tileHVGDL);
+                        HVGhiDanhMoi.Add(tileHVGDM);
                         HTCuocGoi.Add(hTCuocGoi);
                         HTHocVien.Add(hTHocVien);
                         ThangChotBinhQuan.Add(thangChotBinhQuan);
@@ -2736,8 +2736,8 @@ namespace OceanEduSlide.Controllers
                     TiTrongDaoTao.Add(tiTrongDaoTao);
                     TiTrongKeToan.Add(tiTrongKeToan);
                     TongSoHocVien.Add(tongSoHocVien);
-                    HVGhiDanhLai.Add(hVGhiDanhLai);
-                    HVGhiDanhMoi.Add(hVGhiDanhMoi);
+                    HVGhiDanhLai.Add(tileHVGDL);
+                    HVGhiDanhMoi.Add(tileHVGDM);
                     HTCuocGoi.Add(hTCuocGoi);
                     HTHocVien.Add(hTHocVien);
                     ThangChotBinhQuan.Add(thangChotBinhQuan);

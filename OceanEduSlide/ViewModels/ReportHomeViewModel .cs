@@ -79,6 +79,30 @@ namespace OceanEduSlide.ViewModels
         public List<decimal> TiLeDoanhThuVang { get; set; }
         public List<decimal> TiLeDoanhThuSuKien { get; set; }
     }
+    public class BCTHNVViewModel
+    {
+        public IEnumerable<Office> Offices { get; set; }
+        public IPagedList<UserItem> UserItems { get; set; }
+        public IEnumerable<ReportCategory> ReportCategories { get; set; }
+        public IEnumerable<ReportData> ReportDatas { get; set; }
+        public IEnumerable<Zone> Zones { get; set; }
+        public IEnumerable<HistoryUser> ListHistoryUser { get; set; }
+        public int Year { get; set; }
+        public int? UserId { get; set; }
+        public int? OfficeId { get; set; }
+        public int? ZoneId { get; set; }
+        public User User { get; set; }
+        public int? UserType { get; set; }
+        public List<int> ListMonth { get; set; }
+        public class UserItem
+        {
+            public HistoryUser HistoryUser { get; set; }
+            public List<string> ListHTDSs { get; set; }
+            public List<string> ListHTCGs { get; set; }
+            public List<string> ListHTHVs { get; set; }
+            public List<string> ListTCBQs { get; set; }
+        }
+    }
 
     public class ListCallViewModel
     {
