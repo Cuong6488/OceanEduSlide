@@ -83,6 +83,7 @@ namespace OceanEduSlide.ViewModels
     {
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public IPagedList<User> Users { get; set; }
         public IPagedList<UserItem> UserItems { get; set; }
         public int Year { get; set; }
         public int? UserId { get; set; }
