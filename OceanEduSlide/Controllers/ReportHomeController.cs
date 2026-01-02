@@ -863,7 +863,7 @@ namespace OceanEduSlide.Controllers
             var selectedYear = Year ?? DateTime.Now.Year;
             var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).AsNoTracking();
             var zones = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear).AsNoTracking();
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear && (a.TypeUser == TypeUser.HO || a.TypeUser == TypeUser.CV || a.TypeUser == TypeUser.ASM || a.TypeUser == TypeUser.BM)).AsNoTracking();
 
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == selectedYear).Select(h => new
             {
@@ -879,6 +879,7 @@ namespace OceanEduSlide.Controllers
             var listUserSelect = listUser;
 
             var listMonth = new List<int>();
+            var listMonthFull = new List<int>(Enumerable.Range(1, 12));
 
             if (UserType != null)
             {
@@ -893,14 +894,14 @@ namespace OceanEduSlide.Controllers
 
             if (User.TypeUser == TypeUser.HO)
             {
-                listMonth.AddRange(Enumerable.Range(1, 12));
+                listMonth = listMonthFull;
             }
             else if (User.TypeUser == TypeUser.CV)
             {
                 zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",")));
                 if (ZoneId == null)
                 {
-                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
                     if (OfficeId == null)
                     {
                         listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
@@ -909,7 +910,7 @@ namespace OceanEduSlide.Controllers
                         || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
                         if (UserId == null)
                         {
-                            listMonth.AddRange(Enumerable.Range(1, 12));
+                            listMonth = listMonthFull;
                             listUser = listUserSelect;
                         }
                     }
@@ -931,7 +932,7 @@ namespace OceanEduSlide.Controllers
                             || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
                             if (UserId == null)
                             {
-                                listMonth.AddRange(Enumerable.Range(1, 12));
+                                listMonth = listMonthFull;
                                 listUser = listUserSelect;
                             }
                         }
@@ -951,7 +952,7 @@ namespace OceanEduSlide.Controllers
                             || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
                             if (UserId == null)
                             {
-                                listMonth.AddRange(Enumerable.Range(1, 12));
+                                listMonth = listMonthFull;
                                 listUser = listUserSelect;
                             }
                         }
@@ -960,7 +961,7 @@ namespace OceanEduSlide.Controllers
             }
             else if (User.TypeUser == TypeUser.BM)
             {
-                if (string.IsNullOrEmpty(User.OfficeIds))
+                if (!string.IsNullOrEmpty(User.OfficeIds))
                 {
                     offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                     if (OfficeId == null)
@@ -970,7 +971,7 @@ namespace OceanEduSlide.Controllers
                         || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                         if (UserId == null)
                         {
-                            listMonth.AddRange(Enumerable.Range(1, 12));
+                            listMonth = listMonthFull;
                             listUser = listUserSelect;
                         }
                     }
@@ -985,7 +986,7 @@ namespace OceanEduSlide.Controllers
                         || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                         if (UserId == null)
                         {
-                            listMonth.AddRange(Enumerable.Range(1, 12));
+                            listMonth = listMonthFull;
                             listUser = listUserSelect;
                         }
                     }
@@ -1001,14 +1002,15 @@ namespace OceanEduSlide.Controllers
                     if (UserId == null)
                     {
                         listUser = listUserSelect;
-                        if (User.ZoneId == ZoneId || (User.ZoneIds != null && User.ZoneIds.Contains("," + zone.Id + ",")))
-                        {
-                            listMonth.AddRange(Enumerable.Range(1, 12));
-                        }
-                        else
-                        {
-                            listMonth = historyUsers.Where(a => a.ZoneId == ZoneId || (a.ZoneIds != null && a.ZoneIds.Contains("," + ZoneId + ","))).Select(a => a.Month).Distinct().ToList();
-                        }
+                        if (User.TypeUser != TypeUser.HO)
+                            if (User.ZoneId == ZoneId || (User.ZoneIds != null && User.ZoneIds.Contains("," + zone.Id + ",")))
+                            {
+                                listMonth.AddRange(Enumerable.Range(1, 12));
+                            }
+                            else
+                            {
+                                listMonth = historyUsers.Where(a => a.ZoneIds != null && a.ZoneIds.Contains("," + ZoneId + ",")).Select(a => a.Month).Distinct().OrderBy(a => a).ToList();
+                            }
                     }
                 }
             }
@@ -1020,19 +1022,36 @@ namespace OceanEduSlide.Controllers
                 if (UserId == null)
                 {
                     listUser = listUserSelect;
-                    if (User.OfficeId == OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + office.Id + ",")) || (User.ZoneIds != null && office.ZoneId != null && User.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
+                    if (User.TypeUser != TypeUser.HO)
+                        if (User.OfficeId == OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + office.Id + ",")) || (User.ZoneIds != null && office.ZoneId != null && User.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
+                        {
+                            listMonth = listMonthFull;
+                        }
+                        else
+                        {
+                            listMonth = historyUsers.Where(a =>
+                            (a.ZoneIds != null && office.ZoneId != null && a.ZoneIds.Contains("," + office.Zone.ShortCode + ",")) ||
+                            (a.OfficeIds != null && a.OfficeIds.Contains("," + OfficeId + ","))).Select(a => a.Month).Distinct().OrderBy(a => a).ToList();
+                        }
+                }
+            }
+            if (UserId != null)
+            {
+                var user = _unitOfWork.UserRepository.GetById(UserId);
+                listUser = listUser.Where(a => a.Id == UserId);
+                if (User.TypeUser != TypeUser.HO)
+
+                    if ((User.ZoneIds != null && ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+                    (User.OfficeIds != null && user.OfficeId != null && User.OfficeIds.Contains("," + user.OfficeId + ",")))
                     {
-                        listMonth.AddRange(Enumerable.Range(1, 12));
+                        listMonth = listMonthFull;
                     }
                     else
                     {
-                        listMonth = historyUsers.Where(a => a.OfficeId == OfficeId || 
-                        (a.ZoneIds != null && office.ZoneId != null && a.ZoneIds.Contains("," + office.Zone.ShortCode + ",")) ||
-                        (a.OfficeIds != null && a.OfficeIds.Contains("," + OfficeId + ","))).Select(a => a.Month).Distinct().ToList();
+                        listMonth = historyUsers.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+                        (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
                     }
-                }
             }
-            
             return View();
         }
         public ActionResult ReportTHCN(int? ZoneId, int? OfficeId, int? Year)
