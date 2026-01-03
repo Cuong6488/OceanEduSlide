@@ -1,0 +1,200 @@
+﻿@{
+    ViewBag.Title = "Báo cáo Tổng hợp Vùng - Chi nhánh";
+    int countItem = 0;
+}
+
+@using OceanEduSlide.ViewModels
+@using OceanEduSlide.Models
+@using PagedList.Mvc
+
+@model BCTHNVViewModel
+
+<style>
+    #OfficeId-error, #Month-error, #ZoneId-error {
+        display: none !important;
+    }
+
+
+    .box_content td {
+        height: unset;
+    }
+</style>
+
+<div class="container py-3">
+    <form action="@Url.Action("ReportTHNV")" method="get" class="d-flex form-filter mb-5">
+        <div class="row w-100">
+            <div class="col-lg-2">
+                <select name="Year" class="form-select" required>
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2024; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            @if (Model.Zones?.Count() >= 1)
+            {
+                <div class="col-lg-2">
+                    <select name="ZoneId" class="form-select">
+                        <option value="">Chọn vùng</option>
+                        @foreach (var z in Model.Zones)
+                        {
+                            <option value="@z.Id" @(Model.ZoneId == z.Id ? "selected" : "")>@z.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+            {
+
+                <div class="col-lg-2">
+                    <select name="OfficeId" class="form-select">
+                        <option>Chọn chi nhánh</option>
+                        @foreach (var office in Model.Offices)
+                        {
+                            <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class="col-lg-2">
+                <select name="UserType" class="form-select ms-2">
+                    <option value="">Tất cả chức danh</option>
+                    <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+                    <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+                    <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+                    <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
+                    <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+                    <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+                    <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select name="UserId" class="form-select select2">
+                    <option>Chọn nhân sự</option>
+                    @foreach (var user in Model.Users)
+                    {
+                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.Fullname - @user.MaNhanVien - @user.CDCM</option>
+                    }
+                </select>
+            </div>
+
+            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
+            {
+                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
+            }
+        </div>
+    </form>
+
+    <h2>BÁO CÁO Tổng hợp Nhân viên</h2>
+    <div class="box_content mt-0">
+        <table class="table table-bordered table-thcn">
+            <tr class="border-solid-top border-solid-right border-solid-bot border-solid-left">
+                <th colspan="2" class="bg-info text-white text-center border-solid-right"><strong>Chỉ số</strong></th>
+                @foreach (var item in Model.ListMonth)
+                {
+                    <th class="bg-pink @(item == Model.ListMonth.Last()?"border-solid-right":"")">Tháng @item</th>
+                }
+                @if (Model.ListMonth.Any(a => a == 1 || a == 2 || a == 3))
+                {
+                    <th class="bg-pink-purple">Quý I</th>
+                }
+                @if (Model.ListMonth.Any(a => a == 4 || a == 5 || a == 6))
+                {
+                    <th class="bg-pink-purple">Quý II</th>
+                }
+                @if (Model.ListMonth.Any(a => a == 7 || a == 8 || a == 9))
+                {
+                    <th class="bg-pink-purple">Quý III</th>
+                }
+                @if (Model.ListMonth.Any(a => a == 10 || a == 11 || a == 12))
+                {
+                    <th class="bg-pink-purple">Quý IV</th>
+                }
+                <th class="bg-orange  border-solid-left">
+                    @if (Model.ListMonth.Count == 12)
+                    {
+                        @: Năm
+                    }
+                    else
+                    {
+                        @: Tổng
+                    }
+                </th>
+            </tr>
+            @foreach (var user in Model.UserItems)
+            {
+                <tr class="tr-first">
+                    <td rowspan="4" class="text-primary text-black">
+                        <strong style="white-space:normal">@user.User.Fullname</strong> <br />
+                        MNV: @user.User.MaNhanVien <br />
+                        Chức vụ: @Html.DisplayFor(a => user.User.TypeUser)
+                    </td>
+                    <td class="border-solid-right"><strong>% HT D.số</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+
+                    @foreach (var item in user.ListHTDSs)
+                    {
+                        countItem++;
+                        <td class="@(countItem == Model.ListMonth.Count()?"border-solid-right":"") @(countItem == user.ListHTDSs.Count()?"border-solid-left":"")">@item</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Học viên</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in user.ListHTHVs)
+                    {
+                        countItem++;
+                        <td class="@(countItem == Model.ListMonth.Count()?"border-solid-right":"") @(countItem == user.ListHTDSs.Count()?"border-solid-left":"")">@item</td>
+                    }
+                </tr>
+                <tr>
+                    <td class="border-solid-right"><strong>Cuộc gọi</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in user.ListHTCGs)
+                    {
+                        countItem++;
+                        <td class="@(countItem == Model.ListMonth.Count()?"border-solid-right":"") @(countItem == user.ListHTDSs.Count()?"border-solid-left":"")">@item</td>
+                    }
+                </tr>
+                <tr class="border-solid-bot">
+                    <td class="border-solid-right"><strong>Tháng chốt BQ</strong></td>
+                    @{
+                        countItem = 0;
+                    }
+                    @foreach (var item in user.ListTCBQs)
+                    {
+                        countItem++;
+                        <td class="@(countItem == Model.ListMonth.Count()?"border-solid-right":"") @(countItem == user.ListHTDSs.Count()?"border-solid-left":"")">@item</td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+    @if (Model.UserItems.PageCount > 1)
+    {
+        <div class="text-center">
+            @*@if (Model.OfficeId != null)
+            {*@
+                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportTHNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, year = Model.Year}))
+            @*}
+            else
+            {
+                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort, listMonth = Model.ListMonth }))
+            }*@
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        $('.select2').select2({ allowClear: true });
+    </script>
+}

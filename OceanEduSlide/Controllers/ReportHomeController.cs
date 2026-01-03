@@ -14,6 +14,7 @@ using OfficeOpenXml;
 using System.Data;
 using OceanEduSlide.Migrations;
 using System.Web.Services.Protocols;
+using System.Drawing.Printing;
 
 namespace OceanEduSlide.Controllers
 {
@@ -886,7 +887,7 @@ namespace OceanEduSlide.Controllers
                 if (UserId == null)
                 {
                     listUser = listUser.Where(a => (int)a.TypeUser == UserType);
-                    historyQuery = historyQuery.Where(h => listUser.Any(l => l.Id == h.UserId));
+                    //historyQuery = historyQuery.Where(h => listUser.Any(l => l.Id == h.UserId));
                 }
 
                 //listHistoryUser = listHistoryUser.Where(a => (int)a.TypeUser == UserType);
@@ -1048,12 +1049,310 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        listMonth = historyUsers.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+                        var listHU = historyUsers.ToList();
+                        listMonth = listHU.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
                         (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
                     }
             }
-            return View();
+            var userItems = new List<BCTHNVViewModel.UserItem>();
+            var listReportCategoryId = new List<int> { 87, 88, 95, 96, 99, 100, 103 };
+            var allUserIds = listUser.Select(u => u.Id).ToList();
+
+            var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type2 && a.HistoryUserId.HasValue &&
+            allUserIds.Contains(a.HistoryUser.UserId) && listReportCategoryId.Contains(a.ReportCategoryId)).AsNoTracking().ToList();
+            var reportDict = listReportData
+                    .GroupBy(x => (x.Month, x.HistoryUserId, x.ReportCategoryId))
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Sum(x => x.DataReal ?? 0m)
+                    );
+
+            decimal GetData(int month, int historyUserId, int categoryId)
+            {
+                return reportDict.TryGetValue(
+                    (month, historyUserId, categoryId),
+                    out var value
+                ) ? value : 0;
+            }
+            var pagedUsers = listUser.OrderBy(u => u.Id).ToPagedList(pageNumber, 10);
+            foreach (var user in pagedUsers)
+            {
+                var listMonthUser = new List<int>();
+                if (User.TypeUser != TypeUser.HO)
+
+                    if ((User.ZoneIds != null && ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+                    (User.OfficeIds != null && user.OfficeId != null && User.OfficeIds.Contains("," + user.OfficeId + ",")))
+                    {
+                        listMonthUser = listMonthFull;
+                    }
+                    else
+                    {
+                        var listHU = historyUsers.ToList();
+                        listMonthUser = listHU.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+                        (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
+                    }
+                else
+                {
+                    listMonthUser = listMonthFull;
+                }
+                var userItem = new BCTHNVViewModel.UserItem()
+                {
+                    User = user,
+                    ListHTDSs = new List<string>(),
+                    ListHTCGs = new List<string>(),
+                    ListHTHVs = new List<string>(),
+                    ListTCBQs = new List<string>(),
+
+                };
+                // tạo các biến thực đạt/ chỉ tiêu nhân sự
+
+                decimal chitieuDSQuy1 = 0, thucDatDSQuy1 = 0, chitieuCGQuy1 = 0, thucDatCGQuy1 = 0, chitieuHVQuy1 = 0, thucDatHVQuy1 = 0, tongSoThangChotQuy1 = 0;
+                decimal chitieuDSQuy2 = 0, thucDatDSQuy2 = 0, chitieuCGQuy2 = 0, thucDatCGQuy2 = 0, chitieuHVQuy2 = 0, thucDatHVQuy2 = 0, tongSoThangChotQuy2 = 0;
+                decimal chitieuDSQuy3 = 0, thucDatDSQuy3 = 0, chitieuCGQuy3 = 0, thucDatCGQuy3 = 0, chitieuHVQuy3 = 0, thucDatHVQuy3 = 0, tongSoThangChotQuy3 = 0;
+                decimal chitieuDSQuy4 = 0, thucDatDSQuy4 = 0, chitieuCGQuy4 = 0, thucDatCGQuy4 = 0, chitieuHVQuy4 = 0, thucDatHVQuy4 = 0, tongSoThangChotQuy4 = 0;
+                decimal chitieuDSNam = 0, thucDatDSNam = 0, chitieuCGNam = 0, thucDatCGNam = 0, chitieuHVNam = 0, thucDatHVNam = 0, tongSoThangChotNam = 0;
+                foreach (var month in listMonth)
+                {
+
+                    decimal chitieuDSThang = 0, thucDatDSThang = 0, chitieuCGThang = 0, thucDatCGThang = 0, chitieuHVThang = 0, thucDatHVThang = 0, tongSoThangChotThang = 0;
+
+                    if (!listMonthUser.Contains(month))
+                    {
+                        userItem.ListHTDSs.Add("");
+                        userItem.ListHTCGs.Add("");
+                        userItem.ListHTHVs.Add("");
+                        userItem.ListTCBQs.Add("");
+                    }
+                    else
+                    {
+                        var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == selectedYear && a.Active && a.UserId == user.Id).AsNoTracking().ToList();
+                        //decimal chitieuDS = 0, thucDatDS = 0, chitieuCG = 0, thucDatCG = 0, chitieuHV = 0, thucDatHV = 0, tongSoThangChot = 0;
+                        foreach (var item in listHistoryUser)
+                        {
+                            chitieuDSThang += GetData(month, item.Id, 87);
+                            thucDatDSThang += GetData(month, item.Id, 88);
+                            chitieuCGThang += GetData(month, item.Id, 99);
+                            thucDatCGThang += GetData(month, item.Id, 100);
+                            chitieuHVThang += GetData(month, item.Id, 95);
+                            thucDatHVThang += GetData(month, item.Id, 96);
+                            tongSoThangChotThang += GetData(month, item.Id, 103);
+                        }
+                        decimal? htDSThang = null, htCGThang = null, htHVThang = null, thangChotBQThang = null;
+                        if (chitieuDSThang > 0)
+                        {
+                            htDSThang = thucDatDSThang / chitieuDSThang * 100;
+                        }
+                        if (chitieuCGThang > 0)
+                        {
+                            htCGThang = thucDatCGThang / chitieuCGThang * 100;
+                        }
+                        if (chitieuHVThang > 0)
+                        {
+                            htHVThang = thucDatHVThang / chitieuHVThang * 100;
+                        }
+                        if (thucDatHVThang > 0)
+                        {
+                            thangChotBQThang = tongSoThangChotThang / thucDatHVThang;
+                        }
+                        userItem.ListHTDSs.Add(htDSThang == null ? "" : htDSThang?.ToString("N2") + "%");
+                        userItem.ListHTCGs.Add(htCGThang == null ? "" : htCGThang?.ToString("N2") + "%");
+                        userItem.ListHTHVs.Add(htHVThang == null ? "" : htHVThang?.ToString("N2") + "%");
+                        userItem.ListTCBQs.Add(thangChotBQThang == null ? "" : thangChotBQThang?.ToString("N0"));
+
+                        chitieuDSNam += chitieuDSThang;
+                        thucDatDSNam += thucDatDSThang;
+                        chitieuCGNam += chitieuCGThang;
+                        thucDatCGNam += thucDatCGThang;
+                        chitieuHVNam += chitieuHVThang;
+                        thucDatHVNam += thucDatHVThang;
+                        tongSoThangChotNam += tongSoThangChotThang;
+                        if (month <= 3)
+                        {
+                            chitieuDSQuy1 += chitieuDSThang;
+                            thucDatDSQuy1 += thucDatDSThang;
+                            chitieuCGQuy1 += chitieuCGThang;
+                            thucDatCGQuy1 += thucDatCGThang;
+                            chitieuHVQuy1 += chitieuHVThang;
+                            thucDatHVQuy1 += thucDatHVThang;
+                            tongSoThangChotQuy1 += tongSoThangChotThang;
+                        }
+                        else if (month <= 6)
+                        {
+                            chitieuDSQuy2 += chitieuDSThang;
+                            thucDatDSQuy2 += thucDatDSThang;
+                            chitieuCGQuy2 += chitieuCGThang;
+                            thucDatCGQuy2 += thucDatCGThang;
+                            chitieuHVQuy2 += chitieuHVThang;
+                            thucDatHVQuy2 += thucDatHVThang;
+                            tongSoThangChotQuy2 += tongSoThangChotThang;
+                        }
+                        else if (month <= 9)
+                        {
+                            chitieuDSQuy3 += chitieuDSThang;
+                            thucDatDSQuy3 += thucDatDSThang;
+                            chitieuCGQuy3 += chitieuCGThang;
+                            thucDatCGQuy3 += thucDatCGThang;
+                            chitieuHVQuy3 += chitieuHVThang;
+                            thucDatHVQuy3 += thucDatHVThang;
+                            tongSoThangChotQuy3 += tongSoThangChotThang;
+                        }
+                        else
+                        {
+                            chitieuDSQuy4 += chitieuDSThang;
+                            thucDatDSQuy4 += thucDatDSThang;
+                            chitieuCGQuy4 += chitieuCGThang;
+                            thucDatCGQuy4 += thucDatCGThang;
+                            chitieuHVQuy4 += chitieuHVThang;
+                            thucDatHVQuy4 += thucDatHVThang;
+                            tongSoThangChotQuy4 += tongSoThangChotThang;
+                        }
+                    }
+                }
+                if (listMonth.Contains(1) || listMonth.Contains(2) || listMonth.Contains(3))
+                {
+                    decimal? htDSQuy1 = null, htCGQuy1 = null, htHVQuy1 = null, thangChotBQQuy1 = null;
+
+                    if (chitieuDSQuy1 > 0)
+                    {
+                        htDSQuy1 = thucDatDSQuy1 / chitieuDSQuy1 * 100;
+                    }
+                    if (chitieuCGQuy1 > 0)
+                    {
+                        htCGQuy1 = thucDatCGQuy1 / chitieuCGQuy1 * 100;
+                    }
+                    if (chitieuHVQuy1 > 0)
+                    {
+                        htHVQuy1 = thucDatHVQuy1 / chitieuHVQuy1 * 100;
+                    }
+                    if (thucDatHVQuy1 > 0)
+                    {
+                        thangChotBQQuy1 = tongSoThangChotQuy1 / thucDatHVQuy1;
+                    }
+                    userItem.ListHTDSs.Add(htDSQuy1 == null ? "" : htDSQuy1?.ToString("N2") + "%");
+                    userItem.ListHTCGs.Add(htCGQuy1 == null ? "" : htCGQuy1?.ToString("N2") + "%");
+                    userItem.ListHTHVs.Add(htHVQuy1 == null ? "" : htHVQuy1?.ToString("N2") + "%");
+                    userItem.ListTCBQs.Add(thangChotBQQuy1 == null ? "" : thangChotBQQuy1?.ToString("N0"));
+                }
+                if (listMonth.Contains(4) || listMonth.Contains(5) || listMonth.Contains(6))
+                {
+                    decimal? htDSQuy2 = null, htCGQuy2 = null, htHVQuy2 = null, thangChotBQQuy2 = null;
+
+                    if (chitieuDSQuy2 > 0)
+                    {
+                        htDSQuy2 = thucDatDSQuy2 / chitieuDSQuy2 * 100;
+                    }
+                    if (chitieuCGQuy2 > 0)
+                    {
+                        htCGQuy2 = thucDatCGQuy2 / chitieuCGQuy2 * 100;
+                    }
+                    if (chitieuHVQuy2 > 0)
+                    {
+                        htHVQuy2 = thucDatHVQuy2 / chitieuHVQuy2 * 100;
+                    }
+                    if (thucDatHVQuy2 > 0)
+                    {
+                        thangChotBQQuy2 = tongSoThangChotQuy2 / thucDatHVQuy2;
+                    }
+                    userItem.ListHTDSs.Add(htDSQuy2 == null ? "" : htDSQuy2?.ToString("N2") + "%");
+                    userItem.ListHTCGs.Add(htCGQuy2 == null ? "" : htCGQuy2?.ToString("N2") + "%");
+                    userItem.ListHTHVs.Add(htHVQuy2 == null ? "" : htHVQuy2?.ToString("N2") + "%");
+                    userItem.ListTCBQs.Add(thangChotBQQuy2 == null ? "" : thangChotBQQuy2?.ToString("N0"));
+                }
+                if (listMonth.Contains(7) || listMonth.Contains(8) || listMonth.Contains(9))
+                {
+
+                    decimal? htDSQuy3 = null, htCGQuy3 = null, htHVQuy3 = null, thangChotBQQuy3 = null;
+
+                    if (chitieuDSQuy3 > 0)
+                    {
+                        htDSQuy3 = thucDatDSQuy3 / chitieuDSQuy3 * 100;
+                    }
+                    if (chitieuCGQuy3 > 0)
+                    {
+                        htCGQuy3 = thucDatCGQuy3 / chitieuCGQuy3 * 100;
+                    }
+                    if (chitieuHVQuy3 > 0)
+                    {
+                        htHVQuy3 = thucDatHVQuy3 / chitieuHVQuy3 * 100;
+                    }
+                    if (thucDatHVQuy3 > 0)
+                    {
+                        thangChotBQQuy3 = tongSoThangChotQuy3 / thucDatHVQuy3;
+                    }
+                    userItem.ListHTDSs.Add(htDSQuy3 == null ? "" : htDSQuy3?.ToString("N2") + "%");
+                    userItem.ListHTCGs.Add(htCGQuy3 == null ? "" : htCGQuy3?.ToString("N2") + "%");
+                    userItem.ListHTHVs.Add(htHVQuy3 == null ? "" : htHVQuy3?.ToString("N2") + "%");
+                    userItem.ListTCBQs.Add(thangChotBQQuy3 == null ? "" : thangChotBQQuy3?.ToString("N0"));
+                }
+                if (listMonth.Contains(10) || listMonth.Contains(11) || listMonth.Contains(12))
+                {
+                    decimal? htDSQuy4 = null, htCGQuy4 = null, htHVQuy4 = null, thangChotBQQuy4 = null;
+
+                    if (chitieuDSQuy4 > 0)
+                    {
+                        htDSQuy4 = thucDatDSQuy4 / chitieuDSQuy4 * 100;
+                    }
+                    if (chitieuCGQuy4 > 0)
+                    {
+                        htCGQuy4 = thucDatCGQuy4 / chitieuCGQuy4 * 100;
+                    }
+                    if (chitieuHVQuy4 > 0)
+                    {
+                        htHVQuy4 = thucDatHVQuy4 / chitieuHVQuy4 * 100;
+                    }
+                    if (thucDatHVQuy4 > 0)
+                    {
+                        thangChotBQQuy4 = tongSoThangChotQuy4 / thucDatHVQuy4;
+                    }
+                    userItem.ListHTDSs.Add(htDSQuy4 == null ? "" : htDSQuy4?.ToString("N2") + "%");
+                    userItem.ListHTCGs.Add(htCGQuy4 == null ? "" : htCGQuy4?.ToString("N2") + "%");
+                    userItem.ListHTHVs.Add(htHVQuy4 == null ? "" : htHVQuy4?.ToString("N2") + "%");
+                    userItem.ListTCBQs.Add(thangChotBQQuy4 == null ? "" : thangChotBQQuy4?.ToString("N0"));
+                }
+
+
+                decimal? htDSNam = null, htCGNam = null, htHVNam = null, thangChotBQNam = null;
+
+                if (chitieuDSNam > 0)
+                {
+                    htDSNam = thucDatDSNam / chitieuDSNam * 100;
+                }
+                if (chitieuCGNam > 0)
+                {
+                    htCGNam = thucDatCGNam / chitieuCGNam * 100;
+                }
+                if (chitieuHVNam > 0)
+                {
+                    htHVNam = thucDatHVNam / chitieuHVNam * 100;
+                }
+                if (thucDatHVNam > 0)
+                {
+                    thangChotBQNam = tongSoThangChotNam / thucDatHVNam;
+                }
+                userItem.ListHTDSs.Add(htDSNam == null ? "" : htDSNam?.ToString("N2") + "%");
+                userItem.ListHTCGs.Add(htCGNam == null ? "" : htCGNam?.ToString("N2") + "%");
+                userItem.ListHTHVs.Add(htHVNam == null ? "" : htHVNam?.ToString("N2") + "%");
+                userItem.ListTCBQs.Add(thangChotBQNam == null ? "" : thangChotBQNam?.ToString("N0"));
+                userItems.Add(userItem);
+            }
+            var pagedUserItems = new StaticPagedList<BCTHNVViewModel.UserItem>(userItems, pagedUsers.PageNumber, pagedUsers.PageSize, pagedUsers.TotalItemCount);
+            var model = new BCTHNVViewModel()
+            {
+                Zones = zones.ToList(),
+                Offices = offices.ToList(),
+                Users = listUserSelect.ToList(),
+                UserItems = pagedUserItems,
+                Year = selectedYear,
+                UserId = UserId,
+                OfficeId = OfficeId,
+                ZoneId = ZoneId,
+                User = User,
+                UserType = UserType,
+                ListMonth = listMonth,
+            };
+            return View(model);
         }
+
         public ActionResult ReportTHCN(int? ZoneId, int? OfficeId, int? Year)
         {
             if (User.TypeUser == null)

@@ -215,7 +215,7 @@
                                     @foreach (var child in Model.ReportCategories.Where(a => a.ReportCategoryId == cat.Id))
                                     {
                                         <th data-categoryid="@child.Id" class="col-w65 th-filter">
-                                            @child.Name
+                                            @child.Name @child.Id
                                             <div class="btn-filter">
                                                 <div class="icon-default @(Model.categoryId == child.Id?"active":"")">
                                                     <i class="fa-solid fa-sort-down"></i>
