@@ -854,6 +854,16 @@ namespace OceanEduSlide.Controllers
                 Response.BinaryWrite(pck.GetAsByteArray());
             }
         }
+        public int? CheckUserId(IQueryable<User> listUserSelect, int? UserId)
+        {
+            var listUserId = listUserSelect.Select(a => a.Id).ToHashSet();
+            if (UserId != null)
+                if (listUserId.Contains(UserId.Value))
+                {
+                    return UserId.Value;
+                }
+            return null;
+        }
 
         public ActionResult ReportTHNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Year)
         {
@@ -874,7 +884,7 @@ namespace OceanEduSlide.Controllers
             }).AsNoTracking();
             var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == selectedYear
             && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month)))
-            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM).AsNoTracking();
+            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.BM).AsNoTracking();
 
             var listUser = _unitOfWork.UserRepository.GetQuery(a => historyQuery.Any(h => h.Active && h.UserId == a.Id)).AsNoTracking();
             var listUserSelect = listUser;
@@ -884,11 +894,13 @@ namespace OceanEduSlide.Controllers
 
             if (UserType != null)
             {
+                listUserSelect = listUserSelect.Where(a => (int)a.TypeUser == UserType);
+                listUser = listUser.Where(a => (int)a.TypeUser == UserType);
+                UserId = CheckUserId(listUserSelect, UserId);
                 if (UserId == null)
                 {
-                    listUser = listUser.Where(a => (int)a.TypeUser == UserType);
-                    //historyQuery = historyQuery.Where(h => listUser.Any(l => l.Id == h.UserId));
                 }
+
 
                 //listHistoryUser = listHistoryUser.Where(a => (int)a.TypeUser == UserType);
             }
@@ -909,10 +921,14 @@ namespace OceanEduSlide.Controllers
                         && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
                         || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
                         || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+                        UserId = CheckUserId(listUserSelect, UserId);
                         if (UserId == null)
                         {
                             listMonth = listMonthFull;
-                            listUser = listUserSelect;
+                            listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+                            && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+                            || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+                            || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
                         }
                     }
                 }
@@ -931,10 +947,14 @@ namespace OceanEduSlide.Controllers
                             && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
                             || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Office.Zone.ShortCode + ","))
                             || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+                            UserId = CheckUserId(listUserSelect, UserId);
                             if (UserId == null)
                             {
                                 listMonth = listMonthFull;
-                                listUser = listUserSelect;
+                                listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+                            && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+                            || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Office.Zone.ShortCode + ","))
+                            || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
                             }
                         }
                     }
@@ -970,10 +990,13 @@ namespace OceanEduSlide.Controllers
                         listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
                         && ((h.OfficeId != null && User.OfficeIds.Contains("," + h.OfficeId + ","))
                         || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                        UserId = CheckUserId(listUserSelect, UserId);
                         if (UserId == null)
                         {
                             listMonth = listMonthFull;
-                            listUser = listUserSelect;
+                            listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+                        && ((h.OfficeId != null && User.OfficeIds.Contains("," + h.OfficeId + ","))
+                        || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                         }
                     }
                 }
@@ -988,7 +1011,9 @@ namespace OceanEduSlide.Controllers
                         if (UserId == null)
                         {
                             listMonth = listMonthFull;
-                            listUser = listUserSelect;
+                            listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+                        && (User.OfficeId == h.OfficeId
+                        || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
                         }
                     }
                 }
@@ -1000,9 +1025,11 @@ namespace OceanEduSlide.Controllers
                 if (OfficeId == null)
                 {
                     listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id && (ZoneId == h.ZoneId || (h.OfficeId != null && h.Office.ZoneId == ZoneId))));
+                    UserId = CheckUserId(listUserSelect, UserId);
                     if (UserId == null)
                     {
-                        listUser = listUserSelect;
+                        listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id && (ZoneId == h.ZoneId || (h.OfficeId != null && h.Office.ZoneId == ZoneId))));
+
                         if (User.TypeUser != TypeUser.HO)
                             if (User.ZoneId == ZoneId || (User.ZoneIds != null && User.ZoneIds.Contains("," + zone.Id + ",")))
                             {
@@ -1015,14 +1042,15 @@ namespace OceanEduSlide.Controllers
                     }
                 }
             }
-
             if (OfficeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(OfficeId);
                 listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id && OfficeId == h.OfficeId));
+                UserId = CheckUserId(listUserSelect, UserId);
                 if (UserId == null)
                 {
-                    listUser = listUserSelect;
+                    listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id && OfficeId == h.OfficeId));
+
                     if (User.TypeUser != TypeUser.HO)
                         if (User.OfficeId == OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + office.Id + ",")) || (User.ZoneIds != null && office.ZoneId != null && User.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
                         {
@@ -1036,6 +1064,7 @@ namespace OceanEduSlide.Controllers
                         }
                 }
             }
+            UserId = CheckUserId(listUserSelect, UserId);
             if (UserId != null)
             {
                 var user = _unitOfWork.UserRepository.GetById(UserId);
@@ -1882,8 +1911,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy1 = 0;
                         if (tongSoHocVienQuy1 > 0)
                         {
-                            tileHVGDLQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
-                            tileHVGDMQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
+                            tileHVGDMQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
+                            tileHVGDLQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
                             thangChotBQQuy1 = tongSoThangDKQuy1 / tongSoHocVienQuy1;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy1);
@@ -1956,8 +1985,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy2 = 0;
                         if (tongSoHocVienQuy2 > 0)
                         {
-                            tileHVGDLQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
-                            tileHVGDMQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
+                            tileHVGDMQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
+                            tileHVGDLQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
                             thangChotBQQuy2 = tongSoThangDKQuy2 / tongSoHocVienQuy2;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy2);
@@ -2030,8 +2059,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy3 = 0;
                         if (tongSoHocVienQuy3 > 0)
                         {
-                            tileHVGDLQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
-                            tileHVGDMQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
+                            tileHVGDMQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
+                            tileHVGDLQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
                             thangChotBQQuy3 = tongSoThangDKQuy3 / tongSoHocVienQuy3;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy3);
@@ -2104,8 +2133,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy4 = 0;
                         if (tongSoHocVienQuy4 > 0)
                         {
-                            tileHVGDLQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
-                            tileHVGDMQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
+                            tileHVGDMQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
+                            tileHVGDLQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
                             thangChotBQQuy4 = tongSoThangDKQuy4 / tongSoHocVienQuy4;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy4);
@@ -2180,8 +2209,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQNam = 0;
                         if (tongSoHocVienNam > 0)
                         {
-                            tileHVGDLNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
-                            tileHVGDMNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
+                            tileHVGDMNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
+                            tileHVGDLNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
                             thangChotBQNam = tongSoThangDKNam / tongSoHocVienNam;
                         }
                         ThangChotBinhQuan.Add(thangChotBQNam);
@@ -2262,7 +2291,7 @@ namespace OceanEduSlide.Controllers
                     }
                 }
             }
-            if (model.Zones.Count() == 1)
+            if (model.Zones?.Count() == 1)
             {
                 model.ZoneId = model.Zones.First().Id;
             }
@@ -2660,8 +2689,8 @@ namespace OceanEduSlide.Controllers
 
                         if (tongSoHocVienQuy1 > 0)
                         {
-                            tileHVGDLQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
-                            tileHVGDMQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
+                            tileHVGDMQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
+                            tileHVGDLQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
                             thangChotBQQuy1 = tongSoThangDKQuy1 / tongSoHocVienQuy1;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy1);
@@ -2734,8 +2763,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy2 = 0;
                         if (tongSoHocVienQuy2 > 0)
                         {
-                            tileHVGDLQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
-                            tileHVGDMQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
+                            tileHVGDMQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
+                            tileHVGDLQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
                             thangChotBQQuy2 = tongSoThangDKQuy2 / tongSoHocVienQuy2;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy2);
@@ -2808,8 +2837,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy3 = 0;
                         if (tongSoHocVienQuy3 > 0)
                         {
-                            tileHVGDLQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
-                            tileHVGDMQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
+                            tileHVGDMQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
+                            tileHVGDLQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
                             thangChotBQQuy3 = tongSoThangDKQuy3 / tongSoHocVienQuy3;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy3);
@@ -2882,8 +2911,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQQuy4 = 0;
                         if (tongSoHocVienQuy4 > 0)
                         {
-                            tileHVGDLQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
-                            tileHVGDMQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
+                            tileHVGDMQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
+                            tileHVGDLQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
                             thangChotBQQuy4 = tongSoThangDKQuy4 / tongSoHocVienQuy4;
                         }
                         ThangChotBinhQuan.Add(thangChotBQQuy4);
@@ -2958,8 +2987,8 @@ namespace OceanEduSlide.Controllers
                         decimal thangChotBQNam = 0;
                         if (tongSoHocVienNam > 0)
                         {
-                            tileHVGDLNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
-                            tileHVGDMNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
+                            tileHVGDMNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
+                            tileHVGDLNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
                             thangChotBQNam = tongSoThangDKNam / tongSoHocVienNam;
                         }
                         ThangChotBinhQuan.Add(thangChotBQNam);
@@ -3352,8 +3381,8 @@ namespace OceanEduSlide.Controllers
                     decimal thangChotBQQuy1 = 0;
                     if (tongSoHocVienQuy1 > 0)
                     {
-                        tileHVGDLQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
-                        tileHVGDMQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
+                        tileHVGDMQuy1 = (hVGhiDanhMoiQuy1 / tongSoHocVienQuy1) * 100;
+                        tileHVGDLQuy1 = (hVGhiDanhLaiQuy1 / tongSoHocVienQuy1) * 100;
                         thangChotBQQuy1 = tongSoThangDKQuy1 / tongSoHocVienQuy1;
                     }
                     ThangChotBinhQuan.Add(thangChotBQQuy1);
@@ -3426,8 +3455,8 @@ namespace OceanEduSlide.Controllers
                     decimal thangChotBQQuy2 = 0;
                     if (tongSoHocVienQuy2 > 0)
                     {
-                        tileHVGDLQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
-                        tileHVGDMQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
+                        tileHVGDMQuy2 = (hVGhiDanhMoiQuy2 / tongSoHocVienQuy2) * 100;
+                        tileHVGDLQuy2 = (hVGhiDanhLaiQuy2 / tongSoHocVienQuy2) * 100;
                         thangChotBQQuy2 = tongSoThangDKQuy2 / tongSoHocVienQuy2;
                     }
                     ThangChotBinhQuan.Add(thangChotBQQuy2);
@@ -3500,8 +3529,8 @@ namespace OceanEduSlide.Controllers
                     decimal thangChotBQQuy3 = 0;
                     if (tongSoHocVienQuy3 > 0)
                     {
-                        tileHVGDLQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
-                        tileHVGDMQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
+                        tileHVGDMQuy3 = (hVGhiDanhMoiQuy3 / tongSoHocVienQuy3) * 100;
+                        tileHVGDLQuy3 = (hVGhiDanhLaiQuy3 / tongSoHocVienQuy3) * 100;
                         thangChotBQQuy3 = tongSoThangDKQuy3 / tongSoHocVienQuy3;
                     }
                     ThangChotBinhQuan.Add(thangChotBQQuy3);
@@ -3574,8 +3603,8 @@ namespace OceanEduSlide.Controllers
                     decimal thangChotBQQuy4 = 0;
                     if (tongSoHocVienQuy4 > 0)
                     {
-                        tileHVGDLQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
-                        tileHVGDMQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
+                        tileHVGDMQuy4 = (hVGhiDanhMoiQuy4 / tongSoHocVienQuy4) * 100;
+                        tileHVGDLQuy4 = (hVGhiDanhLaiQuy4 / tongSoHocVienQuy4) * 100;
                         thangChotBQQuy4 = tongSoThangDKQuy4 / tongSoHocVienQuy4;
                     }
                     ThangChotBinhQuan.Add(thangChotBQQuy4);
@@ -3650,8 +3679,8 @@ namespace OceanEduSlide.Controllers
                     decimal thangChotBQNam = 0;
                     if (tongSoHocVienNam > 0)
                     {
-                        tileHVGDLNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
-                        tileHVGDMNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
+                        tileHVGDMNam = (hVGhiDanhMoiNam / tongSoHocVienNam) * 100;
+                        tileHVGDLNam = (hVGhiDanhLaiNam / tongSoHocVienNam) * 100;
                         thangChotBQNam = tongSoThangDKNam / tongSoHocVienNam;
                     }
                     ThangChotBinhQuan.Add(thangChotBQNam);

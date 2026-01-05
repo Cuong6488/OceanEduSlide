@@ -251,7 +251,6 @@ namespace OceanEduSlide.DAL
                         _unitOfWork.UserRepository.Insert(newUser);
                         _unitOfWork.Save();
                         users.Add(newUser);
-
                         user = newUser;
                     }
                     else
@@ -259,6 +258,12 @@ namespace OceanEduSlide.DAL
                         user.CDCM = item.MaChucDanh;
                         user.ZoneId = zone?.Id;
                     }
+                    if (office != null && string.IsNullOrEmpty(user.OfficeIds))
+                    {
+                        user.OfficeIds = "," + office.Id + ",";
+                    }
+                    if (zone != null && string.IsNullOrEmpty(user.ZoneIds))
+                        user.ZoneIds = "," + zone.ShortCode + ",";
                     if (office == null && zone == null)
                     {
                         logger.Error("Nhan su co noi lam viec null: " + nhanSuNguon.MaNhanSu);

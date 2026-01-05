@@ -131,7 +131,7 @@ namespace OceanEduSlide.Controllers
 
                 case TypeUser.BM:
                 case TypeUser.EC:
-                case TypeUser.AEC:
+                    //case TypeUser.AEC:
                     historyUser.OfficeIds = ",";
 
                     foreach (var item in zones.Split(','))
@@ -155,7 +155,6 @@ namespace OceanEduSlide.Controllers
                     historyUser.OfficeIds =
                         historyUser.OfficeIds == "," ? null : historyUser.OfficeIds;
                     break;
-
                 case TypeUser.CV:
                     user.ZoneIds = "," + zones + ",";
                     var listZ = zones.Split(',');
@@ -214,7 +213,7 @@ namespace OceanEduSlide.Controllers
 
                 case TypeUser.BM:
                 case TypeUser.EC:
-                case TypeUser.AEC:
+                    //case TypeUser.AEC:
                     user.OfficeIds = ",";
                     user.OfficeNames = "";
 

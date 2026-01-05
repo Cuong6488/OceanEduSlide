@@ -59,9 +59,8 @@
                 </div>
             }
             <div class="col-lg-2">
-                <select name="UserType" class="form-select ms-2">
+                <select name="UserType" class="form-select">
                     <option value="">Tất cả chức danh</option>
-                    <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
                     <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
                     <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
                     <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
@@ -75,7 +74,7 @@
                     <option>Chọn nhân sự</option>
                     @foreach (var user in Model.Users)
                     {
-                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.Fullname - @user.MaNhanVien - @user.CDCM</option>
+                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.Fullname - @user.MaNhanVien - @(user.CDCM?? user.TypeUser.ToString())</option>
                     }
                 </select>
             </div>
