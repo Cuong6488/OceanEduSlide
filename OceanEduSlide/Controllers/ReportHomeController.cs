@@ -373,6 +373,25 @@ namespace OceanEduSlide.Controllers
             var selectedYear = Year ?? DateTime.Now.Year;
             //ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == selectedMonth && a.Year == selectedYear).AsNoTracking();
+            var historyZoneSet = new HashSet<string>();
+            var historyOfficeSet = new HashSet<string>();
+
+            foreach (var h in historyUsers)
+            {
+                if (!string.IsNullOrEmpty(h.ZoneIds))
+                {
+                    var arr = h.ZoneIds.Trim(',').Split(',');
+                    foreach (var z in arr)
+                        historyZoneSet.Add(z);
+                }
+                if (!string.IsNullOrEmpty(h.OfficeIds))
+                {
+                    var arr = h.OfficeIds.Trim(',').Split(',');
+                    foreach (var z in arr)
+                        historyOfficeSet.Add(z);
+                }
+
+            }
 
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == selectedMonth && h.Year == selectedYear).Select(h => new
             {
@@ -419,15 +438,15 @@ namespace OceanEduSlide.Controllers
             }
             else if (User.TypeUser == TypeUser.CV)
             {
-                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || historyZoneSet.Contains(a.ShortCode));
                 if (model.ZoneId == null)
                 {
-                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
                     if (model.OfficeId == null)
                     {
-                        listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+                        listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
                         if (model.UserId == null)
-                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
                     }
                 }
             }
@@ -446,29 +465,29 @@ namespace OceanEduSlide.Controllers
 
                             if (model.OfficeId == null)
                             {
-                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode)))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
                                 if (model.UserId == null)
-                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
                             }
                         }
                     }
                     else if (User.ZoneId != null)
                     {
-                        model.Zones = zones.Where(a => a.Id == User.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+                        model.Zones = zones.Where(a => a.Id == User.ZoneId || historyZoneSet.Contains(a.ShortCode));
                         if (model.ZoneId == null)
                         {
                             //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || historyZoneSet.Contains(h.ZoneShortCode))));
 
                             if (model.OfficeId == null)
                             {
-                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode)))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
                                 if (model.UserId == null)
-                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.Zone.ShortCode + ",")))));
+                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))))
+                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
                             }
                         }
                         //model.ZoneId = User.ZoneId;
@@ -479,13 +498,13 @@ namespace OceanEduSlide.Controllers
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                     {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
 
                         if (model.OfficeId == null)
                         {
-                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
                             if (model.UserId == null)
-                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
 
                         }
 
@@ -495,13 +514,13 @@ namespace OceanEduSlide.Controllers
                     }
                     else
                     {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
 
                         if (model.OfficeId == null)
                         {
-                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
                             if (model.UserId == null)
-                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
 
                         }
                     }
@@ -896,13 +915,6 @@ namespace OceanEduSlide.Controllers
             {
                 listUserSelect = listUserSelect.Where(a => (int)a.TypeUser == UserType);
                 listUser = listUser.Where(a => (int)a.TypeUser == UserType);
-                UserId = CheckUserId(listUserSelect, UserId);
-                if (UserId == null)
-                {
-                }
-
-
-                //listHistoryUser = listHistoryUser.Where(a => (int)a.TypeUser == UserType);
             }
 
             if (User.TypeUser == TypeUser.HO)
@@ -1085,287 +1097,194 @@ namespace OceanEduSlide.Controllers
             }
             var userItems = new List<BCTHNVViewModel.UserItem>();
             var listReportCategoryId = new List<int> { 87, 88, 95, 96, 99, 100, 103 };
+
             var allUserIds = listUser.Select(u => u.Id).ToList();
 
-            var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type2 && a.HistoryUserId.HasValue &&
-            allUserIds.Contains(a.HistoryUser.UserId) && listReportCategoryId.Contains(a.ReportCategoryId)).AsNoTracking().ToList();
-            var reportDict = listReportData
-                    .GroupBy(x => (x.Month, x.HistoryUserId, x.ReportCategoryId))
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Sum(x => x.DataReal ?? 0m)
-                    );
+            // ================== PAGING USER TRƯỚC ==================
+            var pagedUsers = listUser
+                .OrderBy(u => u.Id)
+                .ToPagedList(pageNumber, 10);
 
-            decimal GetData(int month, int historyUserId, int categoryId)
+            var pagedUserIds = pagedUsers.Select(u => u.Id).ToList();
+
+            // ================== LOAD HISTORY USER (CHỈ USER TRONG PAGE) ==================
+            var historyUsersAll = _unitOfWork.HistoryUserRepository
+                .GetQuery(a =>
+                    a.Year == selectedYear &&
+                    a.Active &&
+                    pagedUserIds.Contains(a.UserId))
+                .AsNoTracking()
+                .ToList();
+
+            var historyUserDict = historyUsersAll
+                .GroupBy(x => (x.UserId, x.Month))
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // ================== LOAD REPORT DATA (CHỈ USER TRONG PAGE) ==================
+            var listReportData = _unitOfWork.ReportDataRepository
+                .GetQuery(a =>
+                    a.Active &&
+                    a.Year == selectedYear &&
+                    a.ReportCategory.TypeCat == TypeCat.Type2 &&
+                    a.HistoryUserId.HasValue &&
+                    pagedUserIds.Contains(a.HistoryUser.UserId) &&
+                    listReportCategoryId.Contains(a.ReportCategoryId))
+                .AsNoTracking()
+                .ToList();
+
+            // ================== GỘP REPORT DATA NHỎ & NHANH ==================
+            var reportAggDict = listReportData
+                .GroupBy(x => new
+                {
+                    x.Month,
+                    x.HistoryUser.UserId,
+                    x.ReportCategoryId
+                })
+                .Select(g => new
+                {
+                    g.Key.Month,
+                    g.Key.UserId,
+                    g.Key.ReportCategoryId,
+                    Value = g.Sum(x => x.DataReal ?? 0m)
+                })
+                .GroupBy(x => (x.UserId, x.Month))
+                .ToDictionary(
+                    g => g.Key,
+                    g =>
+                    {
+                        var a = new AggData();
+                        foreach (var i in g)
+                        {
+                            switch (i.ReportCategoryId)
+                            {
+                                case 87: a.CT_DS += i.Value; break;
+                                case 88: a.TD_DS += i.Value; break;
+                                case 99: a.CT_CG += i.Value; break;
+                                case 100: a.TD_CG += i.Value; break;
+                                case 95: a.CT_HV += i.Value; break;
+                                case 96: a.TD_HV += i.Value; break;
+                                case 103: a.TongThangChot += i.Value; break;
+                            }
+                        }
+                        return a;
+                    });
+
+            // ================== HÀM TÍNH CHUNG ==================
+            void CalcResult(decimal ct, decimal td, decimal tong,
+                out string ht, out string tb)
             {
-                return reportDict.TryGetValue(
-                    (month, historyUserId, categoryId),
-                    out var value
-                ) ? value : 0;
+                ht = ct > 0 ? (td / ct * 100).ToString("N2") + "%" : "";
+                tb = td > 0 ? (tong / td).ToString("N0") : "";
             }
-            var pagedUsers = listUser.OrderBy(u => u.Id).ToPagedList(pageNumber, 10);
+
+            // ================== LOOP USER ==================
             foreach (var user in pagedUsers)
             {
                 var listMonthUser = new List<int>();
-                if (User.TypeUser != TypeUser.HO)
 
-                    if ((User.ZoneIds != null && ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
-                    (User.OfficeIds != null && user.OfficeId != null && User.OfficeIds.Contains("," + user.OfficeId + ",")))
+                #region ==== GIỮ NGUYÊN LOGIC PHÂN QUYỀN ====
+
+                if (User.TypeUser != TypeUser.HO)
+                {
+                    if ((User.ZoneIds != null &&
+                        ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) ||
+                         (user.OfficeId != null && user.Office.ZoneId != null &&
+                          User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ","))))
+                        ||
+                        (User.OfficeIds != null &&
+                         user.OfficeId != null &&
+                         User.OfficeIds.Contains("," + user.OfficeId + ",")))
                     {
                         listMonthUser = listMonthFull;
                     }
                     else
                     {
-                        var listHU = historyUsers.ToList();
-                        listMonthUser = listHU.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
-                        (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
+                        listMonthUser = historyUsers
+                            .Where(hu =>
+                                (hu.ZoneIds != null &&
+                                 ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) ||
+                                  (user.OfficeId != null && user.Office.ZoneId != null &&
+                                   hu.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ","))))
+                                ||
+                                (hu.OfficeIds != null &&
+                                 user.OfficeId != null &&
+                                 hu.OfficeIds.Contains("," + user.OfficeId + ",")))
+                            .Select(hu => hu.Month)
+                            .Distinct()
+                            .OrderBy(a => a)
+                            .ToList();
                     }
+                }
                 else
                 {
                     listMonthUser = listMonthFull;
                 }
-                var userItem = new BCTHNVViewModel.UserItem()
+
+                #endregion
+
+                var userItem = new BCTHNVViewModel.UserItem
                 {
                     User = user,
                     ListHTDSs = new List<string>(),
                     ListHTCGs = new List<string>(),
                     ListHTHVs = new List<string>(),
                     ListTCBQs = new List<string>(),
-
                 };
-                // tạo các biến thực đạt/ chỉ tiêu nhân sự
 
-                decimal chitieuDSQuy1 = 0, thucDatDSQuy1 = 0, chitieuCGQuy1 = 0, thucDatCGQuy1 = 0, chitieuHVQuy1 = 0, thucDatHVQuy1 = 0, tongSoThangChotQuy1 = 0;
-                decimal chitieuDSQuy2 = 0, thucDatDSQuy2 = 0, chitieuCGQuy2 = 0, thucDatCGQuy2 = 0, chitieuHVQuy2 = 0, thucDatHVQuy2 = 0, tongSoThangChotQuy2 = 0;
-                decimal chitieuDSQuy3 = 0, thucDatDSQuy3 = 0, chitieuCGQuy3 = 0, thucDatCGQuy3 = 0, chitieuHVQuy3 = 0, thucDatHVQuy3 = 0, tongSoThangChotQuy3 = 0;
-                decimal chitieuDSQuy4 = 0, thucDatDSQuy4 = 0, chitieuCGQuy4 = 0, thucDatCGQuy4 = 0, chitieuHVQuy4 = 0, thucDatHVQuy4 = 0, tongSoThangChotQuy4 = 0;
-                decimal chitieuDSNam = 0, thucDatDSNam = 0, chitieuCGNam = 0, thucDatCGNam = 0, chitieuHVNam = 0, thucDatHVNam = 0, tongSoThangChotNam = 0;
+                decimal ctDSNam = 0, tdDSNam = 0,
+                        ctCGNam = 0, tdCGNam = 0,
+                        ctHVNam = 0, tdHVNam = 0,
+                        tongNam = 0;
+
                 foreach (var month in listMonth)
                 {
-
-                    decimal chitieuDSThang = 0, thucDatDSThang = 0, chitieuCGThang = 0, thucDatCGThang = 0, chitieuHVThang = 0, thucDatHVThang = 0, tongSoThangChotThang = 0;
-
                     if (!listMonthUser.Contains(month))
                     {
                         userItem.ListHTDSs.Add("");
                         userItem.ListHTCGs.Add("");
                         userItem.ListHTHVs.Add("");
                         userItem.ListTCBQs.Add("");
+                        continue;
                     }
-                    else
-                    {
-                        var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == selectedYear && a.Active && a.UserId == user.Id).AsNoTracking().ToList();
-                        //decimal chitieuDS = 0, thucDatDS = 0, chitieuCG = 0, thucDatCG = 0, chitieuHV = 0, thucDatHV = 0, tongSoThangChot = 0;
-                        foreach (var item in listHistoryUser)
-                        {
-                            chitieuDSThang += GetData(month, item.Id, 87);
-                            thucDatDSThang += GetData(month, item.Id, 88);
-                            chitieuCGThang += GetData(month, item.Id, 99);
-                            thucDatCGThang += GetData(month, item.Id, 100);
-                            chitieuHVThang += GetData(month, item.Id, 95);
-                            thucDatHVThang += GetData(month, item.Id, 96);
-                            tongSoThangChotThang += GetData(month, item.Id, 103);
-                        }
-                        decimal? htDSThang = null, htCGThang = null, htHVThang = null, thangChotBQThang = null;
-                        if (chitieuDSThang > 0)
-                        {
-                            htDSThang = thucDatDSThang / chitieuDSThang * 100;
-                        }
-                        if (chitieuCGThang > 0)
-                        {
-                            htCGThang = thucDatCGThang / chitieuCGThang * 100;
-                        }
-                        if (chitieuHVThang > 0)
-                        {
-                            htHVThang = thucDatHVThang / chitieuHVThang * 100;
-                        }
-                        if (thucDatHVThang > 0)
-                        {
-                            thangChotBQThang = tongSoThangChotThang / thucDatHVThang;
-                        }
-                        userItem.ListHTDSs.Add(htDSThang == null ? "" : htDSThang?.ToString("N2") + "%");
-                        userItem.ListHTCGs.Add(htCGThang == null ? "" : htCGThang?.ToString("N2") + "%");
-                        userItem.ListHTHVs.Add(htHVThang == null ? "" : htHVThang?.ToString("N2") + "%");
-                        userItem.ListTCBQs.Add(thangChotBQThang == null ? "" : thangChotBQThang?.ToString("N0"));
 
-                        chitieuDSNam += chitieuDSThang;
-                        thucDatDSNam += thucDatDSThang;
-                        chitieuCGNam += chitieuCGThang;
-                        thucDatCGNam += thucDatCGThang;
-                        chitieuHVNam += chitieuHVThang;
-                        thucDatHVNam += thucDatHVThang;
-                        tongSoThangChotNam += tongSoThangChotThang;
-                        if (month <= 3)
-                        {
-                            chitieuDSQuy1 += chitieuDSThang;
-                            thucDatDSQuy1 += thucDatDSThang;
-                            chitieuCGQuy1 += chitieuCGThang;
-                            thucDatCGQuy1 += thucDatCGThang;
-                            chitieuHVQuy1 += chitieuHVThang;
-                            thucDatHVQuy1 += thucDatHVThang;
-                            tongSoThangChotQuy1 += tongSoThangChotThang;
-                        }
-                        else if (month <= 6)
-                        {
-                            chitieuDSQuy2 += chitieuDSThang;
-                            thucDatDSQuy2 += thucDatDSThang;
-                            chitieuCGQuy2 += chitieuCGThang;
-                            thucDatCGQuy2 += thucDatCGThang;
-                            chitieuHVQuy2 += chitieuHVThang;
-                            thucDatHVQuy2 += thucDatHVThang;
-                            tongSoThangChotQuy2 += tongSoThangChotThang;
-                        }
-                        else if (month <= 9)
-                        {
-                            chitieuDSQuy3 += chitieuDSThang;
-                            thucDatDSQuy3 += thucDatDSThang;
-                            chitieuCGQuy3 += chitieuCGThang;
-                            thucDatCGQuy3 += thucDatCGThang;
-                            chitieuHVQuy3 += chitieuHVThang;
-                            thucDatHVQuy3 += thucDatHVThang;
-                            tongSoThangChotQuy3 += tongSoThangChotThang;
-                        }
-                        else
-                        {
-                            chitieuDSQuy4 += chitieuDSThang;
-                            thucDatDSQuy4 += thucDatDSThang;
-                            chitieuCGQuy4 += chitieuCGThang;
-                            thucDatCGQuy4 += thucDatCGThang;
-                            chitieuHVQuy4 += chitieuHVThang;
-                            thucDatHVQuy4 += thucDatHVThang;
-                            tongSoThangChotQuy4 += tongSoThangChotThang;
-                        }
-                    }
-                }
-                if (listMonth.Contains(1) || listMonth.Contains(2) || listMonth.Contains(3))
-                {
-                    decimal? htDSQuy1 = null, htCGQuy1 = null, htHVQuy1 = null, thangChotBQQuy1 = null;
+                    if (!reportAggDict.TryGetValue((user.Id, month), out var a))
+                        a = new AggData();
 
-                    if (chitieuDSQuy1 > 0)
-                    {
-                        htDSQuy1 = thucDatDSQuy1 / chitieuDSQuy1 * 100;
-                    }
-                    if (chitieuCGQuy1 > 0)
-                    {
-                        htCGQuy1 = thucDatCGQuy1 / chitieuCGQuy1 * 100;
-                    }
-                    if (chitieuHVQuy1 > 0)
-                    {
-                        htHVQuy1 = thucDatHVQuy1 / chitieuHVQuy1 * 100;
-                    }
-                    if (thucDatHVQuy1 > 0)
-                    {
-                        thangChotBQQuy1 = tongSoThangChotQuy1 / thucDatHVQuy1;
-                    }
-                    userItem.ListHTDSs.Add(htDSQuy1 == null ? "" : htDSQuy1?.ToString("N2") + "%");
-                    userItem.ListHTCGs.Add(htCGQuy1 == null ? "" : htCGQuy1?.ToString("N2") + "%");
-                    userItem.ListHTHVs.Add(htHVQuy1 == null ? "" : htHVQuy1?.ToString("N2") + "%");
-                    userItem.ListTCBQs.Add(thangChotBQQuy1 == null ? "" : thangChotBQQuy1?.ToString("N0"));
-                }
-                if (listMonth.Contains(4) || listMonth.Contains(5) || listMonth.Contains(6))
-                {
-                    decimal? htDSQuy2 = null, htCGQuy2 = null, htHVQuy2 = null, thangChotBQQuy2 = null;
+                    CalcResult(a.CT_DS, a.TD_DS, a.TongThangChot, out var htDS, out _);
+                    CalcResult(a.CT_CG, a.TD_CG, a.TongThangChot, out var htCG, out _);
+                    CalcResult(a.CT_HV, a.TD_HV, a.TongThangChot, out var htHV, out var tbHV);
 
-                    if (chitieuDSQuy2 > 0)
-                    {
-                        htDSQuy2 = thucDatDSQuy2 / chitieuDSQuy2 * 100;
-                    }
-                    if (chitieuCGQuy2 > 0)
-                    {
-                        htCGQuy2 = thucDatCGQuy2 / chitieuCGQuy2 * 100;
-                    }
-                    if (chitieuHVQuy2 > 0)
-                    {
-                        htHVQuy2 = thucDatHVQuy2 / chitieuHVQuy2 * 100;
-                    }
-                    if (thucDatHVQuy2 > 0)
-                    {
-                        thangChotBQQuy2 = tongSoThangChotQuy2 / thucDatHVQuy2;
-                    }
-                    userItem.ListHTDSs.Add(htDSQuy2 == null ? "" : htDSQuy2?.ToString("N2") + "%");
-                    userItem.ListHTCGs.Add(htCGQuy2 == null ? "" : htCGQuy2?.ToString("N2") + "%");
-                    userItem.ListHTHVs.Add(htHVQuy2 == null ? "" : htHVQuy2?.ToString("N2") + "%");
-                    userItem.ListTCBQs.Add(thangChotBQQuy2 == null ? "" : thangChotBQQuy2?.ToString("N0"));
-                }
-                if (listMonth.Contains(7) || listMonth.Contains(8) || listMonth.Contains(9))
-                {
+                    userItem.ListHTDSs.Add(htDS);
+                    userItem.ListHTCGs.Add(htCG);
+                    userItem.ListHTHVs.Add(htHV);
+                    userItem.ListTCBQs.Add(tbHV);
 
-                    decimal? htDSQuy3 = null, htCGQuy3 = null, htHVQuy3 = null, thangChotBQQuy3 = null;
-
-                    if (chitieuDSQuy3 > 0)
-                    {
-                        htDSQuy3 = thucDatDSQuy3 / chitieuDSQuy3 * 100;
-                    }
-                    if (chitieuCGQuy3 > 0)
-                    {
-                        htCGQuy3 = thucDatCGQuy3 / chitieuCGQuy3 * 100;
-                    }
-                    if (chitieuHVQuy3 > 0)
-                    {
-                        htHVQuy3 = thucDatHVQuy3 / chitieuHVQuy3 * 100;
-                    }
-                    if (thucDatHVQuy3 > 0)
-                    {
-                        thangChotBQQuy3 = tongSoThangChotQuy3 / thucDatHVQuy3;
-                    }
-                    userItem.ListHTDSs.Add(htDSQuy3 == null ? "" : htDSQuy3?.ToString("N2") + "%");
-                    userItem.ListHTCGs.Add(htCGQuy3 == null ? "" : htCGQuy3?.ToString("N2") + "%");
-                    userItem.ListHTHVs.Add(htHVQuy3 == null ? "" : htHVQuy3?.ToString("N2") + "%");
-                    userItem.ListTCBQs.Add(thangChotBQQuy3 == null ? "" : thangChotBQQuy3?.ToString("N0"));
-                }
-                if (listMonth.Contains(10) || listMonth.Contains(11) || listMonth.Contains(12))
-                {
-                    decimal? htDSQuy4 = null, htCGQuy4 = null, htHVQuy4 = null, thangChotBQQuy4 = null;
-
-                    if (chitieuDSQuy4 > 0)
-                    {
-                        htDSQuy4 = thucDatDSQuy4 / chitieuDSQuy4 * 100;
-                    }
-                    if (chitieuCGQuy4 > 0)
-                    {
-                        htCGQuy4 = thucDatCGQuy4 / chitieuCGQuy4 * 100;
-                    }
-                    if (chitieuHVQuy4 > 0)
-                    {
-                        htHVQuy4 = thucDatHVQuy4 / chitieuHVQuy4 * 100;
-                    }
-                    if (thucDatHVQuy4 > 0)
-                    {
-                        thangChotBQQuy4 = tongSoThangChotQuy4 / thucDatHVQuy4;
-                    }
-                    userItem.ListHTDSs.Add(htDSQuy4 == null ? "" : htDSQuy4?.ToString("N2") + "%");
-                    userItem.ListHTCGs.Add(htCGQuy4 == null ? "" : htCGQuy4?.ToString("N2") + "%");
-                    userItem.ListHTHVs.Add(htHVQuy4 == null ? "" : htHVQuy4?.ToString("N2") + "%");
-                    userItem.ListTCBQs.Add(thangChotBQQuy4 == null ? "" : thangChotBQQuy4?.ToString("N0"));
+                    ctDSNam += a.CT_DS; tdDSNam += a.TD_DS;
+                    ctCGNam += a.CT_CG; tdCGNam += a.TD_CG;
+                    ctHVNam += a.CT_HV; tdHVNam += a.TD_HV;
+                    tongNam += a.TongThangChot;
                 }
 
+                CalcResult(ctDSNam, tdDSNam, tongNam, out var htDSNam, out var tbNam);
+                CalcResult(ctCGNam, tdCGNam, tongNam, out var htCGNam, out _);
+                CalcResult(ctHVNam, tdHVNam, tongNam, out var htHVNam, out _);
 
-                decimal? htDSNam = null, htCGNam = null, htHVNam = null, thangChotBQNam = null;
+                userItem.ListHTDSs.Add(htDSNam);
+                userItem.ListHTCGs.Add(htCGNam);
+                userItem.ListHTHVs.Add(htHVNam);
+                userItem.ListTCBQs.Add(tbNam);
 
-                if (chitieuDSNam > 0)
-                {
-                    htDSNam = thucDatDSNam / chitieuDSNam * 100;
-                }
-                if (chitieuCGNam > 0)
-                {
-                    htCGNam = thucDatCGNam / chitieuCGNam * 100;
-                }
-                if (chitieuHVNam > 0)
-                {
-                    htHVNam = thucDatHVNam / chitieuHVNam * 100;
-                }
-                if (thucDatHVNam > 0)
-                {
-                    thangChotBQNam = tongSoThangChotNam / thucDatHVNam;
-                }
-                userItem.ListHTDSs.Add(htDSNam == null ? "" : htDSNam?.ToString("N2") + "%");
-                userItem.ListHTCGs.Add(htCGNam == null ? "" : htCGNam?.ToString("N2") + "%");
-                userItem.ListHTHVs.Add(htHVNam == null ? "" : htHVNam?.ToString("N2") + "%");
-                userItem.ListTCBQs.Add(thangChotBQNam == null ? "" : thangChotBQNam?.ToString("N0"));
                 userItems.Add(userItem);
             }
-            var pagedUserItems = new StaticPagedList<BCTHNVViewModel.UserItem>(userItems, pagedUsers.PageNumber, pagedUsers.PageSize, pagedUsers.TotalItemCount);
-            var model = new BCTHNVViewModel()
+
+            // ================== MODEL ==================
+            var pagedUserItems = new StaticPagedList<BCTHNVViewModel.UserItem>(
+                userItems,
+                pagedUsers.PageNumber,
+                pagedUsers.PageSize,
+                pagedUsers.TotalItemCount);
+
+            var model = new BCTHNVViewModel
             {
                 Zones = zones.ToList(),
                 Offices = offices.ToList(),
@@ -1377,10 +1296,544 @@ namespace OceanEduSlide.Controllers
                 ZoneId = ZoneId,
                 User = User,
                 UserType = UserType,
-                ListMonth = listMonth,
+                ListMonth = listMonth
             };
+
             return View(model);
         }
+        //    public ActionResult ReportTHNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Year)
+        //    {
+        //        if (User.TypeUser == null)
+        //            return HttpNotFound();
+        //        var pageNumber = page ?? 1;
+        //        ViewBag.Page = pageNumber;
+        //        var selectedYear = Year ?? DateTime.Now.Year;
+        //        var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).AsNoTracking();
+        //        var zones = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
+        //        var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == selectedYear && (a.TypeUser == TypeUser.HO || a.TypeUser == TypeUser.CV || a.TypeUser == TypeUser.ASM || a.TypeUser == TypeUser.BM)).AsNoTracking();
+
+        //        var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == selectedYear).Select(h => new
+        //        {
+        //            h.OfficeId,
+        //            ZoneShortCode = h.Zone.ShortCode,
+        //            h.ZoneId
+        //        }).AsNoTracking();
+        //        var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == selectedYear
+        //        && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month)))
+        //        && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.BM).AsNoTracking();
+
+        //        var listUser = _unitOfWork.UserRepository.GetQuery(a => historyQuery.Any(h => h.Active && h.UserId == a.Id)).AsNoTracking();
+        //        var listUserSelect = listUser;
+
+        //        var listMonth = new List<int>();
+        //        var listMonthFull = new List<int>(Enumerable.Range(1, 12));
+
+        //        if (UserType != null)
+        //        {
+        //            listUserSelect = listUserSelect.Where(a => (int)a.TypeUser == UserType);
+        //            listUser = listUser.Where(a => (int)a.TypeUser == UserType);
+        //        }
+
+        //        if (User.TypeUser == TypeUser.HO)
+        //        {
+        //            listMonth = listMonthFull;
+        //        }
+        //        else if (User.TypeUser == TypeUser.CV)
+        //        {
+        //            zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",")));
+        //            if (ZoneId == null)
+        //            {
+        //                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+        //                if (OfficeId == null)
+        //                {
+        //                    listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                    && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                    || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                    || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+        //                    UserId = CheckUserId(listUserSelect, UserId);
+        //                    if (UserId == null)
+        //                    {
+        //                        listMonth = listMonthFull;
+        //                        listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                        && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                        || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                        || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else if (User.TypeUser == TypeUser.ASM)
+        //        {
+        //            if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+        //            {
+        //                zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
+        //                if (ZoneId == null)
+        //                {
+        //                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
+        //                    if (OfficeId == null)
+        //                    {
+        //                        listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                        && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                        || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Office.Zone.ShortCode + ","))
+        //                        || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+        //                        UserId = CheckUserId(listUserSelect, UserId);
+        //                        if (UserId == null)
+        //                        {
+        //                            listMonth = listMonthFull;
+        //                            listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                        && ((h.ZoneId != null && User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
+        //                        || (h.OfficeId != null && h.Office.ZoneId != null && User.ZoneIds.Contains("," + h.Office.Zone.ShortCode + ","))
+        //                        || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            else if (User.ZoneId != null)
+        //            {
+        //                zones = zones.Where(a => User.ZoneId == a.Id || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",")));
+        //                if (ZoneId == null)
+        //                {
+        //                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ",")))));
+        //                    if (OfficeId == null)
+        //                    {
+        //                        listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                        && (User.ZoneId == h.ZoneId
+        //                        || (h.OfficeId != null && User.ZoneId == h.Office.ZoneId)
+        //                        || historyUsers.Any(hu => hu.ZoneIds != null && ((h.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")) || (h.OfficeId != null && h.Office.ZoneId != null && hu.ZoneIds.Contains("," + h.Zone.ShortCode + ",")))))));
+        //                        if (UserId == null)
+        //                        {
+        //                            listMonth = listMonthFull;
+        //                            listUser = listUserSelect;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else if (User.TypeUser == TypeUser.BM)
+        //        {
+        //            if (!string.IsNullOrEmpty(User.OfficeIds))
+        //            {
+        //                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                if (OfficeId == null)
+        //                {
+        //                    listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                    && ((h.OfficeId != null && User.OfficeIds.Contains("," + h.OfficeId + ","))
+        //                    || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    UserId = CheckUserId(listUserSelect, UserId);
+        //                    if (UserId == null)
+        //                    {
+        //                        listMonth = listMonthFull;
+        //                        listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                    && ((h.OfficeId != null && User.OfficeIds.Contains("," + h.OfficeId + ","))
+        //                    || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    }
+        //                }
+        //            }
+        //            else if (User.OfficeId != null)
+        //            {
+        //                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                if (OfficeId == null)
+        //                {
+        //                    listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                    && (User.OfficeId == h.OfficeId
+        //                    || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    if (UserId == null)
+        //                    {
+        //                        listMonth = listMonthFull;
+        //                        listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id
+        //                    && (User.OfficeId == h.OfficeId
+        //                    || historyUsers.Any(hu => hu.OfficeIds != null && h.OfficeId != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))));
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (ZoneId != null)
+        //        {
+        //            var zone = _unitOfWork.ZoneRepository.GetById(ZoneId);
+        //            offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
+        //            if (OfficeId == null)
+        //            {
+        //                listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id && (ZoneId == h.ZoneId || (h.OfficeId != null && h.Office.ZoneId == ZoneId))));
+        //                UserId = CheckUserId(listUserSelect, UserId);
+        //                if (UserId == null)
+        //                {
+        //                    listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id && (ZoneId == h.ZoneId || (h.OfficeId != null && h.Office.ZoneId == ZoneId))));
+
+        //                    if (User.TypeUser != TypeUser.HO)
+        //                        if (User.ZoneId == ZoneId || (User.ZoneIds != null && User.ZoneIds.Contains("," + zone.Id + ",")))
+        //                        {
+        //                            listMonth.AddRange(Enumerable.Range(1, 12));
+        //                        }
+        //                        else
+        //                        {
+        //                            listMonth = historyUsers.Where(a => a.ZoneIds != null && a.ZoneIds.Contains("," + ZoneId + ",")).Select(a => a.Month).Distinct().OrderBy(a => a).ToList();
+        //                        }
+        //                }
+        //            }
+        //        }
+        //        if (OfficeId != null)
+        //        {
+        //            var office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+        //            listUserSelect = listUserSelect.Where(a => historyQuery.Any(h => h.UserId == a.Id && OfficeId == h.OfficeId));
+        //            UserId = CheckUserId(listUserSelect, UserId);
+        //            if (UserId == null)
+        //            {
+        //                listUser = listUser.Where(a => historyQuery.Any(h => h.UserId == a.Id && OfficeId == h.OfficeId));
+
+        //                if (User.TypeUser != TypeUser.HO)
+        //                    if (User.OfficeId == OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + office.Id + ",")) || (User.ZoneIds != null && office.ZoneId != null && User.ZoneIds.Contains("," + office.Zone.ShortCode + ",")))
+        //                    {
+        //                        listMonth = listMonthFull;
+        //                    }
+        //                    else
+        //                    {
+        //                        listMonth = historyUsers.Where(a =>
+        //                        (a.ZoneIds != null && office.ZoneId != null && a.ZoneIds.Contains("," + office.Zone.ShortCode + ",")) ||
+        //                        (a.OfficeIds != null && a.OfficeIds.Contains("," + OfficeId + ","))).Select(a => a.Month).Distinct().OrderBy(a => a).ToList();
+        //                    }
+        //            }
+        //        }
+        //        UserId = CheckUserId(listUserSelect, UserId);
+        //        if (UserId != null)
+        //        {
+        //            var user = _unitOfWork.UserRepository.GetById(UserId);
+        //            listUser = listUser.Where(a => a.Id == UserId);
+        //            if (User.TypeUser != TypeUser.HO)
+
+        //                if ((User.ZoneIds != null && ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+        //                (User.OfficeIds != null && user.OfficeId != null && User.OfficeIds.Contains("," + user.OfficeId + ",")))
+        //                {
+        //                    listMonth = listMonthFull;
+        //                }
+        //                else
+        //                {
+        //                    var listHU = historyUsers.ToList();
+        //                    listMonth = listHU.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+        //                    (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
+        //                }
+        //        }
+        //        var userItems = new List<BCTHNVViewModel.UserItem>();
+        //        var listReportCategoryId = new List<int> { 87, 88, 95, 96, 99, 100, 103 };
+        //        var allUserIds = listUser.Select(u => u.Id).ToList();
+
+        //        var listReportData = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Year == selectedYear && a.ReportCategory.TypeCat == TypeCat.Type2 && a.HistoryUserId.HasValue &&
+        //        allUserIds.Contains(a.HistoryUser.UserId) && listReportCategoryId.Contains(a.ReportCategoryId)).AsNoTracking().ToList();
+        //        var reportDict = listReportData
+        //                .GroupBy(x => (x.Month, x.HistoryUserId, x.ReportCategoryId))
+        //                .ToDictionary(
+        //                    g => g.Key,
+        //                    g => g.Sum(x => x.DataReal ?? 0m)
+        //                );
+
+        //        decimal GetData(int month, int historyUserId, int categoryId)
+        //        {
+        //            return reportDict.TryGetValue(
+        //                (month, historyUserId, categoryId),
+        //                out var value
+        //            ) ? value : 0;
+        //        }
+        //        var pagedUsers = listUser.OrderBy(u => u.Id).ToPagedList(pageNumber, 10);
+        //        var historyUsersAll = _unitOfWork.HistoryUserRepository
+        //.GetQuery(a => a.Year == selectedYear && a.Active && allUserIds.Contains(a.UserId))
+        //.AsNoTracking()
+        //.ToList();
+
+        //        var historyUserDict = historyUsersAll
+        //            .GroupBy(x => (x.UserId, x.Month))
+        //            .ToDictionary(g => g.Key, g => g.ToList());
+
+        //        foreach (var user in pagedUsers)
+        //        {
+        //            var listMonthUser = new List<int>();
+        //            if (User.TypeUser != TypeUser.HO)
+
+        //                if ((User.ZoneIds != null && ((user.ZoneId != null && User.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+        //                (User.OfficeIds != null && user.OfficeId != null && User.OfficeIds.Contains("," + user.OfficeId + ",")))
+        //                {
+        //                    listMonthUser = listMonthFull;
+        //                }
+        //                else
+        //                {
+        //                    var listHU = historyUsers.ToList();
+        //                    listMonthUser = listHU.Where(hu => (hu.ZoneIds != null && ((user.ZoneId != null && hu.ZoneIds.Contains("," + user.Zone.ShortCode + ",")) || (user.OfficeId != null && user.Office.ZoneId != null && User.ZoneIds.Contains("," + user.Office.Zone.ShortCode + ",")))) ||
+        //                    (hu.OfficeIds != null && user.OfficeId != null && hu.OfficeIds.Contains("," + user.OfficeId + ","))).Select(hu => hu.Month).Distinct().OrderBy(a => a).ToList();
+        //                }
+        //            else
+        //            {
+        //                listMonthUser = listMonthFull;
+        //            }
+        //            var userItem = new BCTHNVViewModel.UserItem()
+        //            {
+        //                User = user,
+        //                ListHTDSs = new List<string>(),
+        //                ListHTCGs = new List<string>(),
+        //                ListHTHVs = new List<string>(),
+        //                ListTCBQs = new List<string>(),
+
+        //            };
+        //            // tạo các biến thực đạt/ chỉ tiêu nhân sự
+
+        //            decimal chitieuDSQuy1 = 0, thucDatDSQuy1 = 0, chitieuCGQuy1 = 0, thucDatCGQuy1 = 0, chitieuHVQuy1 = 0, thucDatHVQuy1 = 0, tongSoThangChotQuy1 = 0;
+        //            decimal chitieuDSQuy2 = 0, thucDatDSQuy2 = 0, chitieuCGQuy2 = 0, thucDatCGQuy2 = 0, chitieuHVQuy2 = 0, thucDatHVQuy2 = 0, tongSoThangChotQuy2 = 0;
+        //            decimal chitieuDSQuy3 = 0, thucDatDSQuy3 = 0, chitieuCGQuy3 = 0, thucDatCGQuy3 = 0, chitieuHVQuy3 = 0, thucDatHVQuy3 = 0, tongSoThangChotQuy3 = 0;
+        //            decimal chitieuDSQuy4 = 0, thucDatDSQuy4 = 0, chitieuCGQuy4 = 0, thucDatCGQuy4 = 0, chitieuHVQuy4 = 0, thucDatHVQuy4 = 0, tongSoThangChotQuy4 = 0;
+        //            decimal chitieuDSNam = 0, thucDatDSNam = 0, chitieuCGNam = 0, thucDatCGNam = 0, chitieuHVNam = 0, thucDatHVNam = 0, tongSoThangChotNam = 0;
+        //            foreach (var month in listMonth)
+        //            {
+
+        //                decimal chitieuDSThang = 0, thucDatDSThang = 0, chitieuCGThang = 0, thucDatCGThang = 0, chitieuHVThang = 0, thucDatHVThang = 0, tongSoThangChotThang = 0;
+
+        //                if (!listMonthUser.Contains(month))
+        //                {
+        //                    userItem.ListHTDSs.Add("");
+        //                    userItem.ListHTCGs.Add("");
+        //                    userItem.ListHTHVs.Add("");
+        //                    userItem.ListTCBQs.Add("");
+        //                }
+        //                else
+        //                {
+        //                    //var listHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Month == month && a.Year == selectedYear && a.Active && a.UserId == user.Id).AsNoTracking().ToList();
+        //                    //decimal chitieuDS = 0, thucDatDS = 0, chitieuCG = 0, thucDatCG = 0, chitieuHV = 0, thucDatHV = 0, tongSoThangChot = 0;
+        //                    if (historyUserDict.TryGetValue((user.Id, month), out var listHistoryUser))
+        //                    {
+
+        //                        foreach (var item in listHistoryUser)
+        //                        {
+        //                            chitieuDSThang += GetData(month, item.Id, 87);
+        //                            thucDatDSThang += GetData(month, item.Id, 88);
+        //                            chitieuCGThang += GetData(month, item.Id, 99);
+        //                            thucDatCGThang += GetData(month, item.Id, 100);
+        //                            chitieuHVThang += GetData(month, item.Id, 95);
+        //                            thucDatHVThang += GetData(month, item.Id, 96);
+        //                            tongSoThangChotThang += GetData(month, item.Id, 103);
+        //                        }
+        //                    }
+
+        //                    //foreach (var item in listHistoryUser)
+        //                    //{
+        //                    //    chitieuDSThang += GetData(month, item.Id, 87);
+        //                    //    thucDatDSThang += GetData(month, item.Id, 88);
+        //                    //    chitieuCGThang += GetData(month, item.Id, 99);
+        //                    //    thucDatCGThang += GetData(month, item.Id, 100);
+        //                    //    chitieuHVThang += GetData(month, item.Id, 95);
+        //                    //    thucDatHVThang += GetData(month, item.Id, 96);
+        //                    //    tongSoThangChotThang += GetData(month, item.Id, 103);
+        //                    //}
+        //                    decimal? htDSThang = null, htCGThang = null, htHVThang = null, thangChotBQThang = null;
+        //                    if (chitieuDSThang > 0)
+        //                    {
+        //                        htDSThang = thucDatDSThang / chitieuDSThang * 100;
+        //                    }
+        //                    if (chitieuCGThang > 0)
+        //                    {
+        //                        htCGThang = thucDatCGThang / chitieuCGThang * 100;
+        //                    }
+        //                    if (chitieuHVThang > 0)
+        //                    {
+        //                        htHVThang = thucDatHVThang / chitieuHVThang * 100;
+        //                    }
+        //                    if (thucDatHVThang > 0)
+        //                    {
+        //                        thangChotBQThang = tongSoThangChotThang / thucDatHVThang;
+        //                    }
+        //                    userItem.ListHTDSs.Add(htDSThang == null ? "" : htDSThang?.ToString("N2") + "%");
+        //                    userItem.ListHTCGs.Add(htCGThang == null ? "" : htCGThang?.ToString("N2") + "%");
+        //                    userItem.ListHTHVs.Add(htHVThang == null ? "" : htHVThang?.ToString("N2") + "%");
+        //                    userItem.ListTCBQs.Add(thangChotBQThang == null ? "" : thangChotBQThang?.ToString("N0"));
+
+        //                    chitieuDSNam += chitieuDSThang;
+        //                    thucDatDSNam += thucDatDSThang;
+        //                    chitieuCGNam += chitieuCGThang;
+        //                    thucDatCGNam += thucDatCGThang;
+        //                    chitieuHVNam += chitieuHVThang;
+        //                    thucDatHVNam += thucDatHVThang;
+        //                    tongSoThangChotNam += tongSoThangChotThang;
+        //                    if (month <= 3)
+        //                    {
+        //                        chitieuDSQuy1 += chitieuDSThang;
+        //                        thucDatDSQuy1 += thucDatDSThang;
+        //                        chitieuCGQuy1 += chitieuCGThang;
+        //                        thucDatCGQuy1 += thucDatCGThang;
+        //                        chitieuHVQuy1 += chitieuHVThang;
+        //                        thucDatHVQuy1 += thucDatHVThang;
+        //                        tongSoThangChotQuy1 += tongSoThangChotThang;
+        //                    }
+        //                    else if (month <= 6)
+        //                    {
+        //                        chitieuDSQuy2 += chitieuDSThang;
+        //                        thucDatDSQuy2 += thucDatDSThang;
+        //                        chitieuCGQuy2 += chitieuCGThang;
+        //                        thucDatCGQuy2 += thucDatCGThang;
+        //                        chitieuHVQuy2 += chitieuHVThang;
+        //                        thucDatHVQuy2 += thucDatHVThang;
+        //                        tongSoThangChotQuy2 += tongSoThangChotThang;
+        //                    }
+        //                    else if (month <= 9)
+        //                    {
+        //                        chitieuDSQuy3 += chitieuDSThang;
+        //                        thucDatDSQuy3 += thucDatDSThang;
+        //                        chitieuCGQuy3 += chitieuCGThang;
+        //                        thucDatCGQuy3 += thucDatCGThang;
+        //                        chitieuHVQuy3 += chitieuHVThang;
+        //                        thucDatHVQuy3 += thucDatHVThang;
+        //                        tongSoThangChotQuy3 += tongSoThangChotThang;
+        //                    }
+        //                    else
+        //                    {
+        //                        chitieuDSQuy4 += chitieuDSThang;
+        //                        thucDatDSQuy4 += thucDatDSThang;
+        //                        chitieuCGQuy4 += chitieuCGThang;
+        //                        thucDatCGQuy4 += thucDatCGThang;
+        //                        chitieuHVQuy4 += chitieuHVThang;
+        //                        thucDatHVQuy4 += thucDatHVThang;
+        //                        tongSoThangChotQuy4 += tongSoThangChotThang;
+        //                    }
+        //                }
+        //            }
+        //            if (listMonth.Contains(1) || listMonth.Contains(2) || listMonth.Contains(3))
+        //            {
+        //                decimal? htDSQuy1 = null, htCGQuy1 = null, htHVQuy1 = null, thangChotBQQuy1 = null;
+
+        //                if (chitieuDSQuy1 > 0)
+        //                {
+        //                    htDSQuy1 = thucDatDSQuy1 / chitieuDSQuy1 * 100;
+        //                }
+        //                if (chitieuCGQuy1 > 0)
+        //                {
+        //                    htCGQuy1 = thucDatCGQuy1 / chitieuCGQuy1 * 100;
+        //                }
+        //                if (chitieuHVQuy1 > 0)
+        //                {
+        //                    htHVQuy1 = thucDatHVQuy1 / chitieuHVQuy1 * 100;
+        //                }
+        //                if (thucDatHVQuy1 > 0)
+        //                {
+        //                    thangChotBQQuy1 = tongSoThangChotQuy1 / thucDatHVQuy1;
+        //                }
+        //                userItem.ListHTDSs.Add(htDSQuy1 == null ? "" : htDSQuy1?.ToString("N2") + "%");
+        //                userItem.ListHTCGs.Add(htCGQuy1 == null ? "" : htCGQuy1?.ToString("N2") + "%");
+        //                userItem.ListHTHVs.Add(htHVQuy1 == null ? "" : htHVQuy1?.ToString("N2") + "%");
+        //                userItem.ListTCBQs.Add(thangChotBQQuy1 == null ? "" : thangChotBQQuy1?.ToString("N0"));
+        //            }
+        //            if (listMonth.Contains(4) || listMonth.Contains(5) || listMonth.Contains(6))
+        //            {
+        //                decimal? htDSQuy2 = null, htCGQuy2 = null, htHVQuy2 = null, thangChotBQQuy2 = null;
+
+        //                if (chitieuDSQuy2 > 0)
+        //                {
+        //                    htDSQuy2 = thucDatDSQuy2 / chitieuDSQuy2 * 100;
+        //                }
+        //                if (chitieuCGQuy2 > 0)
+        //                {
+        //                    htCGQuy2 = thucDatCGQuy2 / chitieuCGQuy2 * 100;
+        //                }
+        //                if (chitieuHVQuy2 > 0)
+        //                {
+        //                    htHVQuy2 = thucDatHVQuy2 / chitieuHVQuy2 * 100;
+        //                }
+        //                if (thucDatHVQuy2 > 0)
+        //                {
+        //                    thangChotBQQuy2 = tongSoThangChotQuy2 / thucDatHVQuy2;
+        //                }
+        //                userItem.ListHTDSs.Add(htDSQuy2 == null ? "" : htDSQuy2?.ToString("N2") + "%");
+        //                userItem.ListHTCGs.Add(htCGQuy2 == null ? "" : htCGQuy2?.ToString("N2") + "%");
+        //                userItem.ListHTHVs.Add(htHVQuy2 == null ? "" : htHVQuy2?.ToString("N2") + "%");
+        //                userItem.ListTCBQs.Add(thangChotBQQuy2 == null ? "" : thangChotBQQuy2?.ToString("N0"));
+        //            }
+        //            if (listMonth.Contains(7) || listMonth.Contains(8) || listMonth.Contains(9))
+        //            {
+
+        //                decimal? htDSQuy3 = null, htCGQuy3 = null, htHVQuy3 = null, thangChotBQQuy3 = null;
+
+        //                if (chitieuDSQuy3 > 0)
+        //                {
+        //                    htDSQuy3 = thucDatDSQuy3 / chitieuDSQuy3 * 100;
+        //                }
+        //                if (chitieuCGQuy3 > 0)
+        //                {
+        //                    htCGQuy3 = thucDatCGQuy3 / chitieuCGQuy3 * 100;
+        //                }
+        //                if (chitieuHVQuy3 > 0)
+        //                {
+        //                    htHVQuy3 = thucDatHVQuy3 / chitieuHVQuy3 * 100;
+        //                }
+        //                if (thucDatHVQuy3 > 0)
+        //                {
+        //                    thangChotBQQuy3 = tongSoThangChotQuy3 / thucDatHVQuy3;
+        //                }
+        //                userItem.ListHTDSs.Add(htDSQuy3 == null ? "" : htDSQuy3?.ToString("N2") + "%");
+        //                userItem.ListHTCGs.Add(htCGQuy3 == null ? "" : htCGQuy3?.ToString("N2") + "%");
+        //                userItem.ListHTHVs.Add(htHVQuy3 == null ? "" : htHVQuy3?.ToString("N2") + "%");
+        //                userItem.ListTCBQs.Add(thangChotBQQuy3 == null ? "" : thangChotBQQuy3?.ToString("N0"));
+        //            }
+        //            if (listMonth.Contains(10) || listMonth.Contains(11) || listMonth.Contains(12))
+        //            {
+        //                decimal? htDSQuy4 = null, htCGQuy4 = null, htHVQuy4 = null, thangChotBQQuy4 = null;
+
+        //                if (chitieuDSQuy4 > 0)
+        //                {
+        //                    htDSQuy4 = thucDatDSQuy4 / chitieuDSQuy4 * 100;
+        //                }
+        //                if (chitieuCGQuy4 > 0)
+        //                {
+        //                    htCGQuy4 = thucDatCGQuy4 / chitieuCGQuy4 * 100;
+        //                }
+        //                if (chitieuHVQuy4 > 0)
+        //                {
+        //                    htHVQuy4 = thucDatHVQuy4 / chitieuHVQuy4 * 100;
+        //                }
+        //                if (thucDatHVQuy4 > 0)
+        //                {
+        //                    thangChotBQQuy4 = tongSoThangChotQuy4 / thucDatHVQuy4;
+        //                }
+        //                userItem.ListHTDSs.Add(htDSQuy4 == null ? "" : htDSQuy4?.ToString("N2") + "%");
+        //                userItem.ListHTCGs.Add(htCGQuy4 == null ? "" : htCGQuy4?.ToString("N2") + "%");
+        //                userItem.ListHTHVs.Add(htHVQuy4 == null ? "" : htHVQuy4?.ToString("N2") + "%");
+        //                userItem.ListTCBQs.Add(thangChotBQQuy4 == null ? "" : thangChotBQQuy4?.ToString("N0"));
+        //            }
+
+
+        //            decimal? htDSNam = null, htCGNam = null, htHVNam = null, thangChotBQNam = null;
+
+        //            if (chitieuDSNam > 0)
+        //            {
+        //                htDSNam = thucDatDSNam / chitieuDSNam * 100;
+        //            }
+        //            if (chitieuCGNam > 0)
+        //            {
+        //                htCGNam = thucDatCGNam / chitieuCGNam * 100;
+        //            }
+        //            if (chitieuHVNam > 0)
+        //            {
+        //                htHVNam = thucDatHVNam / chitieuHVNam * 100;
+        //            }
+        //            if (thucDatHVNam > 0)
+        //            {
+        //                thangChotBQNam = tongSoThangChotNam / thucDatHVNam;
+        //            }
+        //            userItem.ListHTDSs.Add(htDSNam == null ? "" : htDSNam?.ToString("N2") + "%");
+        //            userItem.ListHTCGs.Add(htCGNam == null ? "" : htCGNam?.ToString("N2") + "%");
+        //            userItem.ListHTHVs.Add(htHVNam == null ? "" : htHVNam?.ToString("N2") + "%");
+        //            userItem.ListTCBQs.Add(thangChotBQNam == null ? "" : thangChotBQNam?.ToString("N0"));
+        //            userItems.Add(userItem);
+        //        }
+        //        var pagedUserItems = new StaticPagedList<BCTHNVViewModel.UserItem>(userItems, pagedUsers.PageNumber, pagedUsers.PageSize, pagedUsers.TotalItemCount);
+        //        var model = new BCTHNVViewModel()
+        //        {
+        //            Zones = zones.ToList(),
+        //            Offices = offices.ToList(),
+        //            Users = listUserSelect.ToList(),
+        //            UserItems = pagedUserItems,
+        //            Year = selectedYear,
+        //            UserId = UserId,
+        //            OfficeId = OfficeId,
+        //            ZoneId = ZoneId,
+        //            User = User,
+        //            UserType = UserType,
+        //            ListMonth = listMonth,
+        //        };
+        //        return View(model);
+        //    }
 
         public ActionResult ReportTHCN(int? ZoneId, int? OfficeId, int? Year)
         {

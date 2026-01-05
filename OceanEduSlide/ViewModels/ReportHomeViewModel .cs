@@ -114,6 +114,16 @@ namespace OceanEduSlide.ViewModels
 
         }
     }
+    public class AggData
+    {
+        public decimal CT_DS;
+        public decimal TD_DS;
+        public decimal CT_CG;
+        public decimal TD_CG;
+        public decimal CT_HV;
+        public decimal TD_HV;
+        public decimal TongThangChot;
+    }
 
     public class ListCallViewModel
     {
