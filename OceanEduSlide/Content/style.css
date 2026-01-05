@@ -3054,7 +3054,7 @@ body {
 
 .map-slide1-img {
   position: absolute;
-  width: 90%;
+  height: 90%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

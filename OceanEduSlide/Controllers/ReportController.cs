@@ -427,9 +427,12 @@ namespace OceanEduSlide.Controllers
                 for (int i = 2; i < tbl.Rows.Count; i++)
                 {
 
-                    var month = tbl.Rows[i][0].ToString().Trim();
+                    var year = tbl.Rows[i][0].ToString().Trim();
+                    var month = tbl.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     if (!int.TryParse(month, out int monthInt)) continue;
+                    if (string.IsNullOrEmpty(year)) continue;
+                    if (!int.TryParse(year, out int yearInt)) continue;
                     if (checkLock == false)
                     {
                         var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == DateTime.Now.Year && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.ReportData).FirstOrDefault();
@@ -440,7 +443,7 @@ namespace OceanEduSlide.Controllers
                             return View();
                         }
                     }
-                    var officeShortName = tbl.Rows[i][3].ToString().Trim();
+                    var officeShortName = tbl.Rows[i][4].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
 
                     var office = allOffices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
@@ -449,7 +452,7 @@ namespace OceanEduSlide.Controllers
                     int cChildSort = 1;
                     int group = 1;
 
-                    for (int j = 4; j < tbl.Columns.Count; j++)
+                    for (int j = 5; j < tbl.Columns.Count; j++)
                     {
                         var value = tbl.Rows[i][j].ToString().Trim();
                         string valueReal = "";
@@ -462,7 +465,7 @@ namespace OceanEduSlide.Controllers
                         {
                             if (rawCategoryParentCategory != lastCategoryParent)
                             {
-                                if (j != 4)
+                                if (j != 5)
                                 {
                                     cChildSort = 1;
                                     group++;
@@ -523,7 +526,7 @@ namespace OceanEduSlide.Controllers
                             var data = new ReportData
                             {
                                 Month = monthInt,
-                                Year = DateTime.Now.Year,
+                                Year = yearInt,
                                 OfficeId = office.Id,
                                 ReportCategoryId = category.Id,
                                 Data = valueReal,
@@ -557,19 +560,22 @@ namespace OceanEduSlide.Controllers
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 for (int i = 2; i < tbl2.Rows.Count; i++)
                 {
-                    var month = tbl2.Rows[i][0].ToString().Trim();
+                    var year = tbl.Rows[i][0].ToString().Trim();
+                    var month = tbl2.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     var monthInt = int.Parse(month);
+                    if (string.IsNullOrEmpty(year)) continue;
+                    if (!int.TryParse(year, out int yearInt)) continue;
 
-                    var officeShortName = tbl2.Rows[i][2].ToString().Trim();
+                    var officeShortName = tbl2.Rows[i][3].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
                     var office = allOffices.FirstOrDefault(a => a.ShortName == officeShortName);
                     if (office == null) continue;
 
-                    var maNhanVien = tbl2.Rows[i][3].ToString().Trim();
+                    var maNhanVien = tbl2.Rows[i][4].ToString().Trim();
                     var user = allUsers.FirstOrDefault(a => a.MaNhanVien == maNhanVien);
                     if (user == null) continue;
-                    var typeUser = tbl2.Rows[i][6].ToString().Trim();
+                    var typeUser = tbl2.Rows[i][7].ToString().Trim();
                     if (string.IsNullOrEmpty(typeUser))
                         continue;
                     TypeUser type = new TypeUser();
@@ -599,7 +605,7 @@ namespace OceanEduSlide.Controllers
                         default:
                             break;
                     }
-                    var dayStart = tbl2.Rows[i][4].ToString().Trim().Replace("'", "");
+                    var dayStart = tbl2.Rows[i][5].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
                         continue;
                     var startDate = new DateTime();
@@ -613,7 +619,7 @@ namespace OceanEduSlide.Controllers
                     int cChildSort = 1;
                     int group = 1;
 
-                    for (int j = 10; j < tbl2.Columns.Count; j++)
+                    for (int j = 11; j < tbl2.Columns.Count; j++)
                     {
                         var value = tbl2.Rows[i][j].ToString().Trim();
                         string valueReal = "";
@@ -625,7 +631,7 @@ namespace OceanEduSlide.Controllers
                         {
                             if (rawCategoryParentCategory != lastCategoryParent2)
                             {
-                                if (j != 10)
+                                if (j != 11)
                                 {
                                     cChildSort = 1;
                                     group++;
@@ -683,7 +689,7 @@ namespace OceanEduSlide.Controllers
                             var data = new ReportData
                             {
                                 Month = monthInt,
-                                Year = DateTime.Now.Year,
+                                Year = yearInt,
                                 OfficeId = office.Id,
                                 UserId = user.Id,
                                 HistoryUserId = historyUser.Id,
