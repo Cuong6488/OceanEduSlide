@@ -560,7 +560,7 @@ namespace OceanEduSlide.Controllers
                 var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery();
                 for (int i = 2; i < tbl2.Rows.Count; i++)
                 {
-                    var year = tbl.Rows[i][0].ToString().Trim();
+                    var year = tbl2.Rows[i][0].ToString().Trim();
                     var month = tbl2.Rows[i][1].ToString().Trim();
                     if (string.IsNullOrEmpty(month)) continue;
                     var monthInt = int.Parse(month);
