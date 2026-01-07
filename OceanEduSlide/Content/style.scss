@@ -1987,43 +1987,71 @@ body {
         }
 
         .pathway-discovery-imgkid {
-            width: 174vh;
-            transform: translate(12.5vh,3vh);
+            width: 100%;
+            transform: translateY(8vh);
             position: relative;
-            max-width: 75vw;
         }
 
         .pathways-discovery {
             display: flex;
-            margin-bottom: 1.2vh;
-            position: relative;
+            margin-bottom: 0.5vh;
 
-            & > div {
-                width: 25vh;
+            img {
+                width: 100%;
+            }
+
+            .group-class {
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
-                max-width: 10vw;
-                cursor: pointer;
+
+                div:not(.d-flex):not(.group-class-title) {
+                    width: 7vw;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    transform: translateY(2.6vw);
+                    cursor: pointer;
+                }
+
+                .group-class-title {
+                    z-index: 1;
+                    position: relative;
+
+                    &1 {
+                        width: 28vw;
+                    }
+
+                    &2 {
+                        width: 14vw;
+                    }
+
+                    &3 {
+                        width: 42vw;
+                    }
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        left: -1px;
+                        bottom: 2.6vw;
+                        width: calc(100% + 1px);
+                        height: 0.5vh;
+                        background: #f5fbfc;
+                    }
+                    /*border-top:1px solid white;*/
+                }
             }
 
-            .w-1 {
-                width: 22vh;
-                max-width: calc(30vw - 9vh)/3;
-            }
 
-            .me-2vh {
-                margin-right: 3vh;
+            .me-1vh {
+                margin-right: 1vh;
             }
         }
 
         .pathway-discovery-title {
-            width: 209.5vh;
-            max-width: 89.5vw;
 
-            & > :first-child {
-                margin-bottom: .7vh;
-            }
+                margin-bottom: .5vh;
         }
 
 
@@ -2033,7 +2061,7 @@ body {
             }
 
             .pathway-discovery-imgkid {
-                transform: translate(8vh,6.5vh) !important;
+                transform: translateY(5vh) !important;
             }
         }
 
@@ -2043,7 +2071,7 @@ body {
             }
 
             .pathway-discovery-imgkid {
-                transform: translate(9.5vh,8vh) !important;
+                transform: translateY(7vh) !important;
             }
         }
     }
@@ -4393,4 +4421,3 @@ body {
         }
     }
 }
-

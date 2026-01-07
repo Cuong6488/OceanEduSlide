@@ -1316,7 +1316,7 @@ namespace OceanEduSlide.Controllers
                 UserType = UserType,
                 ListMonth = listMonth
             };
-            
+
 
 
             return View(model);
