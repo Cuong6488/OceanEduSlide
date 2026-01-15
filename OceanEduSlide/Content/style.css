@@ -1618,13 +1618,18 @@ body {
 .pathway-page .pathway-discovery .pathway-discovery-title1 {
   width: 85vh;
   max-width: 50vw;
-  transform: translateY(6vh);
+  transform: translateY(12vh);
   margin: auto;
 }
 .pathway-page .pathway-discovery .pathway-discovery-imgkid {
   width: 100%;
   transform: translateY(8vh);
   position: relative;
+}
+.pathway-page .pathway-discovery .pathway-discovery-imgkid img {
+  display: block;
+  margin: 0 auto;
+  width: 90%;
 }
 .pathway-page .pathway-discovery .pathways-discovery {
   display: flex;
@@ -1680,15 +1685,12 @@ body {
     transform: translateY(7vh) !important;
   }
   .pathway-page .pathway-discovery .pathway-discovery-imgkid {
-    transform: translateY(5vh) !important;
+    transform: translateY(6vh) !important;
   }
 }
 @media (min-aspect-ratio: 1.5) and (max-aspect-ratio: 2) {
   .pathway-page .pathway-discovery .pathway-discovery-title1 {
-    transform: translateY(8.5vh) !important;
-  }
-  .pathway-page .pathway-discovery .pathway-discovery-imgkid {
-    transform: translateY(7vh) !important;
+    transform: translateY(10vh) !important;
   }
 }
 .pathway-page .eight-smart-discovery .eight-smart-img {

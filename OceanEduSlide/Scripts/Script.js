@@ -1089,7 +1089,7 @@ function pathway() {
         $(".pathway-text-star img").fadeOut(0);
         $(".pathway-text-star ." + textStarClass).fadeIn(0);
     });
-    $(".pathways div").on("click", function () {
+    $(".pathways div:not(:has(div))").on("click", function () {
         var pwdetailClass = $(this).attr("class").split(" ")[0];
         if (pwdetailClass === "toeic-400" || pwdetailClass === "toeic-450" || pwdetailClass === "toeic-500" || pwdetailClass === "toeic-550" || pwdetailClass === "toeic-600" || pwdetailClass === "toeic-650" || pwdetailClass === "toeic-700" || pathway !== "toeic") {
             $(".pathway-index > .slide:not(." + pwdetailClass + ")").fadeOut(300, function () {

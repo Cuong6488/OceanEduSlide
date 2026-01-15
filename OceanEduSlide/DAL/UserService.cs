@@ -259,7 +259,10 @@ namespace OceanEduSlide.DAL
                         user.ZoneId = zone?.Id;
                     }
                     if (office != null && (string.IsNullOrEmpty(user.OfficeIds) || user.OfficeIds.Trim(',').Split(',').Length == 1))
+                    {
                         user.OfficeIds = "," + office.Id + ",";
+                        user.OfficeNames = office.ShortCode;
+                    }
                     if (zone != null && (string.IsNullOrEmpty(user.ZoneIds) || user.ZoneIds.Trim(',').Split(',').Length == 1))
                         user.ZoneIds = "," + zone.ShortCode + ",";
                     if (office == null && zone == null)
@@ -313,6 +316,10 @@ namespace OceanEduSlide.DAL
                 {
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                     continue;
+                }
+                if(item.MaNhanSu == "25050647")
+                {
+
                 }
                 var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
                 if (type == null)
@@ -400,7 +407,10 @@ namespace OceanEduSlide.DAL
                     }
                 }
                 if (office != null && (string.IsNullOrEmpty(user.OfficeIds) || user.OfficeIds.Trim(',').Split(',').Length == 1))
+                {
                     user.OfficeIds = "," + office.Id + ",";
+                    user.OfficeNames = office.ShortCode;
+                }    
                 if (zone != null && (string.IsNullOrEmpty(user.ZoneIds) || user.ZoneIds.Trim(',').Split(',').Length == 1))
                     user.ZoneIds = "," + zone.ShortCode + ",";
                 if (office == null && zone == null)
@@ -588,7 +598,10 @@ namespace OceanEduSlide.DAL
                     }
                 }
                 if (office != null && (string.IsNullOrEmpty(user.OfficeIds) || user.OfficeIds.Trim(',').Split(',').Length == 1))
+                {
                     user.OfficeIds = "," + office.Id + ",";
+                    user.OfficeNames = office.ShortCode;
+                }
                 if (zone != null && (string.IsNullOrEmpty(user.ZoneIds) || user.ZoneIds.Trim(',').Split(',').Length == 1))
                     user.ZoneIds = "," + zone.ShortCode + ",";
                 if (office == null && zone == null)
