@@ -350,6 +350,26 @@ namespace OceanEduSlide.Controllers
         //        return HttpNotFound();
         //    }
         //}
+        public ActionResult SyncOfficeNames()
+        {
+
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeIds != null && string.IsNullOrEmpty(a.OfficeNames)).ToList();
+            foreach(var item in users)
+            {
+                var officeNames = "";
+                var listId = item.OfficeIds.Trim(',').Split(',');
+                foreach (var id in listId)
+                {
+                    var idInt = int.Parse(id);
+                    var office = _unitOfWork.OfficeRepository.GetById(idInt);
+                    officeNames += office.ShortCode + ",";
+                }
+                officeNames = officeNames.Trim(',');
+                item.OfficeNames = officeNames;
+            }
+            _unitOfWork.Save();
+            return Content("ok");
+        }
         public ActionResult CreateUser(string result = "")
         {
 
