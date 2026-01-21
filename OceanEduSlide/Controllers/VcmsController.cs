@@ -1299,27 +1299,36 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.Office.ZoneId = model.ZoneId;
-                model.Office.ShortName = model.ShortName;
-                model.Office.ShortCode = model.ShortCode;
-                _unitOfWork.OfficeRepository.Insert(model.Office);
-                _unitOfWork.Save();
-
-                var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
-                if (string.IsNullOrEmpty(zone.OfficeIds))
+                var isPost = true;
+                var oldOffice = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == model.ShortCode || a.ShortName == model.ShortName || a.Name == model.Office.Name).FirstOrDefault();
+                if (oldOffice != null)
                 {
-                    zone.OfficeIds = ",";
+                    isPost = false;
+                    ModelState.AddModelError("", "Đã tồn tại chi nhánh có Tên, Tên viết tắt hoặc Mã chi nhánh vừa nhập");
                 }
-                if (string.IsNullOrEmpty(zone.ShortName))
+                if (isPost)
                 {
-                    zone.ShortName = "";
-                }
-                zone.OfficeIds += model.Office.Id + ",";
-                zone.ShortName += "," + model.ShortCode;
-                zone.ShortName = zone.ShortName.Trim(',');
-                _unitOfWork.Save();
-                return RedirectToAction("ListOffice", new { result = "success" });
+                    model.Office.ZoneId = model.ZoneId;
+                    model.Office.ShortName = model.ShortName;
+                    model.Office.ShortCode = model.ShortCode;
+                    _unitOfWork.OfficeRepository.Insert(model.Office);
+                    _unitOfWork.Save();
 
+                    var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
+                    if (string.IsNullOrEmpty(zone.OfficeIds))
+                    {
+                        zone.OfficeIds = ",";
+                    }
+                    if (string.IsNullOrEmpty(zone.ShortName))
+                    {
+                        zone.ShortName = "";
+                    }
+                    zone.OfficeIds += model.Office.Id + ",";
+                    zone.ShortName += "," + model.ShortCode;
+                    zone.ShortName = zone.ShortName.Trim(',');
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListOffice", new { result = "success" });
+                }
             }
             model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
             return View(model);
