@@ -354,7 +354,7 @@ namespace OceanEduSlide.Controllers
         {
 
             var users = _unitOfWork.UserRepository.GetQuery(a => a.OfficeIds != null && string.IsNullOrEmpty(a.OfficeNames)).ToList();
-            foreach(var item in users)
+            foreach (var item in users)
             {
                 var officeNames = "";
                 var listId = item.OfficeIds.Trim(',').Split(',');
@@ -1287,10 +1287,10 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult Office()
         {
-            var model = new InsertOfficeViewModel
+            var model = new InsertOfficeViewModel()
             {
-                //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
-                Office = new Office { Active = true }
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name"),
+                Office = new Office()
             };
             return View(model);
         }
@@ -1299,12 +1299,29 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
+                model.Office.ZoneId = model.ZoneId;
+                model.Office.ShortName = model.ShortName;
+                model.Office.ShortCode = model.ShortCode;
                 _unitOfWork.OfficeRepository.Insert(model.Office);
+                _unitOfWork.Save();
+
+                var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
+                if (string.IsNullOrEmpty(zone.OfficeIds))
+                {
+                    zone.OfficeIds = ",";
+                }
+                if (string.IsNullOrEmpty(zone.ShortName))
+                {
+                    zone.ShortName = "";
+                }
+                zone.OfficeIds += model.Office.Id + ",";
+                zone.ShortName += "," + model.ShortCode;
+                zone.ShortName = zone.ShortName.Trim(',');
                 _unitOfWork.Save();
                 return RedirectToAction("ListOffice", new { result = "success" });
 
             }
-            //model.SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name");
+            model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
             return View(model);
         }
         public ActionResult UpdateOffice(int officeId = 0)
@@ -1317,9 +1334,12 @@ namespace OceanEduSlide.Controllers
             var model = new InsertOfficeViewModel
             {
                 Office = office,
-                //SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name"),
-                //DistrictSelectList = DistrictSelectList(Office.CityId)
+                ShortName = office.ShortName,
+                ShortCode = office.ShortCode,
+                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name")
             };
+            if (office.ZoneId.HasValue)
+                model.ZoneId = office.ZoneId.Value;
             return View(model);
         }
         [HttpPost, ValidateInput(false)]
@@ -1332,22 +1352,54 @@ namespace OceanEduSlide.Controllers
             }
             if (ModelState.IsValid)
             {
-                //Office.CityId = model.Office.CityId;
+                if (Office.ZoneId != null)
+                {
+                    var oldZone = Office.Zone;
+                    //Hủy OfficeIds và ShortName cũ
+                    if (!string.IsNullOrEmpty(oldZone.OfficeIds))
+                    {
+                        if (oldZone.OfficeIds.Contains("," + Office.Id + ","))
+                            oldZone.OfficeIds = oldZone.OfficeIds.Replace("," + Office.Id + ",", ",");
+                    }
+                    if (!string.IsNullOrEmpty(oldZone.ShortName))
+                    {
+                        oldZone.ShortName = "," + oldZone.ShortName + ",";
+                        if (oldZone.ShortName.Contains("," + Office.ShortCode + ","))
+                            oldZone.ShortName = oldZone.ShortName.Replace("," + Office.ShortCode + ",", ",");
+                        oldZone.ShortName = oldZone.ShortName.Trim(',');
+                    }
+                }
+
+                Office.ZoneId = model.ZoneId;
+                var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
+                if (string.IsNullOrEmpty(zone.OfficeIds))
+                {
+                    zone.OfficeIds = ",";
+                }
+                if (string.IsNullOrEmpty(zone.ShortName))
+                {
+                    zone.ShortName = "";
+                }
+                if (!zone.OfficeIds.Contains("," + Office.Id + ","))
+                    zone.OfficeIds += model.Office.Id + ",";
+                if (!("," + zone.ShortName + ",").Contains("," + Office.ShortCode + ","))
+                    zone.ShortName += "," + model.ShortCode;
+                zone.ShortName = zone.ShortName.Trim(',');
+
+                Office.ShortName = model.ShortName;
+                Office.ShortCode = model.ShortCode;
                 Office.Name = model.Office.Name;
-                //Office.Infor = model.Office.Infor;
                 Office.Active = model.Office.Active;
                 Office.Sort = model.Office.Sort;
                 Office.Email = model.Office.Email;
                 Office.Hotline = model.Office.Hotline;
-                Office.ShortCode = model.Office.ShortCode;
                 Office.Place = model.Office.Place;
-                //Office.DistrictId = model.Office.DistrictId;
-                //Office.GoogleMap = model.Office.GoogleMap;
                 _unitOfWork.Save();
                 return RedirectToAction("ListOffice", new { result = "update" });
             }
-            //model.SelectCities = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active), "Id", "Name");
-            //model.DistrictSelectList = DistrictSelectList(Office.CityId);
+
+            //DebugModelState();
+            model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
             return View(model);
         }
         [HttpPost]

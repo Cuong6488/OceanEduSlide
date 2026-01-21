@@ -133,7 +133,8 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(12, 20)
+                //s => s.ToRunEvery(1).Days().At(2, 20)
+                s => s.ToRunEvery(1).Days().At(3, 0)
             );
             // đồng bộ User
             JobManager.AddJob(
@@ -152,7 +153,7 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(22, 20)
+                s => s.ToRunEvery(1).Days().At(13, 20)
             );
             for (int h = 7; h < 24; h += 2)
             {

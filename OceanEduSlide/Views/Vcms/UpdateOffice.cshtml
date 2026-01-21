@@ -10,57 +10,78 @@
     {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Office.Id)
-    <table class="form_table">
-        @*<tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.CityId)</td>
-            <td class="form_text">
-                @Html.DropDownListFor(model => model.Office.CityId, Model.SelectCities, "Chọn tỉnh thành", new { @class = "mt-2", data_item = "city" })
-            </td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.DistrictId)</td>
-            <td class="form_text">
-                @Html.DropDownListFor(model => model.Office.DistrictId, Model.DistrictSelectList, "Quận huyện", new { @class = "mt-2", data_item = "district" })
-            </td>
-        </tr>*@
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Name)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Name)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.ShortCode)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.ShortCode)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.ShortName)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.ShortName)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Place)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Place)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Hotline)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Hotline)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Email)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Email)</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Active)</td>
-            <td class="form_text">@Html.CheckBoxFor(model => model.Office.Active, new { @checked = "checked" })</td>
-        </tr>
-        <tr>
-            <td class="form_name">@Html.LabelFor(model => model.Office.Sort)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Office.Sort, new { @checked = "checked" })</td>
-        </tr>
-        <tr>
-            <td class="form_name"></td>
-            <td class="form_text">
-                <input type="submit" class="btn quick-link" value="Cập nhật" />
-            </td>
-        </tr>
-    </table>
+        <table class="form_table">
+            @*<tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Office.CityId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Office.CityId, Model.SelectCities, "Chọn tỉnh thành", new { @class = "mt-2", data_item = "city" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Office.DistrictId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Office.DistrictId, Model.DistrictSelectList, "Quận huyện", new { @class = "mt-2", data_item = "district" })
+                    </td>
+                </tr>*@
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Name)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Office.Name)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.ShortCode)</td>
+                @if (string.IsNullOrEmpty(Model.ShortCode))
+                {
+                    <td class="form_text">@Html.EditorFor(model => model.ShortCode)</td>
+                }
+                else
+                {
+                    <td class="form_text">@Html.TextBoxFor(model => model.ShortCode, new { @readonly = "readonly" })</td>
+                }
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.ShortName)</td>
+                @if (string.IsNullOrEmpty(Model.ShortCode))
+                {
+                    <td class="form_text">@Html.EditorFor(model => model.ShortName)</td>
+                }
+                else
+                {
+                    <td class="form_text">@Html.TextBoxFor(model => model.ShortName, new { @readonly = "readonly" })</td>
+                }
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.ZoneId)</td>
+                <td class="form_text">
+                    @Html.DropDownListFor(model => model.ZoneId, Model.SelectZones, "Chọn vùng") <br /> <br />
+                    @Html.ValidationMessageFor(model => model.ZoneId)
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Place)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Office.Place)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Hotline)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Office.Hotline)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Email)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Office.Email)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Active)</td>
+                <td class="form_text">@Html.CheckBoxFor(model => model.Office.Active, new { @checked = "checked" })</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Office.Sort)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Office.Sort, new { @checked = "checked" })</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+        </table>
     }
 </div>

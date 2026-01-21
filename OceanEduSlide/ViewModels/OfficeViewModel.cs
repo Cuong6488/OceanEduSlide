@@ -1,5 +1,6 @@
 ﻿using OceanEduSlide.Models;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace OceanEduSlide.ViewModels
@@ -15,6 +16,14 @@ namespace OceanEduSlide.ViewModels
     public class InsertOfficeViewModel
     {
         public Office Office { get; set; }
+        public SelectList SelectZones { get; set; }
+        [Display(Name = "Vùng"), Required(ErrorMessage = "Hãy chọn vùng")]
+        public int ZoneId { get; set; }
+        [Display(Name = "Tên ngắn"), Required(ErrorMessage = "Hãy nhập Tên ngắn"),UIHint("TextBox")]
+        public string ShortName { get; set; }
+        [Display(Name = "Mã chi nhánh"), Required(ErrorMessage = "Hãy nhập Mã chi nhánh"), UIHint("TextBox")]
+        public string ShortCode { get; set; }
+
         //public SelectList SelectCities { get; set; }
         //public SelectList DistrictSelectList { get; set; }
         //public InsertOfficeViewModel()

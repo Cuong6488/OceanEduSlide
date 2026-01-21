@@ -1,7 +1,7 @@
 ﻿using OceanEduSlide.DAL;
 using System.Linq;
 using System.Web.Mvc;
-
+using OceanEduSlide.Utils;
 namespace OceanEduSlide.Controllers
 {
     public class BaseController : Controller
@@ -17,6 +17,14 @@ namespace OceanEduSlide.Controllers
             var offices = _unitOfWork.OfficeRepository
                 .GetQuery(a => a.Active && a.ZoneId == zoneId, q => q.OrderBy(a => a.Name)).Select(a => new { a.Id, a.Name });
             return Json(offices, JsonRequestBehavior.AllowGet);
+        }
+        protected void DebugModelState()
+        {
+            var errors = ModelState.GetAllErrors();
+            foreach (var e in errors)
+            {
+                System.Diagnostics.Debug.WriteLine($"{e.Field}: {e.Message}");
+            }
         }
         protected override void Dispose(bool disposing)
         {

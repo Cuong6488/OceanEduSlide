@@ -94,21 +94,82 @@ namespace OceanEduSlide.Controllers
             {
                 if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
                     model.Proposal.Active = true;
+                var isPost = true;
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office == null)
                 {
-                    ModelState.AddModelError("", "Không tìm thấy chi nhánh");
-                    return View(model);
+                    ModelState.AddModelError("", "Không tìm thấy chi nhánh, hãy liên hệ quản trị viên");
+                    isPost = false;
                 }
-                model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
 
                 var z = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == office.ZoneId).FirstOrDefault();
                 if (z == null)
                 {
-                    ModelState.AddModelError("", "Không tìm thấy vùng");
-                    return View(model);
+                    ModelState.AddModelError("", "Chi nhánh chưa có vùng, hãy liên hệ quản trị viên");
+                    isPost = false;
                 }
-                model.Proposal.ZoneId = z.Id;
+                if (isPost)
+                {
+                    model.Proposal.MaDeXuat = DateTime.Now.Day.ToString("00") + DateTime.Now.Month.ToString("00") + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString("00") + DateTime.Now.Minute.ToString("00") + office.ShortCode;
+                    model.Proposal.ZoneId = z.Id;
+                    var idUser2 = model.Proposal.UserId2 ?? model.Proposal.UserId;
+                    model.Proposal.User2 = _unitOfWork.UserRepository.GetById(idUser2);
+                    _unitOfWork.ProposalRepository.Insert(model.Proposal);
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListProposal", new { Result = "add" });
+
+                }
+                model.SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content");
+
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
+                    {
+                        var zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
+                        var offices = new List<Office>();
+                        foreach (var zone in zones)
+                        {
+                            var officeAdd = _unitOfWork.OfficeRepository.GetQuery(a => a.ZoneId == zone.Id);
+                            offices.AddRange(officeAdd);
+                        }
+                        model.SelectOffices = new SelectList(offices, "Id", "ShortName");
+                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","))
+                            .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
+                    }
+                    else
+                    {
+                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
+                        if (zone != null)
+                            model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "ShortName");
+                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneId == a.Office.ZoneId)
+                           .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(User.OfficeIds))
+                    {
+                        model.Proposal.OfficeId = (int)User.OfficeId;
+                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == model.Proposal.OfficeId)
+                            .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
+                    }
+                    else
+                    {
+                        var selectOffices = _unitOfWork.OfficeRepository.Get(a => User.OfficeIds.Contains("," + a.Id + ","));
+                        var newOfficeIds = User.OfficeIds.Trim(',');
+                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && User.OfficeIds.Contains("," + a.OfficeId + ","))
+                                .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
+                        if (selectOffices.Count() == 1)
+                        {
+                            model.Proposal.OfficeId = selectOffices.First().Id;
+                        }
+                        else
+                        {
+                            model.SelectOffices = new SelectList(selectOffices, "Id", "ShortName");
+                        }
+                    }
+                }
+                return View(model);
                 //var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds.Contains(z.ShortCode));
                 //model.Proposal.CVName = "";
                 //foreach (var item in cvs)
@@ -116,17 +177,6 @@ namespace OceanEduSlide.Controllers
                 //    model.Proposal.CVName += item.Fullname + ", ";
                 //}
                 //model.Proposal.CVName = model.Proposal.CVName.Trim().Trim(',');
-                var idUser2 = model.Proposal.UserId2 ?? model.Proposal.UserId;
-                model.Proposal.User2 = _unitOfWork.UserRepository.GetById(idUser2);
-                _unitOfWork.ProposalRepository.Insert(model.Proposal);
-                _unitOfWork.Save();
-                return RedirectToAction("ListProposal", new { Result = "add" });
-            }
-            if (User.TypeUser == TypeUser.ASM)
-            {
-                var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.OfficeIds.Contains(User.OfficeId.ToString())).FirstOrDefault();
-                if (zone != null)
-                    model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Zone.OfficeIds.Contains(a.Id.ToString())), "Id", "Name");
             }
             //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
 
