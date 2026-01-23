@@ -23,7 +23,7 @@
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
     <div class="d-flex thead-sticky" style="background: #f1f4f6">
-        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
+        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter form-inyear mb-5" style="flex:1">
             <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
             @if (Model.Zones?.Count() > 1)
             {

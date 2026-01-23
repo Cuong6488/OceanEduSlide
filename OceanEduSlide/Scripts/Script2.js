@@ -23,52 +23,85 @@ function autoReload(minutes) {
     }, minutes * 60 * 1000); // Chuyển phút sang mili giây
 }
 
-$(".form-filter select").on("change", function (data) {
-    let form = $(this).closest("form");
-    if (form.attr("id") == "form-reportcall") {
+//$(".form-filter select").on("change", function (data) {
+//    let form = $(this).closest("form");
+//    if (form.hasClass("form-inyear")) {
+//        var sDay = $("#StartDay").val();
+//        var eDay = $("#EndDay").val();
+//        var yearStart = sDay.slice(-4);
+//        var yearEnd = eDay.slice(-4);
+//        if (yearStart != yearEnd) {
+//            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
+//        }
+//        else {
+//            if (form.valid()) {
+//                form.trigger('submit');
+//            }
+//        }
+//    }
+//    else {
+//        if (form.valid()) { 
+//            form.trigger('submit');
+//        }
+//    }
+
+//});
+//$(".form-filter input").on("change", function (data) {
+//    let form = $(this).closest("form");
+//    if (form.hasClass("form-inyear")) {
+//        var sDay = $("#StartDay").val();
+//        var eDay = $("#EndDay").val();
+//        var yearStart = sDay.slice(-4);
+//        var yearEnd = eDay.slice(-4);
+//        if (yearStart != yearEnd) {
+//            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
+//        }
+//        else {
+//            if (form.valid()) {
+//                form.trigger('submit');
+//            }
+//        }
+//    }
+//    else {
+//        if (form.valid()) { 
+//            form.trigger('submit');
+//        }
+//    }
+
+//});
+// Lưu giá trị cũ trước khi thay đổi
+$(".form-filter").on("focus", "input, select", function () {
+    $(this).data("old-value", $(this).val());
+});
+
+$(".form-filter").on("change", "input, select", function () {
+    let $this = $(this);
+    let form = $this.closest("form");
+
+    if (form.hasClass("form-inyear")) {
         var sDay = $("#StartDay").val();
         var eDay = $("#EndDay").val();
+
+        if (!sDay || !eDay) return;
+
         var yearStart = sDay.slice(-4);
         var yearEnd = eDay.slice(-4);
+
         if (yearStart != yearEnd) {
-            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
-        }
-        else {
-            if (form.valid()) {
-                form.trigger('submit');
-            }
-        }
-    }
-    else {
-        if (form.valid()) { 
-            form.trigger('submit');
+            alert("Vui lòng chọn khoảng thời gian trong cùng một năm");
+
+            // 👉 Khôi phục giá trị cũ
+            $this.val($this.data("old-value"));
+            return;
         }
     }
 
+    if (form.valid()) {
+        form.trigger("submit");
+    }
 });
-$(".form-filter input").on("change", function (data) {
-    let form = $(this).closest("form");
-    if (form.attr("id") == "form-reportcall") {
-        var sDay = $("#StartDay").val();
-        var eDay = $("#EndDay").val();
-        var yearStart = sDay.slice(-4);
-        var yearEnd = eDay.slice(-4);
-        if (yearStart != yearEnd) {
-            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
-        }
-        else {
-            if (form.valid()) {
-                form.trigger('submit');
-            }
-        }
-    }
-    else {
-        if (form.valid()) { 
-            form.trigger('submit');
-        }
-    }
 
-});
+
 $("#form-category3").on("change", function (e) {
 
     var mucluc = $(this).find(".mucluc").val();
