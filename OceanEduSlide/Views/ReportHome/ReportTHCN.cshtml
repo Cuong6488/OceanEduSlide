@@ -14,7 +14,7 @@
     }
 
     .form-filter .select2 {
-        width: 100% !important;
+        /*width: 100% !important;*/
     }
 
     .box_content td {
@@ -24,8 +24,8 @@
 
 <div class="container py-3">
     <form action="@Url.Action("ReportTHCN")" method="get" class="d-flex form-filter mb-5">
-        <div class="row w-100">
-            <div class="col-lg-3">
+        <div class="row w-100 g-2">
+            <div class="col-lg-2 col-md-3 col-6">
                 <select name="Year" class="form-select" required>
                     <option value="">Chọn năm</option>
                     @for (int i = 2024; i <= DateTime.Now.Year; i++)
@@ -36,7 +36,7 @@
             </div>
             @if (Model.Zones?.Count() >= 1)
             {
-                <div class="col-lg-3">
+                <div class="col-lg-2 col-md-3 col-6">
                     <select name="ZoneId" class="form-select">
                         <option value="">Chọn vùng</option>
                         @foreach (var z in Model.Zones)
@@ -50,7 +50,7 @@
             @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
             {
 
-                <div class="col-lg-3">
+                <div class="col-lg-2 col-md-3 col-6">
                     <select name="OfficeId" class="form-select">
                         <option>Chọn chi nhánh</option>
                         @foreach (var office in Model.Offices)

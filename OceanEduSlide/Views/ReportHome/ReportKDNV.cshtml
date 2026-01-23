@@ -43,7 +43,7 @@
         display: none !important;
     }
 
-    #groupWrapper {
+    /* #groupWrapper {
         display: flex !important;
         gap: 0;
         overflow: auto;
@@ -80,69 +80,80 @@
 
     .select2-container {
         margin: 0 8px;
-    }
+    }*/
 </style>
 
 <div class="container py-3">
     <form action="@Url.Action("ReportKDNV")" method="get" class="d-flex form-filter mb-5">
-        <select name="Year" class="form-select me-2 w-25" required>
-            <option value="">Chọn năm</option>
-            @for (int i = 2024; i <= DateTime.Now.Year; i++)
+        <div class="row g-2 w-100">
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="Year" class="form-select" required>
+                    <option value="">Chọn năm</option>
+                    @for (int i = 2024; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="Month" class="form-select" required>
+                    <option value="">Chọn tháng</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+                    }
+                </select>
+            </div>
+            @if (Model.Zones?.Count() > 1)
             {
-                <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select name="ZoneId" class="form-select">
+                        <option value="">Chọn vùng</option>
+                        @foreach (var z in Model.Zones)
+                        {
+                            <option value="@z.Id" @(Model.ZoneId == z.Id ? "selected" : "")>@z.Name</option>
+                        }
+                    </select>
+                </div>
             }
-        </select>
-        <select name="Month" class="form-select me-3 w-25" required>
-            <option value="">Chọn tháng</option>
-            @for (int i = 1; i <= 12; i++)
-            {
-                <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
-            }
-        </select>
-        @if (Model.Zones?.Count() > 1)
-        {
-            <select name="ZoneId" class="form-select me-2 w-25">
-                <option value="">Chọn vùng</option>
-                @foreach (var z in Model.Zones)
+            <div class="col-lg-2 col-md-3 col-6">
+                @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
                 {
-                    <option value="@z.Id" @(Model.ZoneId == z.Id ? "selected" : "")>@z.Name</option>
+                    <select name="OfficeId" class="form-select">
+                        <option>Chọn chi nhánh</option>
+                        @foreach (var office in Model.Offices)
+                        {
+                            <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                        }
+                    </select>
                 }
-            </select>
-        }
-
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
-        {
-
-            <select name="OfficeId" class="form-select w-25">
-                <option>Chọn chi nhánh</option>
-                @foreach (var office in Model.Offices)
+                @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
                 {
-                    <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                    <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
                 }
-            </select>
-        }
-        <select name="UserId" class="form-select w-25 select2">
-            <option>Chọn nhân sự</option>
-            @foreach (var user in Model.ListHistoryUser)
-            {
-                <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien - @user.CDCM</option>
-            }
-        </select>
-
-        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
-        {
-            <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
-        }
-        <select name="UserType" class="form-select w-25 ms-2">
-            <option value="">Tất cả chức danh</option>
-            <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
-            <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
-            <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
-            <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
-            <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
-            <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
-            <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
-        </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="UserId" class="form-select select2">
+                    <option>Chọn nhân sự</option>
+                    @foreach (var user in Model.ListHistoryUser)
+                    {
+                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien - @user.CDCM</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="UserType" class="form-select">
+                    <option value="">Tất cả chức danh</option>
+                    <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+                    <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+                    <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+                    <option value="11" @(Model.UserType == 11 ? "selected" : "")>AEC</option>
+                    <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+                    <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+                    <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+                </select>
+            </div>
+        </div>
         <input type="hidden" name="categoryid" value="@Model.categoryId" />
         <input type="hidden" name="sort" value="@Model.sort" />
     </form>

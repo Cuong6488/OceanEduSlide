@@ -224,17 +224,26 @@ namespace OceanEduSlide.Controllers
                 Type = Type,
                 Fault = Fault,
             };
-            var historyQuery = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Year == model.Year);
+            //var historyQuery = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Year == model.Year);
             var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate),
                 q => q.OrderByDescending(a => a.CreateDate));
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
+            //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
+            //{
+            //    h.OfficeId,
+            //    ZoneShortCode = h.Zone.ShortCode,
+            //    h.ZoneId
+            //});
+            var historyOffices = _unitOfWork.HistoryOfficeRepository
+                .GetQuery(h => (h.Year > StartDate.Year || (h.Year == StartDate.Year && h.Month >= StartDate.Month)) && (h.Year < EndDate.Year || (h.Year == EndDate.Year && h.Month <= EndDate.Month)))
+                .Select(h => new
+                {
+                    h.OfficeId,
+                    ZoneShortCode = h.Zone.ShortCode,
+                    h.ZoneId
+                });
+
             if (!string.IsNullOrEmpty(Type))
             {
                 proposals = proposals.Where(a => a.ProposalTypeId != null && a.ProposalType.Content == Type);
@@ -297,7 +306,7 @@ namespace OceanEduSlide.Controllers
                         ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
                     }
                 }
-                else if (User.TypeUser == TypeUser.BM)
+                else if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.AEC)
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                     {

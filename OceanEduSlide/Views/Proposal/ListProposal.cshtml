@@ -23,57 +23,75 @@
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
     <div class="d-flex thead-sticky" style="background: #f1f4f6">
-        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter form-inyear mb-5" style="flex:1">
-            <input class="form-control me-3 w-25" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
-            @if (Model.Zones?.Count() > 1)
-            {
-                <select name="ZoneId" class="form-select me-3 w-25">
-                    <option value="">Chọn vùng</option>
-                    @foreach (var item in Model.Zones)
-                    {
-                        <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
-                    }
-                </select>
-            }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && !string.IsNullOrEmpty(Model.User.OfficeIds)))
-            {
-                <select name="OfficeId" class="form-select w-25 me-3">
-                    <option>Chọn chi nhánh</option>
-                    @foreach (var item in Model.Offices)
-                    {
-                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
-                    }
-                </select>
-            }
-            <select name="Type" class="form-select ms-3 me-3 w-25">
-                <option value="">Loại đề xuất</option>
-                @foreach (var item in Model.ProposalTypes)
+        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
+            <div class="row g-2 w-100">
+                <div class="col-lg col-md-3 col-6">
+                    <input class="form-control" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
+                </div>
+                @if (Model.Zones?.Count() > 1)
                 {
-                    <option value="@item" @(item == Model.Type ? "selected" : "")>@item</option>
+                    <div class="col-lg col-md-3 col-6">
+                        <select name="ZoneId" class="form-select">
+                            <option value="">Chọn vùng</option>
+                            @foreach (var item in Model.Zones)
+                            {
+                                <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                            }
+                        </select>
+                    </div>
                 }
-            </select>
-            <div class="w-25 d-flex align-items-center">
-                <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
-                <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
-            </div>
-            <div class="w-25 d-flex align-items-center">
-                <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
-                <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
-            </div>
-            <select name="Notice" class="form-select w-25">
-                <option value="">Tình trạng</option>
-                <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
-                <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
-                <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
-                <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
-            </select>
-            <select name="Fault" class="form-select ms-3 me-3 w-25">
-                <option value="">Tổng hợp lỗi</option>
-                @foreach (var item in Model.Faults)
+                @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
                 {
-                    <option value="@item" @(item == Model.Fault ? "selected" : "")>@item</option>
+                    <div class="col-lg col-md-3 col-6">
+                        <select name="OfficeId" class="form-select">
+                            <option>Chọn chi nhánh</option>
+                            @foreach (var item in Model.Offices)
+                            {
+                                <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
+                            }
+                        </select>
+                    </div>
                 }
-            </select>
+                <div class="col-lg col-md-3 col-6">
+                    <select name="Type" class="form-select">
+                        <option value="">Loại đề xuất</option>
+                        @foreach (var item in Model.ProposalTypes)
+                        {
+                            <option value="@item" @(item == Model.Type ? "selected" : "")>@item</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-lg col-md-3 col-6">
+                    <div class="d-flex align-items-center">
+                        <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
+                        <input class="form-control" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="col-lg col-md-3 col-6">
+                    <div class="d-flex align-items-center">
+                        <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
+                        <input class="form-control" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="col-lg col-md-3 col-6">
+                    <select name="Notice" class="form-select">
+                        <option value="">Tình trạng</option>
+                        <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
+                        <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
+                        <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
+                        <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
+                    </select>
+                </div>
+                <div class="col-lg col-md-3 col-6">
+                    <select name="Fault" class="form-select">
+                        <option value="">Tổng hợp lỗi</option>
+                        @foreach (var item in Model.Faults)
+                        {
+                            <option value="@item" @(item == Model.Fault ? "selected" : "")>@item</option>
+                        }
+                    </select>
+                </div>
+            </div>
         </form>
         @if (Model.User.TypeUser == TypeUser.CV)
         {

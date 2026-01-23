@@ -16,49 +16,58 @@
     }
 </style>
 <form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter form-inyear mb-5" id="form-reportcall">
-    <div class="w-25 d-flex align-items-center">
-        <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
-        <input class="form-control me-3" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
-    </div>
-    <div class="w-25 d-flex align-items-center">
-        <p class="m-0 me-2" style="width:60px"><strong>Đến ngày:</strong></p>
-        <input class="form-control me-3" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
-    </div>
-    @*@if (Model.HistoryUser.TypeUser == TypeUser.HO || Model.HistoryUser.TypeUser == TypeUser.CV)*@
-
-    @if (Model.Zones?.Count() > 1)
-    {
-        <select name="ZoneId" class="form-select me-3 w-25">
-            <option value="">Chọn vùng</option>
-            @foreach (var item in Model.Zones)
-            {
-                <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
-            }
-        </select>
-    }
-    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
-    @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC) && !string.IsNullOrEmpty(Model.User.OfficeIds)))
-    {
-        if (Model.Offices.Count() > 1)
+    <div class="row g-2 w-100">
+        <div class="col-md-3 col-6">
+            <div class="d-flex align-items-center">
+                <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
+                <input class="form-control" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="d-flex align-items-center">
+                <p class="m-0 me-2" style="width:60px"><strong>Đến ngày:</strong></p>
+                <input class="form-control" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
+            </div>
+        </div>
+        @if (Model.Zones?.Count() > 1)
         {
-
-            <select name="OfficeId" class="form-select w-25">
-                <option value="">Chọn chi nhánh</option>
-                @foreach (var item in Model.Offices)
-                {
-                    <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
-                }
-            </select>
+            <div class="col-md-3 col-6">
+                <select name="ZoneId" class="form-select">
+                    <option value="">Chọn vùng</option>
+                    @foreach (var item in Model.Zones)
+                    {
+                        <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+            </div>
         }
-        else
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.AEC) && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+        {
+            if (Model.Offices.Count() > 1)
+            {
+                <div class="col-md-3 col-6">
+                    <select name="OfficeId" class="form-select">
+                        <option value="">Chọn chi nhánh</option>
+                        @foreach (var item in Model.Offices)
+                        {
+                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
+                        }
+                    </select>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+            }
+        }
+        else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
         {
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
         }
-    }
-    else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
-    {
-        <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-    }
+    </div>
+    @*@if (Model.HistoryUser.TypeUser == TypeUser.HO || Model.HistoryUser.TypeUser == TypeUser.CV)*@
+
+    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
 </form>
 @if (Model.OfficeId == null)
 {

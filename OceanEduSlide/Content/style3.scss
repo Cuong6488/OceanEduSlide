@@ -272,7 +272,7 @@ h2 {
     }
 
     .select2-container {
-        min-width: 250px;
+        /*min-width: 250px;*/
 
         & * {
             font-family: 'Roboto', sans-serif !important;
@@ -431,8 +431,6 @@ $groupCount: 20;
 #groupWrapper {
     display: flex !important;
     gap: 0;
-    /*border: 1px solid #ccc;*/
-    /*border-radius: 6px;*/
     overflow: auto;
     border-right: 1px solid #ccc;
 }

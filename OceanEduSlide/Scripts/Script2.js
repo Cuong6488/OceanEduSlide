@@ -70,10 +70,6 @@ function autoReload(minutes) {
 
 //});
 // Lưu giá trị cũ trước khi thay đổi
-$(".form-filter").on("focus", "input, select", function () {
-    $(this).data("old-value", $(this).val());
-});
-
 $(".form-filter").on("change", "input, select", function () {
     let $this = $(this);
     let form = $this.closest("form");
@@ -89,9 +85,6 @@ $(".form-filter").on("change", "input, select", function () {
 
         if (yearStart != yearEnd) {
             alert("Vui lòng chọn khoảng thời gian trong cùng một năm");
-
-            // 👉 Khôi phục giá trị cũ
-            $this.val($this.data("old-value"));
             return;
         }
     }
@@ -110,6 +103,7 @@ $("#form-category3").on("change", function (e) {
         $("#category3-content").html(data);
     });
 });
+
 //$("[data-item=zone]").on("change", function (data) {
 //    const id = $(this).val();
 //    var items = [];
