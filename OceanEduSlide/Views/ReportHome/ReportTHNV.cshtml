@@ -44,10 +44,8 @@
                     </select>
                 </div>
             }
-
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+            @if (Model.Offices?.Count() > 0)
             {
-
                 <div class="col-lg-2">
                     <select name="OfficeId" class="form-select">
                         <option>Chọn chi nhánh</option>
@@ -58,6 +56,23 @@
                     </select>
                 </div>
             }
+            @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+                {
+
+                    <div class="col-lg-2">
+                        <select name="OfficeId" class="form-select">
+                            <option>Chọn chi nhánh</option>
+                            @foreach (var office in Model.Offices)
+                            {
+                                <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else if (string.IsNullOrEmpty(Model.User.OfficeIds))
+                {
+                    <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
+                }*@
             <div class="col-lg-2">
                 <select name="UserType" class="form-select">
                     <option value="">Tất cả chức danh</option>
@@ -79,10 +94,6 @@
                 </select>
             </div>
 
-            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
-            {
-                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
-            }
         </div>
     </form>
 
@@ -180,14 +191,14 @@
     @if (Model.UserItems.PageCount > 1)
     {
         <div class="text-center">
-            @*@if (Model.OfficeId != null)
-            {*@
-                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportTHNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, year = Model.Year}))
-            @*}
+            @if (Model.OfficeId == null)
+            {
+                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportTHNV", new { page, zoneId = Model.ZoneId, UserType = Model.UserType, year = Model.Year }))
+            }
             else
             {
-                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportKDNV", new { page, zoneId = Model.ZoneId, month = Model.Month, UserType = Model.UserType, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort, listMonth = Model.ListMonth }))
-            }*@
+                @Html.PagedListPager(Model.UserItems, page => Url.Action("ReportTHNV", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, year = Model.Year }))
+            }
         </div>
     }
 </div>

@@ -20,6 +20,7 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
         public int? ZoneId { get; set; }
+        public string CVName { get; set; }
         public int? Notice { get; set; }
         public string MaDeXuat { get; set; }
         public IEnumerable<Office> Offices { get; set; }
@@ -36,6 +37,7 @@ namespace OceanEduSlide.ViewModels
         public string StartDay { get; set; }
         [Display(Name = " Đến ngày "), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), UIHint("DateTimePicker")]
         public string EndDay { get; set; }
+        public SelectList SelectCVName { get; set; }
         public class ProposalItem
         {
             public List<string> ListCVPhuTrach { get; set; }
@@ -54,6 +56,7 @@ namespace OceanEduSlide.ViewModels
         public int? ZoneId { get; set; }
         public int? Notice { get; set; }
         public string MaDeXuat { get; set; }
+        public string CVName { get; set; }
         public string Type { get; set; }
         public string Fault { get; set; }
 

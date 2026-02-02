@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Helpers;
+using OceanEduSlide.Migrations;
 
 namespace OceanEduSlide.Controllers
 {
@@ -27,7 +28,7 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM)
+            if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
                 return HttpNotFound();
             var model = new ProposeViewModel
             {
@@ -183,7 +184,7 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("ListProposal");
         }
 
-        public ActionResult ListProposal(int? zoneId, int? officeId, string startDay, string endDay, int? Notice, string MaDeXuat, string Type, string Fault, string Result = "")
+        public ActionResult ListProposal(int? zoneId, int? officeId, string startDay, string endDay, int? Notice, string MaDeXuat, string Type, string CVName, string Fault, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -223,10 +224,15 @@ namespace OceanEduSlide.Controllers
                 Faults = faults,
                 Type = Type,
                 Fault = Fault,
+                CVName = CVName,
             };
             //var historyQuery = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Year == model.Year);
-            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate),
-                q => q.OrderByDescending(a => a.CreateDate));
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
+            if (!Notice.HasValue)
+            {
+                proposals = proposals.Where(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate));
+            }
+
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
             //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
@@ -306,7 +312,7 @@ namespace OceanEduSlide.Controllers
                         ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
                     }
                 }
-                else if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.AEC)
+                else
                 {
                     if (string.IsNullOrEmpty(User.OfficeIds))
                     {
@@ -317,17 +323,44 @@ namespace OceanEduSlide.Controllers
                     else
                     {
                         model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                        if (model.OfficeId == null)
-                            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
                         if (User.TypeUser == TypeUser.BM)
                             ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ",") && a.Active && a.NSSeen == false).Count();
                     }
+                    if (model.OfficeId == null)
+                    {
+                        if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.AEC)
+                        {
+                            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
+                        }
+                        else
+                        {
+                            proposals = proposals.Where(a => a.UserId2 == User.Id);
+                        }
+                    }
+                    //if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.AEC)
+                    //{
+                    //    if (string.IsNullOrEmpty(User.OfficeIds))
+                    //    {
+                    //        model.OfficeId = User.OfficeId;
+                    //        if (User.TypeUser == TypeUser.BM)
+                    //            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
+                    //    }
+                    //    else
+                    //    {
+                    //        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
+                    //        if (model.OfficeId == null)
+                    //            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
+                    //        if (User.TypeUser == TypeUser.BM)
+                    //            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ",") && a.Active && a.NSSeen == false).Count();
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    model.OfficeId = User.OfficeId;
+                    //    proposals = proposals.Where(a => a.UserId2 == User.Id);
+                    //}
                 }
-                else
-                {
-                    model.OfficeId = User.OfficeId;
-                    proposals = proposals.Where(a => a.UserId2 == User.Id);
-                }
+
             }
             if (model.ZoneId != null)
             {
@@ -350,7 +383,14 @@ namespace OceanEduSlide.Controllers
                 ListCVPhuTrach = listCV.Where(a => a.ZoneIds.Contains("," + x.Zone.ShortCode + ",")).Select(a => a.Fullname).ToList(),
                 Proposal = x,
             });
+
+            if (!string.IsNullOrEmpty(CVName))
+            {
+                proposalItems = proposalItems.Where(a => a.ListCVPhuTrach != null && a.ListCVPhuTrach.Contains(CVName));
+                var p = proposals.ToList();
+            }
             model.ProposalItems = proposalItems;
+            model.SelectCVName = new SelectList(_unitOfWork.UserRepository.Get(a => a.Fullname != null && a.TypeUser == TypeUser.CV).Select(a => a.Fullname).Distinct());
             return View(model);
             //}
             //else
@@ -523,11 +563,11 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult EditProposal(int pId)
         {
-            if (User.TypeUser != TypeUser.ASM && User.TypeUser != TypeUser.BM)
+            if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
                 return RedirectToAction("ListProposal");
 
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
-            if (proposal == null || (proposal.CVSeen && !proposal.BMEdit))
+            if (proposal == null || proposal.UserId != User.Id || (proposal.CVSeen && !proposal.BMEdit))
                 return RedirectToAction("ListProposal");
 
             var model = new ProposeViewModel
@@ -560,7 +600,7 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ListProposal", new { Result = "add" });
         }
-        public ActionResult UpdateProposal(int pId, int Page, int? ZoneId, int? OfficeId, string StartDay, string EndDay, int? Notice, string MaDeXuat, string Type, string Fault)
+        public ActionResult UpdateProposal(int pId, int Page, int? ZoneId, int? OfficeId, string StartDay, string EndDay, int? Notice, string MaDeXuat, string Type, string Fault, string CVName)
         {
             if (User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.HO)
                 return RedirectToAction("ListProposal");
@@ -583,7 +623,8 @@ namespace OceanEduSlide.Controllers
                 StartDay = StartDay,
                 EndDay = EndDay,
                 Fault = Fault,
-                Type = Type
+                Type = Type,
+                CVName = CVName
 
             };
             return View(model);
@@ -617,7 +658,8 @@ namespace OceanEduSlide.Controllers
                 StartDay = model.StartDay,
                 EndDay = model.EndDay,
                 Fault = model.Fault,
-                Type = model.Type
+                Type = model.Type,
+                CVName = model.CVName,
             });
         }
         [HttpPost]

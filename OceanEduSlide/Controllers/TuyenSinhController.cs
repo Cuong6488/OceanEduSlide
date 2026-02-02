@@ -192,6 +192,10 @@ namespace OceanEduSlide.Controllers
                 model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
                 historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
             }
+            if (model.Offices.Count() == 1)
+            {
+                model.OfficeId = model.Offices.First().Id;
+            }
             var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
 
             ViewBag.WorkingWeeks = workingWeeks;

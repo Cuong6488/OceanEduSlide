@@ -91,6 +91,13 @@
                     <td class="form_name">@Html.LabelFor(model => model.TypeUser)</td>
                     <td class="form_text">
                         @Html.EnumDropDownListFor(model => model.TypeUser, "Chọn phân quyền")
+                        @Html.ValidationMessageFor(model => model.TypeUser)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.CDCM)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.CDCM, "Nhập CDCM")
                     </td>
                 </tr>
                 <tr>

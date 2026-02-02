@@ -447,6 +447,7 @@ namespace OceanEduSlide.Controllers
                         OfficeIds = model.OfficeIds,
                         ZoneIds = model.ZoneIds,
                         OfficeNames = model.OfficeNames,
+                        CDCM = model.CDCM
                     };
                     _unitOfWork.UserRepository.Insert(m);
                     _unitOfWork.Save();
@@ -573,6 +574,7 @@ namespace OceanEduSlide.Controllers
             model.OfficeId = user.OfficeId ?? 0;
             model.ZoneId = user.ZoneId ?? 0;
             model.TypeUser = user.TypeUser ?? null;
+            model.CDCM = user.CDCM;
             return View(model);
         }
         [HttpPost]
@@ -618,6 +620,7 @@ namespace OceanEduSlide.Controllers
                     user.OfficeIds = model.OfficeIds;
                     user.ZoneIds = model.ZoneIds;
                     user.OfficeNames = model.OfficeNames;
+                    user.CDCM = model.CDCM;
                     _unitOfWork.Save();
                     return RedirectToAction("ListUser", new { result = "update" });
                 }

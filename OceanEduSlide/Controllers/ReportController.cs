@@ -435,7 +435,7 @@ namespace OceanEduSlide.Controllers
                     if (!int.TryParse(year, out int yearInt)) continue;
                     if (checkLock == false)
                     {
-                        var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == DateTime.Now.Year && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.ReportData).FirstOrDefault();
+                        var lockImport = _unitOfWork.LockImportRepository.GetQuery(a => a.Year == yearInt && a.Month == monthInt && a.Active && a.TypeLock == TypeLock.ReportData).FirstOrDefault();
                         checkLock = true;
                         if (lockImport != null && Role != RoleAdmin.Admin)
                         {
@@ -503,7 +503,7 @@ namespace OceanEduSlide.Controllers
                         // Check tồn tại trước khi thêm mới
                         var existing = _unitOfWork.ReportDataRepository.GetQuery(a =>
                             a.OfficeId == office.Id &&
-                            a.Year == DateTime.Now.Year &&
+                            a.Year == yearInt &&
                             a.Month == monthInt &&
                             a.ReportCategoryId == category.Id).FirstOrDefault();
 
@@ -614,7 +614,7 @@ namespace OceanEduSlide.Controllers
                         startDate = new DateTime(cd.Year, cd.Month, cd.Day, 0, 0, 0);
                     else
                         continue;
-                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == DateTime.Now.Year && a.DayStart == startDate);
+                    var historyUser = historyUsers.FirstOrDefault(a => a.UserId == user.Id && a.OfficeId == office.Id && a.TypeUser == type && a.Month == monthInt && a.Year == yearInt && a.DayStart == startDate);
                     if (historyUser == null) continue;
                     int cChildSort = 1;
                     int group = 1;
@@ -666,7 +666,7 @@ namespace OceanEduSlide.Controllers
                         // Avoid inserting if already exists
                         var existing = _unitOfWork.ReportDataRepository.GetQuery(a =>
                             a.UserId == user.Id && a.HistoryUserId == historyUser.Id &&
-                            a.Year == DateTime.Now.Year &&
+                            a.Year == yearInt &&
                             a.Month == monthInt &&
                             a.ReportCategoryId == category.Id).FirstOrDefault();
 

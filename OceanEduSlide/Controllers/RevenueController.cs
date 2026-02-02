@@ -2902,6 +2902,12 @@ namespace OceanEduSlide.Controllers
             datas.Delete();
             return Content("ok");
         }
+        public ActionResult DeleteDatax22(int month, int year)
+        {
+            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Year == year && a.Month == month);
+            datas.Delete();
+            return Content("ok");
+        }
         protected override void Dispose(bool disposing)
         {
             _unitOfWork.Dispose();

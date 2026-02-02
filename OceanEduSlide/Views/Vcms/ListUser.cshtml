@@ -32,7 +32,7 @@
                 </select>
             </div>
             <div class="col-lg-2">
-                <label>Chức danh</label>
+                <label>Phân quyền</label>
                 <select name="UserType" class="mt-2">
                     <option value="">Tất cả</option>
                     <option value="1" @(Model.TypeUser == 1 ? "selected" : "")>GĐTS</option>
@@ -73,6 +73,7 @@
                 <th>Các CN phụ trách</th>
                 <th>Các vùng quản lý (CV - ASM)</th>
                 <th>Phân quyền</th>
+                <th>CDCM</th>
                 @*<th style="width:150px">Tỉnh thành</th>*@
                 @*<th>Face-Id</th>*@
                 <th style="width:100px">Hoạt động</th>
@@ -99,6 +100,7 @@
                     <td>@user.OfficeNames</td>
                     <td>@((user.ZoneIds??"").Trim(','))</td>
                     <td>@Html.DisplayFor(model => user.TypeUser)</td>
+                    <td>@user.CDCM</td>
                     <td>@Html.CheckBoxFor(model => user.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -

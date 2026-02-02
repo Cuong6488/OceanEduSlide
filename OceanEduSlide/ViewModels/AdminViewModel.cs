@@ -60,7 +60,7 @@ namespace OceanEduSlide.ViewModels
         public string Username { get; set; }
         [Display(Name = "Họ và tên"), UIHint("TextBox")]
         public string Fullname { get; set; }
-        [Display(Name = "Mã nhân viên"), UIHint("TextBox")]
+        [Display(Name = "Mã nhân viên"), UIHint("TextBox"), Required(ErrorMessage = "Hãy nhập Mã nhân viên")]
         public string MaNhanVien { get; set; }
         [Display(Name = "Mật khẩu"), Required(ErrorMessage = "Hãy nhập mật khẩu mới"),
          StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
@@ -82,9 +82,11 @@ namespace OceanEduSlide.ViewModels
         public string ZoneIds { get; set; }
         [Display(Name = "Các chi nhánh")]
         public string OfficeNames { get; set; }
+        [Display(Name = "Chức danh"), UIHint("TextBox"), Required(ErrorMessage = "Hãy nhập CDCM")]
+        public string CDCM { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
-        [Display(Name = "Phân quyền")]
+        [Display(Name = "Phân quyền"), Required(ErrorMessage = "Hãy chọn phân quyền")]
         public TypeUser? TypeUser { get; set; }
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
@@ -103,7 +105,7 @@ namespace OceanEduSlide.ViewModels
         public string Username { get; set; }
         [Display(Name = "Họ và tên"), UIHint("TextBox")]
         public string Fullname { get; set; }
-        [Display(Name = "Mã nhân viên"), UIHint("TextBox")]
+        [Display(Name = "Mã nhân viên"), UIHint("TextBox"), Required(ErrorMessage = "Hãy nhập Mã nhân viên")]
         public string MaNhanVien { get; set; }
         [Display(Name = "Mật khẩu (không bắt buộc)"),StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
         public string Password { get; set; }
@@ -120,8 +122,10 @@ namespace OceanEduSlide.ViewModels
         public int? OfficeId { get; set; }
         [Display(Name = "Vùng")]
         public int? ZoneId { get; set; }
-        [Display(Name = "Phân quyền")]
+        [Display(Name = "Phân quyền"), Required(ErrorMessage = "Hãy chọn phân quyền")]
         public TypeUser? TypeUser { get; set; }
+        [Display(Name = "Chức danh"), UIHint("TextBox"), Required(ErrorMessage = "Hãy nhập CDCM")]
+        public string CDCM { get; set; }
         public SelectList SelectOffices { get; set; }
         public SelectList SelectZones { get; set; }
         public List<int> CatIds { get; set; }

@@ -41,10 +41,10 @@
                 </select>
             </div>
         }
-        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.AEC) && !string.IsNullOrEmpty(Model.User.OfficeIds)))
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
         {
-            if (Model.Offices.Count() > 1)
-            {
+            //if (Model.Offices.Count() > 1)
+            //{
                 <div class="col-md-3 col-6">
                     <select name="OfficeId" class="form-select">
                         <option value="">Chọn chi nhánh</option>
@@ -54,20 +54,17 @@
                         }
                     </select>
                 </div>
-            }
-            else
-            {
-                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-            }
+            //}
+            //else
+            //    {
+            //    <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+            //}
         }
-        else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT)
+        else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT || Model.User.TypeUser == TypeUser.CM|| Model.User.TypeUser == TypeUser.TTL )
         {
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
         }
     </div>
-    @*@if (Model.HistoryUser.TypeUser == TypeUser.HO || Model.HistoryUser.TypeUser == TypeUser.CV)*@
-
-    @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV)*@
 </form>
 @if (Model.OfficeId == null)
 {
