@@ -4,6 +4,11 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <h2 class="mt-0">@ViewBag.Title</h2>
+
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
 @*<a target="_blank" class="btn quick-link" href="@Url.Action("ReportKDCN","ReportHome")"><i class="far fa-list me-1"></i> Danh sách @ViewBag.Title</a>*@
 <a class="btn quick-link" data-fancybox data-type="iframe" data-src="@Url.Action("ListFile","Revenue", new {type = 0})" href="javascript:;">
     <i class="far fa-list me-1"></i> Lịch sử cập nhật

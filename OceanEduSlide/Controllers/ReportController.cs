@@ -369,6 +369,7 @@ namespace OceanEduSlide.Controllers
         }
         public ActionResult ReportAllField(string result = "")
         {
+            ViewBag.Result = result;
             return View();
         }
         [HttpPost]
@@ -711,9 +712,9 @@ namespace OceanEduSlide.Controllers
                     _unitOfWork.ReportDataRepository.InsertRange(reportDataList2);
 
                 _unitOfWork.Save();
-                return RedirectToAction("Report", new { result = "add" });
+                return RedirectToAction("ReportAllField", new { result = "add" });
             }
-            return RedirectToAction("Report");
+            return RedirectToAction("ReportAllField");
         }
         public ActionResult CreateLockImport()
         {
