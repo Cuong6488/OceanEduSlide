@@ -485,7 +485,7 @@ namespace OceanEduSlide.Controllers
                         // Xử lý dữ liệu hiển thị
                         if (!string.IsNullOrEmpty(value))
                         {
-                            if (category.Name.Contains("%"))
+                            if (category.Name.Contains("%") || category.Name.Contains("Tỷ trọng"))
                             {
                                 if (decimal.TryParse(value, out decimal valDec))
                                 {

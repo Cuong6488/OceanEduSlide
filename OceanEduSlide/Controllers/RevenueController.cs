@@ -895,29 +895,33 @@ namespace OceanEduSlide.Controllers
                                 return View();
                             }
                         var historyUser = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.Status == StatusUser.Active);
+                        var historyUserInActive = listHistoryUser.FirstOrDefault(a => a.UserId == user.Id && a.Status == StatusUser.InActive);
                         // Ghi đè ngày vào làm
-                        if (historyUser != null)
+                        if (historyUser != null && (statusUser == StatusUser.Active || statusUser == StatusUser.InActive))
                         {
-                            if (statusUser == StatusUser.Active)
+                            if (historyUserInActive != null && statusUser == StatusUser.InActive)
                             {
-                                historyUser.OfficeId = office?.Id;
-                                historyUser.ZoneId = zone?.Id;
-                                historyUser.CDCM = cdcm;
-                                historyUser.DayReduce = dayReduce;
-                                historyUser.DayReduceCG = dayReduceCG;
-                                historyUser.TypeUser = type;
-                                historyUser.DayStart = startDate;
-                                historyUser.Sort = sortValue;
-                                if (!string.IsNullOrEmpty(dayEnd))
-                                    historyUser.DayEnd = endDate;
-                                if (!string.IsNullOrEmpty(zones))
+                                historyUser = historyUserInActive;
+                            }
+                            historyUser.Status = statusUser;
+                            historyUser.OfficeId = office?.Id;
+                            historyUser.ZoneId = zone?.Id;
+                            historyUser.CDCM = cdcm;
+                            historyUser.DayReduce = dayReduce;
+                            historyUser.DayReduceCG = dayReduceCG;
+                            historyUser.TypeUser = type;
+                            historyUser.DayStart = startDate;
+                            historyUser.Sort = sortValue;
+                            if (!string.IsNullOrEmpty(dayEnd))
+                                historyUser.DayEnd = endDate;
+                            if (!string.IsNullOrEmpty(zones))
+                            {
+                                if (!HandleUserByType(type, zones, historyUser, user, i, ModelState))
                                 {
-                                    if (!HandleUserByType(type, zones, historyUser, user, i, ModelState))
-                                    {
-                                        return View();
-                                    }
+                                    return View();
                                 }
                             }
+
                         }
                         else
                         {
