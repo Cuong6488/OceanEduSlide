@@ -45,8 +45,8 @@ namespace OceanEduSlide.DAL
             //var allCDCM = _userTypeService.GetAllCDCM();
             //var allCDCM = new HashSet<string>(_userTypeService.GetAllCDCM());
 
-            //var today = DateTime.Now.Date;
-            var today = new DateTime(2026, 1, 31);
+            var today = DateTime.Now.Date;
+            //var today = new DateTime(2026, 1, 31);
             var currentMonth = today.Month;
             var currentYear = today.Year;
             int lastMonth = 0;
