@@ -45,7 +45,8 @@ namespace OceanEduSlide.DAL
             //var allCDCM = _userTypeService.GetAllCDCM();
             //var allCDCM = new HashSet<string>(_userTypeService.GetAllCDCM());
 
-            var today = DateTime.Now.Date;
+            //var today = DateTime.Now.Date;
+            var today = new DateTime(2026, 1, 31);
             var currentMonth = today.Month;
             var currentYear = today.Year;
             int lastMonth = 0;
@@ -156,6 +157,7 @@ namespace OceanEduSlide.DAL
 
             // Danh sách Ns sau khi được Điều chuyển
             var listNSSauDieuchuyen = QuaTrinhCongTacs.Where(q => currentMonth == q.NgayApDung.Month && q.NgayApDung.Year == currentYear && (q.Loai == "DieuChuyen" || q.Loai == "BoNhiem" || q.Loai == "MienNhiem"));
+            
             //Danh sách NS Điều chuyển
             //var listNSDieuchuyen = new List<QuaTrinhCongTac>();
             foreach (var item /*(banghiA)*/ in listNSSauDieuchuyen)
@@ -316,10 +318,6 @@ namespace OceanEduSlide.DAL
                 {
                     logger.Error("Khong co ma nhan su, IDNhanSuHRM: " + item.IDNhanSuHRM);
                     continue;
-                }
-                if(item.MaNhanSu == "25050647")
-                {
-
                 }
                 var type = _userTypeService.GetTypeUser(item.MaChucDanhChuyenMon);
                 if (type == null)
@@ -1285,6 +1283,10 @@ namespace OceanEduSlide.DAL
                             reportDatactHV = reportDataListAdd.FirstOrDefault(a => a.HistoryUserId == item.Id && a.Month == currentMonth && a.Year == currentYear && a.ReportCategoryId == 95);
 
                         // Tính số ngày từ khi khai trương
+                        if(!office.OpenDate.HasValue)
+                        {
+                            continue;
+                        }    
                         int totalMonths = (currentYear - office.OpenDate.Value.Year) * 12 + (currentMonth - office.OpenDate.Value.Month);
                         var STHBQ = totalMonths > 6 ? 20 : 12;
                         decimal ctHV = 0;
