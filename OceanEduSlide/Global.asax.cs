@@ -153,7 +153,7 @@ namespace OceanEduSlide
                         }
                     });
                 },
-                s => s.ToRunEvery(1).Days().At(13, 20)
+                s => s.ToRunEvery(1).Days().At(13, 25)
             );
             for (int h = 7; h < 24; h += 2)
             {
@@ -196,6 +196,51 @@ namespace OceanEduSlide
                     s => s.ToRunEvery(1).Days().At(h, 35)
                 );
             }
+
+            // đồng bộ User tháng trước
+            JobManager.AddJob(
+                () =>
+                {
+                    var today = DateTime.Now.Day;
+                    if (today > 3)
+                        return;
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var userService = new UserService();
+                            await userService.SyncUserLastMonthAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(2, 30)
+            );
+            // đồng bộ User tháng trước
+            JobManager.AddJob(
+                () =>
+                {
+                    var today = DateTime.Now.Day;
+                    if (today > 3)
+                        return;
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var userService = new UserService();
+                            await userService.SyncUserLastMonthAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✗ Timer error: {ex.Message}");
+                        }
+                    });
+                },
+                s => s.ToRunEvery(1).Days().At(13, 15)
+            );
 
         }
 

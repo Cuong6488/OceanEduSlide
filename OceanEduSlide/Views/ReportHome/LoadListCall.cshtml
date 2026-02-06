@@ -6,6 +6,7 @@
             <tr>
                 <th style="text-align:center">Thời gian</th>
                 <th style="text-align: center">Thời lượng</th>
+                <th style="text-align:center">Mã cuộc gọi</th>
                 <th style="text-align: center">Nghe lại cuộc gọi</th>
             </tr>
             @foreach (var item in Model.CallLogs)
@@ -16,6 +17,9 @@
                     </td>
                     <td>
                         @Html.DisplayFor(a => item.BillSec)s
+                    </td>
+                    <td>
+                        @item.UniqueId
                     </td>
                     <td>
                         <audio controls>

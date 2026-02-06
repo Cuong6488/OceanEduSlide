@@ -57,6 +57,10 @@
                 </td>
             </tr>
             <tr>
+                <td class="form_name">@Html.LabelFor(model => model.OpenDate)</td>
+                <td class="form_text">@Html.EditorFor(model => model.OpenDate)</td>
+            </tr>
+            <tr>
                 <td class="form_name">@Html.LabelFor(model => model.Office.Place)</td>
                 <td class="form_text">@Html.EditorFor(model => model.Office.Place)</td>
             </tr>
@@ -85,3 +89,14 @@
         </table>
     }
 </div>
+@section scripts
+{
+    <script>
+        var today = new Date();
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy",
+            yearRange: "1900:2100",
+        });
+    </script>
+
+}

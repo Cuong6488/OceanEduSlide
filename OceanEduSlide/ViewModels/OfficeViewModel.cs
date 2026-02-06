@@ -21,6 +21,8 @@ namespace OceanEduSlide.ViewModels
         public int ZoneId { get; set; }
         [Display(Name = "Tên ngắn"), Required(ErrorMessage = "Hãy nhập Tên ngắn"),UIHint("TextBox")]
         public string ShortName { get; set; }
+        [Display(Name = "Ngày khai trương"), Required(ErrorMessage = "Hãy nhập Ngày khai trương"),UIHint("DateTimePicker")]
+        public string OpenDate { get; set; }
         [Display(Name = "Mã chi nhánh"), Required(ErrorMessage = "Hãy nhập Mã chi nhánh"), UIHint("TextBox")]
         public string ShortCode { get; set; }
 

@@ -1,4 +1,7 @@
-﻿
+﻿@using OceanEduSlide.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @*<link rel="shortcut icon" type="x-icon" href="@Path.Combine("/images/configs/",config.Favicon)">*@
-
+    @if (config.Favicon != null)
+    {
+        <link rel="shortcut icon" href="@Path.Combine("/images/configs/", config.Favicon)?w=64&h=64">
+    }
     <title>@ViewBag.Title</title>
     <meta name="description" content="@Html.Raw(ViewBag.Description)" />
     <meta name="robots" content="@(ViewBag.Robots == null ? "index,follow" : ViewBag.Robots)" />
@@ -34,5 +40,10 @@
     <script src="~/Scripts/ckeditor/ckeditor.js"></script>
     @Scripts.Render("~/bundles/myscript")
     @RenderSection("scripts", required: false)
+
+    @if (config.LiveChat != null)
+    {
+        @Html.Raw(config.LiveChat)
+    }
 </body>
 </html>
