@@ -1,4 +1,5 @@
 ﻿using OceanEduSlide.Models;
+using OceanEduSlide.OEDongBo;
 using PagedList;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -151,19 +152,32 @@ namespace OceanEduSlide.ViewModels
 
     public class ListTargetGroupViewModel
     {
-        public PagedList.IPagedList<TargetGroup> TargetGroups { get; set; }
+        public IPagedList<TargetGroup> TargetGroups { get; set; }
         public int? month { get; set; }
         public int? year { get; set; }
     }
 
     public class ListPhieuThuViewModel
     {
-        public PagedList.IPagedList<BC_PhieuThu_DB> PhieuThus { get; set; }
+        public IPagedList<BC_PhieuThu_DB> PhieuThus { get; set; }
         public SelectList SelectOffices { get; set; }
         public string officeId { get; set; }
         public int? type { get; set; }
         public int? month { get; set; }
         public int? year { get; set; }
         public string Username { get; set; }
+    }
+    public class ListPhieuThuNguonViewModel
+    {
+        public IPagedList<BC_PhieuThu> PhieuThus { get; set; }
+        public SelectList SelectOffices { get; set; }
+        public string OfficeId { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
+        public string MaNVChotSale { get; set; }
+        public string Phieuthuketoan { get; set; }
+        public string TrangThai { get; set; }
+        public string Loai { get; set; }
+        public decimal? DoanhThu { get; set; }
     }
 }

@@ -1746,6 +1746,7 @@
     <Content Include="Views\Banner\ListBanner.cshtml" />
     <Content Include="Views\ReportHome\ReportTHCN.cshtml" />
     <Content Include="Views\ReportHome\ReportTHNV.cshtml" />
+    <Content Include="Views\Revenue\ListPhieuThuNguon.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,121 @@
+﻿@model OceanEduSlide.ViewModels.ListPhieuThuNguonViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách phiếu thu nguồn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="fa-regular fa-table me-1"></i>Trở về trang chủ</a>
+<div class="box_content">
+    <form action="@Url.Action("ListPhieuThuNguon")" method="get">
+        <div class="row">
+            <div class="col-lg">
+                <label>PhieuThuKeToan</label> @Html.TextBoxFor(a => a.Phieuthuketoan, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Năm thanh toán</label>
+                <select name="Year" class="mt-2">
+                    <option value="">Tất cả</option>
+                    @for (int i = 2025; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Tháng thanh toán</label>
+                <select name="Month" class="mt-2">
+                    <option value="">Tất cả</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i" @(Model.Month == i ? "selected" : "")>@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Loại</label>
+                <select name="Loai" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="Học phí + Phiếu gộp" @(Model.Loai == "Học phí + Phiếu gộp" ? "selected" : "")>Học phí + Phiếu gộp</option>
+                    <option value="Học phí" @(Model.Loai == "Học phí" ? "selected" : "")>Học phí</option>
+                    <option value="Phiếu gộp" @(Model.Loai == "Phiếu gộp" ? "selected" : "")>Phiếu gộp</option>
+                    <option value="Đặt cọc" @(Model.Loai == "Đặt cọc" ? "selected" : "")>Đặt cọc</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Trạng thái</label>
+                <select name="TrangThai" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="Complete + Confirm" @(Model.TrangThai == "Complete + Confirm" ? "selected" : "")>Complete + Confirm</option>
+                    <option value="StatusPayment_Complete" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Complete</option>
+                    <option value="StatusPayment_Confirm" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Confirm</option>
+                    <option value="StatusPayment_Cancel" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Cancel</option>
+                    <option value="Waiting_Payment" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>Waiting_Payment</option>
+                </select>
+            </div>
+            <div class="col-lg">
+                <label>Mã NV Chốt Sale</label> @Html.TextBoxFor(a => a.MaNVChotSale, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    @if (ViewBag.Error != null)
+    {
+        <p class="text-danger">@ViewBag.Error</p>
+    }
+    <p>Có tổng số <strong>@Model.PhieuThus.TotalItemCount</strong> phiếu thu nguồn</p>
+    <p>Doanh thu: <strong>@(Model.DoanhThu?.ToString("N0"))đ</strong></p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>PhieuThuKeToan</th>
+                <th>Chi nhánh</th>
+                <th>Ngày thanh toán</th>
+                <th>Loại</th>
+                <th>TUD</th>
+                <th>SUD</th>
+                <th>Đăng ký</th>
+                <th>Giờ tạo</th>
+                <th>NV chốt sale</th>
+                @*<th>Tên NV chốt sale</th>*@
+                <th>Tháng học dự kiến</th>
+                <th>UD_Final</th>
+                <th>Nhóm UD_Final</th>
+                <th>Giờ cập nhật</th>
+                <th>Trạng thái</th>
+            </tr>
+            @foreach (var item in Model.PhieuThus)
+            {
+                <tr>
+                    <td>@item.PhieuThuKeToan</td>
+                    <td>@item.ChiNhanh</td>
+                    <td>@(item.NgayThanhToan?.ToString("dd/MM/yyyy"))</td>
+                    <td>@item.Loai</td>
+                    <td>@(item.TUD?.ToString("N0"))</td>
+                    <td>@(item.SUD?.ToString("N0"))</td>
+                    <td>@item.DangKy</td>
+                    <td>@item.GioTao</td>
+                    <td>@item.MaNVChotSale</td>
+                    @*<td>@item.ChotSale</td>*@
+                    <td>@item.ThangHocDuKien</td>
+                    <td>@item.UD_FINAL</td>
+                    <td>@item.UD_NhomUDFINAL</td>
+                    <td>@item.ThoiGianCapNhat</td>
+                    <td>@item.TrangThai</td>
+                </tr>
+            }
+            @if (Model.PhieuThus.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="15">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThuNguon", new { page, officeId = Model.OfficeId, maNVChotSale = Model.MaNVChotSale, month = Model.Month, year = Model.Year, loai = Model.Loai, trangThai = Model.TrangThai, phieuthuketoan = Model.Phieuthuketoan }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
