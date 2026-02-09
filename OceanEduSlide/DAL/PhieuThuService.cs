@@ -44,6 +44,7 @@ namespace OceanEduSlide.DAL
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
             foreach (var item in phieuThuTakeList)
             {
+                item.MaNVChotSale = item.MaNVChotSale.Replace("'","");
                 var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale
                 && a.DayStart.Date <= item.NgayThanhToan.Value.Date && (a.DayEnd == null || a.DayEnd.Value.Date >= item.NgayThanhToan.Value.Date));
                 if (historyUser == null)
@@ -117,6 +118,7 @@ namespace OceanEduSlide.DAL
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
             foreach (var item in phieuThuTakeList)
             {
+                item.MaNVChotSale = item.MaNVChotSale.Replace("'", "");
                 var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale
                 && a.DayStart.Date <= item.NgayThanhToan.Value.Date && (a.DayEnd == null || a.DayEnd.Value.Date >= item.NgayThanhToan.Value.Date));
                 if (historyUser == null)
@@ -1364,7 +1366,7 @@ namespace OceanEduSlide.DAL
             var rUserWeek_Reals = _unitOfWork.RevenueUser_Week_RealRepository.Get(a => a.Year == day.Year && a.Month == day.Month);
             var firstDayOfMonth = new DateTime(day.Year, day.Month, 1).Date;
             var endDayOfMonth = new DateTime(day.Year, day.Month, DateTime.DaysInMonth(day.Year, day.Month));
-
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year).AsNoTracking().ToList();
             //var listDiscount = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && DbFunctions.TruncateTime(a.StartDate) <= firstDayOfMonth && DbFunctions.TruncateTime(a.EndDate) >= endDayOfMonth).AsNoTracking().ToList();
 
             foreach (var mnv in listMaNV)
@@ -1617,12 +1619,17 @@ namespace OceanEduSlide.DAL
             var listMaHV = new List<string>();
             foreach (var item in phieuThuAllList)
             {
+                // Tìm CN theo tên CN trong phiếu thu
                 var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
                 if (office == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
                     continue;
                 }
+                // Nếu CN này được gộp với CN khác (CNGop): Gán doanh thu cho CN gộp
+                var CNGop = historyOffices.FirstOrDefault(a => !string.IsNullOrEmpty(a.OfficeCodes) && ("," + a.OfficeCodes + ",").Contains("," + office.ShortCode + ","));
+                if (CNGop != null)
+                    office = CNGop.Office;
                 // thực đạt doanh thu CN
                 var bcCN = listBCCN.FirstOrDefault(a => a.ReportCategoryId == 35 && a.OfficeId == office.Id);
                 if (bcCN == null)
@@ -1914,9 +1921,17 @@ namespace OceanEduSlide.DAL
             // Phiếu cọc chi nhánh
             foreach (var cn in listChiNhanh)
             {
-                var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
+                // Tìm CN theo tên CN trong phiếu thu
+                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == cn);
                 if (office == null)
+                {
+                    logger.Error("Khong ton tai chi nhanh nao co ten ngan la " + cn);
                     continue;
+                }
+                // Nếu CN này được gộp với CN khác (CNGop): Gán phiếu thu cho CN gộp
+                var CNGop = historyOffices.FirstOrDefault(a => !string.IsNullOrEmpty(a.OfficeCodes) && ("," + a.OfficeCodes + ",").Contains("," + office.ShortCode + ","));
+                if (CNGop != null)
+                    office = CNGop.Office;
                 var phieuCocCN = listPhieuCoc.Where(a => a.ChiNhanh == cn).ToList();
                 var tongThangCoc = phieuCocCN.Sum(s => s.ThangHocDuKienDecimal);
                 var thangCocDaGop = phieuCocCN.Where(a => a.HDBH != null).Sum(s => s.ThangHocDuKienDecimal);
@@ -2068,6 +2083,10 @@ namespace OceanEduSlide.DAL
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
                     continue;
                 }
+                // Nếu CN này được gộp với CN khác (CNGop): Gán phiếu thu cho CN gộp
+                var CNGop = historyOffices.FirstOrDefault(a => !string.IsNullOrEmpty(a.OfficeCodes) && ("," + a.OfficeCodes + ",").Contains("," + office.ShortCode + ","));
+                if (CNGop != null)
+                    office = CNGop.Office;
                 if (!string.IsNullOrEmpty(item.MaNVChotSale))
                 {
                     var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale && a.DayStart.Date <= item.NgayThanhToan.Value.Date

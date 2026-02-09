@@ -720,6 +720,10 @@
     <Compile Include="Migrations\202512290717548_historyzone.Designer.cs">
       <DependentUpon>202512290717548_historyzone.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202602090728191_CNGop.cs" />
+    <Compile Include="Migrations\202602090728191_CNGop.Designer.cs">
+      <DependentUpon>202602090728191_CNGop.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
@@ -2063,6 +2067,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202512290717548_historyzone.resx">
       <DependentUpon>202512290717548_historyzone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202602090728191_CNGop.resx">
+      <DependentUpon>202602090728191_CNGop.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

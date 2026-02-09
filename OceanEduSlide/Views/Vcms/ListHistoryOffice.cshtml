@@ -67,11 +67,12 @@
             <tr>
                 <th>Chi nhánh</th>
                 <th>Vùng</th>
-                <th>Định biên Cơ sở</th>
+                <th>Chỉ tiêu Doanh số cơ sở CN</th>
                 <th>Định biên ATL</th>
                 <th>Định biên EC</th>
                 <th>Nhóm chi nhánh</th>
                 <th style="width:130px">Áp dụng QĐ 156</th>
+                <th>Các chi nhánh gộp</th>
                 <th style="width: 130px"></th>
             </tr>
             @foreach (var item in Model.HistoryOffices)
@@ -84,6 +85,7 @@
                     <td>@item.DBEC</td>
                     <td>@Html.DisplayFor(model => item.GroupOffice)</td>
                     <td>@Html.DisplayFor(model => item.QD156)</td>
+                    <td>@item.OfficeCodes</td>
                     <td>
                         @*<a href="javascript:;" onclick="updateInfo('@user.Id')">Cập nhật</a> -
             @Html.ActionLink("Sửa", "UpdateHistoryUser", new { id = user.Id }) -*@
@@ -94,7 +96,7 @@
             @if (Model.HistoryOffices.PageCount > 1)
             {
                 <tr>
-                    <td colspan="9">@Html.PagedListPager(Model.HistoryOffices, page => Url.Action("ListHistoryOffice", new { page, name = Model.Name, month = Model.month, year = Model.year, Group = Model.Group, zoneId = Model.ZoneId }))</td>
+                    <td colspan="10">@Html.PagedListPager(Model.HistoryOffices, page => Url.Action("ListHistoryOffice", new { page, name = Model.Name, month = Model.month, year = Model.year, Group = Model.Group, zoneId = Model.ZoneId }))</td>
                 </tr>
             }
         </tbody>

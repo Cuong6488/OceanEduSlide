@@ -359,6 +359,7 @@
         $(".btn-filter li").on("click", function (data) {
             //$(this).siblings("ul").removeClass("active");
             ////var categoryid = @Model.categoryId;
+            var categoryid = $(this).closest('th').data("categoryid");
             var sort = @Model.sort.ToString();
             @*var zoneId = @Model.ZoneId;
           var officeId = @Model.OfficeId;
@@ -370,7 +371,7 @@
     var officeId = @(Model.OfficeId.HasValue ? Model.OfficeId.Value.ToString() : "undefined");
     var userType = @(Model.UserType.HasValue ? Model.UserType.Value.ToString() : "undefined");
     var userId   = @(Model.UserId.HasValue ? Model.UserId.Value.ToString() : "undefined");
-
+            var page = $('input[name="page"]').val();
     // Giả sử categoryid là biến JS khác
     // var categoryid = ...;
 
@@ -381,9 +382,10 @@
     if(zoneId !== undefined) url += `ZoneId=${zoneId}&`;
     if(officeId !== undefined) url += `OfficeId=${officeId}&`;
     if(userType !== undefined) url += `UserType=${userType}&`;
-    if(userId !== undefined) url += `userIdd=${userId}&`;
+    if(userId !== undefined) url += `userId=${userId}&`;
     if(year !== undefined) url += `Year=${year}&`;
-    // if(categoryid !== undefined) url += `categoryid=${categoryid}&`;
+     if(categoryid !== undefined) url += `categoryid=${categoryid}&`;
+            if (page !== undefined) url += `page=${page}&`;
 
     // Loại bỏ ký tự & thừa
     url = url.replace(/&$/, '');

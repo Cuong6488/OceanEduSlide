@@ -20,6 +20,8 @@ namespace OceanEduSlide.Models
         public bool Active { get; set; } = true;
         public bool QD156 { get; set; }
         public virtual Office Office { get; set; }
+        [Display(Name = "Các chi nhánh gộp trong tháng")]
+        public string OfficeCodes { get; set; }
         public virtual Zone Zone { get; set; }
     }
     public enum StatusOffice

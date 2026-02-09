@@ -523,6 +523,26 @@ namespace OceanEduSlide.Controllers
                             ModelState.AddModelError("", @"Chi nhánh " + shortname + " sai định dạng cột Số NVKD cắt giảm chỉ tiêu");
                             return View();
                         }
+
+                        if (tbl.Columns.Count <= 26)
+                        {
+                            ModelState.AddModelError("", @"Sheet chỉ tiêu CN thiếu cột Các chi nhánh gộp (AA)");
+                            return View();
+                        }
+                        var officeCodes = tbl.Rows[i][26].ToString().Trim();
+                        if (!string.IsNullOrEmpty(officeCodes))
+                        {
+                            var listCode = officeCodes.Split(',');
+                            foreach (var code in listCode)
+                            {
+                                var off = offices.FirstOrDefault(a => a.ShortCode == code);
+                                if (off == null)
+                                {
+                                    ModelState.AddModelError("", @" Không có chi nhánh nào có Mã chi nhánh là: " + code + ". Sheet 1, dòng " + (i + 1));
+                                    return View();
+                                }
+                            }
+                        }
                         var bcCTDBCN = _unitOfWork.ReportDataRepository.GetQuery(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22).FirstOrDefault();
                         if (bcCTDBCN == null)
                             bcCTDBCN = reportDataList.FirstOrDefault(a => a.OfficeId == office.Id && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 22);
@@ -588,6 +608,8 @@ namespace OceanEduSlide.Controllers
                             historyOffice.NVKDOver = nvkdDown;
                             historyOffice.TargetReduce = moneyDown;
                             historyOffice.BaseTarget = baseTargetStrDec;
+                            if (!string.IsNullOrEmpty(officeCodes))
+                                historyOffice.OfficeCodes = officeCodes;
                         }
                         else
                         {
@@ -605,6 +627,8 @@ namespace OceanEduSlide.Controllers
                                 BaseTarget = baseTargetStrDec,
                                 QD156 = string.IsNullOrEmpty(qd156) ? false : true
                             };
+                            if (!string.IsNullOrEmpty(officeCodes))
+                                newhistoryOffice.OfficeCodes = officeCodes;
                             historyOfficeList.Add(newhistoryOffice);
                         }
 

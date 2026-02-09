@@ -368,7 +368,7 @@ namespace OceanEduSlide.Controllers
             //    historyUsers.Where(hu => !string.IsNullOrEmpty(hu.ZoneIds)).SelectMany(hu => hu.ZoneIds.Split(',', (char)StringSplitOptions.RemoveEmptyEntries)));
             var pageNumber = page ?? 1;
             ViewBag.Page = pageNumber;
-            //categoryid = categoryid ?? 88;
+            categoryid = categoryid ?? 88;
             var selectedMonth = Month ?? DateTime.Now.Month;
             var selectedYear = Year ?? DateTime.Now.Year;
             //ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
