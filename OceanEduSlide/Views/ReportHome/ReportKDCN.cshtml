@@ -78,6 +78,18 @@
                     </select>
                 </div>
             }
+            @if (Model.ListOffice?.Count() > 1)
+            {
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select name="OfficeId" class="form-select">
+                        <option>Chọn chi nhánh</option>
+                        @foreach (var item in Model.ListOffice)
+                        {
+                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.Name</option>
+                        }
+                    </select>
+                </div>
+            }
         </div>
         <input type="hidden" name="categoryid" value="@Model.categoryId" />
         <input type="hidden" name="sort" value="@Model.sort" />
@@ -184,7 +196,14 @@
     @if (Model.Offices.PageCount > 1)
     {
         <div class="text-center">
-            @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+            @if (Model.OfficeId != null)
+            {
+                @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+            }
+            else
+            {
+                @Html.PagedListPager(Model.Offices, page => Url.Action("ReportKDCN", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, categoryid = Model.categoryId, sort = Model.sort }))
+            }
         </div>
     }
     <input type="hidden" name="page" value="@ViewBag.Page" />
@@ -222,10 +241,11 @@
             var categoryid = $(this).closest('th').data("categoryid");
             var sort = $(this).data("sort");
             var zoneId = $('select[name="ZoneId"]').val();
+            var officeId = $('select[name="OfficeId"]').val();
             var month = $('select[name="Month"]').val();
             var year = $('select[name="Year"]').val();
             var page = $('input[name="page"]').val();
-            window.location.href = `/ReportHome/ReportKDCN?page=${page}&Year=${year}&Month=${month}&ZoneId=${zoneId}&categoryid=${categoryid}&sort=${sort}`;
+            window.location.href = `/ReportHome/ReportKDCN?page=${page}&Year=${year}&Month=${month}&ZoneId=${zoneId}&OfficeId=${officeId}&categoryid=${categoryid}&sort=${sort}`;
 
         });
 

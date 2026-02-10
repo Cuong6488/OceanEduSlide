@@ -32,7 +32,7 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ReportKDCN(int? page, int? ZoneId, int? Month, int? Year, int? categoryid, int sort = 1)
+        public ActionResult ReportKDCN(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year, int? categoryid, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -83,10 +83,11 @@ namespace OceanEduSlide.Controllers
             {
                 officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
             }
-            //if (OfficeId.HasValue)
-            //{
-            //    officeQuery = officeQuery.Where(a =>  a.Id == OfficeId.Value);
-            //}
+            var officeSelect = officeQuery;
+            if (OfficeId.HasValue)
+            {
+                officeQuery = officeQuery.Where(a => a.Id == OfficeId.Value);
+            }
 
             var allOffices = officeQuery.AsNoTracking().ToList();
             var officeIds = allOffices.Select(o => o.Id).ToList();
@@ -157,9 +158,11 @@ namespace OceanEduSlide.Controllers
             var model = new ListReportHomeViewModel
             {
                 Month = currentMonth,
+                ListOffice = officeSelect,
                 Year = currentYear,
                 User = User,
                 ZoneId = ZoneId,
+                OfficeId = OfficeId,
                 categoryId = categoryid,
                 sort = sort,
                 Offices = sortedOffices,
@@ -2131,7 +2134,7 @@ namespace OceanEduSlide.Controllers
             {
                 decimal soSale = 0, dinhBien = 0, chiTieuDS = 0, thucDatDS = 0, hTDS = 0, DSSale = 0, DSDaoTao = 0, DSKeToan = 0, tiTrongSale = 0, tiTrongDaoTao = 0, tiTrongKeToan = 0, uuDaiBinhQuan = 0,
                  hVGhiDanhLai = 0, hVGhiDanhMoi = 0, tileHVGDM = 0, tileHVGDL = 0, chiTieuCuocGoi = 0, chiTieuHocVien = 0, tongSoHocVien = 0, hoanThanhCuocGoi = 0, thangChotBinhQuan = 0, tongSoThangDK = 0, hTCuocGoi = 0, hTHocVien = 0,
-                 saleOver100 = 0, sale30To50 = 0, sale20To30 = 0, saleUnder20 = 0, doanhThuNen = 0, doanhThuHocBong = 0, doanhThuVang = 0,  doanhThuSuKien = 0, tiLeDoanhThuNen = 0, tiLeDoanhThuHocBong = 0, tiLeDoanhThuVang = 0, tiLeDoanhThuSuKien = 0;
+                 saleOver100 = 0, sale30To50 = 0, sale20To30 = 0, saleUnder20 = 0, doanhThuNen = 0, doanhThuHocBong = 0, doanhThuVang = 0, doanhThuSuKien = 0, tiLeDoanhThuNen = 0, tiLeDoanhThuHocBong = 0, tiLeDoanhThuVang = 0, tiLeDoanhThuSuKien = 0;
                 var officeIds = model.Offices.Select(h => h.Id).ToList();
                 foreach (var officeId in officeIds)
                 {
