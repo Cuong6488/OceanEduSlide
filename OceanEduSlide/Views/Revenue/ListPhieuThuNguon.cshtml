@@ -52,9 +52,9 @@
                     <option value="">Tất cả</option>
                     <option value="Complete + Confirm" @(Model.TrangThai == "Complete + Confirm" ? "selected" : "")>Complete + Confirm</option>
                     <option value="StatusPayment_Complete" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Complete</option>
-                    <option value="StatusPayment_Confirm" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Confirm</option>
-                    <option value="StatusPayment_Cancel" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>StatusPayment_Cancel</option>
-                    <option value="Waiting_Payment" @(Model.TrangThai == "StatusPayment_Complete" ? "selected" : "")>Waiting_Payment</option>
+                    <option value="StatusPayment_Confirm" @(Model.TrangThai == "StatusPayment_Confirm" ? "selected" : "")>StatusPayment_Confirm</option>
+                    <option value="StatusPayment_Cancel" @(Model.TrangThai == "StatusPayment_Cancel" ? "selected" : "")>StatusPayment_Cancel</option>
+                    <option value="Waiting_Payment" @(Model.TrangThai == "Waiting_Payment" ? "selected" : "")>Waiting_Payment</option>
                 </select>
             </div>
             <div class="col-lg">
@@ -69,7 +69,7 @@
     {
         <p class="text-danger">@ViewBag.Error</p>
     }
-    <p>Có tổng số <strong>@Model.PhieuThus.TotalItemCount</strong> phiếu thu nguồn</p>
+    <p class="mb-2">Có tổng số <strong>@Model.PhieuThus.TotalItemCount</strong> phiếu thu nguồn</p>
     <p>Doanh thu: <strong>@(Model.DoanhThu?.ToString("N0"))đ</strong></p>
     <table class="list_table tablecenter table-striped">
         <tbody>
@@ -85,8 +85,8 @@
                 <th>NV chốt sale</th>
                 @*<th>Tên NV chốt sale</th>*@
                 <th>Tháng học dự kiến</th>
-                <th>UD_Final</th>
-                <th>Nhóm UD_Final</th>
+                @*<th>UD_Final</th>
+                    <th>Nhóm UD_Final</th>*@
                 <th>Giờ cập nhật</th>
                 <th>Trạng thái</th>
             </tr>
@@ -100,13 +100,13 @@
                     <td>@(item.TUD?.ToString("N0"))</td>
                     <td>@(item.SUD?.ToString("N0"))</td>
                     <td>@item.DangKy</td>
-                    <td>@item.GioTao</td>
+                    <td>@(item.GioTao?.ToString("dd/MM/yyyy HH:mm:ss"))</td>
                     <td>@item.MaNVChotSale</td>
                     @*<td>@item.ChotSale</td>*@
                     <td>@item.ThangHocDuKien</td>
-                    <td>@item.UD_FINAL</td>
-                    <td>@item.UD_NhomUDFINAL</td>
-                    <td>@item.ThoiGianCapNhat</td>
+                    @*<td>@item.UD_FINAL</td>
+                        <td>@item.UD_NhomUDFINAL</td>*@
+                    <td>@(item.ThoiGianCapNhat?.ToString("dd/MM/yyyy HH:mm:ss"))</td>
                     <td>@item.TrangThai</td>
                 </tr>
             }

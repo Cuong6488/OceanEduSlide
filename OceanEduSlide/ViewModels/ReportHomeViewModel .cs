@@ -168,7 +168,7 @@ namespace OceanEduSlide.ViewModels
 
         public string StartDay { get; set; }
         public string EndDay { get; set; }
-        public User User { get; set; }
+        public HistoryUser User { get; set; }
         public IEnumerable<DateItem> DateItems { get; set; }
 
         public class DateItem

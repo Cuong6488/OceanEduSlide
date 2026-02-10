@@ -1,23 +1,26 @@
 ﻿@model OceanEduSlide.ViewModels.LoadListCallDayViewModel
 <div class="box_content" style="max-height:90vh">
-    <h2>Danh sách cuộc gọi từ @Model.StartDay đến @Model.EndDay - nhân sự @(Model.User.Fullname)</h2>
-    <table class="list_table tablecenter table-striped">
-        <tbody>
-            <tr>
-                <th class="text-center">Ngày</th>
-                <th class="text-center">Cuộc gọi trên 60s</th>
-                <th class="text-center">Cuộc gọi trên 30s</th>
-                <th class="text-center">Tổng cuộc gọi</th>
-            </tr>
-            @foreach (var item in Model.DateItems)
-            {
+    <h2>Danh sách cuộc gọi từ @Model.StartDay đến @Model.EndDay - nhân sự @(Model.User.User.Fullname)</h2>
+    <a class="btn quick-link" href="@Url.Action("ExportCallLogUser", new {StartDay = Model.StartDay,EndDay = Model.EndDay,UserId = Model.User.Id})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <div class="box_content">
+        <table class="list_table tablecenter table-striped">
+            <tbody>
                 <tr>
-                    <td>@item.Date.ToString("dd/MM/yyyy")</td>
-                    <td>@item.Over60s.ToString("N0")</td>
-                    <td>@item.Over30s.ToString("N0")</td>
-                    <td>@item.Total.ToString("N0")</td>
+                    <th class="text-center">Ngày</th>
+                    <th class="text-center">Cuộc gọi trên 60s</th>
+                    <th class="text-center">Cuộc gọi trên 30s</th>
+                    <th class="text-center">Tổng cuộc gọi</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+                @foreach (var item in Model.DateItems)
+                {
+                    <tr>
+                        <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Over60s.ToString("N0")</td>
+                        <td>@item.Over30s.ToString("N0")</td>
+                        <td>@item.Total.ToString("N0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

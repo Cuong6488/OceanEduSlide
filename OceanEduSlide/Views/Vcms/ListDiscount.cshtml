@@ -71,7 +71,7 @@
                         <a href="@Url.Action("UpdateDiscount", new { discountId = discount.Id })">@discount.Username</a>
                     </td>
                     @*<td>@discount.City.Name</td>*@
-                    <td>@(discount.PercentDiscount)</td>
+                    <td>@discount.PercentDiscount</td>
                     <td>@(discount.MoneyDiscount.HasValue ? discount.MoneyDiscount.Value.ToString("N0") + "đ" : "")</td>
                     <td>@discount.Gift</td>
                     <td>@discount.Pathway</td>

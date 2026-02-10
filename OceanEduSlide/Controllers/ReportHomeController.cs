@@ -15,6 +15,7 @@ using System.Data;
 using OceanEduSlide.Migrations;
 using System.Web.Services.Protocols;
 using System.Drawing.Printing;
+using OfficeOpenXml.Style;
 
 namespace OceanEduSlide.Controllers
 {
@@ -82,6 +83,15 @@ namespace OceanEduSlide.Controllers
             if (ZoneId.HasValue)
             {
                 officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
+                if (OfficeId.HasValue)
+                {
+                    //var office = _unitOfWork.OfficeRepository.GetById(OfficeId);
+                    var listOId = officeQuery.Select(a => a.Id).ToHashSet();
+                    if (!listOId.Contains(OfficeId.Value))
+                    {
+                        OfficeId = null;
+                    }
+                }
             }
             var officeSelect = officeQuery;
             if (OfficeId.HasValue)
@@ -2966,7 +2976,7 @@ namespace OceanEduSlide.Controllers
                 StartDay = startDay,
                 EndDay = endDay,
                 DateItems = dateItems,
-                User = huser.User,
+                User = huser,
             };
             return PartialView(model);
         }
@@ -3017,6 +3027,62 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
+        public void ExportCallLogUser(string startDay, string endDay, int userId)
+        {
+            DateTime startDate = new DateTime();
+            DateTime endDate = new DateTime();
+            var hUser = _unitOfWork.HistoryUserRepository.GetById(userId);
+            if (hUser == null)
+                return;
+            if (DateTime.TryParse(startDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+                startDate = cd.Date;
+            else
+                return;
+            if (DateTime.TryParse(endDay, new CultureInfo("vi-VN"), DateTimeStyles.None, out var crd))
+                endDate = crd.Date;
+            else
+                return;
+            var listCallLog = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == userId && DbFunctions.TruncateTime(a.CallDate) >= startDate && DbFunctions.TruncateTime(a.CallDate) <= endDate,
+                q => q.OrderBy(a => a.CallDate));
+            // Tạo bảng dữ liệu
+            var dt = new DataTable();
+            dt.Columns.Add("Mã cuộc gọi");
+            dt.Columns.Add("Ngày gọi");
+            //dt.Columns.Add("Mã nhân viên");
+            //dt.Columns.Add("Tên nhân viên");
+            dt.Columns.Add("Phone");
+            dt.Columns.Add("Duration");
+            dt.Columns.Add("BillSec");
+            dt.Columns.Add("RecordingFile");
+
+            var filename = $"danh-sach-cuoc-goi.xlsx";
+            foreach (var item in listCallLog)
+            {
+                dt.Rows.Add(item.UniqueId, item.CallDate, /*item.Exten, item.User.Fullname,*/ item.Phone, item.Duration, item.BillSec, item.RecordingFile);
+            }
+
+            // Xuất Excel
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Báo cáo cuộc gọi");
+                ws.Cells[1, 1].Value = "Danh sách cuộc gọi nhân sự " + hUser.User.Fullname + " - MNV: " + hUser.User.MaNhanVien + ", từ " + startDay + " đến " + endDay;
+                ws.Cells[1, 1, 1, 6].Merge = true;
+
+                ws.Cells[1, 1].Style.Font.Bold = true;
+                ws.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                ws.Cells[1, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+                // 👉 Đổ DataTable từ dòng 2
+                ws.Cells[2, 1].LoadFromDataTable(dt, true);
+
+                ws.Cells.AutoFitColumns();
+
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", $"attachment; filename={filename}");
+                Response.BinaryWrite(pck.GetAsByteArray());
+            }
+        }
+
         //public ActionResult ChangeCallLogDataCN(int officeId)
         //{
         //    var o = _unitOfWork.OfficeRepository.GetById(officeId);
