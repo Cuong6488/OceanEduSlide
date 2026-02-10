@@ -14,6 +14,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using System.Text;
+using OceanEduSlide.OEDongBo;
 
 namespace OceanEduSlide.Controllers
 {
@@ -24,6 +25,7 @@ namespace OceanEduSlide.Controllers
         private string Fullname => RouteData.Values["Fullname"].ToString();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
         public ConfigSite Config => (ConfigSite)HttpContext.Application["ConfigSite"];
+        private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
 
 
         #region ChiTieuCN_NV
@@ -2654,7 +2656,7 @@ namespace OceanEduSlide.Controllers
                 var newkey = username.Trim();
                 if (!string.IsNullOrEmpty(newkey))
                 {
-                    phieuThus = phieuThus.Where(l => l.MaNVChotSale.Contains(newkey) || l.MaNVChotSale.Contains(newkey) || l.MaNVChotSale.Contains(newkey));
+                    phieuThus = phieuThus.Where(l => l.MaNVChotSale.Contains(newkey));
                 }
             }
 
@@ -2667,6 +2669,76 @@ namespace OceanEduSlide.Controllers
                 type = type,
                 year = year,
                 month = month,
+            };
+            return View(model);
+        }
+        public ActionResult ListPhieuThuNguon(int? page, string maNVChotSale, string phieuthuketoan, string officeId, string loai, string trangThai, int? month, int? year)
+        {
+            var pageNumber = page ?? 1;
+            const int pageSize = 20;
+            var phieuThus = _dongBoTuyenSinh.BC_PhieuThu.OrderByDescending(a => a.NgayThanhToan).AsQueryable();
+            if (!string.IsNullOrEmpty(officeId))
+            {
+                phieuThus = phieuThus.Where(l => l.ChiNhanh == officeId);
+            }
+            if (month != null)
+                phieuThus = phieuThus.Where(l => l.NgayThanhToan.HasValue && l.NgayThanhToan.Value.Month == month);
+
+            if (year != null)
+                phieuThus = phieuThus.Where(l => l.NgayThanhToan.HasValue && l.NgayThanhToan.Value.Year == year);
+
+            if (!string.IsNullOrEmpty(maNVChotSale))
+            {
+                var newkey = maNVChotSale.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.MaNVChotSale.Contains(newkey));
+                }
+            }
+            if (!string.IsNullOrEmpty(loai))
+            {
+                if (loai != "Học phí + Phiếu gộp")
+                    phieuThus = phieuThus.Where(l => l.Loai == loai);
+                else
+                    phieuThus = phieuThus.Where(l => l.Loai == "Học phí" || l.Loai == "Phiếu gộp");
+
+            }
+            if (!string.IsNullOrEmpty(trangThai))
+            {
+                if (trangThai != "Complete + Confirm")
+                    phieuThus = phieuThus.Where(l => l.TrangThai == trangThai);
+                else
+                    phieuThus = phieuThus.Where(l => l.TrangThai == "StatusPayment_Complete" || l.TrangThai == "StatusPayment_Confirm");
+            }
+            if (!string.IsNullOrEmpty(phieuthuketoan))
+            {
+                var newkey = phieuthuketoan.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    if (long.TryParse(newkey, out var longPhieuThuKeToan))
+                    {
+                        phieuThus = phieuThus.Where(l => l.PhieuThuKeToan == longPhieuThuKeToan);
+                    }
+                    else
+                    {
+                        ViewBag.Error = "Phiếu thu kế toán không hợp lệ, loại bỏ kết quả lọc với phiếu thu kế toán: " + newkey + ".";
+                    }
+
+                }
+            }
+
+            var model = new ListPhieuThuNguonViewModel
+            {
+                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "ShortName", "ShortName"),
+                PhieuThus = phieuThus.ToPagedList(pageNumber, pageSize),
+                OfficeId = officeId,
+                MaNVChotSale = maNVChotSale,
+                TrangThai = trangThai,
+                Loai = loai,
+                Year = year,
+                Month = month,
+                Phieuthuketoan = phieuthuketoan,
+                DoanhThu = phieuThus.Where(a => a.SUD.HasValue).Sum(a => a.SUD)
             };
             return View(model);
         }
