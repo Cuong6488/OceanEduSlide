@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using OceanEduSlide.Models;
@@ -107,7 +108,7 @@ namespace OceanEduSlide.ViewModels
         public string Fullname { get; set; }
         [Display(Name = "Mã nhân viên"), UIHint("TextBox"), Required(ErrorMessage = "Hãy nhập Mã nhân viên")]
         public string MaNhanVien { get; set; }
-        [Display(Name = "Mật khẩu (không bắt buộc)"),StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
+        [Display(Name = "Mật khẩu (không bắt buộc)"), StringLength(16, MinimumLength = 4, ErrorMessage = "Mật khẩu từ 4, 16 ký tự"), UIHint("Password")]
         public string Password { get; set; }
         [Display(Name = "Nhập lại mật khẩu"), System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Nhập lại mật khẩu không chính xác"),
          UIHint("Password")]
@@ -187,40 +188,54 @@ namespace OceanEduSlide.ViewModels
         public string Name { get; set; }
     }
 
+    public class ListDiscountViewModel
+    {
+        public PagedList.IPagedList<Discount> Discounts { get; set; }
+        public string Name { get; set; }
+        public string Cth { get; set; }
+        public string officeId { get; set; }
+        [Display(Name = "Ngày hiệu lực"), UIHint("DateTimePicker")]
+        public string StartDate { get; set; }
+        [Display(Name = "Ngày hết hạn"), UIHint("DateTimePicker")]
+        public string EndDate { get; set; }
+        public SelectList SelectOffices { get; set; }
+    }
     public class CreateDiscountViewModel
     {
-        [Display(Name = "Tên QĐ"), Required(ErrorMessage = "Hãy điền tên QĐ"), UIHint("TextBox")]
-        public string Name { get; set; }
-
-        [Display(Name = "Hoạt động")]
-        public bool Active { get; set; } = true;
-        [Display(Name = "Chi nhánh"), Required(ErrorMessage = "Hãy chọn chi nhánh")]
-        public int OfficeId { get; set; }
-        [Display(Name = "% ưu đãi"), RegularExpression(@"^(?!0(\.0+)?$)\d+(\.\d+)?$", ErrorMessage = "Nhập số dương"), UIHint("NumberBox")]
-        public double? PercentDiscount { get; set; }
-        [Display(Name = "Ưu đãi tiền mặt")]
+        public Discount Discount { get; set; }
+        [Display(Name = "Ưu đãi tiền mặt"), UIHint("MoneyBox")]
         public string MoneyDiscount { get; set; }
-        [Display(Name = "Quà tặng"), UIHint("Textbox")]
-        public string Gift { get; set; }
-        [Display(Name = "Lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ"), Required(ErrorMessage = "Hãy chọn lộ trình")]
-        public int Pathway { get; set; }
-
-        public SelectList SelectPathway { get; set; }
-        public SelectList SelectOffices { get; set; }
+        [Display(Name = "Ngày hiệu lực"), UIHint("DateTimePicker")]
+        public string StartDate { get; set; }
+        [Display(Name = "Ngày hết hạn"), UIHint("DateTimePicker")]
+        public string EndDate { get; set; }
+        [Display(Name = "Chương trình học"), Required(ErrorMessage = "Hãy chọn Chương trình học")]
+        public string Cth { get; set; }
+        //public SelectList SelectPathway { get; set; }
+        public SelectList SelectCth { get; set; }
         public CreateDiscountViewModel()
         {
-            var listgroup = new Dictionary<int, string>
+            //var listgroup = new Dictionary<int, string>
+            //{
+            //    { 3, "3 tháng" },
+            //    { 6, "6 tháng" },
+            //    { 12, "12 tháng" },
+            //    { 18, "18 tháng" },
+            //    { 24, "24 tháng" },
+            //    { 36, "36 tháng" },
+            //    { 48, "48 tháng" },
+            //    { 72, "72 tháng" },
+            //};
+            //SelectPathway = new SelectList(listgroup, "Key", "Value");
+            SelectCth = new SelectList(new List<string>
             {
-                { 3, "3 tháng" },
-                { 6, "6 tháng" },
-                { 12, "12 tháng" },
-                { 18, "18 tháng" },
-                { 24, "24 tháng" },
-                { 36, "36 tháng" },
-                { 48, "48 tháng" },
-                { 72, "72 tháng" },
-            };
-            SelectPathway = new SelectList(listgroup, "Key", "Value");
+                "Anh văn nhi đồng",
+                "Anh văn thiếu nhi",
+                "T.A học thuật Trung học",
+                "Luyện thi IELTS",
+                "T.A giao tiếp quốc tế TOEIC"
+            });
+
         }
     }
 }

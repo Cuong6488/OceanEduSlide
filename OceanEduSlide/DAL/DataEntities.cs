@@ -42,9 +42,10 @@ namespace OceanEduSlide.DAL
                 .HasForeignKey(p => p.OfficeId)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<ReportData>()
-            //    .Property(x => x.DataReal)
-            //    .HasPrecision(18, 6);
+            modelBuilder.Entity<ReportData>()
+                .Property(x => x.DataReal)
+                .HasPrecision(18, 6);
+
         }
 
     }

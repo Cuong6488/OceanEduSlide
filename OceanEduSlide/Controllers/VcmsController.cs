@@ -631,6 +631,19 @@ namespace OceanEduSlide.Controllers
             return HttpNotFound();
 
         }
+
+        [HttpPost]
+        public bool QuickUpdateUser(bool active, int userId = 0)
+        {
+            var user = _unitOfWork.UserRepository.GetById(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            user.Active = active;
+            _unitOfWork.Save();
+            return true;
+        }
         [HttpPost]
         public JsonResult DeleteUser(int userId)
         {
@@ -1767,10 +1780,7 @@ namespace OceanEduSlide.Controllers
                 return RedirectToAction("CreateZone", new { result = "add" });
 
             }
-            else
-            {
-                return HttpNotFound();
-            }
+            return HttpNotFound();
         }
         public ActionResult UpdateZone(int zoneId)
         {
@@ -1868,17 +1878,27 @@ namespace OceanEduSlide.Controllers
             discounts.Delete();
             return RedirectToAction("ListDiscount");
         }
-        public ActionResult ListDiscount(int? page, string name, string Cth, string officeId, string result = "")
+        public ActionResult ListDiscount(int? page, string name, string Cth, string startDate, string endDate, string officeId, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
             const int pageSize = 15;
             var discounts = _unitOfWork.DiscountRepository.GetQuery(orderBy: l => l.OrderBy(a => a.Id));
 
-            //if (cityId.HasValue)
-            //{
-            //    discounts = discounts.Where(l => l.CityId == cityId);
-            //}
+            if (!string.IsNullOrEmpty(startDate))
+            {
+                if (DateTime.TryParse(startDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.StartDate) <= DbFunctions.TruncateTime(pd));
+                }
+            }
+            if (!string.IsNullOrEmpty(endDate))
+            {
+                if (DateTime.TryParse(endDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.EndDate) >= DbFunctions.TruncateTime(pd));
+                }
+            }
             if (name != null)
             {
                 var newkey = name.Trim();
@@ -1920,11 +1940,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult CreateDiscount(string result = "")
         {
             ViewBag.Result = result;
-            var model = new CreateDiscountViewModel
-            {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
-                //Discount = new Discount(),
-            };
+            var model = new CreateDiscountViewModel();
             return View(model);
         }
         [HttpPost]
@@ -1932,32 +1948,143 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
+                var isPost = true;
 
-                var m = new Discount
+                if (model.Discount.Offices.Contains(" "))
                 {
-                    Username = model.Name,
-                    //Offices = model.Offices,
-                    Active = model.Active,
-                    PercentDiscount = model.PercentDiscount,
-                    Pathway = model.Pathway,
-                    Gift = model.Gift
-
-                };
-                if (model.MoneyDiscount != null)
-                {
-                    m.MoneyDiscount = Convert.ToInt32(model.MoneyDiscount.Replace(",", ""));
+                    ModelState.AddModelError("", "Ô Các chi nhánh áp dụng không được chứa khoảng trắng (dấu cách)");
+                    isPost = false;
                 }
-                _unitOfWork.DiscountRepository.Insert(m);
-                _unitOfWork.Save();
-                //model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "Id", "ShortName"),
-
-                return RedirectToAction("CreateDiscount", new { result = "add" });
-
+                var listOfficeCode = model.Discount.Offices.Split(',');
+                if (listOfficeCode.Any(a => string.IsNullOrEmpty(a)))
+                {
+                    ModelState.AddModelError("", "Kiểm tra lại định dạng Các chi nhánh áp dụng, các chi nhánh ngăn cách bởi 01 dấu phẩy");
+                    isPost = false;
+                }
+                foreach (var item in listOfficeCode)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                        if (office == null)
+                        {
+                            ModelState.AddModelError("", "Kiểm tra lại dữ liệu Các chi nhánh áp dụng, không có Chi nhánh nào có Mã chi nhánh là " + item);
+                            isPost = false;
+                        }
+                    }
+                }
+                if (DateTime.TryParse(model.StartDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    model.Discount.StartDate = pd;
+                }
+                if (DateTime.TryParse(model.EndDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd2))
+                {
+                    model.Discount.EndDate = pd2;
+                }
+                if (model.Discount.EndDate != null && model.Discount.StartDate != null && model.Discount.StartDate > model.Discount.EndDate)
+                {
+                    ModelState.AddModelError("", "Ngày hiệu lực không được lớn hơn ngày hết hạn");
+                    isPost = false;
+                }
+                if (model.Discount.Pathway > model.Discount.PathwayTo)
+                {
+                    ModelState.AddModelError("", "Số tháng từ không được lớn hơn số tháng đến");
+                    isPost = false;
+                }
+                if (isPost)
+                {
+                    if (model.MoneyDiscount != null)
+                    {
+                        model.Discount.MoneyDiscount = Convert.ToInt32(model.MoneyDiscount.Replace(",", ""));
+                    }
+                    model.Discount.Cth = model.Cth;
+                    _unitOfWork.DiscountRepository.Insert(model.Discount);
+                    _unitOfWork.Save();
+                    return RedirectToAction("CreateDiscount", new { result = "add" });
+                }
             }
-            else
+            return View(model);
+
+        }
+        public ActionResult UpdateDiscount(int dcId)
+        {
+            var dc = _unitOfWork.DiscountRepository.GetById(dcId);
+            if (dc == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("ListDisCount");
             }
+            var model = new CreateDiscountViewModel()
+            {
+                Discount = dc,
+                StartDate = dc.StartDate?.ToString("dd/MM/yyyy"),
+                EndDate = dc.EndDate?.ToString("dd/MM/yyyy"),
+                Cth = dc.Cth,
+                MoneyDiscount = dc.MoneyDiscount?.ToString("N0")
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult UpdateDiscount(CreateDiscountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var isPost = true;
+
+                if (model.Discount.Offices.Contains(" "))
+                {
+                    ModelState.AddModelError("", "Ô Các chi nhánh áp dụng không được chứa khoảng trắng (dấu cách)");
+                    isPost = false;
+                }
+                var listOfficeCode = model.Discount.Offices.Split(',');
+                if (listOfficeCode.Any(a => string.IsNullOrEmpty(a)))
+                {
+                    ModelState.AddModelError("", "Kiểm tra lại định dạng Các chi nhánh áp dụng, các chi nhánh ngăn cách bởi 01 dấu phẩy");
+                    isPost = false;
+                }
+                foreach (var item in listOfficeCode)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                        if (office == null)
+                        {
+                            ModelState.AddModelError("", "Kiểm tra lại dữ liệu Các chi nhánh áp dụng, không có Chi nhánh nào có Mã chi nhánh là " + item);
+                            isPost = false;
+                        }
+                    }
+                }
+                if (DateTime.TryParse(model.StartDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    model.Discount.StartDate = pd;
+                }
+                if (DateTime.TryParse(model.EndDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd2))
+                {
+                    model.Discount.EndDate = pd2;
+                }
+                if (model.Discount.EndDate != null && model.Discount.StartDate != null && model.Discount.StartDate > model.Discount.EndDate)
+                {
+                    ModelState.AddModelError("", "Ngày hiệu lực không được lớn hơn ngày hết hạn");
+                    isPost = false;
+                }
+                if (model.Discount.Pathway > model.Discount.PathwayTo)
+                {
+                    ModelState.AddModelError("", "Số tháng từ không được lớn hơn số tháng đến");
+                    isPost = false;
+                }
+                if (isPost)
+                {
+                    if (model.MoneyDiscount != null)
+                    {
+                        model.Discount.MoneyDiscount = Convert.ToInt32(model.MoneyDiscount.Replace(",", ""));
+                    }
+                    model.Discount.Cth = model.Cth;
+                    _unitOfWork.DiscountRepository.Update(model.Discount);
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListDiscount", new { result = "add" });
+                }
+            }
+            return View(model);
+
         }
         public ActionResult InsertDiscountExcel()
         {
@@ -2006,65 +2133,115 @@ namespace OceanEduSlide.Controllers
                 //var discounts = _unitOfWork.DiscountRepository.GetQuery(a => a.Active, o => o.OrderBy(a => a.Id));
                 var listDiscount = new List<Discount>();
                 int sheet = 0;
+                var isPost = true;
                 foreach (DataTable tbl in result.Tables)
                 {
                     sheet++;
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
                         var dong = i + 1;
-                        //var username = tbl.Rows[i][3].ToString().Trim();
-                        //var countUser = members.Count(a => a.Username == username);
-                        //if (countUser > 0) continue;
                         var fullname = tbl.Rows[i][0].ToString().Trim();
                         if (string.IsNullOrEmpty(fullname))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã ưu đãi: Dòng " + dong);
-                            return View();
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Mã ưu đãi: Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
                         }
                         int? moneyDiscount = int.TryParse(tbl.Rows[i][2].ToString().Trim(), out var r) ? (int?)r : null;
                         double? percentDiscount = double.TryParse(tbl.Rows[i][3].ToString().Trim(), out var r2) ? (double?)r2 : null;
 
                         var startDateStr = tbl.Rows[i][4].ToString().Trim();
                         var endDateStr = tbl.Rows[i][5].ToString().Trim();
-                        var gift = tbl.Rows[i][7].ToString().Trim();
-                        var offices = tbl.Rows[i][9].ToString().Trim();
-                        if (string.IsNullOrEmpty(offices))
-                        {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh: Dòng " + dong);
-                            return View();
-                        }
+                        var startDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null;
+                        var endDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null;
                         int pathway = int.TryParse(tbl.Rows[i][10].ToString().Trim(), out var r3) ? r3 : 0;
                         int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
+                        var gift = tbl.Rows[i][7].ToString().Trim();
+                        var offices = tbl.Rows[i][9].ToString().Trim();
+
+                        if (endDate != null && startDate != null && startDate > endDate)
+                        {
+                            ModelState.AddModelError("", "Ngày hiệu lực không được lớn hơn ngày hết hạn: Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
+                        }
+                        if (pathway > pathwayTo)
+                        {
+                            ModelState.AddModelError("", "Số tháng từ không được lớn hơn số tháng đến: Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
+                        }
+                        if (string.IsNullOrEmpty(offices))
+                        {
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh: Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
+                        }
+                        else
+                        {
+                            if (offices.Contains(" "))
+                            {
+                                ModelState.AddModelError("", "Ô Chi nhánh không được chứa khoảng trắng (dấu cách): Dòng " + dong + ", Sheet " + sheet);
+                                isPost = false;
+                            }
+                            var listOfficeCode = offices.Split(',');
+                            if (listOfficeCode.Any(a => string.IsNullOrEmpty(a)))
+                            {
+                                ModelState.AddModelError("", "Kiểm tra lại định dạng Chi nhánh, các chi nhánh ngăn cách bởi 01 dấu phẩy: Dòng " + dong + ", Sheet " + sheet);
+                                isPost = false;
+                            }
+                            foreach (var item in listOfficeCode)
+                            {
+                                if (!string.IsNullOrEmpty(item))
+                                {
+                                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                    if (office == null)
+                                    {
+                                        ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là " + item + ": Dòng " + dong + ", Sheet " + sheet);
+                                        isPost = false;
+                                    }
+                                }
+                            }
+                        }
                         var cth = tbl.Rows[i][12].ToString().Trim();
                         if (string.IsNullOrEmpty(cth))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chương trình học: Dòng " + dong);
-                            return View();
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột Chương trình học: Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
                         }
-                        var discount = new Discount
+                        var listCTH = new List<string>() { "Anh văn nhi đồng", "Anh văn thiếu nhi", "T.A học thuật Trung học", "Luyện thi IELTS", "T.A giao tiếp quốc tế TOEIC" };
+                        if (!listCTH.Contains(cth))
                         {
-                            Username = fullname,
-                            MoneyDiscount = moneyDiscount,
-                            PercentDiscount = percentDiscount,
-                            Gift = gift,
-                            Offices = offices,
-                            Pathway = pathway,
-                            PathwayTo = pathwayTo,
-                            Cth = cth,
-                            StartDate = DateTime.TryParse(startDateStr, out var sDate) ? sDate : (DateTime?)null,
-                            EndDate = DateTime.TryParse(endDateStr, out var eDate) ? eDate : (DateTime?)null,
-                            Active = true
-                        };
-                        //_unitOfWork.DiscountRepository.Insert(discount);
-                        listDiscount.Add(discount);
+                            ModelState.AddModelError("", @"Không có chương trình học nào tên là + " + cth + ": Dòng " + dong + ", Sheet " + sheet);
+                            isPost = false;
+                        }
+                        if (isPost)
+                        {
+                            var discount = new Discount
+                            {
+                                Username = fullname,
+                                MoneyDiscount = moneyDiscount,
+                                PercentDiscount = percentDiscount,
+                                Gift = gift,
+                                Offices = offices,
+                                Pathway = pathway,
+                                PathwayTo = pathwayTo,
+                                Cth = cth,
+                                StartDate = startDate,
+                                EndDate = endDate,
+                                Active = true
+                            };
+                            listDiscount.Add(discount);
+                        }
                     }
                 }
-                if (listDiscount.Any())
+                if (isPost)
                 {
-                    _unitOfWork.DiscountRepository.InsertRange(listDiscount);
-                }
-                _unitOfWork.Save();
+                    if (listDiscount.Any())
+                    {
+                        _unitOfWork.DiscountRepository.InsertRange(listDiscount);
+                    }
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListDiscount", new { result = "add" });
 
+                }
+                return View();
             }
             return RedirectToAction("ListDiscount");
         }

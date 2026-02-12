@@ -25,7 +25,7 @@ namespace OceanEduSlide.DAL
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
-
+        
         public void SyncPhieuThu()
         {
             var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
@@ -108,7 +108,7 @@ namespace OceanEduSlide.DAL
 
             //var day = DateTime.Today.AddDays(-1);
             // custom day để test
-            var day = new DateTime(2025, month, date).Date;
+            var day = new DateTime(2026, month, date).Date;
             var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year).AsNoTracking().ToList();
             //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
             var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && !a.THDB);

@@ -9,12 +9,20 @@ namespace OceanEduSlide.Models
         public int Id { get; set; }
         [Display(Name = "Ngày phát sinh cọc"), Required(ErrorMessage = "Hãy chọn ngày")]
         public string DepositDate { get; set; }
+        [Display(Name = "Ngày phát sinh cọc")]
+        public DateTime? NgayPhatSinhCoc { get; set; }
+        [Display(Name = "Ngày lên đơn")]
+        public DateTime? NgayLenDon { get; set; }
+        [Display(Name = "Mã đơn hàng"), UIHint("TextBox")]
+        public string MaDonHang { get; set; }
         [Display(Name = "Tháng"), Required(ErrorMessage = "Hãy chọn tháng")]
         public int Month { get; set; }
         [Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
         public int Year { get; set; }
         [Display(Name = "Nhân sự"), Required(ErrorMessage = "Hãy chọn nhân sự")]
         public int UserId { get; set; }
+        [Display(Name = "Chi nhánh")]
+        public int? OfficeId { get; set; }
         [Display(Name = "Công nợ gốc")]
         public int? DebtId { get; set; }
         [Display(Name = "Họ tên học viên")]
@@ -30,6 +38,7 @@ namespace OceanEduSlide.Models
         [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal TotalMoney { get; set; }
         [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        //[Display(Name = "Tiền đã thanh toán"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DebtMoney { get; set; }
         [Display(Name = "Tiền giảm lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DownMoney { get; set; }
@@ -47,25 +56,39 @@ namespace OceanEduSlide.Models
         public string FileStatus { get; set; }
         [Display(Name = "Ngày phát sinh gộp phí")]
         public string GrossDate { get; set; }
-        [Display(Name = "Nội dung khó khăn"),UIHint("TextArea")]
+        [Display(Name = "Nội dung khó khăn"), UIHint("TextArea")]
         public string HardContent { get; set; }
         [Display(Name = "Tình trạng liên hệ khách"), UIHint("TextArea")]
         public string ContactStatus { get; set; }
         [Display(Name = "Hướng xử lý"), UIHint("TextArea")]
         public string HandleWay { get; set; }
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"),Display(Name = "Ngày tạo")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
+        [Display(Name = "Công nợ cần thu")]
+        public bool PhaiThu { get; set; }
+        [Display(Name = "Cập nhật tự động")]
+        public bool Auto { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
+        public TypeData TypeData { get; set; }
         public virtual User User { get; set; }
+        public virtual Office Office { get; set; }
         public virtual ICollection<DownPathway> DownPathways { get; set; }
         public virtual ICollection<Debt> Debts { get; set; }
         public virtual Debt DebtParent { get; set; }
+
         public Debt()
         {
             CreateDate = DateTime.Now;
             Active = true;
         }
+    }
+    public enum TypeData
+    {
+        [Display(Name = "Dữ liệu cũ")]
+        Old,
+        [Display(Name = "Dữ liệu mới")]
+        New,
     }
     public enum TypeDebt
     {

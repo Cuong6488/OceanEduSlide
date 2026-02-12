@@ -84,7 +84,7 @@
                 <tr data-id="@user.Id">
                     @*<td>@Html.EditorFor(model => user.Sort)</td>*@
                     <td class="left">
-                        <a href="@Url.Action("UpdateUser", new { userId = user.Id })">@user.Username</a>
+                        <a href="@Url.Action("UpdateUser", new { id = user.Id })">@user.Username</a>
                     </td>
                     @*<td>@user.City.Name</td>*@
 
@@ -113,7 +113,7 @@
             @if (Model.Users.PageCount > 1)
             {
                 <tr>
-                    <td colspan="9">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username, active = Model.active, UserType = Model.TypeUser,zoneId = Model.ZoneId }))</td>
+                    <td colspan="15">@Html.PagedListPager(Model.Users, page => Url.Action("ListUser", new { page, officeId = Model.officeId, username = Model.Username, active = Model.active, UserType = Model.TypeUser,zoneId = Model.ZoneId }))</td>
                 </tr>
             }
         </tbody>
@@ -146,12 +146,11 @@
 
         function updateInfo(id) {
             const elm = $('tr[data-id="' + id + '"]');
-            const sort = elm.find("#user_Sort").val();
             const active = elm.find("input#user_Active").prop("checked");
             $.post("/Vcms/QuickUpdateUser",
-                { userId: id, sort, active },
+                { userId: id, active },
                 function (data) {
-                    if (data) {
+                    if (data === "True") {
                         $.toast({
                             text: 'Cập nhật thành công',
                             position: 'bottom-right',

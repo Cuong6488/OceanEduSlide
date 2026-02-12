@@ -4,7 +4,20 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DongBoTuyenSinhModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DongBoTuyenSinhOEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.BC_CongNo' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="BC_CongNo">
+          <Property Name="NgayLenDon" Type="datetime" />
+          <Property Name="MaHV" Type="varchar" MaxLength="50" />
+          <Property Name="TongTien" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MaDonHang" Type="nvarchar" MaxLength="50" />
+          <Property Name="MaNVChotSale" Type="nvarchar" MaxLength="50" />
+          <Property Name="ChotSale" Type="nvarchar" MaxLength="100" />
+          <Property Name="ThangHocDuKien" Type="float" />
+          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="200" />
+          <Property Name="DateImport" Type="datetime" />
+        </EntityType>-->
         <EntityType Name="BC_PhieuThu">
           <Key>
             <PropertyRef Name="ID_StudentDept" />
@@ -38,92 +51,61 @@
           <Property Name="DonHang" Type="nvarchar" MaxLength="100" />
           <Property Name="UDPhieuThu" Type="nvarchar" MaxLength="255" />
           <Property Name="ThoiGianCapNhat" Type="datetime" />
-          <Property Name="TrangThai" Type="nvarchar" MaxLength="100" />
+          <Property Name="TrangThai" Type="varchar" MaxLength="100" />
           <Property Name="ID_StudentDept" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'DongBoTuyenSinh.dbo.DSNhanSuNguon' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.DSLopNghiTet' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="DSLopNghiTet">
+          <Property Name="TenLop" Type="nvarchar" MaxLength="200" />
+          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="100" />
+          <Property Name="Status" Type="nvarchar" MaxLength="100" />
+        </EntityType>-->
         <EntityType Name="DSNhanSuNguon">
           <Key>
             <PropertyRef Name="IDNhanSuHRM" />
           </Key>
           <Property Name="IDNhanSuHRM" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="MaNhanSu" Type="varchar" MaxLength="50" />
-          <Property Name="TenNhanSu" Type="nvarchar" MaxLength="200" />
-          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="500" />
-          <Property Name="ChucDanhChuyenMon" Type="nvarchar" MaxLength="500" />
-          <Property Name="MaChucDanhChuyenMon" Type="nvarchar" MaxLength="100" />
+          <Property Name="MaNhanSu" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TenNhanSu" Type="nvarchar" MaxLength="255" />
+          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="255" />
+          <Property Name="ChucDanhChuyenMon" Type="nvarchar" MaxLength="255" />
+          <Property Name="MaChucDanhChuyenMon" Type="nvarchar" MaxLength="50" />
           <Property Name="NgayVaoLam" Type="datetime" />
-          <Property Name="TrangThai" Type="nvarchar" MaxLength="20" />
+          <Property Name="TrangThai" Type="nvarchar" MaxLength="50" />
           <Property Name="NgayNghiViec" Type="datetime" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'DongBoTuyenSinh.dbo.QuaTrinhCongTac' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="QuaTrinhCongTac">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="IDNhanSuHRM" />
-            <PropertyRef Name="NgayApDung" />
-            <PropertyRef Name="Loai" />
           </Key>
           <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IDNhanSuHRM" Type="uniqueidentifier" Nullable="false" />
           <Property Name="NgayApDung" Type="datetime" Nullable="false" />
-          <Property Name="MaChucDanh" Type="nvarchar" MaxLength="100" />
-          <Property Name="Loai" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="WorkPlaceName" Type="nvarchar" MaxLength="500" />
-          <Property Name="PositionOld" Type="nvarchar" MaxLength="200" />
+          <Property Name="MaChucDanh" Type="nvarchar" MaxLength="50" />
+          <Property Name="Loai" Type="nvarchar" MaxLength="100" />
+          <Property Name="WorkPlaceName" Type="nvarchar" MaxLength="255" />
+          <Property Name="PositionOld" Type="nvarchar" MaxLength="255" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ThaiSan">
           <Key>
             <PropertyRef Name="IDNhanSuHRM" />
-            <PropertyRef Name="NgayBatDauNghiThaiSan" />
-            <PropertyRef Name="NgayKetthucNghiThaiSan" />
           </Key>
           <Property Name="IDNhanSuHRM" Type="uniqueidentifier" Nullable="false" />
           <Property Name="NgayBatDauNghiThaiSan" Type="datetime" Nullable="false" />
           <Property Name="NgayKetthucNghiThaiSan" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="DongBoTuyenSinhModelStoreContainer">
+        <EntityContainer Name="DongBoTuyenSinhOEModelStoreContainer">
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DSNhanSuNguon" EntityType="Self.DSNhanSuNguon" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [DSNhanSuNguon].[IDNhanSuHRM] AS [IDNhanSuHRM], 
-    [DSNhanSuNguon].[MaNhanSu] AS [MaNhanSu], 
-    [DSNhanSuNguon].[TenNhanSu] AS [TenNhanSu], 
-    [DSNhanSuNguon].[ChiNhanh] AS [ChiNhanh], 
-    [DSNhanSuNguon].[ChucDanhChuyenMon] AS [ChucDanhChuyenMon], 
-    [DSNhanSuNguon].[MaChucDanhChuyenMon] AS [MaChucDanhChuyenMon], 
-    [DSNhanSuNguon].[NgayVaoLam] AS [NgayVaoLam], 
-    [DSNhanSuNguon].[TrangThai] AS [TrangThai], 
-    [DSNhanSuNguon].[NgayNghiViec] AS [NgayNghiViec]
-    FROM [dbo].[DSNhanSuNguon] AS [DSNhanSuNguon]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="QuaTrinhCongTac" EntityType="Self.QuaTrinhCongTac" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [QuaTrinhCongTac].[ID] AS [ID], 
-    [QuaTrinhCongTac].[IDNhanSuHRM] AS [IDNhanSuHRM], 
-    [QuaTrinhCongTac].[NgayApDung] AS [NgayApDung], 
-    [QuaTrinhCongTac].[MaChucDanh] AS [MaChucDanh], 
-    [QuaTrinhCongTac].[Loai] AS [Loai], 
-    [QuaTrinhCongTac].[WorkPlaceName] AS [WorkPlaceName], 
-    [QuaTrinhCongTac].[PositionOld] AS [PositionOld]
-    FROM [dbo].[QuaTrinhCongTac] AS [QuaTrinhCongTac]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="ThaiSan" EntityType="Self.ThaiSan" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [ThaiSan].[IDNhanSuHRM] AS [IDNhanSuHRM], 
-    [ThaiSan].[NgayBatDauNghiThaiSan] AS [NgayBatDauNghiThaiSan], 
-    [ThaiSan].[NgayKetthucNghiThaiSan] AS [NgayKetthucNghiThaiSan]
-    FROM [dbo].[ThaiSan] AS [ThaiSan]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="DSNhanSuNguon" EntityType="Self.DSNhanSuNguon" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuaTrinhCongTac" EntityType="Self.QuaTrinhCongTac" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ThaiSan" EntityType="Self.ThaiSan" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="DongBoTuyenSinhModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="DongBoTuyenSinhOEModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="BC_PhieuThu">
           <Key>
             <PropertyRef Name="ID_StudentDept" />
@@ -157,62 +139,57 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a prima
           <Property Name="DonHang" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="UDPhieuThu" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ThoiGianCapNhat" Type="DateTime" Precision="3" />
-          <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TrangThai" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ID_StudentDept" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
-          <EntitySet Name="DSNhanSuNguons" EntityType="DongBoTuyenSinhModel.DSNhanSuNguon" />
-          <EntitySet Name="QuaTrinhCongTacs" EntityType="DongBoTuyenSinhModel.QuaTrinhCongTac" />
-          <EntitySet Name="ThaiSans" EntityType="DongBoTuyenSinhModel.ThaiSan" />
-        </EntityContainer>
         <EntityType Name="DSNhanSuNguon">
           <Key>
             <PropertyRef Name="IDNhanSuHRM" />
           </Key>
           <Property Name="IDNhanSuHRM" Type="Guid" Nullable="false" />
-          <Property Name="MaNhanSu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TenNhanSu" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ChiNhanh" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ChucDanhChuyenMon" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="MaChucDanhChuyenMon" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MaNhanSu" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TenNhanSu" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ChiNhanh" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ChucDanhChuyenMon" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="MaChucDanhChuyenMon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="NgayVaoLam" Type="DateTime" Precision="3" />
-          <Property Name="TrangThai" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TrangThai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="NgayNghiViec" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="QuaTrinhCongTac">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="IDNhanSuHRM" />
-            <PropertyRef Name="NgayApDung" />
-            <PropertyRef Name="Loai" />
           </Key>
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="IDNhanSuHRM" Type="Guid" Nullable="false" />
           <Property Name="NgayApDung" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="MaChucDanh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Loai" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="WorkPlaceName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PositionOld" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MaChucDanh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Loai" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="WorkPlaceName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PositionOld" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ThaiSan">
           <Key>
             <PropertyRef Name="IDNhanSuHRM" />
-            <PropertyRef Name="NgayBatDauNghiThaiSan" />
-            <PropertyRef Name="NgayKetthucNghiThaiSan" />
           </Key>
           <Property Name="IDNhanSuHRM" Type="Guid" Nullable="false" />
           <Property Name="NgayBatDauNghiThaiSan" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="NgayKetthucNghiThaiSan" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <EntityContainer Name="DongBoTuyenSinhEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" />
+          <EntitySet Name="DSNhanSuNguons" EntityType="Self.DSNhanSuNguon" />
+          <EntitySet Name="QuaTrinhCongTacs" EntityType="Self.QuaTrinhCongTac" />
+          <EntitySet Name="ThaiSans" EntityType="Self.ThaiSan" />
+        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhModelStoreContainer" CdmEntityContainer="DongBoTuyenSinhEntities">
+        <EntityContainerMapping StorageEntityContainer="DongBoTuyenSinhOEModelStoreContainer" CdmEntityContainer="DongBoTuyenSinhEntities">
           <EntitySetMapping Name="BC_PhieuThu">
-            <EntityTypeMapping TypeName="DongBoTuyenSinhModel.BC_PhieuThu">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhOEModel.BC_PhieuThu">
               <MappingFragment StoreEntitySet="BC_PhieuThu">
                 <ScalarProperty Name="PhieuThuKeToan" ColumnName="PhieuThuKeToan" />
                 <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
@@ -249,39 +226,39 @@ warning 6002: The table/view 'DongBoTuyenSinh.dbo.ThaiSan' does not have a prima
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DSNhanSuNguons">
-            <EntityTypeMapping TypeName="DongBoTuyenSinhModel.DSNhanSuNguon">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhOEModel.DSNhanSuNguon">
               <MappingFragment StoreEntitySet="DSNhanSuNguon">
-                <ScalarProperty Name="NgayNghiViec" ColumnName="NgayNghiViec" />
-                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
-                <ScalarProperty Name="NgayVaoLam" ColumnName="NgayVaoLam" />
-                <ScalarProperty Name="MaChucDanhChuyenMon" ColumnName="MaChucDanhChuyenMon" />
-                <ScalarProperty Name="ChucDanhChuyenMon" ColumnName="ChucDanhChuyenMon" />
-                <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
-                <ScalarProperty Name="TenNhanSu" ColumnName="TenNhanSu" />
-                <ScalarProperty Name="MaNhanSu" ColumnName="MaNhanSu" />
                 <ScalarProperty Name="IDNhanSuHRM" ColumnName="IDNhanSuHRM" />
+                <ScalarProperty Name="MaNhanSu" ColumnName="MaNhanSu" />
+                <ScalarProperty Name="TenNhanSu" ColumnName="TenNhanSu" />
+                <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
+                <ScalarProperty Name="ChucDanhChuyenMon" ColumnName="ChucDanhChuyenMon" />
+                <ScalarProperty Name="MaChucDanhChuyenMon" ColumnName="MaChucDanhChuyenMon" />
+                <ScalarProperty Name="NgayVaoLam" ColumnName="NgayVaoLam" />
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
+                <ScalarProperty Name="NgayNghiViec" ColumnName="NgayNghiViec" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="QuaTrinhCongTacs">
-            <EntityTypeMapping TypeName="DongBoTuyenSinhModel.QuaTrinhCongTac">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhOEModel.QuaTrinhCongTac">
               <MappingFragment StoreEntitySet="QuaTrinhCongTac">
-                <ScalarProperty Name="PositionOld" ColumnName="PositionOld" />
-                <ScalarProperty Name="WorkPlaceName" ColumnName="WorkPlaceName" />
-                <ScalarProperty Name="Loai" ColumnName="Loai" />
-                <ScalarProperty Name="MaChucDanh" ColumnName="MaChucDanh" />
-                <ScalarProperty Name="NgayApDung" ColumnName="NgayApDung" />
-                <ScalarProperty Name="IDNhanSuHRM" ColumnName="IDNhanSuHRM" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="IDNhanSuHRM" ColumnName="IDNhanSuHRM" />
+                <ScalarProperty Name="NgayApDung" ColumnName="NgayApDung" />
+                <ScalarProperty Name="MaChucDanh" ColumnName="MaChucDanh" />
+                <ScalarProperty Name="Loai" ColumnName="Loai" />
+                <ScalarProperty Name="WorkPlaceName" ColumnName="WorkPlaceName" />
+                <ScalarProperty Name="PositionOld" ColumnName="PositionOld" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ThaiSans">
-            <EntityTypeMapping TypeName="DongBoTuyenSinhModel.ThaiSan">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhOEModel.ThaiSan">
               <MappingFragment StoreEntitySet="ThaiSan">
-                <ScalarProperty Name="NgayKetthucNghiThaiSan" ColumnName="NgayKetthucNghiThaiSan" />
-                <ScalarProperty Name="NgayBatDauNghiThaiSan" ColumnName="NgayBatDauNghiThaiSan" />
                 <ScalarProperty Name="IDNhanSuHRM" ColumnName="IDNhanSuHRM" />
+                <ScalarProperty Name="NgayBatDauNghiThaiSan" ColumnName="NgayBatDauNghiThaiSan" />
+                <ScalarProperty Name="NgayKetthucNghiThaiSan" ColumnName="NgayKetthucNghiThaiSan" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

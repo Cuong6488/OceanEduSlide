@@ -349,6 +349,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\VcmsController.cs" />
+    <Compile Include="DAL\CongNoService.cs" />
     <Compile Include="DAL\UserTypeService.cs" />
     <Compile Include="DAL\IUserTypeService.cs" />
     <Compile Include="DAL\UserService.cs" />
@@ -723,6 +724,14 @@
     <Compile Include="Migrations\202602090728191_CNGop.cs" />
     <Compile Include="Migrations\202602090728191_CNGop.Designer.cs">
       <DependentUpon>202602090728191_CNGop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202602111020438_datarealpercent.cs" />
+    <Compile Include="Migrations\202602111020438_datarealpercent.Designer.cs">
+      <DependentUpon>202602111020438_datarealpercent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202602120948288_newdebt.cs" />
+    <Compile Include="Migrations\202602120948288_newdebt.Designer.cs">
+      <DependentUpon>202602120948288_newdebt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
@@ -1428,13 +1437,6 @@
     <Content Include="Content\style2.scss" />
     <Content Include="Content\style3.scss" />
     <Content Include="Nlog.config" />
-    <EntityDeploy Include="OEDongBo\Db.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Db.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="OEDongBo\Db.edmx.diagram">
-      <DependentUpon>Db.edmx</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
@@ -1451,6 +1453,13 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <EntityDeploy Include="OEDongBo\Db.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Db.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="OEDongBo\Db.edmx.diagram">
+      <DependentUpon>Db.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\tuyensinh.ocean.edu.vn 8.171.pubxml" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -1747,6 +1756,7 @@
     <Content Include="Views\ReportHome\ReportTHCN.cshtml" />
     <Content Include="Views\ReportHome\ReportTHNV.cshtml" />
     <Content Include="Views\Revenue\ListPhieuThuNguon.cshtml" />
+    <Content Include="Views\Vcms\UpdateDiscount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2071,6 +2081,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202602090728191_CNGop.resx">
       <DependentUpon>202602090728191_CNGop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202602111020438_datarealpercent.resx">
+      <DependentUpon>202602111020438_datarealpercent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202602120948288_newdebt.resx">
+      <DependentUpon>202602120948288_newdebt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
