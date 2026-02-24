@@ -92,6 +92,7 @@
                 <th>Ngày vào làm</th>
                 <th>Ngày nghỉ/ điều chuyển</th>
                 <th>Ngày công giảm</th>
+                <th>Ngày CG giảm</th>
                 <th>Chi nhánh</th>
                 <th>Vùng</th>
                 <th>Các vùng quản lý</th>
@@ -111,6 +112,7 @@
                     <td>@Html.DisplayFor(model => user.DayStart)</td>
                     <td>@Html.DisplayFor(model => user.DayEnd)</td>
                     <td>@user.DayReduce</td>
+                    <td>@user.DayReduceCG</td>
                     <td>
                         @(user.Office?.ShortName)
                     </td>
@@ -131,7 +133,7 @@
             @if (Model.HistoryUsers.PageCount > 1)
             {
                 <tr>
-                    <td colspan="14">@Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ListHistoryUser", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, active = Model.active, UserType = Model.TypeUser, zoneId = Model.ZoneId }))</td>
+                    <td colspan="15">@Html.PagedListPager(Model.HistoryUsers, page => Url.Action("ListHistoryUser", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, active = Model.active, UserType = Model.TypeUser, zoneId = Model.ZoneId }))</td>
                 </tr>
             }
         </tbody>

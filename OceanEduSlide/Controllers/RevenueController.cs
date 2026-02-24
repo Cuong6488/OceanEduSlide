@@ -1615,6 +1615,13 @@ namespace OceanEduSlide.Controllers
                             {
                                 workingDayTT -= item.DayReduce ?? 0;
                             }
+                            if (item.DayEnd.HasValue && item.DayStart.Month == item.DayEnd.Value.Month && item.DayStart.Year == item.DayEnd.Value.Year)
+                            {
+                                if (workingDayTT < 6)
+                                {
+                                    workingDayTT = 0;
+                                }
+                            }
                             workingDayTT = Math.Max(workingDayTT, 0);
                             decimal targetDBCS = targetBaseDec / DBKD;
                             targetNS = targetDBCS * ((decimal)workingDayTT / workingDayFull);
@@ -3029,6 +3036,32 @@ namespace OceanEduSlide.Controllers
             var datas = _unitOfWork.ReportDataRepository.GetQuery(a => a.Year == year && a.Month == month);
             datas.Delete();
             return Content("ok");
+        }
+        public ActionResult DeleteNSChuaDenNAD(int month, int year)
+        {
+            var today = DateTime.Now.Date;
+            if(month != today.Month || year != today.Year)
+            {
+                today = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            }
+            var listNS = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == year && a.Month == month && a.DayStart > today);
+            var countNS = 0;
+            var countHUS = 0;
+            var listMNS = "";
+            foreach(var item in listNS)
+            {
+                item.Active = false;
+                countHUS++;
+                listMNS += item.User.MaNhanVien + ",";
+                var user = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.MaNhanVien == item.User.MaNhanVien).FirstOrDefault();
+                if (user != null)
+                {
+                    user.Active = false;
+                    countNS++;
+                }    
+            }
+            _unitOfWork.Save();
+            return Content("Đã xóa " + countNS + " nhân sự, " + countHUS+ " nhân sự tháng. List: " + listMNS);
         }
         protected override void Dispose(bool disposing)
         {

@@ -121,7 +121,7 @@ namespace OceanEduSlide.DAL
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue &&
             DbFunctions.TruncateTime(a.NgayNghiViec.Value) > DbFunctions.TruncateTime(endDayLastMonth))).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today).OrderByDescending(a => a.NgayApDung).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
 
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
@@ -204,6 +204,11 @@ namespace OceanEduSlide.DAL
                     var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                     if (logVaoLamLai != null)
                         ngayVaoLam = logVaoLamLai.NgayApDung;
+                    if(ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                    {
+                        logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                        continue;
+                    }
                     Office office = null;
                     Zone zone = null;
                     if (!string.IsNullOrEmpty(NsDieuchuyen.WorkPlaceName))
@@ -346,6 +351,11 @@ namespace OceanEduSlide.DAL
                 var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
+                if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                    continue;
+                }
                 Office office = null;
                 Zone zone = null;
                 var QTCT = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM);
@@ -509,6 +519,11 @@ namespace OceanEduSlide.DAL
                 var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
+                if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                    continue;
+                }
                 DateTime? ngayNghiViec = null;
                 if (item.NgayNghiViec != null)
                     ngayNghiViec = item.NgayNghiViec;
@@ -1160,6 +1175,13 @@ namespace OceanEduSlide.DAL
                         if (item.DayReduce > 0)
                         {
                             workingDayTT -= item.DayReduce ?? 0;
+                        }
+                        if (item.DayEnd.HasValue && item.DayStart.Month == item.DayEnd.Value.Month && item.DayStart.Year == item.DayEnd.Value.Year)
+                        {
+                            if (workingDayTT < 6)
+                            {
+                                workingDayTT = 0;
+                            }
                         }
                         workingDayTT = Math.Max(workingDayTT, 0);
                         decimal targetDBCS = targetBase / DBKD;
@@ -1865,7 +1887,7 @@ namespace OceanEduSlide.DAL
             }
             var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.NgayVaoLam.HasValue && DbFunctions.TruncateTime(a.NgayVaoLam.Value) <= DbFunctions.TruncateTime(today) 
             && (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && DbFunctions.TruncateTime(a.NgayNghiViec.Value) > DbFunctions.TruncateTime(endDayLastMonth)))).ToList();
-            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today).OrderByDescending(a => a.NgayApDung).ToList();
+            var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
 
             var ThaiSans = _dongBoTuyenSinh.ThaiSans.Where(t => today >= t.NgayBatDauNghiThaiSan && today <= t.NgayKetthucNghiThaiSan).ToList();
 
@@ -1932,6 +1954,12 @@ namespace OceanEduSlide.DAL
                     var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                     if (logVaoLamLai != null)
                         ngayVaoLam = logVaoLamLai.NgayApDung;
+
+                    if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                    {
+                        logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                        continue;
+                    }
                     Office office = null;
                     Zone zone = null;
                     if (!string.IsNullOrEmpty(NsDieuchuyen.WorkPlaceName))
@@ -2068,6 +2096,11 @@ namespace OceanEduSlide.DAL
                 var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
+                if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                    continue;
+                }
                 Office office = null;
                 Zone zone = null;
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
@@ -2212,6 +2245,11 @@ namespace OceanEduSlide.DAL
                 var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                 if (logVaoLamLai != null)
                     ngayVaoLam = logVaoLamLai.NgayApDung;
+                if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                {
+                    logger.Error("Nhan su " + item.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
+                    continue;
+                }
                 DateTime? ngayNghiViec = null;
                 if (item.NgayNghiViec != null)
                     ngayNghiViec = item.NgayNghiViec;
@@ -2523,9 +2561,6 @@ namespace OceanEduSlide.DAL
                         }
                     }
 
-
-
-
                     //Chỉ tiêu - thực đạt cuộc gọi chi nhánh
                     if (historyUser.OfficeId != null)
                     {
@@ -2802,6 +2837,13 @@ namespace OceanEduSlide.DAL
                         if (item.DayReduce > 0)
                         {
                             workingDayTT -= item.DayReduce ?? 0;
+                        }
+                        if (item.DayEnd.HasValue && item.DayStart.Month == item.DayEnd.Value.Month && item.DayStart.Year == item.DayEnd.Value.Year)
+                        {
+                            if (workingDayTT < 6)
+                            {
+                                workingDayTT = 0;
+                            }
                         }
                         workingDayTT = Math.Max(workingDayTT, 0);
                         decimal targetDBCS = targetBase / DBKD;
