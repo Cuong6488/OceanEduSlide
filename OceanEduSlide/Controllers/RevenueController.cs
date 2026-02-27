@@ -268,7 +268,6 @@ namespace OceanEduSlide.Controllers
             return true;
         }
 
-
         public ActionResult TargetOffice(string result = "")
         {
             ViewBag.Result = result;

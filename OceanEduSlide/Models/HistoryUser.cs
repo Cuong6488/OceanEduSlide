@@ -53,6 +53,24 @@ namespace OceanEduSlide.Models
         public int? OfficeId { get; set; }
         public StatusUser Status { get; set; }
     }
+    public class MapTypeUser
+    {
+        public int Id { get; set; }
+        [Display(Name = "Chức danh chuyên môn"),UIHint("TextBox")]
+        public string CDCM { get; set; }
+        [Display(Name = "Phân quyền")/*,Required(ErrorMessage ="Hãy chọn phân quyền")*/]
+        public TypeUser TypeUser { get; set; }
+        [Display(Name = "Admin tạo")]
+        public string Admin { get; set; }
+        [Display(Name = "Sửa lần cuối")]
+        public string LastEdit { get; set; }
+        public bool Edit { get; set; }
+        [Display(Name = "Thứ tự"), UIHint("NumberBox")]
+        public int Sort { get; set; } = 1;
+        public bool Active { get; set; } = true;
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
+        public DateTime CreateDate { get; set; } = DateTime.Now;
+    }
     public enum StatusUser
     {
         [Display(Name = "Đang làm việc")]

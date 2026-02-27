@@ -164,6 +164,13 @@ namespace OceanEduSlide.ViewModels
         public string Username { get; set; }
         public IEnumerable<MemberCredential> MemberCredentials { get; set; }
     }
+    public class ListMapTypeViewModel
+    {
+        public IEnumerable<MapTypeUser> MapTypeUsers { get; set; }
+        public int? TypeUser { get; set; }
+        public int? active { get; set; }
+        public string CDCM { get; set; }
+    }
     public class ListHistoryUserViewModel
     {
         public PagedList.IPagedList<HistoryUser> HistoryUsers { get; set; }

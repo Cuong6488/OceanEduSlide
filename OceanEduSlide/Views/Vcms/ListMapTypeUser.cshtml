@@ -1,0 +1,184 @@
+﻿@model OceanEduSlide.ViewModels.ListMapTypeViewModel
+@{
+    ViewBag.Title = "Danh sách CDCM";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2 class="mt-0">@ViewBag.Title</h2>
+@if (ViewBag.Result == "add")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("MapTypeUser")"><i class="fal fa-plus-circle me-1"></i>Thêm CDCM</a>
+<div class="box_content">
+    <form action="@Url.Action("ListMapTypeUser")" method="get">
+        <div class="row">
+            @*<div class="col-lg-4">
+                    <label>Tỉnh thành</label> @Html.DropDownListFor(model => model.cityId, Model.SelectCities, "Tất cả tài khoản", new { @class = "mt-2" })
+                </div>*@
+            <div class="col-lg-2">
+                <label>Từ khóa</label> @Html.TextBoxFor(a => a.CDCM, new { @class = "w300 mt-2" })
+            </div>
+            <div class="col-lg-2">
+                <label>Trạng thái</label>
+                <select name="active" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.active == 1 ? "selected" : "")>Hoạt động</option>
+                    <option value="2" @(Model.active == 2 ? "selected" : "")>Không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <label>Phân quyền</label>
+                <select name="UserType" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="1" @(Model.TypeUser == 1 ? "selected" : "")>GĐTS</option>
+                    <option value="8" @(Model.TypeUser == 8 ? "selected" : "")>Chuyên viên</option>
+                    <option value="2" @(Model.TypeUser == 2 ? "selected" : "")>ASM</option>
+                    <option value="3" @(Model.TypeUser == 3 ? "selected" : "")>BM</option>
+                    <option value="9" @(Model.TypeUser == 9 ? "selected" : "")>TTL</option>
+                    <option value="7" @(Model.TypeUser == 7 ? "selected" : "")>CM</option>
+                    <option value="5" @(Model.TypeUser == 5 ? "selected" : "")>ATL</option>
+                    <option value="4" @(Model.TypeUser == 4 ? "selected" : "")>EC</option>
+                    <option value="11" @(Model.TypeUser == 11 ? "selected" : "")>AEC</option>
+                    <option value="6" @(Model.TypeUser == 6 ? "selected" : "")>SAB</option>
+                    <option value="10" @(Model.TypeUser == 10 ? "selected" : "")>PKT</option>
+                </select>
+            </div>
+            <div class="col-lg-2 align-self-center">
+                <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.MapTypeUsers.Count()</strong> CDCM</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>Thứ tự</th>
+                <th>CDCM</th>
+                <th>Phân quyền</th>
+                <th>Admin tạo</th>
+                <th>Ngày tạo</th>
+                <th>Đã chỉnh sửa</th>
+                <th>Sửa lần cuối</th>
+                <th>Hoạt động</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var item in Model.MapTypeUsers)
+            {
+                <tr data-id="@item.Id">
+                    <td>@item.Sort</td>
+                    <td>@item.CDCM</td>
+                    <td>@Html.DisplayFor(a => item.TypeUser)</td>
+                    <td>@item.Admin</td>
+                    <td>@Html.DisplayFor(a => item.CreateDate)</td>
+                    <td>@Html.DisplayFor(a => item.Edit)</td>
+                    <td>@item.LastEdit</td>
+                    <td>@Html.DisplayFor(model => item.Active)</td>
+                    <td>
+                        @Html.ActionLink("Sửa", "UpdateMapTypeUser", new { mapTypeUserId = item.Id }) -
+                        <a href="javascript:;" onclick="deleteMapTypeUser('@item.Id')" style="color: red;">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteMapTypeUser(id) {
+            if (confirm("Bạn có chắc chắn xóa CDCM này không?")) {
+                $.post("/Vcms/DeleteMapTypeUser",
+                    { id: id },
+                    function (data) {
+                        if (data.status) {
+                            $.toast({
+                                text: 'Xóa CDCM thành công',
+                                position: 'bottom-right',
+                                icon: 'success',
+                            })
+                            $("tr[data-id='" + id + "']").fadeOut();
+                        } else {
+                            $.toast({
+                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                icon: 'error',
+                            })
+                        }
+                    });
+            }
+        }
+
+        function updateInfo(id) {
+            const elm = $('tr[data-id="' + id + '"]');
+            const active = elm.find("input#user_Active").prop("checked");
+            $.post("/Vcms/QuickUpdateUser",
+                { userId: id, active },
+                function (data) {
+                    if (data === "True") {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error'
+                        });
+                        window.location.reload();
+                    };
+                });
+        }
+
+        async function checkBeforeRegister(userId, username) {
+            const supported = await isPlatformAuthenticatorAvailable();
+
+            if (!supported) {
+                alert("Thiết bị của bạn không hỗ trợ FaceID / TouchID / Passkey. Vui lòng sử dụng mật khẩu đăng nhập.");
+                return;
+            }
+
+            // Nếu có hỗ trợ ➔ tiến hành đăng ký FaceID
+            registerFaceId(userId, username);
+        }
+
+        async function registerFaceId(userId, username) {
+            const resp = await fetch(`/FaceId/BeginRegistration?userId=${userId}&username=${username}`);
+            const data = await resp.json();
+            const publicKey = preformatMakeCredReq(data);
+            //debugPublicKeyOptions(publicKey);
+            const cred = await navigator.credentials.create({ publicKey });
+            const response = formatMakeCredResp(cred);
+            //console.log(JSON.stringify(response));
+            const rs = await fetch(`/FaceId/CompleteRegistration?userId=${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response)
+            });
+            const rsData = await rs.json();
+            if (rsData.status === "ok") {
+                alert("Đăng ký FaceID thành công!");
+                window.location.reload();
+            } else {
+                alert("Đăng ký FaceID thất bại!");
+            }
+        }
+
+        function removeFaceId(credentialId) {
+            if (confirm("Bạn có chắc chắn xóa FaceId này?")) {
+                $.post("/FaceId/RemoveFaceId", { credentialId: credentialId }, function (data) {
+                    if (data.status === "ok") {
+                        alert("Xóa FaceId thành công!");
+                        window.location.reload();
+                    } else {
+                        alert("Xóa FaceId thất bại!");
+                    }
+                });
+            }
+        }
+    </script>
+}

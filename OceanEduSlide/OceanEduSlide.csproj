@@ -733,6 +733,10 @@
     <Compile Include="Migrations\202602120948288_newdebt.Designer.cs">
       <DependentUpon>202602120948288_newdebt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202602260217327_maptype.cs" />
+    <Compile Include="Migrations\202602260217327_maptype.Designer.cs">
+      <DependentUpon>202602260217327_maptype.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
@@ -1757,6 +1761,9 @@
     <Content Include="Views\ReportHome\ReportTHNV.cshtml" />
     <Content Include="Views\Revenue\ListPhieuThuNguon.cshtml" />
     <Content Include="Views\Vcms\UpdateDiscount.cshtml" />
+    <Content Include="Views\Vcms\MapTypeUser.cshtml" />
+    <Content Include="Views\Vcms\ListMapTypeUser.cshtml" />
+    <Content Include="Views\Vcms\UpdateMapTypeUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2087,6 +2094,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202602120948288_newdebt.resx">
       <DependentUpon>202602120948288_newdebt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202602260217327_maptype.resx">
+      <DependentUpon>202602260217327_maptype.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -632,6 +632,106 @@ namespace OceanEduSlide.Controllers
 
         }
 
+        public ActionResult ListMapTypeUser(string CDCM, int? UserType, int? active, string result = "")
+        {
+            ViewBag.Result = result;
+            var maptypes = _unitOfWork.MapTypeUserRepository.GetQuery(orderBy: l => l.OrderBy(a => a.TypeUser).ThenBy(a => a.Sort));
+            if (UserType.HasValue)
+            {
+                maptypes = maptypes.Where(l => (int)l.TypeUser == UserType);
+            }
+            if (active == 1)
+            {
+                maptypes = maptypes.Where(l => l.Active);
+            }
+            if (active == 2)
+            {
+                maptypes = maptypes.Where(l => !l.Active);
+            }
+            if (!string.IsNullOrEmpty(CDCM))
+            {
+                var newkey = CDCM.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    maptypes = maptypes.Where(l => l.CDCM == newkey);
+                }
+            }
+
+            var model = new ListMapTypeViewModel
+            {
+                CDCM = CDCM,
+                active = active,
+                TypeUser = UserType,
+                MapTypeUsers = maptypes
+            };
+
+            return View(model);
+        }
+        public ActionResult MapTypeUser()
+        {
+            var model = new MapTypeUser();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult MapTypeUser(MapTypeUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var exist = _unitOfWork.MapTypeUserRepository.GetQuery().Any(z => z.CDCM.Equals(model.CDCM));
+                if (exist)
+                {
+                    ModelState.AddModelError("", @"CDCM này đã tồn tại");
+                    return View(model);
+                }
+                else
+                {
+                    model.Admin = Fullname;
+                    _unitOfWork.MapTypeUserRepository.Insert(model);
+                    _unitOfWork.Save();
+                    return RedirectToAction("ListMapTypeUser", new { result = "add" });
+                }
+            }
+            return RedirectToAction("ListMapTypeUser");
+        }
+        public ActionResult UpdateMapTypeUser(int mapTypeUserId = 0)
+        {
+            var mapTypeUser = _unitOfWork.MapTypeUserRepository.GetById(mapTypeUserId);
+            if (mapTypeUser == null)
+            {
+                return RedirectToAction("ListMapTypeUser");
+            }
+            return View(mapTypeUser);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult UpdateMapTypeUser(MapTypeUser model)
+        {
+            var MapTypeUser = _unitOfWork.MapTypeUserRepository.GetById(model.Id);
+            if (MapTypeUser == null)
+            {
+                return RedirectToAction("ListMapTypeUser");
+            }
+            if (ModelState.IsValid)
+            {
+                MapTypeUser.Edit = true;
+                MapTypeUser.LastEdit = "by " + Fullname + ", at " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                MapTypeUser.Active = model.Active;
+                MapTypeUser.Sort = model.Sort;
+                MapTypeUser.CDCM = model.CDCM;
+                MapTypeUser.TypeUser = model.TypeUser;
+                _unitOfWork.Save();
+                return RedirectToAction("ListMapTypeUser", new { result = "update" });
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public JsonResult DeleteMapTypeUser(int id)
+        {
+            var map = _unitOfWork.MapTypeUserRepository.GetById(id);
+            _unitOfWork.MapTypeUserRepository.Delete(map);
+            _unitOfWork.Save();
+            return Json(new { status = true, msg = "Xóa thành công" });
+
+        }
         [HttpPost]
         public bool QuickUpdateUser(bool active, int userId = 0)
         {

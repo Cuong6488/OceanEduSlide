@@ -19,8 +19,10 @@ namespace OceanEduSlide.Models
         public int Month { get; set; }
         [Display(Name = "Năm"), Required(ErrorMessage = "Hãy chọn năm")]
         public int Year { get; set; }
-        [Display(Name = "Nhân sự"), Required(ErrorMessage = "Hãy chọn nhân sự")]
+        [Display(Name = "Nhân sự phụ trách"), Required(ErrorMessage = "Hãy chọn nhân sự")]
         public int UserId { get; set; }
+        [Display(Name = "Nhân sự phát sinh")]
+        public int? UserOriginId { get; set; }
         [Display(Name = "Chi nhánh")]
         public int? OfficeId { get; set; }
         [Display(Name = "Công nợ gốc")]
@@ -68,10 +70,13 @@ namespace OceanEduSlide.Models
         public bool PhaiThu { get; set; }
         [Display(Name = "Cập nhật tự động")]
         public bool Auto { get; set; }
+        [Display(Name = "BM đã sửa Nhân sự phụ trách")]
+        public bool EditUser { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
         public TypeData TypeData { get; set; }
         public virtual User User { get; set; }
+        public virtual User UserOrigin { get; set; }
         public virtual Office Office { get; set; }
         public virtual ICollection<DownPathway> DownPathways { get; set; }
         public virtual ICollection<Debt> Debts { get; set; }

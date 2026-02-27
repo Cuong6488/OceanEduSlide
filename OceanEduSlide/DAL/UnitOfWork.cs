@@ -42,8 +42,11 @@ namespace OceanEduSlide.DAL
         private GenericRepository<LockImport> _lockImportRepository;
         private GenericRepository<GroupDiscount> _groupDiscounttRepository;
         private GenericRepository<Banner> _bannerRepository;
+        private GenericRepository<MapTypeUser> _mapTypeUserRepository;
         public GenericRepository<Banner> BannerRepository =>
             _bannerRepository ?? (_bannerRepository = new GenericRepository<Banner>(_context));
+        public GenericRepository<MapTypeUser> MapTypeUserRepository =>
+            _mapTypeUserRepository ?? (_mapTypeUserRepository = new GenericRepository<MapTypeUser>(_context));
         public GenericRepository<GroupDiscount> GroupDiscountRepository =>
            _groupDiscounttRepository ?? (_groupDiscounttRepository = new GenericRepository<GroupDiscount>(_context));
         public GenericRepository<LockImport> LockImportRepository =>

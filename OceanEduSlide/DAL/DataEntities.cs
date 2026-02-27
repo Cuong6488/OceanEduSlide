@@ -34,6 +34,7 @@ namespace OceanEduSlide.DAL
         public DbSet<LockImport> LockImports { get; set; }
         public DbSet<GroupDiscount> GroupDiscounts { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<MapTypeUser> MapTypeUsers { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Proposal>()
