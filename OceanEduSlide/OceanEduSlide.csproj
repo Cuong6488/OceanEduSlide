@@ -737,6 +737,10 @@
     <Compile Include="Migrations\202602260217327_maptype.Designer.cs">
       <DependentUpon>202602260217327_maptype.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202603020724420_a2.cs" />
+    <Compile Include="Migrations\202603020724420_a2.Designer.cs">
+      <DependentUpon>202603020724420_a2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
@@ -2097,6 +2101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202602260217327_maptype.resx">
       <DependentUpon>202602260217327_maptype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603020724420_a2.resx">
+      <DependentUpon>202603020724420_a2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
