@@ -2235,6 +2235,7 @@ namespace OceanEduSlide.Controllers
                 var listDiscount = new List<Discount>();
                 int sheet = 0;
                 var isPost = true;
+                var listOffice = _unitOfWork.OfficeRepository.GetQuery().AsNoTracking().ToList();
                 foreach (DataTable tbl in result.Tables)
                 {
                     sheet++;
@@ -2291,7 +2292,7 @@ namespace OceanEduSlide.Controllers
                             {
                                 if (!string.IsNullOrEmpty(item))
                                 {
-                                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode.Normalize(NormalizationForm.FormC) == item.Normalize(NormalizationForm.FormC)).FirstOrDefault();
+                                    var office = listOffice.FirstOrDefault(a => a.ShortCode.Normalize(NormalizationForm.FormC) == item.Normalize(NormalizationForm.FormC));
                                     if (office == null)
                                     {
                                         ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là " + item + ": Dòng " + dong + ", Sheet " + sheet);
