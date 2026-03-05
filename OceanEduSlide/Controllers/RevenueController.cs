@@ -436,6 +436,14 @@ namespace OceanEduSlide.Controllers
                                 zone.OfficeIds += office.Id + ",";
                                 zone.ShortName += office.ShortCode + ",";
                             }
+
+                            //Sync lại vùng đề xuất
+
+                            var dexuats = _unitOfWork.ProposalRepository.GetQuery(a => a.CreateDate.Month == monthInt && a.CreateDate.Year == yearInt && a.OfficeId == office.Id);
+                            foreach (var item in dexuats)
+                            {
+                                item.ZoneId = zone.Id;
+                            }
                         }
 
                         var dbECStr = tbl.Rows[i][7].ToString().Trim();
@@ -3039,7 +3047,7 @@ namespace OceanEduSlide.Controllers
         public ActionResult DeleteNSChuaDenNAD(int month, int year)
         {
             var today = DateTime.Now.Date;
-            if(month != today.Month || year != today.Year)
+            if (month != today.Month || year != today.Year)
             {
                 today = new DateTime(year, month, DateTime.DaysInMonth(year, month));
             }
@@ -3047,7 +3055,7 @@ namespace OceanEduSlide.Controllers
             var countNS = 0;
             var countHUS = 0;
             var listMNS = "";
-            foreach(var item in listNS)
+            foreach (var item in listNS)
             {
                 item.Active = false;
                 countHUS++;
@@ -3057,10 +3065,10 @@ namespace OceanEduSlide.Controllers
                 {
                     user.Active = false;
                     countNS++;
-                }    
+                }
             }
             _unitOfWork.Save();
-            return Content("Đã xóa " + countNS + " nhân sự, " + countHUS+ " nhân sự tháng. List: " + listMNS);
+            return Content("Đã xóa " + countNS + " nhân sự, " + countHUS + " nhân sự tháng. List: " + listMNS);
         }
         protected override void Dispose(bool disposing)
         {
