@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -167,32 +168,32 @@ namespace OceanEduSlide.Controllers
                     var officeShortCodesAll = new List<string>();
                     foreach (var shortCode in listZoneShortCode)
                     {
-                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == shortCode && a.Active).FirstOrDefault();
+                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode.Normalize(NormalizationForm.FormC) == shortCode.Normalize(NormalizationForm.FormC) && a.Active).FirstOrDefault();
                         if (zone != null)
                         {
-                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode).ToList();
+                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode.Normalize(NormalizationForm.FormC)).ToList();
                             officeShortCodesAll.AddRange(officeShortCodes);
                         }
                     }
-                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodesAll.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodesAll.Any(o => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + o.Normalize(NormalizationForm.FormC) + ",")));
                 }
                 else
                 {
                     var zoneId = User.ZoneId;
-                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode).ToList();
-                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodes.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
+                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode.Normalize(NormalizationForm.FormC)).ToList();
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodes.Any(o => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + o.Normalize(NormalizationForm.FormC) + ",")));
                 }
             }
             if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
             {
                 if (string.IsNullOrEmpty(User.OfficeIds))
                 {
-                    discountTypeUsers = discountTypeUsers.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+                    discountTypeUsers = discountTypeUsers.Where(a => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + OfficeCode.Normalize(NormalizationForm.FormC) + ","));
                 }   
                 else
                 {
                     var listCode = User.OfficeNames.Split(',');
-                    discountTypeUsers = discountTypeUsers.Where(a => listCode.Any(l => ("," + a.Offices + ",").Contains("," + l + ",")));
+                    discountTypeUsers = discountTypeUsers.Where(a => listCode.Any(l => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + l.Normalize(NormalizationForm.FormC) + ",")));
                 }
             }
             //var discounts = _unitOfWork.DiscountRepository

@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using OceanEduSlide.Migrations;
 using System.Globalization;
+using System.Text;
 namespace OceanEduSlide.Controllers
 {
     [Authorize, AdminRoleFilters]
@@ -2290,7 +2291,7 @@ namespace OceanEduSlide.Controllers
                             {
                                 if (!string.IsNullOrEmpty(item))
                                 {
-                                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode == item).FirstOrDefault();
+                                    var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortCode.Normalize(NormalizationForm.FormC) == item.Normalize(NormalizationForm.FormC)).FirstOrDefault();
                                     if (office == null)
                                     {
                                         ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là " + item + ": Dòng " + dong + ", Sheet " + sheet);
