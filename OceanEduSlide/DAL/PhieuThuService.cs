@@ -17,6 +17,7 @@ using OceanEduSlide.OEDongBo;
 using Z.EntityFramework.Plus;
 using OceanEduSlide.Migrations;
 using System.Text;
+using OceanEduSlide.Utils;
 
 namespace OceanEduSlide.DAL
 {
@@ -25,7 +26,7 @@ namespace OceanEduSlide.DAL
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
-        
+
         public void SyncPhieuThu()
         {
             var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
@@ -44,7 +45,7 @@ namespace OceanEduSlide.DAL
             var phieuThuAddList = new List<BC_PhieuThu_DB>();
             foreach (var item in phieuThuTakeList)
             {
-                item.MaNVChotSale = item.MaNVChotSale.Replace("'","");
+                item.MaNVChotSale = item.MaNVChotSale.Replace("'", "");
                 var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale
                 && a.DayStart.Date <= item.NgayThanhToan.Value.Date && (a.DayEnd == null || a.DayEnd.Value.Date >= item.NgayThanhToan.Value.Date));
                 if (historyUser == null)
@@ -52,7 +53,8 @@ namespace OceanEduSlide.DAL
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
                     continue;
                 }
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
+                item.ChiNhanh = VietnameseCodeHelper.NormalizeVietnameseCode(item.ChiNhanh);
+                var office = offices.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
                 if (office == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
@@ -126,7 +128,8 @@ namespace OceanEduSlide.DAL
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
                     continue;
                 }
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
+                item.ChiNhanh = VietnameseCodeHelper.NormalizeVietnameseCode(item.ChiNhanh);
+                var office = offices.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
                 if (office == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
@@ -1391,8 +1394,9 @@ namespace OceanEduSlide.DAL
             //listIdReset.AddRange(listIdChild);
             var listbccnReset = _unitOfWork.ReportDataRepository.Get(a => listIdReset.Contains(a.ReportCategoryId) && a.Month == day.Month && a.Year == day.Year);
 
-            foreach (var cn in listCN)
+            foreach (var cnName in listCN)
             {
+                var cn = VietnameseCodeHelper.NormalizeVietnameseCode(cnName);
                 var office = offices.FirstOrDefault(a => a.Active && a.ShortName == cn);
                 if (office == null)
                     continue;
@@ -1620,7 +1624,8 @@ namespace OceanEduSlide.DAL
             foreach (var item in phieuThuAllList)
             {
                 // Tìm CN theo tên CN trong phiếu thu
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
+                item.ChiNhanh = VietnameseCodeHelper.NormalizeVietnameseCode(item.ChiNhanh);
+                var office = offices.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
                 if (office == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
@@ -1919,10 +1924,11 @@ namespace OceanEduSlide.DAL
             var listMaNhanVien = listPhieuCoc.Select(a => a.MaNVChotSale).Distinct().ToList();
 
             // Phiếu cọc chi nhánh
-            foreach (var cn in listChiNhanh)
+            foreach (var cnName in listChiNhanh)
             {
+                var cn = VietnameseCodeHelper.NormalizeVietnameseCode(cnName);
                 // Tìm CN theo tên CN trong phiếu thu
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == cn);
+                var office = offices.FirstOrDefault(a => a.ShortName == cn);
                 if (office == null)
                 {
                     logger.Error("Khong ton tai chi nhanh nao co ten ngan la " + cn);
@@ -2077,7 +2083,8 @@ namespace OceanEduSlide.DAL
 
             foreach (var item in listPhieuCoc)
             {
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
+                item.ChiNhanh = VietnameseCodeHelper.NormalizeVietnameseCode(item.ChiNhanh);
+                var office = offices.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
                 if (office == null)
                 {
                     logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);

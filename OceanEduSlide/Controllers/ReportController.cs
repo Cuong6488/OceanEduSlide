@@ -4,6 +4,7 @@ using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
+using OceanEduSlide.Utils;
 using OceanEduSlide.ViewModels;
 using PagedList;
 using System;
@@ -446,8 +447,8 @@ namespace OceanEduSlide.Controllers
                     }
                     var officeShortName = tbl.Rows[i][4].ToString().Trim();
                     if (string.IsNullOrEmpty(officeShortName)) continue;
-
-                    var office = allOffices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
+                    officeShortName = VietnameseCodeHelper.NormalizeVietnameseCode(officeShortName);
+                    var office = allOffices.FirstOrDefault(a => a.ShortName == officeShortName);
                     if (office == null) continue;
 
                     int cChildSort = 1;

@@ -160,6 +160,8 @@ namespace OceanEduSlide.Controllers
         {
             var discountTypeUsers = _unitOfWork.DiscountRepository.GetQuery(a => a.Active && (!a.StartDate.HasValue || DbFunctions.TruncateTime(a.StartDate) <= DbFunctions.TruncateTime(DateTime.Now))
             && (!a.EndDate.HasValue || DbFunctions.TruncateTime(a.EndDate) >= DbFunctions.TruncateTime(DateTime.Now)) && a.Cth == cth, q => q.OrderBy(a => a.Id));
+            var zones = _unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
+            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
             if (User.TypeUser == TypeUser.CV || User.TypeUser == TypeUser.ASM)
             {
                 if (User.TypeUser == TypeUser.CV || (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2))
@@ -168,32 +170,32 @@ namespace OceanEduSlide.Controllers
                     var officeShortCodesAll = new List<string>();
                     foreach (var shortCode in listZoneShortCode)
                     {
-                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode.Normalize(NormalizationForm.FormC) == shortCode.Normalize(NormalizationForm.FormC) && a.Active).FirstOrDefault();
+                        var zone = zones.FirstOrDefault(a => a.ShortCode == shortCode && a.Active);
                         if (zone != null)
                         {
-                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode.Normalize(NormalizationForm.FormC)).ToList();
+                            var officeShortCodes = offices.Where(o => o.ZoneId == zone.Id).Select(o => o.ShortCode).ToList();
                             officeShortCodesAll.AddRange(officeShortCodes);
                         }
                     }
-                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodesAll.Any(o => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + o.Normalize(NormalizationForm.FormC) + ",")));
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodesAll.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
                 }
                 else
                 {
                     var zoneId = User.ZoneId;
-                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode.Normalize(NormalizationForm.FormC)).ToList();
-                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodes.Any(o => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + o.Normalize(NormalizationForm.FormC) + ",")));
+                    var officeShortCodes = offices.Where(o => o.ZoneId == zoneId).Select(o => o.ShortCode).ToList();
+                    discountTypeUsers = discountTypeUsers.Where(a => officeShortCodes.Any(o => ("," + a.Offices + ",").Contains("," + o + ",")));
                 }
             }
             if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
             {
                 if (string.IsNullOrEmpty(User.OfficeIds))
                 {
-                    discountTypeUsers = discountTypeUsers.Where(a => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + OfficeCode.Normalize(NormalizationForm.FormC) + ","));
+                    discountTypeUsers = discountTypeUsers.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
                 }   
                 else
                 {
                     var listCode = User.OfficeNames.Split(',');
-                    discountTypeUsers = discountTypeUsers.Where(a => listCode.Any(l => ("," + a.Offices.Normalize(NormalizationForm.FormC) + ",").Contains("," + l.Normalize(NormalizationForm.FormC) + ",")));
+                    discountTypeUsers = discountTypeUsers.Where(a => listCode.Any(l => ("," + a.Offices + ",").Contains("," + l + ",")));
                 }
             }
             //var discounts = _unitOfWork.DiscountRepository

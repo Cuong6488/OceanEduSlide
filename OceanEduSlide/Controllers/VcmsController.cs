@@ -4,6 +4,7 @@ using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
 using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
+using OceanEduSlide.Utils;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -1340,6 +1341,7 @@ namespace OceanEduSlide.Controllers
                         }
                         var zone = tbl.Rows[i][2].ToString().Trim();
                         var officescode = tbl.Rows[i][3].ToString().Trim();
+                        officescode = VietnameseCodeHelper.NormalizeVietnameseCode(officescode);
                         var content = tbl.Rows[i][4].ToString().Trim();
                         var qdNumber = tbl.Rows[i][5].ToString().Trim();
                         var qdLink = tbl.Rows[i][6].ToString().Trim();
@@ -1383,7 +1385,7 @@ namespace OceanEduSlide.Controllers
                 var newkey = name.Trim();
                 if (!string.IsNullOrEmpty(newkey))
                 {
-                    offices = offices.Where(l => l.Name.Contains(newkey));
+                    offices = offices.Where(l => l.Name.Contains(newkey) || l.ShortName.Contains(newkey)|| l.ShortCode.Contains(newkey));
                 }
             }
             if (trung == 1)
@@ -1439,8 +1441,8 @@ namespace OceanEduSlide.Controllers
                 if (isPost)
                 {
                     model.Office.ZoneId = model.ZoneId;
-                    model.Office.ShortName = model.ShortName;
-                    model.Office.ShortCode = model.ShortCode;
+                    model.Office.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortName);
+                    model.Office.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortCode);
                     _unitOfWork.OfficeRepository.Insert(model.Office);
                     _unitOfWork.Save();
 
@@ -1540,9 +1542,9 @@ namespace OceanEduSlide.Controllers
                         zone.ShortName += "," + model.ShortCode;
                     zone.ShortName = zone.ShortName.Trim(',');
 
-                    Office.ShortName = model.ShortName;
-                    Office.ShortCode = model.ShortCode;
-                    Office.Name = model.Office.Name;
+                    Office.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortName);
+                    Office.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortCode);
+                    Office.Name = VietnameseCodeHelper.NormalizeVietnameseCode(model.Office.Name);
                     Office.Active = model.Office.Active;
                     Office.Sort = model.Office.Sort;
                     Office.Email = model.Office.Email;
@@ -1642,9 +1644,14 @@ namespace OceanEduSlide.Controllers
                     //if (countUser > 0) continue;
 
                     var shortcode = tbl.Rows[i][1].ToString().Trim();
+                    if (shortcode == "") continue;
+                    shortcode = VietnameseCodeHelper.NormalizeVietnameseCode(shortcode);
                     var shortname = tbl.Rows[i][2].ToString().Trim();
+                    if (shortname == "") continue;
+                    shortname = VietnameseCodeHelper.NormalizeVietnameseCode(shortname);
                     var fullname = tbl.Rows[i][3].ToString().Trim();
                     if (fullname == "") continue;
+                    fullname = VietnameseCodeHelper.NormalizeVietnameseCode(fullname);
                     var countOffice = offices.Count(a => a.Name == fullname);
                     if (countOffice > 0) continue;
                     var office = new Office
@@ -1714,6 +1721,26 @@ namespace OceanEduSlide.Controllers
             _unitOfWork.Save();
             return Json(new { status = true, msg = "Xóa thành công" });
         }
+        public ActionResult ChangeOfficeAndZoneVietnameseCode()
+        {
+            var offices = _unitOfWork.OfficeRepository.Get();
+            foreach (var item in offices)
+            {
+                item.Name = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
+                item.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
+                item.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+            }
+            var zones = _unitOfWork.ZoneRepository.Get();
+            foreach (var item in zones)
+            {
+                item.Name = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
+                item.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
+                item.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+            }
+            _unitOfWork.Save();
+            var a = VietnameseCodeHelper.NormalizeVietnameseCode("Ocean Edu Thuận Thành");
+            return Content(a);
+        }
         #endregion
 
         #region Zone
@@ -1766,11 +1793,13 @@ namespace OceanEduSlide.Controllers
                 {
                     var officeIds = "";
                     var officescode = tbl.Rows[i][0].ToString().Trim();
-
+                    officescode = VietnameseCodeHelper.NormalizeVietnameseCode(officescode);
                     var fullname = tbl.Rows[i][1].ToString().Trim();
                     if (fullname == "") continue;
+                    fullname = VietnameseCodeHelper.NormalizeVietnameseCode(fullname);
                     var shortcode = tbl.Rows[i][2].ToString().Trim();
                     if (shortcode == "") continue;
+                    shortcode = VietnameseCodeHelper.NormalizeVietnameseCode(shortcode);
                     var zoneOld = zones.Where(a => a.Name == fullname || a.ShortCode == shortcode).FirstOrDefault();
                     if (zoneOld != null)
                     {
@@ -1849,6 +1878,8 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
+                model.Zone.Name = VietnameseCodeHelper.NormalizeVietnameseCode(model.Zone.Name);
+                model.Zone.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.Zone.ShortCode);
                 _unitOfWork.ZoneRepository.Insert(model.Zone);
                 var catIds = fc.GetValues("CatIDs");
                 if (catIds != null)
@@ -1928,8 +1959,8 @@ namespace OceanEduSlide.Controllers
                         }
                         zone.OfficeIds = "," + zone.OfficeIds;
                     }
-                    zone.Name = model.Zone.Name;
-                    zone.ShortCode = model.Zone.ShortCode;
+                    zone.Name = VietnameseCodeHelper.NormalizeVietnameseCode(model.Zone.Name);
+                    zone.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.Zone.ShortCode);
                     zone.Active = model.Zone.Active;
                     //_unitOfWork.Save();
                     zone.ShortName = "";
@@ -2056,6 +2087,7 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("", "Ô Các chi nhánh áp dụng không được chứa khoảng trắng (dấu cách)");
                     isPost = false;
                 }
+                model.Discount.Offices = VietnameseCodeHelper.NormalizeVietnameseCode(model.Discount.Offices);
                 var listOfficeCode = model.Discount.Offices.Split(',');
                 if (listOfficeCode.Any(a => string.IsNullOrEmpty(a)))
                 {
@@ -2136,6 +2168,7 @@ namespace OceanEduSlide.Controllers
                     ModelState.AddModelError("", "Ô Các chi nhánh áp dụng không được chứa khoảng trắng (dấu cách)");
                     isPost = false;
                 }
+                model.Discount.Offices = VietnameseCodeHelper.NormalizeVietnameseCode(model.Discount.Offices);
                 var listOfficeCode = model.Discount.Offices.Split(',');
                 if (listOfficeCode.Any(a => string.IsNullOrEmpty(a)))
                 {
@@ -2259,7 +2292,7 @@ namespace OceanEduSlide.Controllers
                         int pathwayTo = int.TryParse(tbl.Rows[i][11].ToString().Trim(), out var r4) ? r4 : 0;
                         var gift = tbl.Rows[i][7].ToString().Trim();
                         var offices = tbl.Rows[i][9].ToString().Trim();
-
+                        offices = VietnameseCodeHelper.NormalizeVietnameseCode(offices);
                         if (endDate != null && startDate != null && startDate > endDate)
                         {
                             ModelState.AddModelError("", "Ngày hiệu lực không được lớn hơn ngày hết hạn: Dòng " + dong + ", Sheet " + sheet);
@@ -2292,7 +2325,7 @@ namespace OceanEduSlide.Controllers
                             {
                                 if (!string.IsNullOrEmpty(item))
                                 {
-                                    var office = listOffice.FirstOrDefault(a => a.ShortCode.Normalize(NormalizationForm.FormC) == item.Normalize(NormalizationForm.FormC));
+                                    var office = listOffice.FirstOrDefault(a => a.ShortCode == item);
                                     if (office == null)
                                     {
                                         ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là " + item + ": Dòng " + dong + ", Sheet " + sheet);

@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Web.Services.Description;
 using System.Text;
 using System.Xml.Linq;
+using OceanEduSlide.Utils;
 namespace OceanEduSlide.DAL
 {
     public class UserService
@@ -204,7 +205,7 @@ namespace OceanEduSlide.DAL
                     var logVaoLamLai = QuaTrinhCongTacs.FirstOrDefault(a => a.IDNhanSuHRM == item.IDNhanSuHRM && (a.Loai == "VaoLamlai" || a.PositionOld == "Nhân viên Học việc"));
                     if (logVaoLamLai != null)
                         ngayVaoLam = logVaoLamLai.NgayApDung;
-                    if(ngayVaoLam == null || ngayVaoLam.Value.Date > today)
+                    if (ngayVaoLam == null || ngayVaoLam.Value.Date > today)
                     {
                         logger.Error("Nhan su " + nhanSuNguon.MaNhanSu + ": Ngay vao lam lon hon ngay hien tai");
                         continue;
@@ -213,15 +214,16 @@ namespace OceanEduSlide.DAL
                     Zone zone = null;
                     if (!string.IsNullOrEmpty(NsDieuchuyen.WorkPlaceName))
                     {
+                        NsDieuchuyen.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(NsDieuchuyen.WorkPlaceName);
 
-                        if (NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                        if (NsDieuchuyen.WorkPlaceName == "OE Buôn Ma Thuột")
                         {
                             NsDieuchuyen.WorkPlaceName = "OE BMT";
                         }
-                        office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        office = allOffice.FirstOrDefault(a => a.ShortName == NsDieuchuyen.WorkPlaceName);
                         //if (office == null)
                         //{
-                        zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        zone = allZone.FirstOrDefault(a => a.Name == NsDieuchuyen.WorkPlaceName);
                         if (zone == null && office == null)
                         {
                             logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
@@ -366,14 +368,15 @@ namespace OceanEduSlide.DAL
                 }
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
-                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    QTCT.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(QTCT.WorkPlaceName);
+                    if (QTCT.WorkPlaceName == "OE Buôn Ma Thuột")
                     {
                         QTCT.WorkPlaceName = "OE BMT";
                     }
-                    office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    office = allOffice.FirstOrDefault(a => a.ShortName == QTCT.WorkPlaceName);
                     //if (office == null)
                     //{
-                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    zone = allZone.FirstOrDefault(a => a.Name == QTCT.WorkPlaceName);
                     if (zone == null && office == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
@@ -555,14 +558,15 @@ namespace OceanEduSlide.DAL
                 }
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
-                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    QTCT.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(QTCT.WorkPlaceName);
+                    if (QTCT.WorkPlaceName == "OE Buôn Ma Thuột")
                     {
                         QTCT.WorkPlaceName = "OE BMT";
                     }
-                    office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    office = allOffice.FirstOrDefault(a => a.ShortName == QTCT.WorkPlaceName);
                     //if (office == null)
                     //{
-                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    zone = allZone.FirstOrDefault(a => a.Name == QTCT.WorkPlaceName);
                     if (zone == null && office == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
@@ -1885,7 +1889,7 @@ namespace OceanEduSlide.DAL
                 default:
                     break;
             }
-            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.NgayVaoLam.HasValue && DbFunctions.TruncateTime(a.NgayVaoLam.Value) <= DbFunctions.TruncateTime(today) 
+            var DSNhanSuNguons = _dongBoTuyenSinh.DSNhanSuNguons.Where(a => a.NgayVaoLam.HasValue && DbFunctions.TruncateTime(a.NgayVaoLam.Value) <= DbFunctions.TruncateTime(today)
             && (a.TrangThai == "E_HIRE" || (a.NgayNghiViec.HasValue && DbFunctions.TruncateTime(a.NgayNghiViec.Value) > DbFunctions.TruncateTime(endDayLastMonth)))).ToList();
             var QuaTrinhCongTacs = _dongBoTuyenSinh.QuaTrinhCongTacs.Where(a => DbFunctions.TruncateTime(a.NgayApDung) <= today || a.Loai == "VaoLamlai").OrderByDescending(a => a.NgayApDung).ToList();
 
@@ -1964,15 +1968,15 @@ namespace OceanEduSlide.DAL
                     Zone zone = null;
                     if (!string.IsNullOrEmpty(NsDieuchuyen.WorkPlaceName))
                     {
-
-                        if (NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                        NsDieuchuyen.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(NsDieuchuyen.WorkPlaceName);
+                        if (NsDieuchuyen.WorkPlaceName == "OE Buôn Ma Thuột")
                         {
                             NsDieuchuyen.WorkPlaceName = "OE BMT";
                         }
-                        office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        office = allOffice.FirstOrDefault(a => a.ShortName == NsDieuchuyen.WorkPlaceName);
                         //if (office == null)
                         //{
-                        zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == NsDieuchuyen.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                        zone = allZone.FirstOrDefault(a => a.Name == NsDieuchuyen.WorkPlaceName);
                         if (zone == null && office == null)
                         {
                             logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
@@ -2105,14 +2109,15 @@ namespace OceanEduSlide.DAL
                 Zone zone = null;
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
-                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    QTCT.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(QTCT.WorkPlaceName);
+                    if (QTCT.WorkPlaceName == "OE Buôn Ma Thuột")
                     {
                         QTCT.WorkPlaceName = "OE BMT";
                     }
-                    office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    office = allOffice.FirstOrDefault(a => a.ShortName == QTCT.WorkPlaceName);
                     //if (office == null)
                     //{
-                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    zone = allZone.FirstOrDefault(a => a.Name == QTCT.WorkPlaceName);
                     if (zone == null && office == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);
@@ -2275,14 +2280,15 @@ namespace OceanEduSlide.DAL
                 Zone zone = null;
                 if (!string.IsNullOrEmpty(QTCT.WorkPlaceName))
                 {
-                    if (QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC) == "OE Buôn Ma Thuột")
+                    QTCT.WorkPlaceName = VietnameseCodeHelper.NormalizeVietnameseCode(QTCT.WorkPlaceName);
+                    if (QTCT.WorkPlaceName == "OE Buôn Ma Thuột")
                     {
                         QTCT.WorkPlaceName = "OE BMT";
                     }
-                    office = allOffice.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    office = allOffice.FirstOrDefault(a => a.ShortName == QTCT.WorkPlaceName);
                     //if (office == null)
                     //{
-                    zone = allZone.FirstOrDefault(a => a.Name.Normalize(NormalizationForm.FormC) == QTCT.WorkPlaceName.Normalize(NormalizationForm.FormC));
+                    zone = allZone.FirstOrDefault(a => a.Name == QTCT.WorkPlaceName);
                     if (zone == null && office == null)
                     {
                         logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + QTCT.WorkPlaceName);

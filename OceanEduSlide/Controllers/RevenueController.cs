@@ -15,6 +15,7 @@ using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using System.Text;
 using OceanEduSlide.OEDongBo;
+using OceanEduSlide.Utils;
 
 namespace OceanEduSlide.Controllers
 {
@@ -400,18 +401,20 @@ namespace OceanEduSlide.Controllers
                     for (var i = 1; i < tbl.Rows.Count; i++)
                     {
                         var shortname = tbl.Rows[i][0].ToString().Trim();
+                        shortname = VietnameseCodeHelper.NormalizeVietnameseCode(shortname);
                         if (string.IsNullOrEmpty(shortname))
                         {
                             ModelState.AddModelError("", @"Thiếu dữ liệu cột Chi nhánh - Dòng " + (i + 1));
                             return View();
                         }
-                        var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == shortname.Normalize(NormalizationForm.FormC));
+                        var office = offices.FirstOrDefault(a => a.ShortName == shortname);
                         if (office == null)
                         {
                             ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + shortname);
                             return View();
                         }
                         var zonename = tbl.Rows[i][1].ToString().Trim();
+                        zonename = VietnameseCodeHelper.NormalizeVietnameseCode(zonename);
                         if (string.IsNullOrEmpty(zonename))
                         {
                             ModelState.AddModelError("", @"Thiếu dữ liệu cột Vùng - Dòng " + (i + 1));
@@ -539,6 +542,7 @@ namespace OceanEduSlide.Controllers
                             return View();
                         }
                         var officeCodes = tbl.Rows[i][26].ToString().Trim();
+                        officeCodes = VietnameseCodeHelper.NormalizeVietnameseCode(officeCodes);
                         if (!string.IsNullOrEmpty(officeCodes))
                         {
                             var listCode = officeCodes.Split(',');
@@ -695,14 +699,18 @@ namespace OceanEduSlide.Controllers
                         var user = users.FirstOrDefault(a => a.MaNhanVien == manhanvien);
 
                         var officeShortName = tbl2.Rows[i][1].ToString().Trim();
-                        var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeShortName.Normalize(NormalizationForm.FormC));
+                        officeShortName = VietnameseCodeHelper.NormalizeVietnameseCode(officeShortName);
+                        var office = offices.FirstOrDefault(a => a.ShortName == officeShortName);
 
                         var zoneName = tbl2.Rows[i][0].ToString().Trim();
+                        zoneName = VietnameseCodeHelper.NormalizeVietnameseCode(zoneName);
                         var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Name == zoneName).FirstOrDefault();
 
                         var cdcm = tbl2.Rows[i][4].ToString().Trim();
+                        cdcm = VietnameseCodeHelper.NormalizeVietnameseCode(cdcm);
 
                         var typeUser = tbl2.Rows[i][10].ToString().Trim();
+                        typeUser = VietnameseCodeHelper.NormalizeVietnameseCode(typeUser);
                         if (string.IsNullOrEmpty(typeUser))
                         {
                             ModelState.AddModelError("", @"Thiếu dữ liệu cột phân quyền dòng " + (i + 1));
@@ -787,7 +795,9 @@ namespace OceanEduSlide.Controllers
                         }
                         var password = HtmlHelpers.ComputeHash(Config.Password ?? "AUG2025@#", "SHA256", null);
                         var fullname = tbl2.Rows[i][3].ToString().Trim();
+                        fullname = VietnameseCodeHelper.NormalizeVietnameseCode(fullname);
                         var zones = tbl2.Rows[i][12].ToString().Trim();
+                        zones = VietnameseCodeHelper.NormalizeVietnameseCode(zones);
                         var dayReduceStr = tbl2.Rows[i][13].ToString().Trim();
                         int dayReduce = 0;
                         if (!string.IsNullOrEmpty(dayReduceStr) && !int.TryParse(dayReduceStr, out dayReduce))
@@ -1460,7 +1470,8 @@ namespace OceanEduSlide.Controllers
                 {
 
                     var officeshortname = tbl.Rows[i][0].ToString().Trim();
-                    var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == officeshortname.Normalize(NormalizationForm.FormC));
+                    officeshortname = VietnameseCodeHelper.NormalizeVietnameseCode(officeshortname);
+                    var office = offices.FirstOrDefault(a => a.ShortName == officeshortname);
                     if (office == null)
                     {
                         ModelState.AddModelError("", @"Không tồn tại chi nhánh nào có tên ngắn là " + officeshortname);
