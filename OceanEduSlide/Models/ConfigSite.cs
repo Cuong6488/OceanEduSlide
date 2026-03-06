@@ -69,6 +69,8 @@ namespace OceanEduSlide.Models
         public bool AutoRevenue { get; set; }
         [DisplayName("Chạy tự động Công nợ")]
         public bool AutoDebt { get; set; }
+        [DisplayName("Chạy tự động Cuộc gọi")]
+        public bool AutoCallLog { get; set; }
 
     }
 }
