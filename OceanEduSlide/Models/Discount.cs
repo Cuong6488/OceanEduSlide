@@ -26,6 +26,8 @@ namespace OceanEduSlide.Models
         public DateTime? EndDate { get; set; }
         [Display(Name = "Ngày hiệu lực")]
         public DateTime? StartDate { get; set; }
+        [Display(Name = "Ngày tạo")]
+        public DateTime? CreateDate { get; set; }
         [Display(Name = "Quà tặng"), UIHint("Textbox")]
         public string Gift { get; set; }
         [Display(Name = "Phân loại"), UIHint("Textbox")]
@@ -36,6 +38,7 @@ namespace OceanEduSlide.Models
         public Discount()
         {
             Active = true;
+            CreateDate = DateTime.Now;
         }
     }
 }

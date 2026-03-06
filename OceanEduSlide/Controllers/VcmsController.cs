@@ -1385,7 +1385,7 @@ namespace OceanEduSlide.Controllers
                 var newkey = name.Trim();
                 if (!string.IsNullOrEmpty(newkey))
                 {
-                    offices = offices.Where(l => l.Name.Contains(newkey) || l.ShortName.Contains(newkey)|| l.ShortCode.Contains(newkey));
+                    offices = offices.Where(l => l.Name.Contains(newkey) || l.ShortName.Contains(newkey) || l.ShortCode.Contains(newkey));
                 }
             }
             if (trung == 1)
@@ -1724,22 +1724,38 @@ namespace OceanEduSlide.Controllers
         public ActionResult ChangeOfficeAndZoneVietnameseCode()
         {
             var offices = _unitOfWork.OfficeRepository.Get();
+            var countOffice = 0;
+            var countZone = 0;
             foreach (var item in offices)
             {
-                item.Name = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
-                item.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
-                item.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+                var newName = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
+                var newShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
+                var newShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+                if (item.Name != newName || item.ShortCode != newShortCode || item.ShortName != newShortName)
+                {
+                    countOffice++;
+                    item.Name = newName;
+                    item.ShortCode = newShortCode;
+                    item.ShortName = newShortName;
+                }
+
             }
             var zones = _unitOfWork.ZoneRepository.Get();
             foreach (var item in zones)
             {
-                item.Name = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
-                item.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
-                item.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+                var newName = VietnameseCodeHelper.NormalizeVietnameseCode(item.Name);
+                var newShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortCode);
+                var newShortName = VietnameseCodeHelper.NormalizeVietnameseCode(item.ShortName);
+                if (item.Name != newName || item.ShortCode != newShortCode || item.ShortName != newShortName)
+                {
+                    countZone++;
+                    item.Name = newName;
+                    item.ShortCode = newShortCode;
+                    item.ShortName = newShortName;
+                }
             }
             _unitOfWork.Save();
-            var a = VietnameseCodeHelper.NormalizeVietnameseCode("Ocean Edu Thuận Thành");
-            return Content(a);
+            return Content("Đã đồng bộ mã ký tự "+ countOffice + " chi nhánh và " + countZone + " vùng");
         }
         #endregion
 
@@ -2004,13 +2020,51 @@ namespace OceanEduSlide.Controllers
 
         #region Discount
 
-        public ActionResult ClearDiscount()
+        public ActionResult ClearDiscount(string name, string Cth, string startDate, string endDate, string createDate, string officeId, string result = "")
         {
             var discounts = _unitOfWork.DiscountRepository.GetQuery();
+            if (!string.IsNullOrEmpty(startDate))
+            {
+                if (DateTime.TryParse(startDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.StartDate) <= DbFunctions.TruncateTime(pd));
+                }
+            }
+            if (!string.IsNullOrEmpty(endDate))
+            {
+                if (DateTime.TryParse(endDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.EndDate) >= DbFunctions.TruncateTime(pd));
+                }
+            }
+            if (!string.IsNullOrEmpty(createDate))
+            {
+                if (DateTime.TryParse(createDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.CreateDate) == DbFunctions.TruncateTime(pd));
+                }
+            }
+            if (name != null)
+            {
+                var newkey = name.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    discounts = discounts.Where(l => l.Username.Contains(newkey));
+                }
+            }
+            if (!string.IsNullOrEmpty(Cth))
+            {
+                discounts = discounts.Where(l => l.Cth.Contains(Cth));
+            }
+            if (!string.IsNullOrEmpty(officeId))
+            {
+                discounts = discounts.Where(a => ("," + a.Offices + ",").Contains("," + officeId + ","));
+            }
+            var countDelete = discounts.Count();
             discounts.Delete();
-            return RedirectToAction("ListDiscount");
+            return RedirectToAction("ListDiscount", new { countDelete });
         }
-        public ActionResult ListDiscount(int? page, string name, string Cth, string startDate, string endDate, string officeId, string result = "")
+        public ActionResult ListDiscount(int? page, string name, string Cth, string startDate, string endDate, string createDate, string officeId, int countDelete = 0, string result = "")
         {
             ViewBag.Result = result;
             var pageNumber = page ?? 1;
@@ -2029,6 +2083,13 @@ namespace OceanEduSlide.Controllers
                 if (DateTime.TryParse(endDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
                 {
                     discounts = discounts.Where(l => DbFunctions.TruncateTime(l.EndDate) >= DbFunctions.TruncateTime(pd));
+                }
+            }
+            if (!string.IsNullOrEmpty(createDate))
+            {
+                if (DateTime.TryParse(createDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var pd))
+                {
+                    discounts = discounts.Where(l => DbFunctions.TruncateTime(l.CreateDate) == DbFunctions.TruncateTime(pd));
                 }
             }
             if (name != null)
@@ -2052,22 +2113,24 @@ namespace OceanEduSlide.Controllers
                 Discounts = discounts.ToPagedList(pageNumber, pageSize),
                 Name = name,
                 Cth = Cth,
+                CreateDate = createDate,
+                StartDate = startDate,
+                EndDate = endDate,
+                officeId = officeId,
                 SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(), "ShortCode", "ShortName"),
             };
+            ViewBag.countDelete = countDelete;
             return View(model);
         }
-        public ActionResult DeleteDiscount()
+        public bool DeleteDiscount(int discountId)
         {
 
-            var model = _unitOfWork.DiscountRepository.Get(a => a.Username == "QĐ 200" || a.Username == "QĐ 400" || a.Username == "QĐ 300");
-            foreach (var item in model)
-            {
-                _unitOfWork.DiscountRepository.Delete(item);
-            }
+            var model = _unitOfWork.DiscountRepository.GetById(discountId);
+            if (model != null)
+                _unitOfWork.DiscountRepository.Delete(model);
             _unitOfWork.Save();
 
-
-            return RedirectToAction("Index");
+            return true;
         }
         public ActionResult CreateDiscount(string result = "")
         {
@@ -2328,7 +2391,7 @@ namespace OceanEduSlide.Controllers
                                     var office = listOffice.FirstOrDefault(a => a.ShortCode == item);
                                     if (office == null)
                                     {
-                                        ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là " + item + ": Dòng " + dong + ", Sheet " + sheet);
+                                        ModelState.AddModelError("", "Kiểm tra lại dữ liệu Chi nhánh, không có Chi nhánh nào có Mã chi nhánh là \"" + item + "\" - Dòng " + dong + ", Sheet " + sheet);
                                         isPost = false;
                                     }
                                 }

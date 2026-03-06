@@ -205,6 +205,8 @@ namespace OceanEduSlide.ViewModels
         public string StartDate { get; set; }
         [Display(Name = "Ngày hết hạn"), UIHint("DateTimePicker")]
         public string EndDate { get; set; }
+        [Display(Name = "Ngày tạo"), UIHint("DateTimePicker")]
+        public string CreateDate { get; set; }
         public SelectList SelectOffices { get; set; }
     }
     public class CreateDiscountViewModel

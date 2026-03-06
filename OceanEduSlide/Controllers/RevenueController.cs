@@ -16,6 +16,7 @@ using Z.EntityFramework.Plus;
 using System.Text;
 using OceanEduSlide.OEDongBo;
 using OceanEduSlide.Utils;
+using OceanEduSlide.Migrations;
 
 namespace OceanEduSlide.Controllers
 {
@@ -551,7 +552,7 @@ namespace OceanEduSlide.Controllers
                                 var off = offices.FirstOrDefault(a => a.ShortCode == code);
                                 if (off == null)
                                 {
-                                    ModelState.AddModelError("", @" Không có chi nhánh nào có Mã chi nhánh là: " + code + ". Sheet 1, dòng " + (i + 1));
+                                    ModelState.AddModelError("", "Không có chi nhánh nào có Mã chi nhánh là \"" + code + "\" - Dòng " + i + 1 + ", Sheet 1");
                                     return View();
                                 }
                             }
@@ -2518,12 +2519,14 @@ namespace OceanEduSlide.Controllers
                 for (var i = 1; i < tbl.Rows.Count; i++)
                 {
                     var officename = tbl.Rows[i][0].ToString().Trim();
+                    officename = VietnameseCodeHelper.NormalizeVietnameseCode(officename);
                     var office = _unitOfWork.OfficeRepository.GetQuery(a => a.ShortName == officename).FirstOrDefault();
                     if (office == null)
                     {
                         //continue;
 
-                        ModelState.AddModelError("", @"Không có chi nhánh nào có tên ngắn là " + officename);
+                        ModelState.AddModelError("", "Không có chi nhánh nào có tên ngắn là"  + officename);
+
                         return View();
                     }
                     var ngayThanhToanStr = tbl.Rows[i][1].ToString().Trim();

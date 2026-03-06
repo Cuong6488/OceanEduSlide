@@ -741,6 +741,10 @@
     <Compile Include="Migrations\202603020724420_a2.Designer.cs">
       <DependentUpon>202603020724420_a2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202603060138412_createdatediscount.cs" />
+    <Compile Include="Migrations\202603060138412_createdatediscount.Designer.cs">
+      <DependentUpon>202603060138412_createdatediscount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Banner.cs" />
     <Compile Include="Models\BC_PhieuThu_DB.cs" />
@@ -2105,6 +2109,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202603020724420_a2.resx">
       <DependentUpon>202603020724420_a2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603060138412_createdatediscount.resx">
+      <DependentUpon>202603060138412_createdatediscount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

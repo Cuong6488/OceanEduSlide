@@ -13,6 +13,10 @@
 {
     <div id="AlertBox" class="alert alert-success"><strong>Cập nhật ưu đãi thành công</strong></div>
 }
+@if (ViewBag.CountDelete > 0)
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Đã xóa @ViewBag.CountDelete QĐ ưu đãi</strong></div>
+}
 <a class="btn quick-link" href="@Url.Action("CreateDiscount")"><i class="fal fa-plus-circle me-1"></i>Thêm ưu đãi</a>
 <a class="btn quick-link" href="@Url.Action("InsertDiscountExcel")"><i class="fal fa-plus-circle me-1"></i>Thêm ưu đãi Excel</a>
 @*<a class="btn quick-link" href="@Url.Action("ExportDiscount")"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>*@
@@ -34,6 +38,9 @@
                 </select>
             </div>
             <div class="col-lg">
+                <label>Ngày tạo</label> @Html.TextBoxFor(a => a.CreateDate, new { @class = "datepicker mt-2", autocomplete = "off" })
+            </div>
+            <div class="col-lg">
                 <label>Ngày đang có hiệu lực (từ)</label> @Html.TextBoxFor(a => a.StartDate, new { @class = "datepicker mt-2", autocomplete = "off" })
             </div>
             <div class="col-lg">
@@ -49,7 +56,7 @@
         </div>
     </form>
     <p>Có tổng số <strong>@Model.Discounts.TotalItemCount</strong> QĐ ưu đãi</p>
-    <a onclick="clearDiscount()" href="javascript:;" class="btn btn-danger mb-3" style="font-size:13px;">Xóa toàn bộ QĐ</a>
+    <a onclick="clearDiscount()" href="javascript:;" class="btn btn-danger mb-3" style="font-size:13px;">Xóa @Model.Discounts.TotalItemCount QĐ này (theo bộ lọc)</a>
     <table class="list_table tablecenter table-striped">
         <tbody>
             <tr>
@@ -59,12 +66,11 @@
                 <th>Quà tặng</th>
                 <th>Số tháng từ</th>
                 <th>Số tháng đến</th>
+                <th>Ngày tạo</th>
                 <th>Ngày hiệu lực</th>
                 <th>Ngày hết hạn</th>
                 <th>Chi nhánh</th>
                 <th>Chương trình học</th>
-                @*<th style="width:150px">Tỉnh thành</th>*@
-
                 <th style="width:100px">Hoạt động</th>
                 <th style="width: 130px"></th>
             </tr>
@@ -72,14 +78,14 @@
             {
                 <tr data-id="@discount.Id">
                     <td class="left">
-                        <a href="@Url.Action("UpdateDiscount", new { discountId = discount.Id })">@discount.Username</a>
+                        <a href="@Url.Action("UpdateDiscount", new { dcId = discount.Id })">@discount.Username</a>
                     </td>
-                    @*<td>@discount.City.Name</td>*@
                     <td>@discount.PercentDiscount</td>
                     <td>@(discount.MoneyDiscount.HasValue ? discount.MoneyDiscount.Value.ToString("N0") + "đ" : "")</td>
                     <td>@discount.Gift</td>
                     <td>@discount.Pathway</td>
                     <td>@discount.PathwayTo</td>
+                    <td>@(discount.CreateDate?.ToString("dd/MM/yyyy"))</td>
                     <td>@(discount.StartDate?.ToString("dd/MM/yyyy"))</td>
                     <td>@(discount.EndDate?.ToString("dd/MM/yyyy"))</td>
                     <td style="max-width:300px;word-break:break-word;text-align:start">@discount.Offices</td>
@@ -94,7 +100,7 @@
             @if (Model.Discounts.PageCount > 1)
             {
                 <tr>
-                    <td colspan="13">@Html.PagedListPager(Model.Discounts, page => Url.Action("ListDiscount", new { page, name = Model.Name }))</td>
+                    <td colspan="13">@Html.PagedListPager(Model.Discounts, page => Url.Action("ListDiscount", new { page, name = Model.Name, Cth = Model.Cth, startDate = Model.StartDate, endDate = Model.EndDate, createDate = Model.CreateDate, officeId = Model.officeId }))</td>
                 </tr>
             }
         </tbody>
@@ -124,13 +130,20 @@
                     });
             }
         }
-        function clearDiscount() {
-            if (confirm("Hành động này sẽ xóa toàn bộ dữ liệu về QĐ ưu đãi!")) {
-                if (confirm("Bạn có chắc chắn xóa toàn bộ QĐ ưu đãi không?")) {
-                    window.location.href = "/Vcms/ClearDiscount";
-                }
-            }
+       function clearDiscount() {
+    if (confirm("Hành động này sẽ xóa @Model.Discounts.TotalItemCount QĐ ưu đãi (theo bộ lọc)!")) {
+        if (confirm("Bạn có chắc chắn xóa các QĐ ưu đãi này không?")) {
+
+            window.location.href = "/Vcms/ClearDiscount?"
+                + "name=" + encodeURIComponent('@(Model.Name ?? "")')
+                + "&Cth=" + encodeURIComponent('@(Model.Cth ?? "")')
+                + "&startDate=" + encodeURIComponent('@(Model.StartDate ?? "")')
+                + "&endDate=" + encodeURIComponent('@(Model.EndDate ?? "")')
+                + "&createDate=" + encodeURIComponent('@(Model.CreateDate ?? "")')
+                + "&officeId=" + encodeURIComponent('@(Model.officeId ?? "")');
         }
+    }
+}
         $(function () {
             $(".datepicker").datepicker({
                 dateFormat: "dd/mm/yy",

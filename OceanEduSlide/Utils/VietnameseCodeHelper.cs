@@ -12,7 +12,7 @@ namespace OceanEduSlide.Utils
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;
-
+            // replace ký tự "Đ" sai unicode chuẩn
             return input
                 .Trim()
                 .Replace('Ð', 'Đ')
