@@ -29,5 +29,6 @@ namespace OceanEduSlide.OEDongBo
         public virtual DbSet<DSNhanSuNguon> DSNhanSuNguons { get; set; }
         public virtual DbSet<QuaTrinhCongTac> QuaTrinhCongTacs { get; set; }
         public virtual DbSet<ThaiSan> ThaiSans { get; set; }
+        public virtual DbSet<BC_CongNo> BC_CongNo { get; set; }
     }
 }

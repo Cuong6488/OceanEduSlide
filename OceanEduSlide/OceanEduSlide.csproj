@@ -786,6 +786,9 @@
     <Compile Include="Models\RevenueOffice.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="OEDongBo\BC_CongNo.cs">
+      <DependentUpon>Db.tt</DependentUpon>
+    </Compile>
     <Compile Include="OEDongBo\BC_PhieuThu.cs">
       <DependentUpon>Db.tt</DependentUpon>
     </Compile>

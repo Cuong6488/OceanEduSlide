@@ -17,6 +17,7 @@ using OceanEduSlide.OEDongBo;
 using Z.EntityFramework.Plus;
 using OceanEduSlide.Migrations;
 using System.Text;
+using OceanEduSlide.Utils;
 
 namespace OceanEduSlide.DAL
 {
@@ -26,87 +27,134 @@ namespace OceanEduSlide.DAL
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
 
-        public void SyncPhieuThu()
+        public void SyncCongNo(DateTime day)
         {
+            var monthCheck = day.Month;
+            var yearCheck = day.Year;
+            var dayCheck = day.Day;
+
             var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             if (config == null || !config.AutoDebt)
             {
                 return;
             }
-            var day = DateTime.Today;
+            //Chuẩn bị các list dữ liệu
+            var listCongNoDBTrungGian = _dongBoTuyenSinh.BC_CongNo.AsNoTracking().ToList();
+            var listMDHOld = _unitOfWork.DebtRepository.GetQuery(a => a.TypeData == TypeData.New).Select(a => a.MaDonHang).ToHashSet();
+            var listCongNoTake = listCongNoDBTrungGian.Where(a => !listMDHOld.Contains(a.MaDonHang)).ToList();
+            //var listMDHNew = listCongNoTake.Select(a => a.MaDonHang);
+            //var listPhieuThu = _dongBoTuyenSinh.BC_PhieuThu.Where(a => listMDHNew.Contains(a.DonHang)).AsNoTracking().ToList();
+            var listUser = _unitOfWork.UserRepository.GetQuery().ToList();
+            var listOffice = _unitOfWork.OfficeRepository.GetQuery().ToList();
 
-            var phieuThuTakeList = _dongBoTuyenSinh.BC_PhieuThu.Where(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year).AsNoTracking().ToList();
-            //var phieuThuKeToanList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month).Select(a => a.PhieuThuKeToan).ToList();
-            var oldList = _unitOfWork.PhieuThuRepository.GetQuery(a => a.NgayThanhToan != null && a.NgayThanhToan.Value.Month == day.Month && a.NgayThanhToan.Value.Year == day.Year && !a.THDB);
-            oldList.Delete();
-            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking().ToList();
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == day.Month && a.Year == day.Year, q => q.OrderBy(a => a.DayEnd == null).ThenBy(a => a.DayEnd).ThenBy(a => a.OfficeId == null)).AsNoTracking().ToList();
-            var phieuThuAddList = new List<BC_PhieuThu_DB>();
-            foreach (var item in phieuThuTakeList)
+            // Đồng bộ công nợ từ DB trung gian => DB dự án
+            TakeCongNoToDataBase(listCongNoTake, listUser, listOffice);
+
+            // Lấy ra các list mới sau khi đồng bộ công nợ từ DB trung gian => DB dự án
+            var listCongNoNew = _unitOfWork.DebtRepository.GetQuery(a => a.TypeData == TypeData.New);
+            var congNoNewList = listCongNoNew.ToList();
+            var listMDHNew = listCongNoNew.Select(a => a.MaDonHang);
+            var listPhieuThu = _unitOfWork.PhieuThuRepository.GetQuery(a => listMDHNew.Contains(a.DonHang) && (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm")).AsNoTracking().ToList();
+
+            // Tính toán số tiền đã cọc, bổ sung, còn lại
+            CalculateMoney(listCongNoDBTrungGian, congNoNewList, listPhieuThu);
+
+        }
+        public void TakeCongNoToDataBase(List<BC_CongNo> listCongNoTake, List<User> listUser, List<Office> listOffice)
+        {
+            var listCongNo = new List<Debt>();
+            foreach (var item in listCongNoTake)
             {
-                item.MaNVChotSale = item.MaNVChotSale.Replace("'","");
-                var historyUser = historyUsers.FirstOrDefault(a => a.User.MaNhanVien == item.MaNVChotSale
-                && a.DayStart.Date <= item.NgayThanhToan.Value.Date && (a.DayEnd == null || a.DayEnd.Value.Date >= item.NgayThanhToan.Value.Date));
-                if (historyUser == null)
+                if (item.NgayLenDon == null)
                 {
-                    logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai nhan su theo thang nao thoa man ngay lam viec: " + item.NgayThanhToan + " va MNV: " + item.MaNVChotSale);
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai cot NgayLenDon");
                     continue;
                 }
-                var office = offices.FirstOrDefault(a => a.ShortName.Normalize(NormalizationForm.FormC) == item.ChiNhanh.Normalize(NormalizationForm.FormC));
+                if (!item.TongTien.HasValue)
+                {
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai cot TongTien");
+                    continue;
+                }
+                if (string.IsNullOrEmpty(item.MaNVChotSale))
+                {
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai cot MaNVChotSale");
+                    continue;
+                }
+                var user = listUser.FirstOrDefault(a => a.MaNhanVien == item.MaNVChotSale);
+                if (user == null)
+                {
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai MaNhanVien: " + item.MaNVChotSale);
+                    continue;
+                }
+                if (string.IsNullOrEmpty(item.ChiNhanh))
+                {
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai cot ChiNhanh");
+                    continue;
+                }
+                item.ChiNhanh = VietnameseCodeHelper.NormalizeVietnameseCode(item.ChiNhanh);
+                var office = listOffice.FirstOrDefault(a => a.ShortName == item.ChiNhanh);
                 if (office == null)
                 {
-                    logger.Error("PhieuThuKeToan " + item.PhieuThuKeToan + ": Khong ton tai chi nhanh nao co ten ngan la " + item.ChiNhanh);
+                    logger.Error("MaDonHang " + item.MaDonHang + ": Khong ton tai CN: " + item.ChiNhanh);
                     continue;
                 }
-                var phieuThu = new BC_PhieuThu_DB()
+                var congno = new Debt()
                 {
-                    PhieuThuKeToan = item.PhieuThuKeToan,
-                    ChiNhanh = item.ChiNhanh,
-                    MaNVChotSale = item.MaNVChotSale,
-                    NgayThanhToan = item.NgayThanhToan,
-                    SUD = item.SUD,
-                    TUD = item.TUD,
-                    Loai = item.Loai,
-                    ReceiptCode = item.ReceiptCode,
-                    MaHV = item.MaHV,
-                    TenHV = item.TenHV,
-                    PhanTramUD = item.PhanTramUD,
-                    GioiTinh = item.GioiTinh,
-                    HinhThucThanhToan = item.HinhThucThanhToan,
-                    Notes = item.Notes,
-                    DangKy = item.DangKy,
-                    GioTao = item.GioTao,
-                    ChotSale = item.ChotSale,
-                    CongTacVien = item.CongTacVien,
-                    ThangHocDuKienDecimal = (decimal?)item.ThangHocDuKien,
-                    UD_FINAL = item.UD_FINAL,
-                    LoaiCTH = item.LoaiCTH,
-                    ChuongTrinhHoc = item.ChuongTrinhHoc,
-                    CapDo = item.CapDo,
-                    Modun = item.Modun,
-                    UD_NhomUDFINAL = item.UD_NhomUDFINAL,
-                    HDBH = item.HDBH,
-                    DonHang = item.DonHang,
-                    UDPhieuThu = item.UDPhieuThu,
-                    ThangTinhDThu = item.NgayThanhToan.Value.Month,
-                    NamTinhDThu = item.NgayThanhToan.Value.Year,
-                    TrangThai = item.TrangThai,
+                    NgayLenDon = item.NgayLenDon,
+                    MaDonHang = item.MaDonHang,
+                    NgayPhatSinhCoc = item.NgayLenDon,
+                    Month = item.NgayLenDon.Value.Month,
+                    Year = item.NgayLenDon.Value.Year,
+                    TotalMoney = item.TongTien.Value,
+                    StudentCode = item.MaHV,
+                    UserOriginId = user.Id,
+                    UserId = user.Id,
+                    OfficeId = office.Id,
+                    TypeData = TypeData.New,
+                    TypeDebt = TypeDebt.Type2,
                 };
-                phieuThuAddList.Add(phieuThu);
+                listCongNo.Add(congno);
             }
+            if (listCongNo.Any())
+            {
+                _unitOfWork.DebtRepository.InsertRange(listCongNo);
+            }
+            _unitOfWork.Save();
+        }
+        public void CalculateMoney(List<BC_CongNo> listCongNoDBTrungGian, List<Debt> congNoNewList, List<BC_PhieuThu_DB> listPhieuThu)
+        {
+            foreach (var item in congNoNewList)
+            {
+                var phieuThus = listPhieuThu.Where(a => a.DonHang == item.MaDonHang).ToList();
+                var tongCoc = 0m;
+                var boSungPhi = 0m;
 
-            if (phieuThuAddList.Any())
-                _unitOfWork.PhieuThuRepository.InsertRange(phieuThuAddList);
+                foreach (var phieuThu in phieuThus)
+                {
+                    if (phieuThu.Loai == "Đặt cọc")
+                        tongCoc += phieuThu.SUD ?? 0;
 
+                    else if (phieuThu.Loai == "Bổ Sung Phí")
+                        boSungPhi += phieuThu.SUD ?? 0;
+                    else if (phieuThu.Loai == "Học phí" || phieuThu.Loai == "Phiếu gộp")
+                        item.TypeDebt = TypeDebt.Type6;
+
+                }
+                var daDong = tongCoc + boSungPhi;
+                item.DebtMoney = daDong;
+                item.RemainMoney = item.TotalMoney - daDong;
+
+            }
             _unitOfWork.Save();
         }
 
 
-        public async Task SyncPhieuThuAsync()
+
+        public async Task SyncCongNoAsync(DateTime day)
         {
             await Task.Run(() =>
             {
-                SyncPhieuThu();
+                SyncCongNo(day);
             });
         }
     }

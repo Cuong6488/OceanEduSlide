@@ -4,20 +4,21 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DongBoTuyenSinhOEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.BC_CongNo' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+    <Schema Namespace="DongBoTuyenSinhOEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BC_CongNo">
+          <Key>
+            <PropertyRef Name="MaDonHang" />
+          </Key>
           <Property Name="NgayLenDon" Type="datetime" />
           <Property Name="MaHV" Type="varchar" MaxLength="50" />
           <Property Name="TongTien" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="MaDonHang" Type="nvarchar" MaxLength="50" />
+          <Property Name="MaDonHang" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="MaNVChotSale" Type="nvarchar" MaxLength="50" />
           <Property Name="ChotSale" Type="nvarchar" MaxLength="100" />
           <Property Name="ThangHocDuKien" Type="float" />
           <Property Name="ChiNhanh" Type="nvarchar" MaxLength="200" />
           <Property Name="DateImport" Type="datetime" />
-        </EntityType>-->
+        </EntityType>
         <EntityType Name="BC_PhieuThu">
           <Key>
             <PropertyRef Name="ID_StudentDept" />
@@ -54,13 +55,6 @@ warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.BC_CongNo' does not have a p
           <Property Name="TrangThai" Type="varchar" MaxLength="100" />
           <Property Name="ID_StudentDept" Type="int" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.DSLopNghiTet' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="DSLopNghiTet">
-          <Property Name="TenLop" Type="nvarchar" MaxLength="200" />
-          <Property Name="ChiNhanh" Type="nvarchar" MaxLength="100" />
-          <Property Name="Status" Type="nvarchar" MaxLength="100" />
-        </EntityType>-->
         <EntityType Name="DSNhanSuNguon">
           <Key>
             <PropertyRef Name="IDNhanSuHRM" />
@@ -96,13 +90,13 @@ warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.DSLopNghiTet' does not have 
           <Property Name="NgayKetthucNghiThaiSan" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityContainer Name="DongBoTuyenSinhOEModelStoreContainer">
+          <EntitySet Name="BC_CongNo" EntityType="Self.BC_CongNo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BC_PhieuThu" EntityType="Self.BC_PhieuThu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DSNhanSuNguon" EntityType="Self.DSNhanSuNguon" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QuaTrinhCongTac" EntityType="Self.QuaTrinhCongTac" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ThaiSan" EntityType="Self.ThaiSan" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DongBoTuyenSinhOEModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -181,7 +175,22 @@ warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.DSLopNghiTet' does not have 
           <EntitySet Name="DSNhanSuNguons" EntityType="Self.DSNhanSuNguon" />
           <EntitySet Name="QuaTrinhCongTacs" EntityType="Self.QuaTrinhCongTac" />
           <EntitySet Name="ThaiSans" EntityType="Self.ThaiSan" />
+          <EntitySet Name="BC_CongNo" EntityType="DongBoTuyenSinhOEModel.BC_CongNo" />
         </EntityContainer>
+        <EntityType Name="BC_CongNo">
+          <Key>
+            <PropertyRef Name="MaDonHang" />
+          </Key>
+          <Property Name="NgayLenDon" Type="DateTime" Precision="3" />
+          <Property Name="MaHV" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TongTien" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MaDonHang" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MaNVChotSale" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ChotSale" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ThangHocDuKien" Type="Double" />
+          <Property Name="ChiNhanh" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DateImport" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -259,6 +268,21 @@ warning 6013: The table/view 'DongBoTuyenSinhOE.dbo.DSLopNghiTet' does not have 
                 <ScalarProperty Name="IDNhanSuHRM" ColumnName="IDNhanSuHRM" />
                 <ScalarProperty Name="NgayBatDauNghiThaiSan" ColumnName="NgayBatDauNghiThaiSan" />
                 <ScalarProperty Name="NgayKetthucNghiThaiSan" ColumnName="NgayKetthucNghiThaiSan" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BC_CongNo">
+            <EntityTypeMapping TypeName="DongBoTuyenSinhOEModel.BC_CongNo">
+              <MappingFragment StoreEntitySet="BC_CongNo">
+                <ScalarProperty Name="DateImport" ColumnName="DateImport" />
+                <ScalarProperty Name="ChiNhanh" ColumnName="ChiNhanh" />
+                <ScalarProperty Name="ThangHocDuKien" ColumnName="ThangHocDuKien" />
+                <ScalarProperty Name="ChotSale" ColumnName="ChotSale" />
+                <ScalarProperty Name="MaNVChotSale" ColumnName="MaNVChotSale" />
+                <ScalarProperty Name="MaDonHang" ColumnName="MaDonHang" />
+                <ScalarProperty Name="TongTien" ColumnName="TongTien" />
+                <ScalarProperty Name="MaHV" ColumnName="MaHV" />
+                <ScalarProperty Name="NgayLenDon" ColumnName="NgayLenDon" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
