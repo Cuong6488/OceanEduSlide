@@ -122,6 +122,7 @@ namespace OceanEduSlide.Controllers
                     model.AutoRevenue = config.AutoRevenue;
                     model.AutoUser = config.AutoUser;
                     model.AutoCallLog = config.AutoCallLog;
+                    model.AutoDebt = config.AutoDebt;
                     model.LiveChat = config.LiveChat;
                     _unitOfWork.Save();
 

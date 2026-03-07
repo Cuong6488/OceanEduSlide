@@ -11,7 +11,7 @@ namespace OceanEduSlide.Models
         public string DepositDate { get; set; }
         [Display(Name = "Ngày phát sinh cọc")]
         public DateTime? NgayPhatSinhCoc { get; set; }
-        [Display(Name = "Ngày lên đơn")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}"), Display(Name = "Ngày lên đơn")]
         public DateTime? NgayLenDon { get; set; }
         [Display(Name = "Mã đơn hàng"), UIHint("TextBox")]
         public string MaDonHang { get; set; }
@@ -39,14 +39,14 @@ namespace OceanEduSlide.Models
         public decimal Pathway { get; set; }
         [Display(Name = "Thành tiền"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal TotalMoney { get; set; }
-        [Display(Name = "Tiền cọc giữ chỗ"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        [Display(Name = "Tiền cọc"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         //[Display(Name = "Tiền đã thanh toán"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DebtMoney { get; set; }
         [Display(Name = "Tiền giảm lộ trình"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DownMoney { get; set; }
-        [Display(Name = "Tiền cọc bổ sung làm hồ sơ"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        [Display(Name = "Bổ sung phí"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal DebtMoney2 { get; set; }
-        [Display(Name = "Tiền còn lại phải thanh toán"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        [Display(Name = "Tiền còn lại"), DisplayFormat(DataFormatString = "{0:N0}đ")]
         public decimal RemainMoney { get; set; }
         [Display(Name = "Tình trạng khách hàng")]
         public TypeDebt? TypeDebt { get; set; }
@@ -66,11 +66,11 @@ namespace OceanEduSlide.Models
         public string HandleWay { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
-        [Display(Name = "Công nợ cần thu")]
+        [Display(Name = "Công nợ cần thu (từ các tháng cũ)")]
         public bool PhaiThu { get; set; }
         [Display(Name = "Cập nhật tự động")]
         public bool Auto { get; set; }
-        [Display(Name = "BM đã sửa Nhân sự phụ trách")]
+        [Display(Name = "BM đã sửa")]
         public bool EditUser { get; set; }
         [Display(Name = "Hoạt động")]
         public bool Active { get; set; }

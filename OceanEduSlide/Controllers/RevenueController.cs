@@ -3034,6 +3034,17 @@ namespace OceanEduSlide.Controllers
             phieuthuService.SyncPhieuThu();
             return Content("Đã đồng bộ phiếu thu thủ công");
         }
+        public ActionResult SyncDebt(/*int? day,int? month, int? year*/)
+        {
+            //var date = DateTime.Now;
+            //if(day.HasValue && month.HasValue && year.HasValue)
+            //{
+            //    date = new DateTime(year.Value, month.Value, day.Value);
+            //}
+            var congNoService = new CongNoService();
+            congNoService.SyncCongNo(/*date*/);
+            return Content("Đã đồng bộ công nợ thủ công");
+        }
         public ActionResult SyncUserAsync()
         {
             var userService = new UserService();

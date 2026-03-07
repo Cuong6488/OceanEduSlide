@@ -27,11 +27,11 @@ namespace OceanEduSlide.DAL
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
 
-        public void SyncCongNo(DateTime day)
+        public void SyncCongNo(/*DateTime day*/)
         {
-            var monthCheck = day.Month;
-            var yearCheck = day.Year;
-            var dayCheck = day.Day;
+            //var monthCheck = day.Month;
+            //var yearCheck = day.Year;
+            //var dayCheck = day.Day;
 
             var config = _unitOfWork.ConfigSiteRepository.GetQuery().FirstOrDefault();
             if (config == null || !config.AutoDebt)
@@ -39,11 +39,8 @@ namespace OceanEduSlide.DAL
                 return;
             }
             //Chuẩn bị các list dữ liệu
-            var listCongNoDBTrungGian = _dongBoTuyenSinh.BC_CongNo.AsNoTracking().ToList();
             var listMDHOld = _unitOfWork.DebtRepository.GetQuery(a => a.TypeData == TypeData.New).Select(a => a.MaDonHang).ToHashSet();
-            var listCongNoTake = listCongNoDBTrungGian.Where(a => !listMDHOld.Contains(a.MaDonHang)).ToList();
-            //var listMDHNew = listCongNoTake.Select(a => a.MaDonHang);
-            //var listPhieuThu = _dongBoTuyenSinh.BC_PhieuThu.Where(a => listMDHNew.Contains(a.DonHang)).AsNoTracking().ToList();
+            var listCongNoTake = _dongBoTuyenSinh.BC_CongNo.Where(a => !listMDHOld.Contains(a.MaDonHang)).ToList();
             var listUser = _unitOfWork.UserRepository.GetQuery().ToList();
             var listOffice = _unitOfWork.OfficeRepository.GetQuery().ToList();
 
@@ -57,7 +54,7 @@ namespace OceanEduSlide.DAL
             var listPhieuThu = _unitOfWork.PhieuThuRepository.GetQuery(a => listMDHNew.Contains(a.DonHang) && (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm")).AsNoTracking().ToList();
 
             // Tính toán số tiền đã cọc, bổ sung, còn lại
-            CalculateMoney(listCongNoDBTrungGian, congNoNewList, listPhieuThu);
+            CalculateMoney(congNoNewList, listPhieuThu);
 
         }
         public void TakeCongNoToDataBase(List<BC_CongNo> listCongNoTake, List<User> listUser, List<Office> listOffice)
@@ -103,6 +100,7 @@ namespace OceanEduSlide.DAL
                     NgayLenDon = item.NgayLenDon,
                     MaDonHang = item.MaDonHang,
                     NgayPhatSinhCoc = item.NgayLenDon,
+                    DepositDate = item.NgayLenDon?.ToString("dd/MM/yyyy"),
                     Month = item.NgayLenDon.Value.Month,
                     Year = item.NgayLenDon.Value.Year,
                     TotalMoney = item.TongTien.Value,
@@ -112,6 +110,7 @@ namespace OceanEduSlide.DAL
                     OfficeId = office.Id,
                     TypeData = TypeData.New,
                     TypeDebt = TypeDebt.Type2,
+                    Pathway = (decimal)(item.ThangHocDuKien ?? 0),
                 };
                 listCongNo.Add(congno);
             }
@@ -121,14 +120,14 @@ namespace OceanEduSlide.DAL
             }
             _unitOfWork.Save();
         }
-        public void CalculateMoney(List<BC_CongNo> listCongNoDBTrungGian, List<Debt> congNoNewList, List<BC_PhieuThu_DB> listPhieuThu)
+        public void CalculateMoney(List<Debt> congNoNewList, List<BC_PhieuThu_DB> listPhieuThu)
         {
             foreach (var item in congNoNewList)
             {
                 var phieuThus = listPhieuThu.Where(a => a.DonHang == item.MaDonHang).ToList();
                 var tongCoc = 0m;
                 var boSungPhi = 0m;
-
+                var daDong = 0m;
                 foreach (var phieuThu in phieuThus)
                 {
                     if (phieuThu.Loai == "Đặt cọc")
@@ -137,11 +136,16 @@ namespace OceanEduSlide.DAL
                     else if (phieuThu.Loai == "Bổ Sung Phí")
                         boSungPhi += phieuThu.SUD ?? 0;
                     else if (phieuThu.Loai == "Học phí" || phieuThu.Loai == "Phiếu gộp")
+                    {
                         item.TypeDebt = TypeDebt.Type6;
+                        item.GrossDate = phieuThu.NgayThanhToan?.ToString("dd/MM/yyyy");
+                    }
+
 
                 }
-                var daDong = tongCoc + boSungPhi;
-                item.DebtMoney = daDong;
+                daDong = tongCoc + boSungPhi;
+                item.DebtMoney = tongCoc;
+                item.DebtMoney2 = boSungPhi;
                 item.RemainMoney = item.TotalMoney - daDong;
 
             }
@@ -150,11 +154,11 @@ namespace OceanEduSlide.DAL
 
 
 
-        public async Task SyncCongNoAsync(DateTime day)
+        public async Task SyncCongNoAsync(/*DateTime day*/)
         {
             await Task.Run(() =>
             {
-                SyncCongNo(day);
+                SyncCongNo(/*day*/);
             });
         }
     }

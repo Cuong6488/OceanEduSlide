@@ -820,6 +820,7 @@
     <Compile Include="Utils\DebugHelper.cs" />
     <Compile Include="Utils\ExcelHelpers.cs" />
     <Compile Include="Utils\VietnameseCodeHelper.cs" />
+    <Compile Include="Utils\PermisstionHelper.cs" />
     <Compile Include="Utils\WeekHelper.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\BannerViewModel.cs" />

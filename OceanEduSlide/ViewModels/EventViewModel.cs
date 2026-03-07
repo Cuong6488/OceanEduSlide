@@ -84,13 +84,14 @@ namespace OceanEduSlide.ViewModels
         public int? UserType { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
-        public IEnumerable<DebtItem> DebtItems { get; set; }
+        public IEnumerable<Debt> Debts { get; set; }
+        //public IEnumerable<DebtItem> DebtItems { get; set; }
         public User User { get; set; }
-        public class DebtItem
-        {
-            public int DebtParentId { get; set; }
-            public Debt Debt { get; set; }
-        }
+        //public class DebtItem
+        //{
+        //    public int DebtParentId { get; set; }
+        //    public Debt Debt { get; set; }
+        //}
     }
     public class InsertDebtViewModel
     {

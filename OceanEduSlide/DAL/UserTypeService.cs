@@ -68,43 +68,6 @@ namespace OceanEduSlide.DAL
                 _typeUserMap[item.CDCM.Trim()] = item.TypeUser;
             }
         }
-        //private static readonly Dictionary<string, TypeUser> _typeUserMap =
-        //    new Dictionary<string, TypeUser>()
-        //{
-        //{ "ASM", TypeUser.ASM },
-        ////{ "DCEO", TypeUser.HO },
-        //{ "NDDM", TypeUser.ASM },
-        //{ "GĐTS", TypeUser.HO },
-        //{ "EC", TypeUser.EC },
-        //{ "TELES", TypeUser.EC },
-        //{ "APrO", TypeUser.EC },
-        //{ "BM", TypeUser.BM },
-        //{ "BM1", TypeUser.BM },
-        //{ "BM2", TypeUser.BM },
-        //{ "BM3", TypeUser.BM },
-        //{ "BDM", TypeUser.BM },
-        //{ "BAM", TypeUser.BM },
-        //{ "ABM", TypeUser.BM },
-        //{ "ABM1", TypeUser.BM },
-        //{ "ABM2", TypeUser.BM },
-        //{ "ABM3", TypeUser.BM },
-        //{ "FBM", TypeUser.BM },
-        //{ "PO", TypeUser.BM },
-        //{ "APRS", TypeUser.BM },
-        //{ "APrS", TypeUser.BM },
-        //{ "BSA", TypeUser.SAB },
-        //{ "SAB", TypeUser.SAB },
-        //{ "ATL", TypeUser.ALT },
-        //{ "CM", TypeUser.CM },
-        //{ "BTL", TypeUser.TTL },
-        //{ "TTL", TypeUser.TTL },
-        //{ "AEC", TypeUser.AEC },
-        //{ "AAL", TypeUser.AEC },
-        //{ "BDO", TypeUser.AEC },
-        //};
-
-
-
         public TypeUser? GetTypeUser(string maChucDanh)
         {
             if (string.IsNullOrWhiteSpace(maChucDanh))
