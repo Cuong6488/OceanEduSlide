@@ -1,5 +1,6 @@
 ﻿@using OceanEduSlide.ViewModels
 @using OceanEduSlide.Models
+@using PagedList.Mvc
 @model DebtViewModel
 @{
     ViewBag.Title = "Danh sách công nợ";
@@ -56,7 +57,7 @@
             {
                 <div class="col-lg-2 col-md-3 col-6">
                     <select name="OfficeId" class="form-select">
-                        <option value="">Chọn chi nhánh</option>
+                        <option>Chọn chi nhánh</option>
                         @foreach (var item in Model.Offices)
                         {
                             <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
@@ -81,322 +82,222 @@
             </div>
         </div>
     </form>
-    @if (Model.OfficeId != null)
-    {
-        <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
-        if (Model.User.TypeUser != TypeUser.HO && Model.User.TypeUser != TypeUser.CV)
-        {
-            <a class="btn quick-link" href="@Url.Action("CreateDebt")">Thêm mới công nợ</a>
-        }
-        <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 1,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
-        <div class="box_content">
-            @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
-            <table class="list_table tablecenter table-striped text-center">
-                <tbody>
-                    <tr>
-                        <th rowspan="2">STT</th>
-                        <th rowspan="2" class="col-w90">
-                            Ngày phát sinh cọc
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            NS phụ trách
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            NS phát sinh
-                        </th>
-                        <th rowspan="2" class="col-w65">
-                            Mã học viên
-                        </th>
-                        <th rowspan="2">
-                            Lộ trình
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Thành tiền
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền cọc
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Bổ sung phí
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền còn thiếu
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tình trạng <br /> khách hàng
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền giảm <br /> lộ trình
-                        </th>
-                        <th rowspan="2" class="col-w65">
-                            Tình trạng hồ sơ
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Ngày phát sinh gộp phí
-                        </th>
-                        <th colspan="3">Khó khăn của cọc</th>
-                        <th rowspan="2"></th>
-                        @*<th rowspan="2" class="col-w90">
-                                Họ tên <br /> học viên
-                            </th>*@
-                        @*<th rowspan="2" class="col-w90">
-                                Chương trình học
-                            </th>
-                            <th rowspan="2" class="col-w90">
-                                Tên QĐ ưu đãi
-                            </th>*@
-
-                        @*<th rowspan="2" class="col-w90">
-                                Hình thức thanh toán
-                            </th>
-                            <th rowspan="2" class="col-w90">
-                                Kênh trả góp
-                            </th>*@
-
-                        @*@if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
-                            {*@
-                        @*}*@
-
-                    </tr>
-                    <tr>
-                        <th class="col-w90">Nội dung <br /> khó khăn</th>
-                        <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
-                        <th class="col-w90">Hướng xử lý</th>
-                    </tr>
-                    @if (Model.DebtItems != null)
-                    {
-                        int stt = 1;
-                        foreach (var item in Model.DebtItems.Where(a => a.Debt.Active))
-                        {
-                            <tr>
-                                <td>@stt</td>
-                                <td>@Html.DisplayFor(a => item.Debt.NgayLenDon)</td>
-                                <td>@item.Debt.UserOrigin.Fullname - @item.Debt.UserOrigin.MaNhanVien</td>
-                                <td>@item.Debt.User.Fullname - @item.Debt.User.MaNhanVien</td>
-                                <td>@item.Debt.StudentCode</td>
-                                <td>@item.Debt.Pathway</td>
-                                <td>@Html.DisplayFor(a => item.Debt.TotalMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney2)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.RemainMoney)</td>
-                                <td>
-                                    @Html.DisplayFor(a => item.Debt.TypeDebt)
-                                    @if (item.Debt.TypeDebt == TypeDebt.Type3)
-                                    {
-                                        if (item.Debt.DownPathways.Any())
-                                        {
-                                            <div class="btnhistory-input">
-                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Debt.Id})"
-                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                            </div>
-                                        }
-
-                                        if (Model.User.TypeUser == TypeUser.BM)
-                                        {
-
-                                            <div class="btnedit-input-debt">
-                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Debt.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
-                                            </div>
-
-                                        }
-                                    }
-                                </td>
-                                <td>@Html.DisplayFor(a => item.Debt.DownMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.FileStatus)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.GrossDate)</td>
-                                <td>@item.Debt.HardContent</td>
-                                <td>@item.Debt.ContactStatus</td>
-                                <td>@item.Debt.HandleWay</td>
-                                @*<td>@item.Debt.StudentName</td>*@
-                                @*<td>@item.Debt.Cth</td>
-                                    <td>@item.Debt.DiscountName</td>*@
-                                @*<td>@Html.DisplayFor(a => item.Debt.TypePay)</td>
-                                    <td>@Html.DisplayFor(a => item.Debt.ChannelPay)</td>*@
-                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.Debt.UserId)
-                                {
-                                    <td class="col-w65">
-                                        <a href="@Url.Action("UpdateDebt", new {id = item.Debt.Id})">Sửa</a> - <a class="text-danger" href="javascript:;" onclick="deleteDebt('@item.Debt.Id')">Xóa</a> <br />
-                                        @if (item.Debt.DebtId != null)
-                                        {
-                                            <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDedt",  new{debtId = item.Debt.Id})"
-                                               data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i> Lịch sử</a>
-                                        }
-
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                            </tr>
-                            stt++;
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <h2 class="mt-4">DANH SÁCH CÔNG NỢ đã xóa tháng @Model.Month - @Model.Year</h2>
-        <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 0,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
-        <div class="box_content">
-            @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
-            <table class="list_table tablecenter table-striped text-center">
-                <tbody>
-                    <tr>
-                        <th rowspan="2">STT</th>
-                        <th rowspan="2" class="col-w90">
-                            Ngày phát sinh cọc
-                        </th>
-                        <th rowspan="2" class="col-w90">
+    <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
+    <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 1,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <div class="box_content">
+        @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
+        <table class="list_table table-striped">
+            <tbody>
+                <tr class="text-center">
+                    <th rowspan="2">STT</th>
+                    <th rowspan="2" class="col-w90">
+                        Mã đơn hàng
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Ngày phát sinh cọc
+                    </th>
+                    <th rowspan="2" class="col-w150">
+                        Chi nhánh
+                    </th>
+                    <th rowspan="2" class="col-w150">
+                        Nhân sự
+                    </th>
+                    <th rowspan="2" class="col-w65">
+                        Mã học viên
+                    </th>
+                    <th rowspan="2">
+                        Lộ trình
+                    </th>
+                    <th rowspan="2" class="col-w150">
+                        Các khoản tiền
+                    </th>
+                    <th rowspan="2" class="col-w65">
+                        Công nợ <br />
+                        phải thu
+                    </th>
+                    <th rowspan="2" class="col-w90">
+                        Tình trạng <br /> khách hàng
+                    </th>
+                    <th colspan="3">Khó khăn của cọc</th>
+                    <th rowspan="2"></th>
+                    @*<th rowspan="2" class="col-w90">
                             Họ tên <br /> học viên
-                        </th>
-                        <th rowspan="2" class="col-w65">
-                            Mã học viên
-                        </th>
-                        <th rowspan="2" class="col-w90">
+                        </th>*@
+                    @*<th rowspan="2" class="col-w90">
                             Chương trình học
                         </th>
                         <th rowspan="2" class="col-w90">
                             Tên QĐ ưu đãi
-                        </th>
-                        <th rowspan="2">
-                            Lộ trình
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Thành tiền
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền cọc <br /> giữ chỗ
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền cọc <br /> bổ sung <br /> làm hồ sơ
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tình trạng <br /> khách hàng
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền giảm <br /> lộ trình
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Tiền còn lại phải thanh toán
-                        </th>
-                        <th rowspan="2" class="col-w90">
+                        </th>*@
+
+                    @*<th rowspan="2" class="col-w90">
                             Hình thức thanh toán
                         </th>
                         <th rowspan="2" class="col-w90">
                             Kênh trả góp
-                        </th>
-                        <th rowspan="2" class="col-w65">
-                            Tình trạng hồ sơ
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            Ngày phát sinh gộp phí
-                        </th>
-                        <th rowspan="2" class="col-w90">
-                            NS phụ trách
-                        </th>
-                        <th colspan="3">Khó khăn của cọc</th>
-                        <th rowspan="2"></th>
+                        </th>*@
 
+                    @*@if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM)
+                        {*@
+                    @*}*@
 
-                    </tr>
+                </tr>
+                <tr class="text-center">
+                    <th class="col-w90">Nội dung <br /> khó khăn</th>
+                    <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
+                    <th class="col-w90">Hướng xử lý</th>
+                </tr>
+                @{
+                    int stt = 1 + (Model.Debts.PageNumber - 1) * 15;
+                }
+                @foreach (var item in Model.Debts)
+                {
                     <tr>
-                        <th class="col-w90">Nội dung <br /> khó khăn</th>
-                        <th class="col-w90">Tình trạng <br /> liên hệ khách</th>
-                        <th class="col-w90">Hướng xử lý</th>
-                    </tr>
-                    @if (Model.DebtItems != null)
-                    {
-                        int stt = 1;
-                        foreach (var item in Model.DebtItems.Where(a => !a.Debt.Active))
+                        <td>@stt</td>
+                        <td>@item.MaDonHang</td>
+                        <td>
+                            @Html.DisplayFor(a => item.NgayLenDon)
+                            @if (item.GrossDate != null)
+                            {
+                                <br /> <br />
+                                @: Ngày phát sinh gộp phí: <br />
+                                @Html.DisplayFor(a => item.GrossDate)
+                            }
+                        </td>
+                        <td>@item.Office.ShortName</td>
+                        <td>
+                            <strong>Nhân sự phát sinh cọc:</strong> <br />
+                            @item.UserOrigin.Fullname <br /> @item.UserOrigin.MaNhanVien <br /> <br />
+                            <strong>Nhân sự phụ trách:</strong> <br />
+                            @item.User.Fullname <br /> @item.User.MaNhanVien
+                        </td>
+                        <td>
+                            @item.StudentCode
+                            @if (item.StudentName != null)
+                            {
+                                <br />
+                                @: @item.StudentName
+                            }
+                        </td>
+                        <td>@item.Pathway</td>
+                        <td>
+                            <p class="mb-1">
+                                <strong>Tổng tiền: </strong>  @Html.DisplayFor(a => item.TotalMoney)
+                            </p>
+                            <p class="mb-1">
+                                <strong>Cọc: </strong> @Html.DisplayFor(a => item.DebtMoney)
+                            </p>
+                            <p class="mb-1">
+                                <strong>Bổ sung phí: </strong> @Html.DisplayFor(a => item.DebtMoney2)
+                            </p>
+                            <p class="mb-1">
+                                <strong>Còn thiếu: </strong> @Html.DisplayFor(a => item.RemainMoney)
+                            </p>
+                            <p class="mb-1">
+                                <strong>Giảm lộ trình: </strong> @Html.DisplayFor(a => item.DownMoney)
+                            </p>
+
+                        </td>
+                        <td>
+                            @{
+                                var dayNow = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                                var dayLastMonth = dayNow.AddDays(-1);
+
+                            }
+
+                            @if (item.Month == dayLastMonth.Month && item.Year == dayLastMonth.Year)
+                            {
+                                <input type="checkbox" disabled checked value="" />
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(a => item.PhaiThu)
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.TypeDebt)
+                            @if (item.TypeDebt == TypeDebt.Type3)
+                            {
+                                if (item.DownPathways.Any())
+                                {
+                                    <div class="btnhistory-input">
+                                        <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Id})"
+                                           data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
+                                    </div>
+                                }
+
+                                if (Model.User.TypeUser == TypeUser.BM)
+                                {
+
+                                    <div class="btnedit-input-debt">
+                                        <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
+                                    </div>
+
+                                }
+                            }
+                            @if (item.FileStatus != null)
+                            {
+                                <br />
+                                @item.FileStatus
+                            }
+
+                        </td>
+                        <td>@item.HardContent</td>
+                        <td>@item.ContactStatus</td>
+                        <td>@item.HandleWay</td>
+                        @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.UserId)
                         {
-                            <tr>
-                                <td>@stt</td>
-                                <td>@Html.DisplayFor(a => item.Debt.DepositDate)</td>
-                                <td>@item.Debt.StudentName</td>
-                                <td>@item.Debt.StudentCode</td>
-                                <td>@item.Debt.Cth</td>
-                                <td>@item.Debt.DiscountName</td>
-                                <td>@item.Debt.Pathway.ToString("N1")</td>
-                                <td>@Html.DisplayFor(a => item.Debt.TotalMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.DebtMoney2)</td>
-                                <td>
-                                    @Html.DisplayFor(a => item.Debt.TypeDebt)
-                                    @if (item.Debt.TypeDebt == TypeDebt.Type3)
-                                    {
-                                        if (item.Debt.DownPathways.Any())
-                                        {
-                                            <div class="btnhistory-input">
-                                                <a title="Xem lịch sử" href="" data-src="@Url.Action("LoadHistoryDownPathway",  new{debtId = item.Debt.Id})"
-                                                   data-fancybox data-type="ajax" data-touch="false"><i class="fa-regular fa-files"></i></a>
-                                            </div>
-                                        }
-
-                                        if (Model.User.TypeUser == TypeUser.BM)
-                                        {
-
-                                            <div class="btnedit-input-debt">
-                                                <a title="Cập nhật giảm lộ trình" href="@Url.Action("UpdateDownPathway", new {debtId = item.Debt.Id})"><i class="fa-regular fa-pen-to-square"></i></a>
-                                            </div>
-
-                                        }
-                                    }
-
-                                </td>
-                                <td>@Html.DisplayFor(a => item.Debt.DownMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.RemainMoney)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.TypePay)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.ChannelPay)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.FileStatus)</td>
-                                <td>@Html.DisplayFor(a => item.Debt.GrossDate)</td>
-                                <td>@(item.Debt.User.Fullname??item.Debt.User.Username)</td>
-                                <td>@item.Debt.HardContent</td>
-                                <td>@item.Debt.ContactStatus</td>
-                                <td>@item.Debt.HandleWay</td>
-                                @if (Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.BM || Model.User.Id == item.Debt.UserId)
-                                {
-                                    <td class="col-w65"><a href="javascript:;" onclick="deleteDebt('@item.Debt.Id')">Khôi phục</a></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                            </tr>
-                            stt++;
+                            <td class="col-w65">
+                                <a href="@Url.Action("UpdateDebt", new {id = item.Id})">Sửa</a>
+                            </td>
                         }
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                    stt++;
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+
+    @if (Model.Debts.PageCount > 1)
     {
-        <div class="text-danger">
-            * Vui lòng chọn chi nhánh
+        <div class="text-center">
+            @if (Model.OfficeId != null)
+            {
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year }))
+            }
+            else
+            {
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, UserType = Model.UserType, month = Model.Month, year = Model.Year }))
+            }
         </div>
     }
 </div>
 @section scripts{
     <script src="~/Scripts/jquery.maskMoney.min.js"></script>
 
-    <script type="text/javascript">
-        function deleteDebt(id) {
-            if (confirm("Bạn có chắc chắn xóa/ khôi phục công nợ này không?")) {
-                $.post("/Event/DeleteDebt",
-                    { debtId: id },
-                    function (data) {
-                        if (data === "True") {
-                            alert("Cập nhật thành công");
-                            location.reload();
-                        } else {
-                            $.toast({
-                                text: 'Quá trình thực hiện không thành công. Hãy thử lại',
-                                icon: 'error',
-                            })
-                        }
-                    });
+    @*<script type="text/javascript">
+            function deleteDebt(id) {
+                if (confirm("Bạn có chắc chắn xóa/ khôi phục công nợ này không?")) {
+                    $.post("/Event/DeleteDebt",
+                        { debtId: id },
+                        function (data) {
+                            if (data === "True") {
+                                alert("Cập nhật thành công");
+                                location.reload();
+                            } else {
+                                $.toast({
+                                    text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                                    icon: 'error',
+                                })
+                            }
+                        });
+                }
             }
-        }
-    </script>
+        </script>*@
 }

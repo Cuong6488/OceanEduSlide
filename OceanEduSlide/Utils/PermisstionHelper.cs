@@ -10,6 +10,7 @@ public static class PermisstionHelper
 {
     public static List<TypeUser> ListTypeUserNhanVien_CN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.ALT };
     public static List<TypeUser> ListTypeUserQuanLy = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM, TypeUser.AEC };
+    public static List<TypeUser> ListTypeUserQuanLy_Vung = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM, TypeUser.AEC };
     public static List<TypeUser> ListTypeUserNhanVien_CN_Vung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.ALT, TypeUser.AEC };
 
     public static List<User> GetUserManagerPresent(UnitOfWork unitOfWork, User user)
@@ -65,7 +66,7 @@ public static class PermisstionHelper
     }
     #region Zone
 
-    public static List<Zone> GetZoneManagerMonth(UnitOfWork unitOfWork, User user, List<HistoryUser> historyUsers, int year, int month)
+    public static List<Zone> GetZoneManagerMonth(UnitOfWork unitOfWork, User user, IQueryable<HistoryUser> historyUsers, int year, int month)
     {
         if (!user.TypeUser.HasValue)
         {
@@ -76,7 +77,8 @@ public static class PermisstionHelper
 
         if (user.TypeUser != TypeUser.HO)
         {
-            zones = zones.Where(a => user.ZoneIds.Contains("," + a.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",")));
+            if (ListTypeUserQuanLy.Contains(user.TypeUser.Value))
+                zones = zones.Where(a => user.ZoneIds.Contains("," + a.ShortCode + ",") || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",")));
         }
 
         return zones.ToList();
@@ -84,7 +86,7 @@ public static class PermisstionHelper
 
     #endregion
     #region Office
-    public static List<Office> GetOfficeManagerMonth(UnitOfWork unitOfWork, User user, List<HistoryUser> historyUsers, int year, int month, int? zoneId)
+    public static List<Office> GetOfficeManagerMonth(UnitOfWork unitOfWork, User user, IQueryable<HistoryUser> historyUsers, int year, int month, int? zoneId)
     {
         if (!user.TypeUser.HasValue)
         {
@@ -102,8 +104,10 @@ public static class PermisstionHelper
         {
             listOffice = listOffice.Where(a => historyOffices.Any(h => h.OfficeId == a.Id
             && ((user.ZoneIds != null && user.ZoneIds.Contains("," + h.ZoneShortCode + ","))
+            || (user.ZoneId == h.ZoneId)
             || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))
             || (user.OfficeIds != null && user.OfficeIds.Contains("," + h.OfficeId + ","))
+            || (user.OfficeId == h.OfficeId)
             || historyUsers.Any(hu => hu.OfficeIds != null && hu.OfficeIds.Contains("," + h.OfficeId + ",")))
             ));
         }
@@ -115,6 +119,40 @@ public static class PermisstionHelper
         return listOffice.ToList();
     }
 
+
+    public static List<Office> GetOfficeManagerPresent(UnitOfWork unitOfWork, User user)
+    {
+        if (!user.TypeUser.HasValue)
+        {
+            return new List<Office>();
+        }
+        var listOffice = unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking();
+
+        if (user.TypeUser != TypeUser.HO)
+        {
+            var listZoneShortCodeManagerString = user.ZoneIds ?? ",";
+            if (user.ZoneId.HasValue)
+            {
+                if (!listZoneShortCodeManagerString.Contains("," + user.Zone.ShortCode + ","))
+                {
+                    listZoneShortCodeManagerString += user.Zone.ShortCode + ",";
+                }
+            }
+
+            var listOfficeIdManagerString = user.OfficeIds ?? ",";
+            if (user.OfficeId.HasValue)
+            {
+                if (!listOfficeIdManagerString.Contains("," + user.OfficeId + ","))
+                {
+                    listOfficeIdManagerString += user.OfficeId + ",";
+                }
+            }
+
+            listOffice = listOffice.Where(a => a.Active && (listZoneShortCodeManagerString.Contains("," + a.Zone.ShortCode + ",") || listOfficeIdManagerString.Contains("," + a.Id.ToString() + ",")));
+        }
+
+        return listOffice.ToList();
+    }
     #endregion
 
 }

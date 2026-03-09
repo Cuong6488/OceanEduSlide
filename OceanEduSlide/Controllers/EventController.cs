@@ -12,6 +12,8 @@ using System.Linq;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
 using OceanEduSlide.EnumHelpers;
+using PagedList;
+using System.Web.UI;
 
 namespace OceanEduSlide.Controllers
 {
@@ -1070,144 +1072,109 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Công_nợ
-        public ActionResult ListDebt(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, string Result = "")
+        public ActionResult ListDebt(int? page, int? zoneId, int? officeId, int? month, int? year, int? userType, string result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            ViewBag.Result = Result;
-            var model = new DebtViewModel
-            {
-                Month = Month ?? DateTime.Now.Month,
-                Year = Year ?? DateTime.Now.Year,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Name)),
-                User = User,
-                ZoneId = ZoneId,
-                UserType = UserType,
-                OfficeId = OfficeId,
-            };
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == model.Month && h.Year == model.Year).Select(h => new
+            ViewBag.Result = result;
+            page = page ?? 1;
+            var pageSize = 15;
+            month = month ?? DateTime.Now.Month;
+            year = year ?? DateTime.Now.Year;
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id).AsNoTracking();
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == month && h.Year == year).Select(h => new
             {
                 h.OfficeId,
                 ZoneShortCode = h.Zone.ShortCode,
                 h.ZoneId
             });
-            if (User.TypeUser == TypeUser.HO)
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-            else if (User.TypeUser == TypeUser.CV)
+            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year && a.Month == month && a.TypeData == TypeData.New && listOfficeId.Contains(a.OfficeId.Value),
+                q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
+            if (offices.Count() == 1)
             {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                if (model.ZoneId == null)
-                {
-                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                }
+                officeId = offices.First().Id;
             }
-            else
+            if (officeId.HasValue)
             {
-                //model.ZoneId = User.ZoneId;
-                //if (User.TypeUser == TypeUser.ASM)
-                //    model.Offices = model.Offices.Where(a => User.Zone.OfficeIds.Contains("," + a.Id.ToString() + ","));
-                //else
-                //    model.OfficeId = User.OfficeId;
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                        if (model.ZoneId == null)
-                        {
-                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                        }
-                    }
-                    else
-                    {
-                        model.ZoneId = User.ZoneId;
-                    }
-                }
-
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        model.OfficeId = User.OfficeId;
-                    else
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                    }
-                }
-            }
-            if (model.ZoneId != null)
-                //model.Offices = model.Offices.Where(a => a.ZoneId == model.ZoneId);
-                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
-            if (model.Offices.Count() == 1)
-            {
-                model.OfficeId = model.Offices.First().Id;
-            }
-            if (model.OfficeId != null)
-            {
-                var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
-                //var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year < model.Year || (a.Year == model.Year && a.Month <= model.Month) && a.DebtId == null);
-                var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == model.Year || a.Month == model.Month && a.TypeData == TypeData.New);
-                if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.HO && User.TypeUser != TypeUser.CV && User.TypeUser != TypeUser.ASM)
-                    debts = debts.Where(a => a.UserId == User.Id);
+                var office = _unitOfWork.OfficeRepository.GetById(officeId);
                 if (office != null)
-                    debts = debts.Where(a => a.User.OfficeId == model.OfficeId);
-                if (UserType != null)
-                    debts = debts.Where(a => (int)a.User.TypeUser == UserType);
-                model.Debts = debts;
-                //var debtitems = debts.ToList().Select(x => new DebtViewModel.DebtItem
-                //{
-                //    DebtParentId = x.Id,
-                //    Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id), q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
-                //}).Where(x => x.Debt != null);
-                //model.DebtItems = debtitems;
+                    debts = debts.Where(a => a.User.OfficeId == officeId);
             }
+            if (userType != null)
+                debts = debts.Where(a => (int)a.User.TypeUser == userType);
+            if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
+                debts = debts.Where(a => a.UserId == User.Id);
+
+            var model = new DebtViewModel
+            {
+                Month = month,
+                Year = year,
+                Zones = zones,
+                Offices = offices,
+                ZoneId = zoneId,
+                OfficeId = officeId,
+                UserType = userType,
+                Debts = debts.ToPagedList(page.Value, pageSize),
+                User = User,
+            };
+
             return View(model);
         }
-        public void ExportDebt(int Year, int Month, int OfficeId, int? UserType, int Active)
+        public void ExportDebt(int? zoneId, int? officeId, int? month, int? year, int? userType)
         {
-            var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == Year && a.Month == Month && a.DebtId == null && a.User.OfficeId == OfficeId);
-            //var debts = _unitOfWork.DebtRepository.GetQuery(a => (a.Year < Year || (a.Year == Year && a.Month <= Month)) && a.DebtId == null && a.User.OfficeId == OfficeId);
 
-            if (Active == 1)
-                debts = debts.Where(a => a.Active);
-            else
-                debts = debts.Where(a => !a.Active);
-            if (UserType != null)
-                debts = debts.Where(a => (int)a.User.TypeUser == UserType);
-            //var debtitems = debts.ToList().Select(x => new DebtViewModel.DebtItem
-            //{
-            //    DebtParentId = x.Id,
-            //    Debt = _unitOfWork.DebtRepository.GetQuery(a => (a.Id == x.Id || a.DebtId == x.Id), q => q.OrderByDescending(a => a.CreateDate)).FirstOrDefault()
-            //}).Where(x => x.Debt != null);
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id).AsNoTracking();
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == month && h.Year == year).Select(h => new
+            {
+                h.OfficeId,
+                ZoneShortCode = h.Zone.ShortCode,
+                h.ZoneId
+            });
+            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year || a.Month == month && a.TypeData == TypeData.New && listOfficeId.Contains(a.OfficeId.Value),
+                q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
+            if (offices.Count() == 1)
+            {
+                officeId = offices.First().Id;
+            }
+            if (officeId.HasValue)
+            {
+                var office = _unitOfWork.OfficeRepository.GetById(officeId);
+                if (office != null)
+                    debts = debts.Where(a => a.User.OfficeId == officeId);
+            }
+            if (userType != null)
+                debts = debts.Where(a => (int)a.User.TypeUser == userType);
+            if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
+                debts = debts.Where(a => a.UserId == User.Id);
             var dt = new DataTable();
             dt.Columns.Add("STT");
+            dt.Columns.Add("Mã đơn hàng");
             dt.Columns.Add("Ngày phát sinh cọc");
-            dt.Columns.Add("Họ tên học viên");
+            dt.Columns.Add("Chi nhánh");
+            dt.Columns.Add("Nhân sự phát sinh");
+            dt.Columns.Add("Nhân sự phụ trách");
             dt.Columns.Add("Mã học viên");
-            dt.Columns.Add("Chương trình học");
-            dt.Columns.Add("Tên QĐ ưu đãi");
             dt.Columns.Add("Lộ trình");
-            dt.Columns.Add("Thành tiền");
-            dt.Columns.Add("Tiền cọc giữ chỗ");
-            dt.Columns.Add("Tiền cọc bổ sung làm hồ sơ");
-            dt.Columns.Add("Tình trạng khách hàng");
+            dt.Columns.Add("Tổng tiền");
+            dt.Columns.Add("Tiền cọc");
+            dt.Columns.Add("Bổ sung phí");
+            dt.Columns.Add("Tiền còn lại");
             dt.Columns.Add("Tiền giảm lộ trình");
-            dt.Columns.Add("Tiền còn lại phải thanh toán");
-            dt.Columns.Add("Hình thức thanh toán");
-            dt.Columns.Add("Kênh trả góp");
-            dt.Columns.Add("Tình trạng hồ sơ");
-            dt.Columns.Add("Ngày phát sinh gộp phí");
-            dt.Columns.Add("NS phụ trách");
+            dt.Columns.Add("Tình trạng khách hàng");
             dt.Columns.Add("Nội dung khó khăn");
             dt.Columns.Add("Tình trạng liên hệ khách");
             dt.Columns.Add("Hướng xử lý");
             int stt = 1;
             foreach (var item in debts)
             {
-                dt.Rows.Add(stt, item.DepositDate, item.StudentName, item.StudentCode, item.Cth, item.DiscountName, item.Pathway, item.TotalMoney, item.DebtMoney, item.DebtMoney2,
-                    EnumExtensions.GetDisplayName(item.TypeDebt), item.DownMoney, item.RemainMoney, EnumExtensions.GetDisplayName(item.TypePay), EnumExtensions.GetDisplayName(item.ChannelPay),
-                    item.FileStatus, item.GrossDate, item.User.Fullname, item.HardContent, item.ContactStatus, item.HandleWay);
+                dt.Rows.Add(stt,item.MaDonHang, item.NgayLenDon, item.Office.Name, item.UserOrigin.Fullname, item.User.Fullname, item.StudentCode, item.Pathway, item.TotalMoney, item.DebtMoney, item.DebtMoney2,item.RemainMoney,item.DownMoney,
+                    EnumExtensions.GetDisplayName(item.TypeDebt), item.HardContent, item.ContactStatus, item.HandleWay);
                 stt++;
             }
             var filename = $"danh-sach-cong-no.xlsx";
@@ -1219,10 +1186,21 @@ namespace OceanEduSlide.Controllers
                 //Load the datatable into the sheet, starting from cell A1. Print the column names on row 1
                 ws.Cells["A1"].LoadFromDataTable(dt, true);
 
+                //Header in đậm
+                using (var rng = ws.Cells["A1:Q1"])
+                {
+                    rng.Style.Font.Bold = true;
+                }
+
+                //Tự động chỉnh độ rộng cột theo nội dung
+                ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
                 //Write it back to the client
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 Response.AddHeader("content-disposition", "attachment;  filename=" + filename + "");
                 Response.BinaryWrite(pck.GetAsByteArray());
+
+
             }
         }
 
@@ -1300,16 +1278,8 @@ namespace OceanEduSlide.Controllers
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
                 return RedirectToAction("Index");
-            Debt debtparent = null;
-            if (debt.DebtId == null)
-                debtparent = debt;
-            else
-            {
-                debtparent = _unitOfWork.DebtRepository.GetById(debt.DebtId);
-                if (debtparent == null)
-                    return RedirectToAction("Index");
-            }
-            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.Id != debt.UserId)
+            var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User).Select(a => a.Id).ToHashSet();
+            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.Id != debt.UserId && !listOfficeId.Contains(debt.OfficeId.Value))
                 return HttpNotFound();
             var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User)
              .Select(a => new
@@ -1320,35 +1290,7 @@ namespace OceanEduSlide.Controllers
             var model = new InsertDebtViewModel
             {
                 UserSelectList = new SelectList(users, "Id", "DisplayName"),
-                Debt = new Debt
-                {
-                    DebtId = debtparent.Id,
-                    DepositDate = debt.DepositDate,
-                    Month = debt.Month,
-                    Year = debt.Year,
-                    UserId = debt.UserId,
-                    StudentName = debt.StudentName,
-                    StudentCode = debt.StudentCode,
-                    Cth = debt.Cth,
-                    DiscountName = debt.DiscountName,
-                    Pathway = debt.Pathway,
-                    DebtMoney = debt.DebtMoney,
-                    DebtMoney2 = debt.DebtMoney2,
-                    TotalMoney = debt.TotalMoney,
-                    RemainMoney = debt.RemainMoney,
-                    TypeDebt = debt.TypeDebt,
-                    ChannelPay = debt.ChannelPay,
-                    TypePay = debt.TypePay,
-                    FileStatus = debt.FileStatus,
-                    GrossDate = debt.GrossDate,
-                    HardContent = debt.HardContent,
-                    ContactStatus = debt.ContactStatus,
-                    HandleWay = debt.HandleWay,
-                    User = debt.User,
-                    UserOrigin = debt.UserOrigin,
-                    NgayLenDon = debt.NgayLenDon,
-
-                },
+                Debt = debt,
                 DownMoney = debt.DownMoney.ToString("N0"),
             };
             ViewBag.TypeDebtList = Enum.GetValues(typeof(TypeDebt)).Cast<TypeDebt>().Where(d => d != TypeDebt.Type6).Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
@@ -1374,7 +1316,8 @@ namespace OceanEduSlide.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("ListDebt", new { result = "update" });
             }
-            
+            ViewBag.TypeDebtList = Enum.GetValues(typeof(TypeDebt)).Cast<TypeDebt>().Where(d => d != TypeDebt.Type6).Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
+
             return View(model);
         }
         //public ActionResult UpdateDebt(InsertDebtViewModel model)

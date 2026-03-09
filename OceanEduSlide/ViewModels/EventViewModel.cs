@@ -1,5 +1,6 @@
 ﻿using OceanEduSlide.DAL;
 using OceanEduSlide.Models;
+using PagedList;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -84,7 +85,7 @@ namespace OceanEduSlide.ViewModels
         public int? UserType { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
-        public IEnumerable<Debt> Debts { get; set; }
+        public IPagedList<Debt> Debts { get; set; }
         //public IEnumerable<DebtItem> DebtItems { get; set; }
         public User User { get; set; }
         //public class DebtItem
