@@ -195,6 +195,25 @@ namespace OceanEduSlide
                     },
                     s => s.ToRunEvery(1).Days().At(h, 35)
                 );
+                // đồng bộ công nợ
+                JobManager.AddJob(
+                    () =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                var congNoService = new CongNoService();
+                                await congNoService.SyncCongNoAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"✗ SyncCongNo error: {ex.Message}");
+                            }
+                        });
+                    },
+                    s => s.ToRunEvery(1).Days().At(h, 50)
+                );
             }
 
             // đồng bộ User tháng trước
