@@ -1467,101 +1467,101 @@ namespace OceanEduSlide.Controllers
             model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
             return View(model);
         }
-        public ActionResult UpdateOffice(int officeId = 0)
-        {
-            var office = _unitOfWork.OfficeRepository.GetById(officeId);
-            if (office == null)
-            {
-                return RedirectToAction("ListOffice");
-            }
-            var model = new InsertOfficeViewModel
-            {
-                Office = office,
-                ShortName = office.ShortName,
-                ShortCode = office.ShortCode,
-                OpenDate = office.OpenDate?.ToString("dd/MM/yyyy"),
-                SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name")
-            };
-            if (office.ZoneId.HasValue)
-                model.ZoneId = office.ZoneId.Value;
-            return View(model);
-        }
-        [HttpPost, ValidateInput(false)]
-        public ActionResult UpdateOffice(InsertOfficeViewModel model)
-        {
-            var Office = _unitOfWork.OfficeRepository.GetById(model.Office.Id);
-            if (Office == null)
-            {
-                return RedirectToAction("ListOffice");
-            }
-            if (ModelState.IsValid)
-            {
-                var isPost = true;
+        //public ActionResult UpdateOffice(int officeId = 0)
+        //{
+        //    var office = _unitOfWork.OfficeRepository.GetById(officeId);
+        //    if (office == null)
+        //    {
+        //        return RedirectToAction("ListOffice");
+        //    }
+        //    var model = new InsertOfficeViewModel
+        //    {
+        //        Office = office,
+        //        ShortName = office.ShortName,
+        //        ShortCode = office.ShortCode,
+        //        OpenDate = office.OpenDate?.ToString("dd/MM/yyyy"),
+        //        SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name")
+        //    };
+        //    if (office.ZoneId.HasValue)
+        //        model.ZoneId = office.ZoneId.Value;
+        //    return View(model);
+        //}
+        //[HttpPost, ValidateInput(false)]
+        //public ActionResult UpdateOffice(InsertOfficeViewModel model)
+        //{
+        //    var Office = _unitOfWork.OfficeRepository.GetById(model.Office.Id);
+        //    if (Office == null)
+        //    {
+        //        return RedirectToAction("ListOffice");
+        //    }
+        //    if (ModelState.IsValid)
+        //    {
+        //        var isPost = true;
 
-                if (DateTime.TryParse(model.OpenDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
-                {
-                    var Date = new DateTime(cd.Year, cd.Month, cd.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-                    Office.OpenDate = Date;
-                }
-                else
-                {
-                    isPost = false;
-                    ModelState.AddModelError("", "Ngày khai trương không hợp lệ");
-                }
-                if (isPost)
-                {
-                    if (Office.ZoneId != null)
-                    {
-                        var oldZone = Office.Zone;
-                        //Hủy OfficeIds và ShortName cũ
-                        if (!string.IsNullOrEmpty(oldZone.OfficeIds))
-                        {
-                            if (oldZone.OfficeIds.Contains("," + Office.Id + ","))
-                                oldZone.OfficeIds = oldZone.OfficeIds.Replace("," + Office.Id + ",", ",");
-                        }
-                        if (!string.IsNullOrEmpty(oldZone.ShortName))
-                        {
-                            oldZone.ShortName = "," + oldZone.ShortName + ",";
-                            if (oldZone.ShortName.Contains("," + Office.ShortCode + ","))
-                                oldZone.ShortName = oldZone.ShortName.Replace("," + Office.ShortCode + ",", ",");
-                            oldZone.ShortName = oldZone.ShortName.Trim(',');
-                        }
-                    }
+        //        if (DateTime.TryParse(model.OpenDate, new CultureInfo("vi-VN"), DateTimeStyles.None, out var cd))
+        //        {
+        //            var Date = new DateTime(cd.Year, cd.Month, cd.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+        //            Office.OpenDate = Date;
+        //        }
+        //        else
+        //        {
+        //            isPost = false;
+        //            ModelState.AddModelError("", "Ngày khai trương không hợp lệ");
+        //        }
+        //        if (isPost)
+        //        {
+        //            if (Office.ZoneId != null)
+        //            {
+        //                var oldZone = Office.Zone;
+        //                //Hủy OfficeIds và ShortName cũ
+        //                if (!string.IsNullOrEmpty(oldZone.OfficeIds))
+        //                {
+        //                    if (oldZone.OfficeIds.Contains("," + Office.Id + ","))
+        //                        oldZone.OfficeIds = oldZone.OfficeIds.Replace("," + Office.Id + ",", ",");
+        //                }
+        //                if (!string.IsNullOrEmpty(oldZone.ShortName))
+        //                {
+        //                    oldZone.ShortName = "," + oldZone.ShortName + ",";
+        //                    if (oldZone.ShortName.Contains("," + Office.ShortCode + ","))
+        //                        oldZone.ShortName = oldZone.ShortName.Replace("," + Office.ShortCode + ",", ",");
+        //                    oldZone.ShortName = oldZone.ShortName.Trim(',');
+        //                }
+        //            }
 
-                    Office.ZoneId = model.ZoneId;
-                    var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
-                    if (string.IsNullOrEmpty(zone.OfficeIds))
-                    {
-                        zone.OfficeIds = ",";
-                    }
-                    if (string.IsNullOrEmpty(zone.ShortName))
-                    {
-                        zone.ShortName = "";
-                    }
-                    if (!zone.OfficeIds.Contains("," + Office.Id + ","))
-                        zone.OfficeIds += model.Office.Id + ",";
-                    if (!("," + zone.ShortName + ",").Contains("," + Office.ShortCode + ","))
-                        zone.ShortName += "," + model.ShortCode;
-                    zone.ShortName = zone.ShortName.Trim(',');
+        //            Office.ZoneId = model.ZoneId;
+        //            var zone = _unitOfWork.ZoneRepository.GetById(model.ZoneId);
+        //            if (string.IsNullOrEmpty(zone.OfficeIds))
+        //            {
+        //                zone.OfficeIds = ",";
+        //            }
+        //            if (string.IsNullOrEmpty(zone.ShortName))
+        //            {
+        //                zone.ShortName = "";
+        //            }
+        //            if (!zone.OfficeIds.Contains("," + Office.Id + ","))
+        //                zone.OfficeIds += model.Office.Id + ",";
+        //            if (!("," + zone.ShortName + ",").Contains("," + Office.ShortCode + ","))
+        //                zone.ShortName += "," + model.ShortCode;
+        //            zone.ShortName = zone.ShortName.Trim(',');
 
-                    Office.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortName);
-                    Office.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortCode);
-                    Office.Name = VietnameseCodeHelper.NormalizeVietnameseCode(model.Office.Name);
-                    Office.Active = model.Office.Active;
-                    Office.Sort = model.Office.Sort;
-                    Office.Email = model.Office.Email;
-                    Office.Hotline = model.Office.Hotline;
-                    Office.Place = model.Office.Place;
-                    _unitOfWork.Save();
-                    return RedirectToAction("ListOffice", new { result = "update" });
-                }
+        //            Office.ShortName = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortName);
+        //            Office.ShortCode = VietnameseCodeHelper.NormalizeVietnameseCode(model.ShortCode);
+        //            Office.Name = VietnameseCodeHelper.NormalizeVietnameseCode(model.Office.Name);
+        //            Office.Active = model.Office.Active;
+        //            Office.Sort = model.Office.Sort;
+        //            Office.Email = model.Office.Email;
+        //            Office.Hotline = model.Office.Hotline;
+        //            Office.Place = model.Office.Place;
+        //            _unitOfWork.Save();
+        //            return RedirectToAction("ListOffice", new { result = "update" });
+        //        }
 
-            }
+        //    }
 
-            //DebugModelState();
-            model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
-            return View(model);
-        }
+        //    //DebugModelState();
+        //    model.SelectZones = new SelectList(_unitOfWork.ZoneRepository.Get(), "Id", "Name");
+        //    return View(model);
+        //}
         [HttpPost]
         public bool DeleteOffice(int OfficeId = 0)
         {
