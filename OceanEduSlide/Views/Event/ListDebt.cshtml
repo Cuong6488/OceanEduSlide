@@ -21,9 +21,9 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-    <form action="@Url.Action("ListDebt")" method="get" class="d-flex form-filter mb-5">
-        <div class="row g-2 w-100">
-            <div class="col-lg-2 col-md-3 col-6">
+    <form action="@Url.Action("ListDebt")" method="get" class="form-filter mb-5">
+        <div class="row g-2">
+            <div class="col-lg col-md-3 col-6">
                 <select name="Year" class="form-select" required">
                     <option value="">Chọn năm</option>
                     @for (int i = 2024; i <= DateTime.Now.Year; i++)
@@ -32,7 +32,7 @@
                     }
                 </select>
             </div>
-            <div class="col-lg-2 col-md-3 col-6">
+            <div class="col-lg col-md-3 col-6">
                 <select name="Month" class="form-select month-select" required>
                     <option value="">Chọn tháng</option>
                     @for (int i = 1; i <= 12; i++)
@@ -41,9 +41,9 @@
                     }
                 </select>
             </div>
-            @if (Model.Zones?.Count() > 1)
+            @if (Model.Zones.Count() > 0)
             {
-                <div class="col-lg-2 col-md-3 col-6">
+                <div class="col-lg col-md-3 col-6">
                     <select name="ZoneId" class="form-select">
                         <option value="">Chọn vùng</option>
                         @foreach (var item in Model.Zones)
@@ -53,9 +53,9 @@
                     </select>
                 </div>
             }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+            @if (Model.Offices.Count() > 0)
             {
-                <div class="col-lg-2 col-md-3 col-6">
+                <div class="col-lg col-md-3 col-6">
                     <select name="OfficeId" class="form-select">
                         <option>Chọn chi nhánh</option>
                         @foreach (var item in Model.Offices)
@@ -65,11 +65,19 @@
                     </select>
                 </div>
             }
-            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
+            @if (Model.Users.Count() > 0)
             {
-                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+                <div class="col-lg col-md-3 col-6">
+                    <select name="UserId" class="form-select select2">
+                        <option>Chọn nhân sự phụ trách</option>
+                        @foreach (var user in Model.Users)
+                        {
+                            <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.Fullname - @user.MaNhanVien</option>
+                        }
+                    </select>
+                </div>
             }
-            <div class="col-lg-2 col-md-3 col-6">
+            <div class="col-lg col-md-3 col-6">
                 <select name="UserType" class="form-select">
                     <option value="">Tất cả chức danh</option>
                     <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
@@ -79,6 +87,9 @@
                     <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
                     <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
                 </select>
+            </div>
+            <div class="col-lg col-md-3 col-6">
+                <input type="text" name="MaDonHang" value="@Model.MaDonHang" class="form-control" />
             </div>
         </div>
     </form>
@@ -90,23 +101,11 @@
             <tbody>
                 <tr class="text-center">
                     <th rowspan="2">STT</th>
-                    <th rowspan="2" class="col-w90">
-                        Mã đơn hàng
-                    </th>
-                    <th rowspan="2" class="col-w90">
-                        Ngày phát sinh cọc
-                    </th>
                     <th rowspan="2" class="col-w150">
-                        Chi nhánh
+                        Thông tin <br /> đơn hàng
                     </th>
                     <th rowspan="2" class="col-w150">
                         Nhân sự
-                    </th>
-                    <th rowspan="2" class="col-w65">
-                        Mã học viên
-                    </th>
-                    <th rowspan="2">
-                        Lộ trình
                     </th>
                     <th rowspan="2" class="col-w150">
                         Các khoản tiền
@@ -154,32 +153,35 @@
                 {
                     <tr>
                         <td>@stt</td>
-                        <td>@item.MaDonHang</td>
                         <td>
-                            @Html.DisplayFor(a => item.NgayLenDon)
+                            <p class="mb-1">
+                                <strong>Mã ĐH: </strong>  @item.MaDonHang
+                            </p>
+                            <p class="mb-1">
+                                <strong>Ngày lên đơn: </strong> @Html.DisplayFor(a => item.NgayLenDon)
+                            </p>
                             @if (item.GrossDate != null)
                             {
-                                <br /> <br />
-                                @: Ngày phát sinh gộp phí: <br />
-                                @Html.DisplayFor(a => item.GrossDate)
+                                <p class="mb-1">
+                                    <strong>Ngày phát sinh gộp phí: </strong> @Html.DisplayFor(a => item.GrossDate)
+                                </p>
                             }
+                            <p class="mb-1">
+                                <strong>CN: </strong> @item.Office.ShortName
+                            </p>
+                            <p class="mb-1">
+                                <strong>Mã HV: </strong> @item.StudentCode
+                            </p>
+                            <p class="mb-0">
+                                <strong>Lộ trình: </strong> @item.Pathway
+                            </p>
                         </td>
-                        <td>@item.Office.ShortName</td>
                         <td>
                             <strong>Nhân sự phát sinh cọc:</strong> <br />
                             @item.UserOrigin.Fullname <br /> @item.UserOrigin.MaNhanVien <br /> <br />
                             <strong>Nhân sự phụ trách:</strong> <br />
                             @item.User.Fullname <br /> @item.User.MaNhanVien
                         </td>
-                        <td>
-                            @item.StudentCode
-                            @if (item.StudentName != null)
-                            {
-                                <br />
-                                @: @item.StudentName
-                            }
-                        </td>
-                        <td>@item.Pathway</td>
                         <td>
                             <p class="mb-1">
                                 <strong>Tổng tiền: </strong>  @Html.DisplayFor(a => item.TotalMoney)
@@ -193,7 +195,7 @@
                             <p class="mb-1">
                                 <strong>Còn thiếu: </strong> @Html.DisplayFor(a => item.RemainMoney)
                             </p>
-                            <p class="mb-1">
+                            <p class="mb-0">
                                 <strong>Giảm lộ trình: </strong> @Html.DisplayFor(a => item.DownMoney)
                             </p>
 
@@ -269,11 +271,11 @@
         <div class="text-center">
             @if (Model.OfficeId != null)
             {
-                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, OfficeId = Model.OfficeId, UserType = Model.UserType, month = Model.Month, year = Model.Year }))
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, officeId = Model.OfficeId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang }))
             }
             else
             {
-                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, UserType = Model.UserType, month = Model.Month, year = Model.Year }))
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang }))
             }
         </div>
     }

@@ -21,8 +21,8 @@
 </style>
 
 <div class="container py-3">
-    <form action="@Url.Action("ReportTHNV")" method="get" class="d-flex form-filter mb-5">
-        <div class="row w-100 g-2">
+    <form action="@Url.Action("ReportTHNV")" method="get" class="form-filter mb-5">
+        <div class="row g-2">
             <div class="col-lg-2">
                 <select name="Year" class="form-select" required>
                     <option value="">Chọn năm</option>
@@ -57,22 +57,22 @@
                 </div>
             }
             @*@if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
-                {
+            {
 
-                    <div class="col-lg-2">
-                        <select name="OfficeId" class="form-select">
-                            <option>Chọn chi nhánh</option>
-                            @foreach (var office in Model.Offices)
-                            {
-                                <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
-                            }
-                        </select>
-                    </div>
-                }
-                else if (string.IsNullOrEmpty(Model.User.OfficeIds))
-                {
-                    <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
-                }*@
+                <div class="col-lg-2">
+                    <select name="OfficeId" class="form-select">
+                        <option>Chọn chi nhánh</option>
+                        @foreach (var office in Model.Offices)
+                        {
+                            <option value="@office.Id" @(Model.OfficeId == office.Id ? "selected" : "")>@office.ShortName</option>
+                        }
+                    </select>
+                </div>
+            }
+            else if (string.IsNullOrEmpty(Model.User.OfficeIds))
+            {
+                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
+            }*@
             <div class="col-lg-2">
                 <select name="UserType" class="form-select">
                     <option value="">Tất cả chức danh</option>

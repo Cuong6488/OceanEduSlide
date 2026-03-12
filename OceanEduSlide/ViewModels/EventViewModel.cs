@@ -81,10 +81,13 @@ namespace OceanEduSlide.ViewModels
         public int? Year { get; set; }
         public int? Month { get; set; }
         public int? OfficeId { get; set; }
+        public int? UserId { get; set; }
         public int? ZoneId { get; set; }
         public int? UserType { get; set; }
+        public string MaDonHang { get; set; }
         public IEnumerable<Zone> Zones { get; set; }
         public IEnumerable<Office> Offices { get; set; }
+        public IEnumerable<User> Users { get; set; }
         public IPagedList<Debt> Debts { get; set; }
         //public IEnumerable<DebtItem> DebtItems { get; set; }
         public User User { get; set; }

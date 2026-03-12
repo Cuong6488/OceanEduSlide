@@ -220,10 +220,7 @@ namespace OceanEduSlide.Controllers
                         RevenueUser_Month_BM_real = _unitOfWork.RevenueUser_Month_BM_realRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                         RevenueUser_Weeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
                         RevenueUser_Week_Reals = _unitOfWork.RevenueUser_Week_RealRepository.GetQuery(p => p.HistoryUserId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
-                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserId == a.UserId 
-                        && ((model.Month == 1 && q.Year == model.Year - 1 && q.Month == 12) ||  (model.Month > 1 && q.Year == model.Year && q.Month == model.Month - 1) || q.PhaiThu)
-                        && (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3)).GroupBy(q => q.DebtId ?? q.Id)
-                        .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault()).Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0
+                        Debt = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.UserOriginId == a.UserId && q.TypeDebt != TypeDebt.Type6 && (q.Year > model.Year || (q.Year == model.Year && q.Month >= model.Month - 1))).Sum(q => (decimal?)q.TotalMoney) ?? 0
                     });
                     model.UserItems = userItems.ToPagedList(pageNumber, 20);
                 }
@@ -306,18 +303,12 @@ namespace OceanEduSlide.Controllers
                 //var debtDict = debtsList
                 //    .GroupBy(q => q.UserId)
                 //    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0);
-                var debtsList = _unitOfWork.DebtRepository
-    .GetQuery(q => q.Active && pagedUserIds.Contains(q.UserId) &&
-        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
-        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
-    .AsNoTracking()
-    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
-    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
-    .ToList();
+                var debtsList = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.TypeData == TypeData.New && q.TypeDebt != TypeDebt.Type6 
+                && pagedUserIds.Contains(q.UserOriginId.Value) && (q.Year > model.Year || (q.Year == model.Year && q.Month >= model.Month - 1))).AsNoTracking().ToList();
 
                 var debtDict = debtsList
-                    .GroupBy(q => q.UserId)
-                    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0);
+                    .GroupBy(q => q.UserOriginId)
+                    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)q.TotalMoney) ?? 0);
 
                 // Bước 6: Tạo danh sách kết quả
                 var userItems = new List<RevenueViewModel.UserItem>();

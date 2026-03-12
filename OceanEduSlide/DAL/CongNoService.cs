@@ -194,7 +194,7 @@ namespace OceanEduSlide.DAL
                 var bcDuThuNV = listBCDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.UserId);
                 if (bcDuThuNV == null)
                     bcDuThuNV = listBCDuThuAdd.FirstOrDefault(a => a.HistoryUserId == item.UserId && a.ReportCategoryId == 92);
-                var duThuNV = congNoDuThu.Where(a => a.UserId == item.UserId).Sum(a => a.TotalMoney);
+                var duThuNV = congNoDuThu.Where(a => a.UserOriginId == item.UserId).Sum(a => a.TotalMoney);
                 var data = duThuNV.ToString("N0");
                 if (bcDuThuNV != null)
                 {

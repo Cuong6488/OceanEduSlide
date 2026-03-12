@@ -20,76 +20,76 @@
     {
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
-    <form action="@Url.Action("Index")" method="get" class="d-flex form-filter mb-5">
-        <div class="row g-2 w-100">
-            <div class="col-lg-2 col-md-3 col-6">
-                <select name="Year" class="form-select" required">
-                    <option value="">Chọn năm</option>
-                    @for (int i = 2025; i <= ViewBag.Year + 1; i++)
-                    {
-                        <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
-                    }
-                </select>
-            </div>
-            <div class="col-lg-2 col-md-3 col-6">
-                <select name="Month" class="form-select month-select" required>
-                    <option value="">Chọn tháng</option>
-                    @for (int i = 1; i <= 12; i++)
-                    {
-                        <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
-                    }
-                </select>
-            </div>
-            <div class="col-lg-2 col-md-3 col-6">
-                <select name="Week" class="form-select" required>
-                    <option value="">Chọn tuần</option>
-                    @for (int i = 1; i <= ViewBag.WorkingWeeks; i++)
-                    {
-                        <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
-                    }
-                </select>
-            </div>
-            @if (Model.Zones?.Count() > 1)
-            {
-                <div class="col-lg-2 col-md-3 col-6">
-                    <select name="ZoneId" class="form-select">
-                        <option value="">Chọn vùng</option>
-                        @foreach (var item in Model.Zones)
-                        {
-                            <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
-                        }
-                    </select>
-                </div>
-            }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
-            {
-                <div class="col-lg-2 col-md-3 col-6">
-                    <select name="OfficeId" class="form-select">
-                        <option>Chọn chi nhánh</option>
-                        @foreach (var item in Model.Offices)
-                        {
-                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
-                        }
-                    </select>
-                </div>
-            }
-            @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
-            {
-                <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
-            }
-            <div class="col-lg-2 col-md-3 col-6">
-                <select name="UserType" class="form-select">
-                    <option value="">Tất cả chức danh</option>
-                    <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
-                    <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
-                    <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
-                    <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
-                    <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
-                    <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
-                </select>
-            </div>
+<form action="@Url.Action("Index")" method="get" class="form-filter mb-5">
+    <div class="row g-2">
+        <div class="col-lg-2 col-md-3 col-6">
+            <select name="Year" class="form-select" required">
+                <option value="">Chọn năm</option>
+                @for (int i = 2025; i <= ViewBag.Year + 1; i++)
+                {
+                    <option value="@i" @(Model.Year == i ? "selected" : "")>@i</option>
+                }
+            </select>
         </div>
-    </form>
+        <div class="col-lg-2 col-md-3 col-6">
+            <select name="Month" class="form-select month-select" required>
+                <option value="">Chọn tháng</option>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i" @(Model.Month == i ? "selected" : "")>Tháng @i</option>
+                }
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+            <select name="Week" class="form-select" required>
+                <option value="">Chọn tuần</option>
+                @for (int i = 1; i <= ViewBag.WorkingWeeks; i++)
+                {
+                    <option value="@i" @(Model.Week == i ? "selected" : "")>Tuần @i</option>
+                }
+            </select>
+        </div>
+        @if (Model.Zones?.Count() > 1)
+        {
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="ZoneId" class="form-select">
+                    <option value="">Chọn vùng</option>
+                    @foreach (var item in Model.Zones)
+                    {
+                        <option value="@item.Id" @(Model.ZoneId == item.Id ? "selected" : "")>@item.Name</option>
+                    }
+                </select>
+            </div>
+        }
+        @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+        {
+            <div class="col-lg-2 col-md-3 col-6">
+                <select name="OfficeId" class="form-select">
+                    <option>Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
+                    }
+                </select>
+            </div>
+        }
+        @if ((Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT) && string.IsNullOrEmpty(Model.User.OfficeIds))
+        {
+            <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
+        }
+        <div class="col-lg-2 col-md-3 col-6">
+            <select name="UserType" class="form-select">
+                <option value="">Tất cả chức danh</option>
+                <option value="3" @(Model.UserType == 3 ? "selected" : "")>BM</option>
+                <option value="4" @(Model.UserType == 4 ? "selected" : "")>EC</option>
+                <option value="5" @(Model.UserType == 5 ? "selected" : "")>ATL</option>
+                <option value="6" @(Model.UserType == 6 ? "selected" : "")>SAB</option>
+                <option value="7" @(Model.UserType == 7 ? "selected" : "")>CM</option>
+                <option value="9" @(Model.UserType == 9 ? "selected" : "")>TTL</option>
+            </select>
+        </div>
+    </div>
+</form>
     @if (Model.OfficeId != null)
     {
         <h2>KẾ HOẠCH TUẦN @Model.Week - Tháng @Model.Month - @Model.Year DỰ KIẾN</h2>

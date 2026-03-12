@@ -15,8 +15,8 @@
         display: none !important;
     }
 </style>
-<form action="@Url.Action("ReportCall")" method="get" class="d-flex form-filter form-inyear mb-5" id="form-reportcall">
-    <div class="row g-2 w-100">
+<form action="@Url.Action("ReportCall")" method="get" class="form-filter form-inyear mb-5" id="form-reportcall">
+    <div class="row g-2">
         <div class="col-md-3 col-6">
             <div class="d-flex align-items-center">
                 <p class="m-0 me-2" style="width:60px"><strong>Từ ngày:</strong></p>
@@ -45,22 +45,22 @@
         {
             //if (Model.Offices.Count() > 1)
             //{
-                <div class="col-md-3 col-6">
-                    <select name="OfficeId" class="form-select">
-                        <option value="">Chọn chi nhánh</option>
-                        @foreach (var item in Model.Offices)
-                        {
-                            <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
-                        }
-                    </select>
-                </div>
+            <div class="col-md-3 col-6">
+                <select name="OfficeId" class="form-select">
+                    <option value="">Chọn chi nhánh</option>
+                    @foreach (var item in Model.Offices)
+                    {
+                        <option value="@item.Id" @(Model.OfficeId == item.Id ? "selected" : "")>@item.ShortName</option>
+                    }
+                </select>
+            </div>
             //}
             //else
             //    {
             //    <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
             //}
         }
-        else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT || Model.User.TypeUser == TypeUser.CM|| Model.User.TypeUser == TypeUser.TTL )
+        else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT || Model.User.TypeUser == TypeUser.CM || Model.User.TypeUser == TypeUser.TTL)
         {
             <input type="hidden" value="@Model.OfficeId" name="OfficeId" />
         }

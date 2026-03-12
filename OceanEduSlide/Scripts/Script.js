@@ -76,6 +76,12 @@ $(document).ready(function () {
     $.datepicker.setDefaults($.datepicker.regional['vi']);
 
 });
+
+$(function () {
+    $('.select2').select2({ allowClear: true });
+
+});
+
 function price() {
     $(".input-number").maskMoney({
         precision: 0,

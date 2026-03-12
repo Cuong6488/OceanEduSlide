@@ -23,8 +23,8 @@
         <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thành công</strong></div>
     }
     <div class="d-flex thead-sticky" style="background: #f1f4f6">
-        <form action="@Url.Action("ListProposal")" method="get" class="d-flex form-filter mb-5" style="flex:1">
-            <div class="row g-2 w-100">
+        <form action="@Url.Action("ListProposal")" method="get" class="form-filter mb-5" style="flex:1">
+            <div class="row g-2">
                 <div class="col-lg col-md-3 col-6">
                     <input class="form-control" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
                 </div>
@@ -55,7 +55,7 @@
                 @if (Model.User.TypeUser == TypeUser.HO)
                 {
                     <div class="col-lg col-md-3 col-6">
-                        @Html.DropDownListFor(a => a.CVName,Model.SelectCVName,"CV phụ trách", new {@class="form-select"})
+                        @Html.DropDownListFor(a => a.CVName, Model.SelectCVName, "CV phụ trách", new { @class = "form-select" })
                     </div>
                 }
                 <div class="col-lg col-md-3 col-6">
