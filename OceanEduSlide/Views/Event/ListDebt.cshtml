@@ -97,7 +97,7 @@
         </div>
     </form>
     <h2>DANH SÁCH CÔNG NỢ tháng @Model.Month - @Model.Year</h2>
-    <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,Active = 1,UserType = Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <a class="btn quick-link" href="@Url.Action("ExportDebt", new {Month = Model.Month,Year = Model.Year,OfficeId = Model.OfficeId,UserType = Model.UserType,maDonHang = Model.MaDonHang, typeDebt = Model.TypeDebt})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
     <div class="box_content">
         @*<a href=""><i class="fa-solid fa-arrows-rotate"></i></a>*@
         <table class="list_table table-striped">
@@ -150,7 +150,7 @@
                     <th class="col-w90">Hướng xử lý</th>
                 </tr>
                 @{
-                    int stt = 1 + (Model.Debts.PageNumber - 1) * 15;
+                    int stt = 1 + (Model.Debts.PageNumber - 1) * Model.Debts.PageSize;
                 }
                 @foreach (var item in Model.Debts)
                 {

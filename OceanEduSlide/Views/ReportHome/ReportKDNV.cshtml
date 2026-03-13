@@ -135,9 +135,9 @@
             <div class="col-lg-2 col-md-3 col-6">
                 <select name="UserId" class="form-select select2">
                     <option>Chọn nhân sự</option>
-                    @foreach (var user in Model.ListHistoryUser)
+                    @foreach (var user in Model.Users)
                     {
-                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.User.Fullname - @user.User.MaNhanVien - @user.CDCM</option>
+                        <option value="@user.Id" @(Model.UserId == user.Id ? "selected" : "")>@user.Fullname - @user.MaNhanVien</option>
                     }
                 </select>
             </div>
@@ -159,7 +159,7 @@
     </form>
 
     <h2>BÁO CÁO KDNV tháng @Model.Month - @Model.Year</h2>
-    <a class="btn quick-link" href="@Url.Action("ExportKDNV", new {Month = Model.Month,Year = Model.Year,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId,UserType=Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
+    <a class="btn quick-link" href="@Url.Action("ExportKDNV", new {month = Model.Month,year = Model.Year,zoneId = Model.ZoneId,officeId = Model.OfficeId,userId = Model.UserId,userType=Model.UserType})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
 
     <div class="box_content d-flex">
         <div class="columnGroup" data-group-id="group-0">

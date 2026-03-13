@@ -1078,10 +1078,10 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             ViewBag.Result = result;
             page = page ?? 1;
-            var pageSize = 15;
+            var pageSize = 10;
             month = month ?? DateTime.Now.Month;
             year = year ?? DateTime.Now.Year;
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id).AsNoTracking();
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
             var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == month && h.Year == year).Select(h => new
             {
                 h.OfficeId,
@@ -1094,7 +1094,7 @@ namespace OceanEduSlide.Controllers
                 zoneId = zones.First().Id;
             }
             var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
-            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            var listOfficeId = offices.Select(a => a.Id).ToList();
             if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
                 officeId = null;
@@ -1106,7 +1106,7 @@ namespace OceanEduSlide.Controllers
             var users = PermisstionHelper.GetUserManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId, officeId);
             if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
             {
-                users = users.Where(a => a.Id == User.Id).ToList();
+                users = users.Where(a => a.Id == User.Id);
             }
             var listUserId = users.Select(a => a.Id).ToHashSet();
             if (userId.HasValue && !listUserId.Contains(userId.Value))
@@ -1161,7 +1161,7 @@ namespace OceanEduSlide.Controllers
 
             return View(model);
         }
-        public void ExportDebt(int? zoneId, int? officeId, int? month, int? year, int? userType)
+        public void ExportDebt(int? zoneId, int? officeId, int? month, int? year, int? userType, string maDonHang, TypeDebt? typeDebt)
         {
 
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id).AsNoTracking();
@@ -1173,7 +1173,7 @@ namespace OceanEduSlide.Controllers
             });
             var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
             var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
-            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            var listOfficeId = offices.Select(a => a.Id).ToList();
             var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year || a.Month == month && a.TypeData == TypeData.New && listOfficeId.Contains(a.OfficeId.Value),
                 q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
             if (offices.Count() == 1)
@@ -1188,6 +1188,10 @@ namespace OceanEduSlide.Controllers
             }
             if (userType != null)
                 debts = debts.Where(a => (int)a.User.TypeUser == userType);
+            if (userType != null)
+                debts = debts.Where(a => (int)a.User.TypeUser == userType);
+            if (typeDebt != null)
+                debts = debts.Where(a => a.TypeDebt == typeDebt);
             if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
                 debts = debts.Where(a => a.UserId == User.Id);
             var dt = new DataTable();

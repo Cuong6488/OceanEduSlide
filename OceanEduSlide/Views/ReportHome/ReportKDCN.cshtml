@@ -2,21 +2,6 @@
 @{
     ViewBag.Title = "Báo cáo KDCN";
 
-    string officeIds = ViewBag.OfficeIds ?? ",";
-    var officeIdList = (officeIds ?? "")
-    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-    .Select(id =>
-    {
-        return int.TryParse(id, out int val) ? (int?)val : null;
-    })
-    .Where(val => val.HasValue)
-    .Select(val => val.Value)
-    .ToHashSet();
-
-
-    //var officeHasData = Model.Offices.Where(o => officeIdList.Contains(o.Id)).ToList();
-    //var officeNoData = Model.Offices.Where(o => !officeIdList.Contains(o.Id)).ToList();
-
     var reportDataDict = Model.ReportDatas
         .GroupBy(d => new { d.OfficeId, CategoryId = d.ReportCategory.ReportCategoryId ?? 0 })
         .ToDictionary(

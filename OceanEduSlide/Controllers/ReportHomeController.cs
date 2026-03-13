@@ -16,6 +16,7 @@ using OceanEduSlide.Migrations;
 using System.Web.Services.Protocols;
 using System.Drawing.Printing;
 using OfficeOpenXml.Style;
+using System.Security.Policy;
 
 namespace OceanEduSlide.Controllers
 {
@@ -33,101 +34,49 @@ namespace OceanEduSlide.Controllers
         {
             return View();
         }
-        public ActionResult ReportKDCN(int? page, int? ZoneId, int? OfficeId, int? Month, int? Year, int? categoryid, int sort = 1)
+        public ActionResult ReportKDCN(int? page, int? zoneId, int? officeId, int? month, int? year, int? categoryid, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            categoryid = categoryid ?? 35;
-            int currentMonth = Month ?? DateTime.Now.Month;
-            int currentYear = Year ?? DateTime.Now.Year;
             int pageNumber = page ?? 1;
             ViewBag.Page = pageNumber;
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == currentMonth && h.Year == currentYear).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            // 1. Truy vấn danh sách Office theo quyền truy cập
-            var officeQuery = _unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsQueryable();
+            categoryid = categoryid ?? 35;
 
-            if (User.TypeUser == TypeUser.CV)
+            month = month ?? DateTime.Now.Month;
+            year = year ?? DateTime.Now.Year;
+
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
+
+            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            if (zones.Count() == 1)
             {
-                if (!ZoneId.HasValue)
-                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-            }
-            else if (User.TypeUser == TypeUser.ASM)
-            {
-                if (!ZoneId.HasValue)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    }
-                    else
-                    {
-                        officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.Zone.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                    }
-                }
-            }
-            else if (User.TypeUser != TypeUser.HO)
-            {
-                if (string.IsNullOrEmpty(User.OfficeIds))
-                    officeQuery = officeQuery.Where(a => a.Id == User.OfficeId);
-                else
-                {
-                    officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                }
+                zoneId = zones.First().Id;
             }
 
-            if (ZoneId.HasValue)
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
-                officeQuery = officeQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId.Value));
-                if (OfficeId.HasValue)
-                {
-                    //var office = _unitOfWork.OfficeRepository.GetById(OfficeId);
-                    var listOId = officeQuery.Select(a => a.Id).ToHashSet();
-                    if (!listOId.Contains(OfficeId.Value))
-                    {
-                        OfficeId = null;
-                    }
-                }
+                officeId = null;
             }
-            var officeSelect = officeQuery;
-            if (OfficeId.HasValue)
+            if (offices.Count() == 1)
             {
-                officeQuery = officeQuery.Where(a => a.Id == OfficeId.Value);
+                officeId = offices.First().Id;
             }
 
-            var allOffices = officeQuery.AsNoTracking().ToList();
+            var allOffices = offices.ToList();
             var officeIds = allOffices.Select(o => o.Id).ToList();
-
-            // 2. Truy vấn ReportData cho chỉ ReportCategoryId
-            var reportDataRaw = _unitOfWork.ReportDataRepository
-                .GetQuery(a =>
-                    a.Active &&
-                    a.Month == currentMonth &&
-                    a.Year == currentYear &&
-                    a.ReportCategory.TypeCat == TypeCat.Type1 &&
-                    a.ReportCategoryId == categoryid &&
-                    officeIds.Contains(a.OfficeId ?? 0)) // giới hạn trong office được truy cập
-                .Select(a => new { a.OfficeId, a.Data })
-                .AsNoTracking()
-                .ToList();
-
-            // 3. Tính tổng theo OfficeId
-            var officeDataDict = reportDataRaw
-                .GroupBy(r => r.OfficeId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Sum(r =>
-                    {
-                        decimal val;
-                        var cleaned = r.Data?.Replace(".", "").Replace(",", "").Replace("%", "") ?? "0";
-                        return decimal.TryParse(cleaned, out val) ? val : 0;
-                    })
-                );
-
+            if (officeId.HasValue)
+            {
+                allOffices = allOffices.Where(a => a.Id == officeId).ToList();
+            }
+            var officeDataDict = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == month && a.Year == year && a.ReportCategoryId == categoryid && a.OfficeId.HasValue && officeIds.Contains(a.OfficeId.Value))
+                .GroupBy(a => a.OfficeId).Select(g => new
+                {
+                    OfficeId = g.Key,
+                    Total = g.Sum(x => x.DataReal ?? 0)
+                })
+                .ToDictionary(x => x.OfficeId, x => x.Total);
             // 4. Tách offices có và không có data
             var officeHasData = allOffices.Where(o => officeDataDict.ContainsKey(o.Id)).ToList();
             var officeNoData = allOffices.Where(o => !officeDataDict.ContainsKey(o.Id)).ToList();
@@ -157,8 +106,8 @@ namespace OceanEduSlide.Controllers
             // 5. Truy vấn ReportData (đầy đủ) cho các Office trong trang hiện tại
             var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
                 a.Active &&
-                a.Month == currentMonth &&
-                a.Year == currentYear &&
+                a.Month == month &&
+                a.Year == year &&
                 a.ReportCategory.TypeCat == TypeCat.Type1 &&
                 pagedOfficeIds.Contains(a.OfficeId ?? 0))
                 .AsNoTracking()
@@ -167,130 +116,29 @@ namespace OceanEduSlide.Controllers
             // 6. Chuẩn bị ViewModel
             var model = new ListReportHomeViewModel
             {
-                Month = currentMonth,
-                ListOffice = officeSelect,
-                Year = currentYear,
-                User = User,
-                ZoneId = ZoneId,
-                OfficeId = OfficeId,
+                Year = year,
+                Month = month,
+                Zones = zones,
+                ListOffice = offices,
+                ZoneId = zoneId,
+                OfficeId = officeId,
                 categoryId = categoryid,
                 sort = sort,
                 Offices = sortedOffices,
-                ReportCategories = _unitOfWork.ReportCategoryRepository
-                    .GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1,
-                              q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort))
-                    .AsNoTracking(),
-                ReportDatas = reportDatas
+                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type1, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)).AsNoTracking(),
+                ReportDatas = reportDatas,
+                User = User
             };
-
-            // 7. Gán zone cho model theo quyền
-            if (User.TypeUser == TypeUser.HO)
-            {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-            }
-            else if (User.TypeUser == TypeUser.CV)
-            {
-                model.Zones = _unitOfWork.ZoneRepository
-                    .Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-            }
-            else
-            {
-                //model.ZoneId = User.ZoneId;
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-
-                    }
-                    else
-                    {
-                        model.ZoneId = User.ZoneId;
-                    }
-
-                }
-            }
-
-            // 8. OfficeIds cho ViewBag
-            ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
 
             return View(model);
         }
-        public void ExportKDCN(int Year, int Month, int? ZoneId, int? ReportCategoryId)
+        public void ExportKDCN(int year, int month, int? zoneId, int? officeId)
         {
-            // Truy xuất historyOffices trước để dùng filter
-            var historyOffices = _unitOfWork.HistoryOfficeRepository
-                .GetQuery(h => h.Month == Month && h.Year == Year)
-                .Select(h => new
-                {
-                    h.OfficeId,
-                    ZoneShortCode = h.Zone.ShortCode,
-                    h.ZoneId
-                })
-                .ToList();
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
 
-            // Truy xuất Office ban đầu
-            var offices = _unitOfWork.OfficeRepository
-                .GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
-                .ToList();
-
-            // Lọc quyền người dùng
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (ZoneId == null)
-                {
-                    offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ",")).ToList();
-                }
-            }
-            else if (User.TypeUser != TypeUser.HO)
-            {
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        if (ZoneId == null)
-                        {
-                            var allowedOfficeIds = historyOffices
-                                .Where(h => User.ZoneIds.Contains("," + h.ZoneShortCode + ","))
-                                .Select(h => h.OfficeId)
-                                .ToHashSet();
-
-                            offices = offices.Where(o => allowedOfficeIds.Contains(o.Id)).ToList();
-                        }
-                    }
-                    else
-                    {
-                        ZoneId = User.ZoneId;
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(User.OfficeIds))
-                    {
-                        var allowedOfficeIds = historyOffices
-                            .Where(h => User.OfficeIds.Contains("," + h.OfficeId + ","))
-                            .Select(h => h.OfficeId)
-                            .ToHashSet();
-
-                        offices = offices.Where(o => allowedOfficeIds.Contains(o.Id)).ToList();
-                    }
-                    else
-                    {
-                        offices = offices.Where(a => a.Id == User.OfficeId).ToList();
-                    }
-                }
-            }
-
-            if (ZoneId != null)
-            {
-                var zoneOfficeIds = historyOffices
-                    .Where(h => h.ZoneId == ZoneId)
-                    .Select(h => h.OfficeId)
-                    .ToHashSet();
-
-                offices = offices.Where(o => zoneOfficeIds.Contains(o.Id)).ToList();
-            }
-
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year, month, zoneId);
+            if (officeId.HasValue)
+                offices = offices.Where(a => a.Id == officeId);
             var officeIds = offices.Select(o => o.Id).ToList();
 
             // Lấy toàn bộ category và group theo parent
@@ -308,13 +156,13 @@ namespace OceanEduSlide.Controllers
 
             // Lấy toàn bộ ReportData theo tháng, năm, office
             var reportDataList = _unitOfWork.ReportDataRepository
-                .GetQuery(r => r.Active && r.Month == Month && r.Year == Year && r.OfficeId != null && officeIds.Contains(r.OfficeId.Value))
+                .GetQuery(r => r.Active && r.Month == month && r.Year == year && r.OfficeId != null && officeIds.Contains(r.OfficeId.Value))
                 .ToList();
 
             // Gom dữ liệu report theo OfficeId + CategoryId để truy xuất nhanh
             var reportDataDict = reportDataList
                 .GroupBy(r => (r.OfficeId.Value, r.ReportCategoryId))
-                .ToDictionary(g => g.Key, g => g.FirstOrDefault()?.Data ?? "");
+                .ToDictionary(g => g.Key, g => g.FirstOrDefault()?.DataReal ?? null);
 
             // Tạo bảng dữ liệu
             var dt = new DataTable();
@@ -339,7 +187,7 @@ namespace OceanEduSlide.Controllers
             {
                 var listData = new List<string>
         {
-            $"{Month}/{Year}",                 // Tháng
+            $"{month}/{year}",                 // Tháng
             office.Zone?.Name ?? "",          // Vùng
             office.ShortName                  // Chi nhánh
         };
@@ -351,8 +199,8 @@ namespace OceanEduSlide.Controllers
                         foreach (var category in categories)
                         {
                             var key = (office.Id, category.Id);
-                            var report = reportDataDict.ContainsKey(key) ? reportDataDict[key] : "";
-                            listData.Add(report);
+                            var report = reportDataDict.ContainsKey(key) ? reportDataDict[key] : null;
+                            listData.Add(report.ToString());
                         }
                     }
                 }
@@ -373,225 +221,59 @@ namespace OceanEduSlide.Controllers
             }
         }
 
-        public ActionResult ReportKDNV(int? page, int? ZoneId, int? OfficeId, int? UserId, int? UserType, int? Month, int? Year, int? categoryid/*, List<int> ListMonth*/, int sort = 1)
+        public ActionResult ReportKDNV(int? page, int? zoneId, int? officeId, int? userId, int? userType, int? month, int? year, int? categoryid/*, List<int> ListMonth*/, int sort = 1)
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            //var allHistoryZoneIds = new HashSet<string>(
-            //    historyUsers.Where(hu => !string.IsNullOrEmpty(hu.ZoneIds)).SelectMany(hu => hu.ZoneIds.Split(',', (char)StringSplitOptions.RemoveEmptyEntries)));
+
             var pageNumber = page ?? 1;
             ViewBag.Page = pageNumber;
+
             categoryid = categoryid ?? 88;
-            var selectedMonth = Month ?? DateTime.Now.Month;
-            var selectedYear = Year ?? DateTime.Now.Year;
-            //ListMonth = ListMonth ?? new List<int>() { DateTime.Now.Month };
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == selectedMonth && a.Year == selectedYear).AsNoTracking();
-            var historyZoneSet = new HashSet<string>();
-            var historyOfficeSet = new HashSet<string>();
+            month = month ?? DateTime.Now.Month;
+            year = year ?? DateTime.Now.Year;
 
-            foreach (var h in historyUsers)
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
+
+            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            if (zones.Count() == 1)
             {
-                if (!string.IsNullOrEmpty(h.ZoneIds))
-                {
-                    var arr = h.ZoneIds.Trim(',').Split(',');
-                    foreach (var z in arr)
-                        historyZoneSet.Add(z);
-                }
-                if (!string.IsNullOrEmpty(h.OfficeIds))
-                {
-                    var arr = h.OfficeIds.Trim(',').Split(',');
-                    foreach (var z in arr)
-                        historyOfficeSet.Add(z);
-                }
-
+                zoneId = zones.First().Id;
             }
 
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == selectedMonth && h.Year == selectedYear).Select(h => new
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == selectedMonth && a.Year == selectedYear
-            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == selectedMonth) || a.DayEnd.Value.Month != selectedMonth)))
-            && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.ASM);
-            var listHistoryUser = historyQuery;
-            //if (User.TypeUser != TypeUser.ASM)
-            //{
-            //    historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
-            //}
-            if (UserType != null)
-            {
-                if (UserId == null)
-                    historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
-                //listHistoryUser = listHistoryUser.Where(a => (int)a.TypeUser == UserType);
+                officeId = null;
             }
-            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort));
-            var zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-            //var users = _unitOfWork.UserRepository.Get(a => a.Active && listHistoryUser.Contains(a.Id));
-            var model = new ListReportNVHomeViewModel
+            if (offices.Count() == 1)
             {
-                Month = selectedMonth,
-                Year = selectedYear,
-                Offices = offices,
-                User = User,
-                ZoneId = ZoneId,
-                categoryId = categoryid,
-                sort = sort,
-                UserType = UserType,
-                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
-                OfficeId = OfficeId,
-                UserId = UserId,
-                //ListMonth = ListMonth
-            };
-
-            if (User.TypeUser == TypeUser.HO)
-            {
-                model.Zones = zones;
-            }
-            else if (User.TypeUser == TypeUser.CV)
-            {
-                model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || historyZoneSet.Contains(a.ShortCode));
-                if (model.ZoneId == null)
-                {
-                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
-                    if (model.OfficeId == null)
-                    {
-                        listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
-                        if (model.UserId == null)
-                            historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))));
-                    }
-                }
-            }
-            else
-            {
-                //model.ZoneId = User.ZoneId;
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        model.Zones = zones.Where(a => User.ZoneIds.Contains("," + a.ShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ","))));
-                        if (model.ZoneId == null)
-                        {
-                            //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || (historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + h.ZoneShortCode + ","))))));
-
-                            if (model.OfficeId == null)
-                            {
-                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode)))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
-                                if (model.UserId == null)
-                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
-                            }
-                        }
-                    }
-                    else if (User.ZoneId != null)
-                    {
-                        model.Zones = zones.Where(a => a.Id == User.ZoneId || historyZoneSet.Contains(a.ShortCode));
-                        if (model.ZoneId == null)
-                        {
-                            //model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.ZoneId == h.ZoneId || historyZoneSet.Contains(h.ZoneShortCode))));
-
-                            if (model.OfficeId == null)
-                            {
-                                listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && (historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode)))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
-                                if (model.UserId == null)
-                                    historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.ZoneIds.Contains("," + h.ZoneShortCode + ",") || historyZoneSet.Contains(h.ZoneShortCode))))
-                                                               || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && (User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") || historyZoneSet.Contains(a.Zone.ShortCode))));
-                            }
-                        }
-                        //model.ZoneId = User.ZoneId;
-                    }
-                    //filteredUsers = filteredUsers.Where(a => User.Zone.OfficeIds.Contains("," + a.Office.Id.ToString() + ","));
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-
-                        if (model.OfficeId == null)
-                        {
-                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-                            if (model.UserId == null)
-                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeId == h.OfficeId || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-
-                        }
-
-                        //model.OfficeId = User.OfficeId;
-
-
-                    }
-                    else
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && (User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-
-                        if (model.OfficeId == null)
-                        {
-                            listHistoryUser = listHistoryUser.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-                            if (model.UserId == null)
-                                historyQuery = historyQuery.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && (User.OfficeIds.Contains("," + h.OfficeId + ",") || historyOfficeSet.Contains(h.OfficeId.ToString()))));
-
-                        }
-                    }
-                }
+                officeId = offices.First().Id;
             }
 
-            if (model.ZoneId != null)
+            var users = PermisstionHelper.GetUserManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId, officeId);
+            var listUserId = users.Select(a => a.Id).ToHashSet();
+            if (userId.HasValue && !listUserId.Contains(userId.Value))
             {
-                //var zone = zones.FirstOrDefault(a => a.Id == ZoneId);
-                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
-                if (model.OfficeId == null)
-                {
-                    listHistoryUser = listHistoryUser.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
-                                            || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
-                    if (model.UserId == null)
-                        historyQuery = historyQuery.Where(a => (a.TypeUser != TypeUser.AEC && historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId))
-                                                || (a.TypeUser == TypeUser.AEC && a.ZoneId != null && model.ZoneId == a.ZoneId));
-                }
+                userId = null;
+            }
+            if (users.Count() == 1)
+            {
+                userId = users.First().Id;
             }
 
-            if (model.OfficeId != null)
-            {
-                listHistoryUser = listHistoryUser.Where(a => a.OfficeId == model.OfficeId);
+            var listHistoryUser = PermisstionHelper.GetHistoryUserManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId, officeId, userId, userType);
 
-                if (model.UserId == null)
-                    historyQuery = historyQuery.Where(a => a.OfficeId == model.OfficeId);
-            }
-            model.ListHistoryUser = listHistoryUser.ToList();
-            if (model.UserId != null)
-            {
-                historyQuery = historyQuery.Where(a => a.Id == model.UserId);
-            }
-            IEnumerable<HistoryUser> filteredHistoryUsers = historyQuery.OrderBy(a => a.OfficeId).ToList();
+            IEnumerable<HistoryUser> filteredHistoryUsers = listHistoryUser.OrderBy(a => a.OfficeId).ToList();
 
             // LẤY ReportData CHỈ CHO categoryid (dùng để sort user)
-            //var userIds = filteredUsers.Select(u => u.Id).ToList();
             var historyUserIds = filteredHistoryUsers.Select(h => h.Id).ToList();
-            var reportData88 = _unitOfWork.ReportDataRepository.GetQuery(a =>
-                a.Active &&
-                a.Month == selectedMonth &&
-                a.Year == selectedYear &&
-                a.ReportCategory.TypeCat == TypeCat.Type2 &&
-                a.ReportCategoryId == categoryid &&
-                historyUserIds.Contains(a.HistoryUserId ?? 0)).ToList();
-
-            // Tính tổng
-            var userDataDict = reportData88
-                .GroupBy(r => r.HistoryUserId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Sum(r =>
-                    {
-                        int val;
-                        var cleanedData = r.Data?.Replace(",", "").Replace(".", "").Replace("%", "");
-                        return int.TryParse(cleanedData, out val) ? val : 0;
-                    })
-                );
-
+            var userDataDict = _unitOfWork.ReportDataRepository.GetQuery(a => a.Active && a.Month == month && a.Year == year && a.ReportCategoryId == categoryid && a.HistoryUserId.HasValue
+            && listHistoryUser.Select(h => h.Id).Contains(a.HistoryUserId.Value))
+                .GroupBy(a => a.HistoryUserId)
+                .Select(g => new { HistoryUserId = g.Key, Total = g.Sum(x => x.DataReal ?? 0) })
+                .ToDictionary(x => x.HistoryUserId, x => x.Total);
             List<HistoryUser> sortedUsers;
             if (categoryid == null)
             {
@@ -636,152 +318,58 @@ namespace OceanEduSlide.Controllers
 
             filteredHistoryUsers = sortedUsers;
 
-
             // PHÂN TRANG
             var pagedUsers = filteredHistoryUsers.ToPagedList(pageNumber, 15);
-            //model.Users = pagedUsers;
-            model.HistoryUsers = pagedUsers;
 
             var userIdsInPage = pagedUsers.Select(u => u.Id).ToList();
 
             // Lấy reportData của user trong trang hiện tại (tất cả category)
             var reportDatas = _unitOfWork.ReportDataRepository.GetQuery(a =>
                     a.Active &&
-                    a.Month == selectedMonth &&
-                    a.Year == selectedYear &&
+                    a.Month == month &&
+                    a.Year == year &&
                     a.ReportCategory.TypeCat == TypeCat.Type2 &&
                     userIdsInPage.Contains(a.HistoryUserId ?? 0),
                 q => q.OrderBy(a => a.Sort)).ToList();
 
-            model.ReportDatas = reportDatas;
-
-            // Tạo MaNhanViens
-            var maNhanViens = "," + string.Join(",", reportDatas.Select(d => d.User?.MaNhanVien).Where(x => !string.IsNullOrEmpty(x)).Distinct()) + ",";
-            ViewBag.MaNhanViens = maNhanViens;
-
-            if (model.OfficeId != null)
+            var model = new ListReportNVHomeViewModel
             {
-                ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
-            }
+                Month = month,
+                Year = year,
+                Zones = zones,
+                Offices = offices,
+                Users = users,
+                ZoneId = zoneId,
+                OfficeId = officeId,
+                UserId = userId,
+                UserType = userType,
+                categoryId = categoryid,
+                sort = sort,
+                ReportCategories = _unitOfWork.ReportCategoryRepository.GetQuery(a => a.Active && a.TypeCat == TypeCat.Type2, q => q.OrderBy(a => a.Group).ThenBy(a => a.Sort)),
+                ReportDatas = reportDatas,
+                HistoryUsers = pagedUsers,
+                User = User,
+            };
+            //// Tạo MaNhanViens
+            //var maNhanViens = "," + string.Join(",", reportDatas.Select(d => d.User?.MaNhanVien).Where(x => !string.IsNullOrEmpty(x)).Distinct()) + ",";
+            //ViewBag.MaNhanViens = maNhanViens;
+
+            //if (model.OfficeId != null)
+            //{
+            //    ViewBag.OfficeIds = "," + string.Join(",", reportDatas.Select(d => d.OfficeId).Distinct()) + ",";
+            //}
             return View(model);
         }
 
-        public void ExportKDNV(int Year, int Month, int? ZoneId, int? OfficeId, int? UserType)
+        public void ExportKDNV(int? ZoneId, int? OfficeId, int? userId, int? UserType, int Month, int Year)
         {
-            // Lấy thông tin HistoryOffice trước
-            // Lấy historyOffice với đầy đủ thông tin
-            var historyOfficeList = _unitOfWork.HistoryOfficeRepository
-                .GetQuery(h => h.Month == Month && h.Year == Year)
-                .Include(h => h.Zone)
-                .ToList();
+            var lisstHistoryUser = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == Month && a.Year == Year).AsNoTracking();
 
-            var historyQuery = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-                a.Active &&
-                a.Month == Month &&
-                a.Year == Year &&
-                (a.DayEnd == null || (a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == Month) || a.DayEnd.Value.Month != Month) &&
-                a.TypeUser != TypeUser.HO &&
-                a.TypeUser != TypeUser.CV &&
-                a.TypeUser != TypeUser.PKT &&
-                a.TypeUser != TypeUser.ASM
-            );
+            var historyQuery = PermisstionHelper.GetHistoryUserManagerMonth(_unitOfWork, User, lisstHistoryUser, Year, Month, ZoneId, OfficeId, userId, UserType);
 
-            //if (User.TypeUser != TypeUser.ASM)
-            //{
-            //    historyQuery = historyQuery.Where(a => a.TypeUser != TypeUser.AEC);
-            //}
+            if (userId.HasValue)
+                historyQuery = historyQuery.Where(a => a.UserId == userId);
 
-            if (UserType != null)
-            {
-                historyQuery = historyQuery.Where(a => (int)a.TypeUser == UserType);
-            }
-
-            // Quyền người dùng
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (ZoneId == null && OfficeId == null)
-                {
-                    var allowedOfficeIds = historyOfficeList
-                        .Where(h => User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
-                        .Select(h => h.OfficeId)
-                        .Distinct()
-                        .ToList();
-
-                    historyQuery = historyQuery.Where(a => a.OfficeId.HasValue && allowedOfficeIds.Contains(a.OfficeId.Value));
-                }
-            }
-            else if (User.TypeUser == TypeUser.ASM)
-            {
-                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                {
-                    if (ZoneId == null && OfficeId == null)
-                    {
-                        var allowedOfficeIds = historyOfficeList
-                            .Where(h => User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
-                            .Select(h => h.OfficeId)
-                            .Distinct()
-                            .ToList();
-
-                        var allowedZoneIds = historyOfficeList
-                            .Where(h => User.ZoneIds.Contains("," + h.Zone.ShortCode + ","))
-                            .Select(h => h.ZoneId)
-                            .Distinct()
-                            .ToList();
-
-                        historyQuery = historyQuery.Where(a =>
-                            (a.TypeUser != TypeUser.AEC && a.OfficeId.HasValue && allowedOfficeIds.Contains(a.OfficeId.Value)) ||
-                            (a.TypeUser == TypeUser.AEC && a.ZoneId != null && allowedZoneIds.Contains(a.ZoneId.Value)));
-                    }
-                }
-                else
-                {
-                    ZoneId = User.ZoneId;
-                }
-            }
-            else if (User.TypeUser != TypeUser.HO)
-            {
-                if (string.IsNullOrEmpty(User.OfficeIds))
-                {
-                    OfficeId = User.OfficeId;
-                }
-                else
-                {
-                    if (OfficeId == null)
-                    {
-                        var allowedOfficeIds = historyOfficeList
-                            .Where(h => User.OfficeIds.Contains("," + h.OfficeId + ","))
-                            .Select(h => h.OfficeId)
-                            .Distinct()
-                            .ToList();
-
-                        historyQuery = historyQuery.Where(a => a.OfficeId.HasValue && allowedOfficeIds.Contains(a.OfficeId.Value));
-                    }
-                }
-            }
-
-            if (ZoneId != null)
-            {
-                var zoneOfficeIds = historyOfficeList
-                    .Where(h => h.ZoneId == ZoneId)
-                    .Select(h => h.OfficeId)
-                    .ToList();
-
-                if (User.TypeUser != TypeUser.ASM)
-                {
-                    historyQuery = historyQuery.Where(a => a.OfficeId.HasValue && zoneOfficeIds.Contains(a.OfficeId.Value));
-                }
-                else
-                {
-                    historyQuery = historyQuery.Where(a =>
-                        (a.TypeUser != TypeUser.AEC && a.OfficeId.HasValue && zoneOfficeIds.Contains(a.OfficeId.Value)) ||
-                        (a.TypeUser == TypeUser.AEC && a.ZoneId == ZoneId));
-                }
-            }
-
-            if (OfficeId != null)
-            {
-                historyQuery = historyQuery.Where(a => a.OfficeId == OfficeId);
-            }
 
             // Include các bảng liên quan để tránh Lazy Loading
             var historyUsers = historyQuery
@@ -864,8 +452,8 @@ namespace OceanEduSlide.Controllers
                     {
                         foreach (var category in categories)
                         {
-                            var report = userReports.FirstOrDefault(r => r.ReportCategoryId == category.Id)?.Data ?? "";
-                            listData.Add(report);
+                            var report = userReports.FirstOrDefault(r => r.ReportCategoryId == category.Id)?.DataReal ?? null;
+                            listData.Add(report.ToString());
                         }
                     }
                 }
