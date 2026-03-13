@@ -18,6 +18,16 @@
                 <label>Mã NV</label> @Html.TextBoxFor(a => a.Username, new { @class = "w300 mt-2" })
             </div>
             <div class="col-lg">
+                <label>Mã đơn hàng</label> @Html.TextBoxFor(a => a.MaDonHang, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Mã HV</label> @Html.TextBoxFor(a => a.MaHV, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label class="mb-2">Chi nhánh</label>
+                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
                 <label>Năm</label>
                 <select name="year" class="mt-2">
                     <option value="">Tất cả</option>
@@ -44,10 +54,15 @@
                     <option value="0" @(Model.type == 0 ? "selected" : "")>Thông thường</option>
                     <option value="1" @(Model.type == 1 ? "selected" : "")>Đặc biệt</option>
                 </select>
-            </div>
-            <div class="col-lg">
-                <label class="mb-2">Chi nhánh</label>
-                @Html.DropDownListFor(model => model.officeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2" })
+            </div><div class="col-lg">
+                <label>Loại</label>
+                <select name="Loai" class="mt-2">
+                    <option value="">Tất cả</option>
+                    <option value="Học phí + Phiếu gộp" @(Model.Loai == "Học phí + Phiếu gộp" ? "selected" : "")>Học phí + Phiếu gộp</option>
+                    <option value="Học phí" @(Model.Loai == "Học phí" ? "selected" : "")>Học phí</option>
+                    <option value="Phiếu gộp" @(Model.Loai == "Phiếu gộp" ? "selected" : "")>Phiếu gộp</option>
+                    <option value="Đặt cọc" @(Model.Loai == "Đặt cọc" ? "selected" : "")>Đặt cọc</option>
+                </select>
             </div>
             <div class="col-lg align-self-center">
                 <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
@@ -59,6 +74,7 @@
         <tbody>
             <tr>
                 <th>Chi nhánh</th>
+                <th>Mã Đơn hàng</th>
                 <th>Mã NV chốt sale</th>
                 <th>Tên NV chốt sale</th>
                 <th>Ngày thanh toán</th>
@@ -74,6 +90,7 @@
             {
                 <tr data-id="@item.Id">
                     <td>@item.ChiNhanh</td>
+                    <td>@item.DonHang</td>
                     <td>@item.MaNVChotSale</td>
                     <td>@item.ChotSale</td>
                     <td>@Html.DisplayFor(model => item.NgayThanhToan)</td>
@@ -89,7 +106,7 @@
             @if (Model.PhieuThus.PageCount > 1)
             {
                 <tr>
-                    <td colspan="10">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThu", new { page, officeId = Model.officeId, username = Model.Username, month = Model.month, year = Model.year, type = Model.type }))</td>
+                    <td colspan="10">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThu", new { page, officeId = Model.officeId, username = Model.Username, maHV = Model.MaHV, loai = Model.Loai, maDonHang = Model.MaDonHang, month = Model.month, year = Model.year, type = Model.type }))</td>
                 </tr>
             }
         </tbody>

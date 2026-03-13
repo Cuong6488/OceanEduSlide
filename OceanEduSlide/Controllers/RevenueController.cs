@@ -682,7 +682,7 @@ namespace OceanEduSlide.Controllers
 
                     var reportCallOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && (a.ReportCategoryId == 26 || a.ReportCategoryId == 27));
                     var reportCallHTOffices = _unitOfWork.ReportDataRepository.Get(a => a.Active && a.Month == monthInt && a.Year == yearInt && a.ReportCategoryId == 28);
-                    if (Config.AutoCallLog)
+                    if (Config.AutoRevenue)
                     {
                         foreach (var item in reportCallOffices)
                         {
@@ -1031,7 +1031,7 @@ namespace OceanEduSlide.Controllers
                         if (historyUser != null)
                         {
                             //Tính chỉ tiêu - TĐ - HT cuộc gọi
-                            if (Config.AutoCallLog)
+                            if (Config.AutoRevenue)
                             {
                                 // cuộc gọi thực đạt
                                 var countTD = _unitOfWork.CallLogRepository.GetQuery(a => a.HistoryUserId == historyUser.Id && a.CallDate.Year == yearInt && a.CallDate.Month == monthInt && a.BillSec >= 60).Count();
@@ -1336,7 +1336,7 @@ namespace OceanEduSlide.Controllers
                     foreach (var office in offices)
                     {
                         // Cuộc gọi CN
-                        if (Config.AutoCallLog)
+                        if (Config.AutoRevenue)
                         {
                             var callTarget = reportCallOffices.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                             if (callTarget == null)
@@ -2665,7 +2665,7 @@ namespace OceanEduSlide.Controllers
             }
             return RedirectToAction("Index", "Vcms");
         }
-        public ActionResult ListPhieuThu(int? page, string username, string officeId, int? month, int? year, int? type, string result = "")
+        public ActionResult ListPhieuThu(int? page, string username, string maHV, string maDonHang, string loai, string officeId, int? month, int? year, int? type, string result = "")
         {
             var pageNumber = page ?? 1;
             const int pageSize = 20;
@@ -2688,6 +2688,30 @@ namespace OceanEduSlide.Controllers
             {
                 phieuThus = phieuThus.Where(l => l.THDB);
             }
+            if (!string.IsNullOrEmpty(maDonHang))
+            {
+                var newkey = maDonHang.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.DonHang == newkey);
+                }
+            }
+            if (!string.IsNullOrEmpty(maHV))
+            {
+                var newkey = maHV.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.MaHV == newkey);
+                }
+            }
+            if (!string.IsNullOrEmpty(loai))
+            {
+                if (loai != "Học phí + Phiếu gộp")
+                    phieuThus = phieuThus.Where(l => l.Loai == loai);
+                else
+                    phieuThus = phieuThus.Where(l => l.Loai == "Học phí" || l.Loai == "Phiếu gộp");
+
+            }
             if (username != null)
             {
                 var newkey = username.Trim();
@@ -2706,10 +2730,13 @@ namespace OceanEduSlide.Controllers
                 type = type,
                 year = year,
                 month = month,
+                MaHV = maHV,
+                Loai = loai,
+                MaDonHang = maDonHang,
             };
             return View(model);
         }
-        public ActionResult ListPhieuThuNguon(int? page, string maNVChotSale, string phieuthuketoan, string officeId, string loai, string trangThai, int? month, int? year)
+        public ActionResult ListPhieuThuNguon(int? page, string maNVChotSale, string maHV, string phieuthuketoan, string maDonHang, string officeId, string loai, string trangThai, int? month, int? year)
         {
             var pageNumber = page ?? 1;
             const int pageSize = 20;
@@ -2730,6 +2757,22 @@ namespace OceanEduSlide.Controllers
                 if (!string.IsNullOrEmpty(newkey))
                 {
                     phieuThus = phieuThus.Where(l => l.MaNVChotSale.Contains(newkey));
+                }
+            }
+            if (!string.IsNullOrEmpty(maDonHang))
+            {
+                var newkey = maDonHang.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.DonHang == newkey);
+                }
+            }
+            if (!string.IsNullOrEmpty(maHV))
+            {
+                var newkey = maHV.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    phieuThus = phieuThus.Where(l => l.MaHV == newkey);
                 }
             }
             if (!string.IsNullOrEmpty(loai))
@@ -2770,10 +2813,12 @@ namespace OceanEduSlide.Controllers
                 PhieuThus = phieuThus.ToPagedList(pageNumber, pageSize),
                 OfficeId = officeId,
                 MaNVChotSale = maNVChotSale,
+                MaHV = maHV,
                 TrangThai = trangThai,
                 Loai = loai,
                 Year = year,
                 Month = month,
+                MaDonHang = maDonHang,
                 Phieuthuketoan = phieuthuketoan,
                 DoanhThu = phieuThus.Where(a => a.SUD.HasValue).Sum(a => a.SUD)
             };

@@ -1072,7 +1072,7 @@ namespace OceanEduSlide.Controllers
         #endregion
 
         #region Công_nợ
-        public ActionResult ListDebt(int? page, int? zoneId, int? officeId, int? userId, int? month, int? year, int? userType, string maDonHang, string result = "")
+        public ActionResult ListDebt(int? page, int? zoneId, int? officeId, int? userId, int? month, int? year, int? userType, string maDonHang, TypeDebt? typeDebt, string result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
@@ -1117,22 +1117,31 @@ namespace OceanEduSlide.Controllers
             {
                 userId = users.First().Id;
             }
-            var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year && a.Month == month && a.TypeData == TypeData.New && listUserId.Contains(a.UserId),
-                q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
+            // Lọc danh sách công nợ theo list Users quản lý trong tháng - theo cột User đang phụ trách
+            //var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year && a.Month == month && a.TypeData == TypeData.New && listUserId.Contains(a.UserId),
+            //    q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
 
-            if (!string.IsNullOrEmpty(maDonHang))
-            {
-                var newkey = maDonHang.Trim();
-                debts = debts.Where(a => a.MaDonHang == newkey);
-            }
+            // Lọc danh sách công nợ theo list Office đang quản lý
+            var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year && a.Month == month && a.TypeData == TypeData.New && listOfficeId.Contains(a.OfficeId.Value),
+              q => q.OrderBy(a => a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.User.TypeUser));
             if (userId.HasValue)
             {
                 var user = _unitOfWork.UserRepository.GetById(userId);
                 if (user != null)
                     debts = debts.Where(a => a.UserId == userId);
             }
+            if (!string.IsNullOrEmpty(maDonHang))
+            {
+                var newkey = maDonHang.Trim();
+                if (!string.IsNullOrEmpty(newkey))
+                {
+                    debts = debts.Where(a => a.MaDonHang == newkey);
+                }
+            }
             if (userType != null)
                 debts = debts.Where(a => (int)a.User.TypeUser == userType);
+            if (typeDebt != null)
+                debts = debts.Where(a => a.TypeDebt == typeDebt);
             var model = new DebtViewModel
             {
                 Month = month,
@@ -1145,6 +1154,7 @@ namespace OceanEduSlide.Controllers
                 UserId = userId,
                 UserType = userType,
                 MaDonHang = maDonHang,
+                TypeDebt = typeDebt,
                 Debts = debts.ToPagedList(page.Value, pageSize),
                 User = User,
             };
@@ -1305,10 +1315,10 @@ namespace OceanEduSlide.Controllers
         {
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
-                return RedirectToAction("Index");
-            var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User).Select(a => a.Id).ToHashSet();
-            if (User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM && User.Id != debt.UserId && !listOfficeId.Contains(debt.OfficeId.Value))
                 return HttpNotFound();
+            var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User).Select(a => a.Id).ToHashSet();
+            if ((PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && !listOfficeId.Contains(debt.OfficeId.Value)) || (!PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && User.Id != debt.UserId))
+                return RedirectToAction("Index");
             var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User)
              .Select(a => new
              {

@@ -704,7 +704,7 @@ namespace OceanEduSlide.DAL
 
             // Update báo cáo CG
 
-            if (config.AutoCallLog)
+            if (config.AutoRevenue)
             {
                 foreach (var item in reportDatas.Where(a => a.ReportCategoryId == 26 || a.ReportCategoryId == 27))
                 {
@@ -1673,7 +1673,7 @@ namespace OceanEduSlide.DAL
                 #endregion
 
                 // Cuộc gọi chi nhánh
-                if (config.AutoCallLog)
+                if (config.AutoRevenue)
                 {
                     var callTarget = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                     if (callTarget == null)
@@ -2383,7 +2383,7 @@ namespace OceanEduSlide.DAL
             var reportDataList = new List<ReportData>();
 
             // Cuộc gọi
-            if (config.AutoCallLog)
+            if (config.AutoRevenue)
             {
                 foreach (var item in reportDatas.Where(a => a.ReportCategoryId == 26 || a.ReportCategoryId == 27))
                 {
@@ -3328,7 +3328,7 @@ namespace OceanEduSlide.DAL
                 #endregion
 
                 // Cuộc gọi chi nhánh
-                if (config.AutoCallLog)
+                if (config.AutoRevenue)
                 {
                     var callTarget = reportDatas.FirstOrDefault(a => a.OfficeId == office.Id && a.ReportCategoryId == 26);
                     if (callTarget == null)

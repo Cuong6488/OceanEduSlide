@@ -65,7 +65,7 @@ namespace OceanEduSlide.Models
         public string Password { get; set; }
         [DisplayName("Chạy tự động Nhân sự")]
         public bool AutoUser { get; set; }
-        [DisplayName("Chạy tự động Doanh thu")]
+        [DisplayName("Chạy tự động báo cáo")]
         public bool AutoRevenue { get; set; }
         [DisplayName("Chạy tự động Công nợ")]
         public bool AutoDebt { get; set; }

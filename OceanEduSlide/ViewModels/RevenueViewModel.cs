@@ -166,6 +166,10 @@ namespace OceanEduSlide.ViewModels
         public int? month { get; set; }
         public int? year { get; set; }
         public string Username { get; set; }
+        public string MaHV { get; set; }
+        public string MaDonHang { get; set; }
+        public decimal? DoanhThu { get; set; }
+        public string Loai { get; set; }
     }
     public class ListPhieuThuNguonViewModel
     {
@@ -175,9 +179,11 @@ namespace OceanEduSlide.ViewModels
         public int? Month { get; set; }
         public int? Year { get; set; }
         public string MaNVChotSale { get; set; }
+        public string MaHV { get; set; }
         public string Phieuthuketoan { get; set; }
         public string TrangThai { get; set; }
         public string Loai { get; set; }
+        public string MaDonHang { get; set; }
         public decimal? DoanhThu { get; set; }
     }
 }

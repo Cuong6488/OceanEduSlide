@@ -51,24 +51,23 @@ namespace OceanEduSlide.DAL
             TakeCongNoToDataBase(listCongNoTake, listUser, listOffice);
 
             // Lấy ra các list mới sau khi đồng bộ công nợ từ DB trung gian => DB dự án
-            var listCongNoNew = _unitOfWork.DebtRepository.GetQuery(a => a.Active && a.TypeData == TypeData.New);
-            var congNoNewList = listCongNoNew.ToList();
-            var listMDHNew = listCongNoNew.Select(a => a.MaDonHang);
-            var listPhieuThu = _unitOfWork.PhieuThuRepository.GetQuery(a => listMDHNew.Contains(a.DonHang) && (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm")).AsNoTracking().ToList();
-
+            var listCongNoNew = _unitOfWork.DebtRepository.GetQuery(a => a.Active && a.TypeData == TypeData.New).ToList();
+            var listMDHNew = listCongNoNew.Select(a => a.MaDonHang).ToHashSet();
+            var listPhieuThu = _dongBoTuyenSinh.BC_PhieuThu.Where(a => listMDHNew.Contains(a.DonHang) && (a.TrangThai == "StatusPayment_Complete" || a.TrangThai == "StatusPayment_Confirm")).AsNoTracking().ToList();
             // Tính toán số tiền đã cọc, bổ sung, còn lại
-            CalculateMoney(congNoNewList, listPhieuThu);
+            CalculateMoney(listCongNoNew, listPhieuThu);
 
             //Danh sách công nợ cần thu
-            var congNoDuThu = congNoNewList.Where(a => a.TypeDebt != TypeDebt.Type6 && (a.Year > _thisYear || (a.Year == _thisYear && a.Month >= _thisMonth - 1))).ToList();
+            var congNoDuThu = listCongNoNew.Where(a => a.TypeDebt != TypeDebt.Type6 && (a.Year > _thisYear || (a.Year == _thisYear && a.Month >= _thisMonth - 1))).ToList();
 
             // Tính toán báo cáo dự thu
-
-            //Nhân viên
-            BaoCaoDuThuNV(congNoDuThu);
-            //Chi nhánh
-            BaoCaoDuThuCN(congNoDuThu);
-
+            if (config.AutoRevenue)
+            {
+                //Nhân viên
+                BaoCaoDuThuNV(congNoDuThu);
+                //Chi nhánh
+                BaoCaoDuThuCN(congNoDuThu);
+            }
 
         }
         public void TakeCongNoToDataBase(List<BC_CongNo> listCongNoTake, List<User> listUser, List<Office> listOffice)
@@ -123,7 +122,7 @@ namespace OceanEduSlide.DAL
                     UserId = user.Id,
                     OfficeId = office.Id,
                     TypeData = TypeData.New,
-                    TypeDebt = TypeDebt.Type2,
+                    //TypeDebt = TypeDebt.Type1,
                     Pathway = (decimal)(item.ThangHocDuKien ?? 0),
                 };
                 listCongNo.Add(congno);
@@ -134,9 +133,9 @@ namespace OceanEduSlide.DAL
             }
             _unitOfWork.Save();
         }
-        public void CalculateMoney(List<Debt> congNoNewList, List<BC_PhieuThu_DB> listPhieuThu)
+        public void CalculateMoney(List<Debt> listCongNoNew, List<BC_PhieuThu> listPhieuThu)
         {
-            foreach (var item in congNoNewList)
+            foreach (var item in listCongNoNew)
             {
                 var phieuThus = listPhieuThu.Where(a => a.DonHang == item.MaDonHang).ToList();
                 var tongCoc = 0m;
@@ -235,7 +234,7 @@ namespace OceanEduSlide.DAL
                 if (bcHTDuThuNV != null)
                 {
                     bcHTDuThuNV.DataReal = HTDT;
-                    bcHTDuThuNV.Data = (HTDT * 100)?.ToString("F2")+"%";
+                    bcHTDuThuNV.Data = (HTDT * 100)?.ToString("F2") + "%";
                 }
                 else
                 {

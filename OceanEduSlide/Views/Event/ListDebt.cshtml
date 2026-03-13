@@ -89,7 +89,10 @@
                 </select>
             </div>
             <div class="col-lg col-md-3 col-6">
-                <input type="text" name="MaDonHang" value="@Model.MaDonHang" class="form-control" />
+                @Html.EnumDropDownListFor(a => a.TypeDebt, "Tình trạng", new { @class = "form-select" })
+            </div>
+            <div class="col-lg col-md-3 col-6">
+                <input type="text" name="MaDonHang" value="@Model.MaDonHang" placeholder="Mã đơn hàng" class="form-control" />
             </div>
         </div>
     </form>
@@ -271,11 +274,11 @@
         <div class="text-center">
             @if (Model.OfficeId != null)
             {
-                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, officeId = Model.OfficeId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang }))
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, officeId = Model.OfficeId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang, typeDebt = Model.TypeDebt }))
             }
             else
             {
-                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang }))
+                @Html.PagedListPager(Model.Debts, page => Url.Action("ListDebt", new { page, zoneId = Model.ZoneId, userId = Model.UserId, userType = Model.UserType, month = Model.Month, year = Model.Year, maDonHang = Model.MaDonHang, typeDebt = Model.TypeDebt }))
             }
         </div>
     }

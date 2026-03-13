@@ -13,6 +13,15 @@
                 <label>PhieuThuKeToan</label> @Html.TextBoxFor(a => a.Phieuthuketoan, new { @class = "mt-2" })
             </div>
             <div class="col-lg">
+                <label>Mã đơn hàng</label> @Html.TextBoxFor(a => a.MaDonHang, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Mã NV Chốt Sale</label> @Html.TextBoxFor(a => a.MaNVChotSale, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
+                <label>Mã HV</label> @Html.TextBoxFor(a => a.MaHV, new { @class = "mt-2" })
+            </div>
+            <div class="col-lg">
                 <label class="mb-2">Chi nhánh</label>
                 @Html.DropDownListFor(model => model.OfficeId, Model.SelectOffices, "Tất cả", new { @class = "mt-2" })
             </div>
@@ -57,9 +66,6 @@
                     <option value="Waiting_Payment" @(Model.TrangThai == "Waiting_Payment" ? "selected" : "")>Waiting_Payment</option>
                 </select>
             </div>
-            <div class="col-lg">
-                <label>Mã NV Chốt Sale</label> @Html.TextBoxFor(a => a.MaNVChotSale, new { @class = "mt-2" })
-            </div>
             <div class="col-lg align-self-center">
                 <button type="submit" class="btn-search mt-2">Tìm kiếm</button>
             </div>
@@ -75,6 +81,7 @@
         <tbody>
             <tr>
                 <th>PhieuThuKeToan</th>
+                <th>Mã Đơn hàng</th>
                 <th>Mã HV</th>
                 <th>Tên HV</th>
                 <th>Chi nhánh</th>
@@ -96,6 +103,7 @@
             {
                 <tr>
                     <td>@item.PhieuThuKeToan</td>
+                    <td>@item.DonHang</td>
                     <td>@item.MaHV</td>
                     <td>@item.TenHV</td>
                     <td>@item.ChiNhanh</td>
@@ -117,7 +125,7 @@
             @if (Model.PhieuThus.PageCount > 1)
             {
                 <tr>
-                    <td colspan="15">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThuNguon", new { page, officeId = Model.OfficeId, maNVChotSale = Model.MaNVChotSale, month = Model.Month, year = Model.Year, loai = Model.Loai, trangThai = Model.TrangThai, phieuthuketoan = Model.Phieuthuketoan }))</td>
+                    <td colspan="15">@Html.PagedListPager(Model.PhieuThus, page => Url.Action("ListPhieuThuNguon", new { page, officeId = Model.OfficeId, maNVChotSale = Model.MaNVChotSale, maHV = Model.MaHV, month = Model.Month, year = Model.Year, loai = Model.Loai, maDonHang = Model.MaDonHang, trangThai = Model.TrangThai, phieuthuketoan = Model.Phieuthuketoan }))</td>
                 </tr>
             }
         </tbody>
