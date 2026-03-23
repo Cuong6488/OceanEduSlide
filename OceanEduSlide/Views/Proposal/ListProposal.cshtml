@@ -28,7 +28,7 @@
                 <div class="col-lg col-md-3 col-6">
                     <input class="form-control" type="text" name="MaDeXuat" value="@Model.MaDeXuat" placeholder="Mã đề xuất" />
                 </div>
-                @if (Model.Zones?.Count() > 1)
+                @if (Model.Zones?.Count() > 0)
                 {
                     <div class="col-lg col-md-3 col-6">
                         <select name="ZoneId" class="form-select">
@@ -40,7 +40,7 @@
                         </select>
                     </div>
                 }
-                @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+                @if (Model.Offices?.Count() > 0)
                 {
                     <div class="col-lg col-md-3 col-6">
                         <select name="OfficeId" class="form-select">

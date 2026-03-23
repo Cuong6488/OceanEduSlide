@@ -10,7 +10,7 @@ using System.Linq;
 public static class PermisstionHelper
 {
     public static List<TypeUser> ListTypeUserNhanVien_CN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.ALT };
-    public static List<TypeUser> ListTypeUserQuanLy = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM, TypeUser.HO };
+    public static List<TypeUser> ListTypeUserQuanLy = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM, TypeUser.HO, TypeUser.PKT };
     public static List<TypeUser> ListTypeUserQuanLy_CN_Vung = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserQuanLy_Vung = new List<TypeUser>() { TypeUser.CV, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserQuanLy_CN = new List<TypeUser>() { TypeUser.BM };
@@ -26,7 +26,7 @@ public static class PermisstionHelper
             return Enumerable.Empty<Zone>().AsQueryable();
         }
         var zones = unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             zones = zones.Where(a => (user.ZoneIds.Contains("," + a.ShortCode + ",") && ListTypeUserQuanLy_Vung.Contains(user.TypeUser.Value))
                 || historyUsers.Any(hu => hu.ZoneIds != null && hu.ZoneIds.Contains("," + a.ShortCode + ",") && ListTypeUserQuanLy_Vung.Contains(hu.TypeUser)));
@@ -43,7 +43,7 @@ public static class PermisstionHelper
         }
         var zones = unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             var listZoneShortCodeManagerString = user.ZoneIds ?? ",";
             if (user.ZoneId.HasValue)
@@ -75,7 +75,7 @@ public static class PermisstionHelper
             ZoneShortCode = h.Zone.ShortCode,
             h.ZoneId
         }).AsNoTracking();
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listOffice = listOffice.Where(a => historyOfficeFields.Any(h => h.OfficeId == a.Id
             && (
@@ -108,7 +108,7 @@ public static class PermisstionHelper
             ZoneShortCode = h.Zone.ShortCode,
             h.ZoneId
         }).AsNoTracking();
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listOffice = listOffice.Where(a => historyOffices.Any(h => h.OfficeId == a.Id
             && (
@@ -141,7 +141,7 @@ public static class PermisstionHelper
             ZoneShortCode = h.Zone.ShortCode,
             h.ZoneId
         }).AsNoTracking();
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listOffice = listOffice.Where(a => historyOffices.Any(h => h.OfficeId == a.Id
             && (
@@ -170,7 +170,7 @@ public static class PermisstionHelper
         }
         var listOffice = unitOfWork.OfficeRepository.GetQuery(a => a.Active).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             var listZoneShortCodeManagerString = user.ZoneIds ?? ",";
             if (user.ZoneId.HasValue)
@@ -211,7 +211,7 @@ public static class PermisstionHelper
         }
         var listUser = unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser.HasValue && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser.Value)).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             var listZoneShortCodeManagerString = user.ZoneIds ?? "";
             if (user.ZoneId.HasValue)
@@ -273,7 +273,7 @@ public static class PermisstionHelper
             h.Zone
         }).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             //listUser = listUser.Where(a => listHistoryUser.Any(h => h.UserId == a.Id
             //&& (
@@ -375,7 +375,7 @@ public static class PermisstionHelper
             h.TypeUser
         }).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listUser = listUser.Where(a => listHistoryUser.Any(h =>
                 h.UserId == a.Id &&
@@ -461,7 +461,7 @@ public static class PermisstionHelper
         }
         var listHistoryUser = unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == month && a.Year == year && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser)
                     && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))));
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listHistoryUser = listHistoryUser.Where(h =>
 
@@ -547,7 +547,7 @@ public static class PermisstionHelper
         var listHistoryUser = unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == year && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser)
                     && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month)))).AsNoTracking();
 
-        if (user.TypeUser != TypeUser.HO)
+        if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listHistoryUser = listHistoryUser.Where(h =>
 
@@ -640,7 +640,7 @@ public static class PermisstionHelper
         if (zoneId == null && officeId == null && userId == null)
             return listMonthFull;
 
-        if (user.TypeUser == TypeUser.HO)
+        if (user.TypeUser == TypeUser.HO && user.TypeUser == TypeUser.PKT)
         {
             return listMonthFull;
         }
