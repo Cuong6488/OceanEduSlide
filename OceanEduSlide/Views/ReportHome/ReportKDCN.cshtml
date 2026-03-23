@@ -51,7 +51,7 @@
                     }
                 </select>
             </div>
-            @if (Model.Zones?.Count() > 1)
+            @if (Model.Zones?.Count() > 0)
             {
                 <div class="col-lg-2 col-md-3 col-6">
                     <select name="ZoneId" class="form-select">
@@ -63,7 +63,7 @@
                     </select>
                 </div>
             }
-            @if (Model.ListOffice?.Count() > 1)
+            @if (Model.ListOffice?.Count() > 0)
             {
                 <div class="col-lg-2 col-md-3 col-6">
                     <select name="OfficeId" class="form-select">

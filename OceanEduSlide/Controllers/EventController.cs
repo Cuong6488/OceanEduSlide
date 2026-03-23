@@ -1088,7 +1088,7 @@ namespace OceanEduSlide.Controllers
                 ZoneShortCode = h.Zone.ShortCode,
                 h.ZoneId
             });
-            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
             if (zones.Count() == 1)
             {
                 zoneId = zones.First().Id;
@@ -1171,7 +1171,7 @@ namespace OceanEduSlide.Controllers
                 ZoneShortCode = h.Zone.ShortCode,
                 h.ZoneId
             });
-            var zones = PermisstionHelper.GetZoneManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value);
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
             var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToList();
             var debts = _unitOfWork.DebtRepository.GetQuery(a => a.Year == year || a.Month == month && a.TypeData == TypeData.New && listOfficeId.Contains(a.OfficeId.Value),

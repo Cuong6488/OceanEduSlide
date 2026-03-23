@@ -27,6 +27,7 @@ namespace OceanEduSlide.Controllers
         private string Fullname => RouteData.Values["Fullname"].ToString();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
         public ConfigSite Config => (ConfigSite)HttpContext.Application["ConfigSite"];
+        private readonly UserTypeService _userTypeService = new UserTypeService();
         private DongBoTuyenSinhEntities _dongBoTuyenSinh = new DongBoTuyenSinhEntities();
 
 
@@ -713,55 +714,19 @@ namespace OceanEduSlide.Controllers
                         var cdcm = tbl2.Rows[i][4].ToString().Trim();
                         cdcm = VietnameseCodeHelper.NormalizeVietnameseCode(cdcm);
 
-                        var typeUser = tbl2.Rows[i][10].ToString().Trim();
-                        typeUser = VietnameseCodeHelper.NormalizeVietnameseCode(typeUser);
-                        if (string.IsNullOrEmpty(typeUser))
+                        //var typeUser = tbl2.Rows[i][10].ToString().Trim();
+                        //typeUser = VietnameseCodeHelper.NormalizeVietnameseCode(typeUser);
+                        if (string.IsNullOrEmpty(cdcm))
                         {
-                            ModelState.AddModelError("", @"Thiếu dữ liệu cột phân quyền dòng " + (i + 1));
+                            ModelState.AddModelError("", @"Thiếu dữ liệu cột chức danh dòng " + (i + 1));
                             return View();
                         }
-                        TypeUser type = new TypeUser();
-                        switch (typeUser)
+                        var type = _userTypeService.GetTypeUser(cdcm);
+                        if (type == null)
                         {
-                            case "ASM":
-                                type = TypeUser.ASM;
-                                break;
-                            case "GĐTS":
-                                type = TypeUser.HO;
-                                break;
-                            case "EC":
-                                type = TypeUser.EC;
-                                break;
-                            case "BM":
-                                type = TypeUser.BM;
-                                break;
-                            case "BSA":
-                                type = TypeUser.SAB;
-                                break;
-                            case "SAB":
-                                type = TypeUser.SAB;
-                                break;
-                            case "ATL":
-                                type = TypeUser.ALT;
-                                break;
-                            case "CM":
-                                type = TypeUser.CM;
-                                break;
-                            case "TTL":
-                                type = TypeUser.TTL;
-                                break;
-                            case "Chuyên viên":
-                                type = TypeUser.CV;
-                                break;
-                            case "AEC":
-                                type = TypeUser.AEC;
-                                break;
-                            default:
-                                ModelState.AddModelError("", @"Chưa tồn tại phân quyền " + typeUser + ", dòng " + (i + 1));
-                                return View();
-                                //break;
+                            ModelState.AddModelError("", @"Chưa tồn tại chức danh " + type + ", dòng " + (i + 1));
+                            return View();
                         }
-
                         var status = tbl2.Rows[i][5].ToString().Trim();
                         if (string.IsNullOrEmpty(status))
                         {
@@ -845,7 +810,7 @@ namespace OceanEduSlide.Controllers
                                 };
                                 if (!string.IsNullOrEmpty(zones))
                                 {
-                                    if (!HandleUserByType(type, zones, newUser, i, ModelState))
+                                    if (!HandleUserByType(type.Value, zones, newUser, i, ModelState))
                                     {
                                         return View();
                                     }
@@ -893,7 +858,7 @@ namespace OceanEduSlide.Controllers
                                     }
                                     if (!string.IsNullOrEmpty(zones))
                                     {
-                                        if (!HandleUserByType(type, zones, user, i, ModelState))
+                                        if (!HandleUserByType(type.Value, zones, user, i, ModelState))
                                         {
                                             return View();
                                         }
@@ -956,14 +921,14 @@ namespace OceanEduSlide.Controllers
                             historyUser.CDCM = cdcm;
                             historyUser.DayReduce = dayReduce;
                             historyUser.DayReduceCG = dayReduceCG;
-                            historyUser.TypeUser = type;
+                            historyUser.TypeUser = type.Value;
                             historyUser.DayStart = startDate;
                             historyUser.Sort = sortValue;
                             if (!string.IsNullOrEmpty(dayEnd))
                                 historyUser.DayEnd = endDate;
                             if (!string.IsNullOrEmpty(zones))
                             {
-                                if (!HandleUserByType(type, zones, historyUser, user, i, ModelState))
+                                if (!HandleUserByType(type.Value, zones, historyUser, user, i, ModelState))
                                 {
                                     return View();
                                 }
@@ -989,7 +954,7 @@ namespace OceanEduSlide.Controllers
                                 //}
                                 if (!string.IsNullOrEmpty(zones))
                                 {
-                                    if (!HandleUserByType(type, zones, historyUser, user, i, ModelState))
+                                    if (!HandleUserByType(type.Value, zones, historyUser, user, i, ModelState))
                                     {
                                         return View();
                                     }
@@ -1003,7 +968,7 @@ namespace OceanEduSlide.Controllers
                                     UserId = user.Id,
                                     Month = monthInt,
                                     Year = yearInt,
-                                    TypeUser = type,
+                                    TypeUser = type.Value,
                                     OfficeId = office?.Id,
                                     ZoneId = zone?.Id,
                                     Status = statusUser,
@@ -1020,7 +985,7 @@ namespace OceanEduSlide.Controllers
                                     newHistoryUser.Sort = int.Parse(sort);
                                 if (!string.IsNullOrEmpty(zones))
                                 {
-                                    if (!HandleUserByType(type, zones, newHistoryUser, user, i, ModelState))
+                                    if (!HandleUserByType(type.Value, zones, newHistoryUser, user, i, ModelState))
                                     {
                                         return View();
                                     }

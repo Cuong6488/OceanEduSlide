@@ -104,7 +104,7 @@
                     }
                 </select>
             </div>
-            @if (Model.Zones?.Count() > 1)
+            @if (Model.Zones?.Count() > 0)
             {
                 <div class="col-lg-2 col-md-3 col-6">
                     <select name="ZoneId" class="form-select">
@@ -116,7 +116,7 @@
                     </select>
                 </div>
             }
-            @if (Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM || Model.User.TypeUser == TypeUser.CV || !string.IsNullOrEmpty(Model.User.OfficeIds))
+            @if (Model.Offices?.Count() > 0)
             {
                 <div class="col-lg-2 col-md-3 col-6">
                     <select name="OfficeId" class="form-select">
@@ -127,10 +127,6 @@
                         }
                     </select>
                 </div>
-            }
-            else if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.EC || Model.User.TypeUser == TypeUser.SAB || Model.User.TypeUser == TypeUser.ALT || Model.User.TypeUser == TypeUser.CM || Model.User.TypeUser == TypeUser.TTL)
-            {
-                <input type="hidden" name="OfficeId" value="@Model.OfficeId" />
             }
             <div class="col-lg-2 col-md-3 col-6">
                 <select name="UserId" class="form-select select2">

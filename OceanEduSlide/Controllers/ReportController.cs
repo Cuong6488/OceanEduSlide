@@ -3,6 +3,7 @@ using FluentScheduler;
 using Helpers;
 using OceanEduSlide.DAL;
 using OceanEduSlide.Filters;
+using OceanEduSlide.Migrations;
 using OceanEduSlide.Models;
 using OceanEduSlide.Utils;
 using OceanEduSlide.ViewModels;
@@ -24,6 +25,7 @@ namespace OceanEduSlide.Controllers
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private RoleAdmin Role => (RoleAdmin)Enum.Parse(typeof(RoleAdmin), RouteData.Values["Role"].ToString());
         private string Fullname => RouteData.Values["Fullname"].ToString();
+        private readonly UserTypeService _userTypeService = new UserTypeService();
 
         public ActionResult Report(string result = "")
         {
@@ -575,37 +577,18 @@ namespace OceanEduSlide.Controllers
                     if (office == null) continue;
 
                     var maNhanVien = tbl2.Rows[i][4].ToString().Trim();
+                  
                     var user = allUsers.FirstOrDefault(a => a.MaNhanVien == maNhanVien);
                     if (user == null) continue;
                     var typeUser = tbl2.Rows[i][7].ToString().Trim();
+                    typeUser = VietnameseCodeHelper.NormalizeVietnameseCode(typeUser);
                     if (string.IsNullOrEmpty(typeUser))
                         continue;
-                    TypeUser type = new TypeUser();
-                    switch (typeUser)
+                    var type = _userTypeService.GetTypeUser(typeUser);
+                    if (type == null)
                     {
-                        case "EC":
-                            type = TypeUser.EC;
-                            break;
-                        case "BM":
-                            type = TypeUser.BM;
-                            break;
-                        case "BSA":
-                            type = TypeUser.SAB;
-                            break;
-                        case "SAB":
-                            type = TypeUser.SAB;
-                            break;
-                        case "ATL":
-                            type = TypeUser.ALT;
-                            break;
-                        case "CM":
-                            type = TypeUser.CM;
-                            break;
-                        case "TTL":
-                            type = TypeUser.TTL;
-                            break;
-                        default:
-                            break;
+                        ModelState.AddModelError("", @"Chưa tồn tại chức danh " + type + ", dòng " + (i + 3));
+                        return View();
                     }
                     var dayStart = tbl2.Rows[i][5].ToString().Trim().Replace("'", "");
                     if (string.IsNullOrEmpty(dayStart))
