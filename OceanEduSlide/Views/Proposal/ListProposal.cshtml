@@ -67,21 +67,18 @@
                         }
                     </select>
                 </div>
-                @if (!Model.Notice.HasValue)
-                {
-                    <div class="col-lg col-md-3 col-6">
-                        <div class="d-flex align-items-center">
-                            <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
-                            <input class="form-control" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
-                        </div>
+                <div class="col-lg col-md-3 col-6">
+                    <div class="d-flex align-items-center">
+                        <p class="m-0 me-2" style="width:20px"><strong>Từ:</strong></p>
+                        <input class="form-control" style="flex:1" type="text" id="StartDay" name="StartDay" value="@Model.StartDay" autocomplete="off" />
                     </div>
-                    <div class="col-lg col-md-3 col-6">
-                        <div class="d-flex align-items-center">
-                            <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
-                            <input class="form-control" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
-                        </div>
+                </div>
+                <div class="col-lg col-md-3 col-6">
+                    <div class="d-flex align-items-center">
+                        <p class="m-0 me-2" style="width:20px"><strong>Đến:</strong></p>
+                        <input class="form-control" style="flex:1" type="text" id="EndDay" name="EndDay" value="@Model.EndDay" autocomplete="off" />
                     </div>
-                }
+                </div>
 
                 <div class="col-lg col-md-3 col-6">
                     <select name="Notice" class="form-select">

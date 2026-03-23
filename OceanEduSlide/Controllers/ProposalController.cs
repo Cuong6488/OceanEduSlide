@@ -210,11 +210,8 @@ namespace OceanEduSlide.Controllers
             {
                 EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
             }
-            var proposals = _unitOfWork.ProposalRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.CreateDate));
-            if (!Notice.HasValue)
-            {
-                proposals = proposals.Where(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate));
-            }
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate)
+            , q => q.OrderByDescending(a => a.CreateDate));
 
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
