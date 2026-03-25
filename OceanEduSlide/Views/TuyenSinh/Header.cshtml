@@ -182,18 +182,9 @@
                 <li>
                     <a href="@Url.Action("ListDebt","Event")">CÔNG NỢ</a>
                 </li>
-                if ((Model.User.TypeUser != TypeUser.BM && Model.User.TypeUser != TypeUser.ASM) || Model.User.CDCM == "BAM")
-                {
-                    <li>
-                        <a href="@Url.Action("ListProposal","Proposal")"> ĐỀ XUẤT </a>
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        <a href="@Url.Action("Propose","Proposal")">ĐỀ XUẤT</a>
-                    </li>
-                }
+                <li>
+                    <a href="@Url.Action("ListProposal","Proposal")"> ĐỀ XUẤT </a>
+                </li>
                 <li>
                     <a href="javascript:;">BÁO CÁO</a>
                     <ul class="ul-reset" style="top:150%">

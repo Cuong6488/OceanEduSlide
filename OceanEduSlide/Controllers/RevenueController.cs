@@ -3032,11 +3032,11 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        public ActionResult TestSyncPhieuThu(int date, int month)
+        public ActionResult TestSyncPhieuThu(int date, int month, int year)
         {
             var phieuthuService = new PhieuThuService();
-            phieuthuService.TestSyncPhieuThu(date, month);
-            return Content("Đã đồng bộ phiếu thu");
+            phieuthuService.TestSyncPhieuThu(date, month, year);
+            return Content("Đã đồng bộ phiếu thu thủ công");
         }
         public ActionResult SyncPhieuThu()
         {
@@ -3068,7 +3068,7 @@ namespace OceanEduSlide.Controllers
             return Content("Đã đồng bộ nhân sự tháng trước");
         }
 
-        public ActionResult DeleteDatax2(string listId, int month)
+        public ActionResult DeleteDatax2(string listId, int month, int year)
         {
 
             var listIdString = listId.Split(',');
@@ -3078,7 +3078,7 @@ namespace OceanEduSlide.Controllers
                 var id = int.Parse(item);
                 listIdInt.Add(id);
             }
-            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => listIdInt.Contains(a.ReportCategoryId) && a.Month == month);
+            var datas = _unitOfWork.ReportDataRepository.GetQuery(a => listIdInt.Contains(a.ReportCategoryId) && a.Month == month && a.Year == year);
             datas.Delete();
             return Content("ok");
         }

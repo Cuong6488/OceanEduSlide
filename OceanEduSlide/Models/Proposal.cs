@@ -42,7 +42,7 @@ namespace OceanEduSlide.Models
         public bool CVSeen { get; set; }
         public bool NSSeen { get; set; }
         [Display(Name = "BM Duyệt")]
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}"), Display(Name = "Ngày tạo")]
         public DateTime CreateDate { get; set; }
         public virtual User User { get; set; }

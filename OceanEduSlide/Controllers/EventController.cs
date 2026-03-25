@@ -14,6 +14,8 @@ using Z.EntityFramework.Plus;
 using OceanEduSlide.EnumHelpers;
 using PagedList;
 using System.Web.UI;
+using OceanEduSlide.Migrations;
+using System.Security.Policy;
 
 namespace OceanEduSlide.Controllers
 {
@@ -26,123 +28,78 @@ namespace OceanEduSlide.Controllers
         private string OfficeCode => RouteData.Values["OfficeCode"].ToString();
         private new User User => _unitOfWork.UserRepository.GetQuery(a => a.Username == Username).SingleOrDefault();
         #region Sự_Kiện
-        public ActionResult Index(int? ZoneId, int? Month, int? OfficeId, int? Year, int? Week, int? UserType, int? TypeView, string Result = "")
+        public ActionResult Index(int? zoneId, int? month, int? officeId, int? year, int? week, int? userType, int? TypeView, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month, DateTime.Now);
+            year = year ?? DateTime.Now.Year;
+            month = month ?? DateTime.Now.Month;
+            (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(year.Value, month.Value, DateTime.Now);
+            week = week ?? currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.CurrentWeek = currentWeek;
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.Year = DateTime.Now.Year;
-            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek(Week ?? currentWeek, Year ?? DateTime.Now.Year, Month ?? DateTime.Now.Month);
+            ViewBag.DayOfWeeks = DateHelper.GetWorkingDaysInWeek(week.Value, year.Value, month.Value);
             ViewBag.Result = Result;
+
+           
+            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == month && a.Year == year && (int)a.WeekNumber == week);
+
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == year && h.Month == month).AsNoTracking();
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == year && a.Month == month).AsNoTracking();
+
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
+            if (zones.Count() == 1)
+            {
+                zoneId = zones.First().Id;
+            }
+
+            var offices = PermisstionHelper.GetOfficeManagerPeriod(_unitOfWork, User, historyUsers, historyOffices, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
+            {
+                officeId = null;
+            }
+            if (offices.Count() == 1)
+            {
+                officeId = offices.First().Id;
+            }
+            if (officeId.HasValue)
+                listOfficeId = listOfficeId.Where(a => a == officeId).ToHashSet();
+            events = events.Where(a => listOfficeId.Contains(a.OfficeId));
             var model = new EventViewModel
             {
-                Month = Month ?? DateTime.Now.Month,
-                Year = Year ?? DateTime.Now.Year,
-                Week = Week ?? currentWeek,
-                OfficeId = OfficeId,
-                ZoneId = ZoneId,
-                UserType = UserType,
+                Month = month,
+                Year = year,
+                Week = week,
+                OfficeId = officeId,
+                ZoneId = zoneId,
+                UserType = userType,
                 User = User,
                 Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
             };
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == model.Month && h.Year == model.Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == model.Month && a.Year == model.Year && (int)a.WeekNumber == model.Week);
-            if (User.TypeUser == TypeUser.HO)
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-            else if (User.TypeUser == TypeUser.CV)
-            {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                if (model.ZoneId == null)
-                {
-                    model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    if (model.OfficeId == null)
-                        events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
-                }
-            }
-            else
-            {
-                //model.ZoneId = User.ZoneId;
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                        if (model.ZoneId == null)
-                        {
-                            model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            if (model.OfficeId == null)
-                                events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
-                        }
-
-                    }
-                    else
-                    {
-                        model.ZoneId = User.ZoneId;
-                    }
-
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        model.OfficeId = User.OfficeId;
-                    else
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                        if (model.OfficeId == null)
-                            events = events.Where(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
-                    }
-                }
-
-            }
-            if (model.ZoneId != null)
-                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
-            if (model.Offices.Count() == 1)
-                model.OfficeId = model.Offices.First().Id;
-            if (model.OfficeId != null)
+            if (officeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
                 {
                     var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && a.Year == model.Year && a.Month == model.Month
-                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))), q => q.OrderBy(a => a.Sort));
+                    var listHistoryUsers = PermisstionHelper.GetHistoryUserManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId, officeId, null, userType);
 
-                    if (UserType != null)
-                    {
-                        users = users.Where(a => (int)a.TypeUser == UserType);
-                        historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
-                    }
-                    else
-                    {
-                        users = users.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-                        historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-                    }
-
-                    var userItems = historyUsers.ToList().Select(a => new EventViewModel.UserItem
+                    var userItems = listHistoryUsers.ToList().Select(a => new EventViewModel.UserItem
                     {
                         HistoryUser = a,
-                        Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)),
-                        RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
+                        Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == month && p.Year == year && (int)p.WeekNumber == week, q => q.OrderByDescending(p => p.CreateDate)),
+                        RevenueUser_Week = _unitOfWork.RevenueUser_WeekRepository.GetQuery(p => p.HistoryUserId == a.Id && p.UserId == a.UserId && p.Month == month && p.Year == year && (int)p.WeekNumber == week, q => q.OrderByDescending(p => p.CreateDate)).FirstOrDefault(),
                     });
                     model.Users = users;
                     model.UserItems = userItems;
                     model.Events = events.OrderByDescending(p => p.CreateDate).Where(a => a.OfficeId == model.OfficeId);
-                    model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.TargetBM != 0 && p.Month == model.Month && p.Year == model.Year && (int)p.WeekNumber == model.Week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
+                    model.Revenues = _unitOfWork.RevenueUser_DayOfWeekRepository.GetQuery(p => p.TargetBM != 0 && p.Month == month && p.Year == year && (int)p.WeekNumber == week && p.User.OfficeId == model.OfficeId, q => q.OrderByDescending(p => p.CreateDate));
                 }
                 return View(model);
             }
-            //var latestEventsPerGroup = events.GroupBy(e => new { e.Month, e.Year, e.WeekNumber, e.OfficeId, e.DayofWeek })
-            //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
-            //model.Events = latestEventsPerGroup;
-            // Chọn bản ghi mới nhất cho mỗi nhóm
             if (TypeView >= 1 && TypeView <= 4)
             {
                 events = events.Where(a => (int)a.TypeEvent == TypeView);
@@ -167,96 +124,41 @@ namespace OceanEduSlide.Controllers
             return View("EventManager", model);
         }
 
-        public void ExportEvent(int Year, int Month, int Week, int? OfficeId, int? ZoneId, int? TypeView)
+        public void ExportEvent(int year, int month, int week, int? officeId, int? zoneId, int? TypeView)
         {
-            var events = _unitOfWork.EventRepository.GetQuery(a => a.Year == Year && a.Month == Month && (int)a.WeekNumber == Week);
-            var offices1 = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            if (User.TypeUser == TypeUser.HO)
-            {
 
-            }
-            else if (User.TypeUser == TypeUser.CV)
-            {
-                if (ZoneId == null)
-                {
-                    offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
+            var events = _unitOfWork.EventRepository.GetQuery(a => a.Month == month && a.Year == year && (int)a.WeekNumber == week);
 
-                    if (OfficeId == null)
-                        events = events.Where(a => a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","));
-                }
-            }
-            else
-            {
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        if (ZoneId == null)
-                        {
-                            offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            if (OfficeId == null)
-                                events = events.Where(a => User.Zone.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
-                        }
-                    }
-                    else
-                    {
-                        ZoneId = User.ZoneId;
-                    }
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Year == year && h.Month == month).AsNoTracking();
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == year && a.Month == month).AsNoTracking();
 
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        OfficeId = User.OfficeId;
-                    else
-                    {
-                        if (OfficeId == null)
-                        {
-                            events = events.Where(a => User.OfficeIds.Contains("," + a.OfficeId.ToString() + ","));
-                            offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId + ",")));
-                        }
-                    }
-                }
-
-            }
-            if (ZoneId != null && OfficeId == null)
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
+            if (zones.Count() == 1)
             {
-                offices1 = offices1.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
-                events = events.Where(a => a.Office.ZoneId == ZoneId);
+                zoneId = zones.First().Id;
+            }
 
-            }
-            else if (OfficeId != null)
+            var offices = PermisstionHelper.GetOfficeManagerPeriod(_unitOfWork, User, historyUsers, historyOffices, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
-                events = events.Where(a => a.OfficeId == OfficeId);
-                offices1 = offices1.Where(a => a.Id == OfficeId);
+                officeId = null;
             }
-            //var latestEventsPerGroup = events.GroupBy(e => new { e.Month, e.Year, e.WeekNumber, e.OfficeId, e.DayofWeek })
-            //    .Select(g => g.OrderByDescending(e => e.CreateDate).FirstOrDefault());
-            //model.Events = latestEventsPerGroup;
-            // Chọn bản ghi mới nhất cho mỗi nhóm
+            if (offices.Count() == 1)
+            {
+                officeId = offices.First().Id;
+            }
+            if (officeId.HasValue)
+                listOfficeId = listOfficeId.Where(a => a == officeId).ToHashSet();
+            events = events.Where(a => listOfficeId.Contains(a.OfficeId));
+
             if (TypeView >= 1 && TypeView <= 4)
             {
                 events = events.Where(a => (int)a.TypeEvent == TypeView);
             }
             // Lấy toàn bộ sự kiện thỏa điều kiện, group theo OfficeId + WeekNumber + DayofWeek
             var eventsList = events.AsNoTracking().GroupBy(a => new { a.OfficeId, a.WeekNumber, a.DayofWeek }).Select(g => g.OrderByDescending(a => a.CreateDate).FirstOrDefault()).ToList();
-            // Dictionary tra cứu nhanh: OfficeId -> WeekEnum -> DayEnum
-            //var eventDict = eventsList
-            //    .GroupBy(e => e.OfficeId)
-            //    .ToDictionary(
-            //        g => g.Key,
-            //        g => g.GroupBy(e => e.WeekNumber)
-            //              .ToDictionary(
-            //                  wg => wg.Key,
-            //                  wg => wg.ToDictionary(e => e.DayofWeek, e => e)
-            //              )
-            //    );
+            
             var eventDict = events
                     .GroupBy(e => e.OfficeId)
                     .ToDictionary(
@@ -274,7 +176,7 @@ namespace OceanEduSlide.Controllers
                               )
                     );
 
-            var offices = offices1.AsNoTracking().ToList();
+            //var offices = offices1.AsNoTracking().ToList();
 
             var dt = new DataTable();
             dt.Columns.Add("Chi nhánh");
@@ -292,33 +194,12 @@ namespace OceanEduSlide.Controllers
                 var row = dt.NewRow();
                 row["Chi nhánh"] = office.ShortName;
                 row["Vùng"] = office.Zone?.Name;
-                row["Tháng"] = Month.ToString();
-                row["Tuần"] = Week;
+                row["Tháng"] = month.ToString();
+                row["Tuần"] = week;
 
                 // Ép kiểu từ int sang enum (WeekEnum và DayEnum là enum thực tế bạn đang dùng)
-                var weekEnum = (WeekNumber)Week;
+                var weekEnum = (WeekNumber)week;
 
-                //for (int j = 2; j <= 8; j++)
-                //{
-                //    var dayEnum = (DayofWeek)j;
-
-                //    if (eventDict.TryGetValue(office.Id, out var weekDict) &&
-                //        weekDict.TryGetValue(weekEnum, out var dayDict) &&
-                //        dayDict.TryGetValue(dayEnum, out var eventDay))
-                //    {
-                //        var eventInfo = string.Join("\n", new[]
-                //        {
-                //        $"Loại hoạt động: {EnumExtensions.GetDisplayName(eventDay.TypeEvent)}",
-                //        $"Tên hoạt động: {eventDay.Name}",
-                //        $"Đối tượng tham gia: {EnumExtensions.GetDisplayName(eventDay.TypeJoin)}",
-                //        $"Lứa tuổi: {eventDay.Ages}",
-                //        $"Thời gian: {eventDay.TimeFrom} - {eventDay.TimeTo}",
-                //    });
-
-                //        var columnName = j == 8 ? "Chủ nhật" : $"Thứ {j}";
-                //        row[columnName] = eventInfo.Trim();
-                //    }
-                //}
                 for (int j = 2; j <= 8; j++)
                 {
                     var dayEnum = (DayofWeek)j;
@@ -643,10 +524,10 @@ namespace OceanEduSlide.Controllers
                     ev.Range = 0;
                     foreach (var item in listrevenue)
                     {
-                        if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.CM || item.User.TypeUser == TypeUser.ALT)
+                        if (item.User.TypeUser.HasValue && (PermisstionHelper.ListTypeUserNhanVien_HocVu.Contains(item.User.TypeUser.Value) || PermisstionHelper.ListTypeUserNhanVien_KinhDoanh.Contains(item.User.TypeUser.Value)))
                         {
                             ev.Range += (int)item.CI;
-                            if (item.User.TypeUser == TypeUser.EC || item.User.TypeUser == TypeUser.ALT)
+                            if (PermisstionHelper.ListTypeUserNhanVien_KinhDoanh.Contains(item.User.TypeUser.Value))
                                 ev.RangeNewCustomer += (int)item.CI;
                             else
                                 ev.RangeStudent += (int)item.CI;
@@ -936,7 +817,7 @@ namespace OceanEduSlide.Controllers
             var model = new AddEventViewModel
             {
                 Event = ev,
-                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && a.Active && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.OfficeId == officeId && a.Active && a.TypeUser.HasValue && PermisstionHelper.ListTypeUserNhanVien_ThuocCN.Contains(a.TypeUser.Value))
             };
             return View(model);
         }
@@ -999,7 +880,7 @@ namespace OceanEduSlide.Controllers
                     Office = ev.Office,
                 },
                 EventParentId = ev.Id,
-                Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == ev.OfficeId && (a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM))
+                Users = _unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == ev.OfficeId && a.TypeUser.HasValue && PermisstionHelper.ListTypeUserNhanVien_ThuocCN.Contains(a.TypeUser.Value))
             };
             (int workingWeeks, int currentWeek) = DateHelper.CalculateWeeks(ev.Year, ev.Month, DateTime.Now);
             ViewBag.CurrentWeek = currentWeek;

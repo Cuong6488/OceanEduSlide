@@ -29,10 +29,15 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            //if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
-            //return HttpNotFound();
+            if (User.TypeUser == null)
+                return HttpNotFound();
             var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+
             var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
+            if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
+            {
+                users = users.Where(a => a.Id == User.Id);
+            }
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
@@ -128,6 +133,40 @@ namespace OceanEduSlide.Controllers
             {
                 EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
             }
+            if (User.TypeUser == TypeUser.CV)
+            {
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && !a.CVSeen).Count();
+                if (Notice == 1)
+                    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && !a.CVSeen
+                    , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+            }
+            else if (User.TypeUser == TypeUser.HO)
+            {
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.TypeApprove == TypeApprove.Type3).Count();
+                if (Notice == 4)
+                    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.TypeApprove == TypeApprove.Type3
+               , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+            }
+            else
+            {
+                if (User.TypeUser == TypeUser.ASM)
+                {
+                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => !a.NSSeen && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)).Count();
+                    if (Notice == 3)
+                        StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)
+                        , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                }
+                else
+                {
+                    if (User.TypeUser == TypeUser.BM)
+                    {
+                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ",")))).Count();
+                        if (Notice == 3)
+                            StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ",")))
+                            , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                    }
+                }
+            }
             var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate)
             , q => q.OrderByDescending(a => a.CreateDate));
 
@@ -143,56 +182,30 @@ namespace OceanEduSlide.Controllers
             }
             if (Notice == 1)
                 proposals = proposals.Where(a => !a.CVSeen);
+            if (Notice == 3)
+                proposals = proposals.Where(a => !a.NSSeen);
             if (Notice == 4)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type3);
             if (Notice == 5)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type2);
             if (Notice == 6)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type1);
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (Notice == 2)
-                    proposals = proposals.Where(a => a.CVSeen);
-                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && a.Active && !a.CVSeen).Count();
-            }
-            else if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.PKT)
-            {
-                proposals = proposals.Where(a => a.Active);
-                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.TypeApprove == TypeApprove.Type3).Count();
-            }
-            else
-            {
-                if (Notice == 2)
-                    proposals = proposals.Where(a => a.Active == false);
-                else if (Notice == 3)
-                {
-                    proposals = proposals.Where(a => a.NSSeen == false);
-                }
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.NSSeen == false && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)).Count();
-                }
-                else
-                {
-                    if (User.TypeUser == TypeUser.BM)
-                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ",")))).Count();
-                }
-            }
+
             if (User.TypeUser.HasValue && PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
             {
                 proposals = proposals.Where(a => a.UserId2 == User.Id);
             }
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => (h.Year > StartDate.Year || (h.Year == StartDate.Year && h.Month >= StartDate.Month)) && (h.Year < EndDate.Year || (h.Year == EndDate.Year && h.Month <= EndDate.Month))).AsNoTracking();
+            //var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => (h.Year > StartDate.Year || (h.Year == StartDate.Year && h.Month >= StartDate.Month)) && (h.Year < EndDate.Year || (h.Year == EndDate.Year && h.Month <= EndDate.Month))).AsNoTracking();
 
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && (a.Year > StartDate.Year || (a.Year == StartDate.Year && a.Month >= StartDate.Month)) && (a.Year < EndDate.Year || (a.Year == EndDate.Year && a.Month <= EndDate.Month))).AsNoTracking();
+            //var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && (a.Year > StartDate.Year || (a.Year == StartDate.Year && a.Month >= StartDate.Month)) && (a.Year < EndDate.Year || (a.Year == EndDate.Year && a.Month <= EndDate.Month))).AsNoTracking();
 
-            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
+            var zones = PermisstionHelper.GetZoneManagerPresent(_unitOfWork, User);
             if (zones.Count() == 1)
             {
                 zoneId = zones.First().Id;
             }
 
-            var offices = PermisstionHelper.GetOfficeManagerPeriod(_unitOfWork, User, historyUsers, historyOffices, zoneId);
+            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
             if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
@@ -220,7 +233,7 @@ namespace OceanEduSlide.Controllers
 
             var model = new ProposalViewModel
             {
-                StartDay = startDay,
+                StartDay = StartDate.ToString("dd/MM/yyyy"),
                 EndDay = endDay,
                 Zones = zones,
                 Offices = offices,
@@ -273,30 +286,14 @@ namespace OceanEduSlide.Controllers
             }
             if (Notice == 1)
                 proposals = proposals.Where(a => !a.CVSeen);
+            if (Notice == 3)
+                proposals = proposals.Where(a => a.NSSeen == false);
             if (Notice == 4)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type3);
             if (Notice == 5)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type2);
             if (Notice == 6)
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type1);
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (Notice == 2)
-                    proposals = proposals.Where(a => a.CVSeen);
-            }
-            else if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.PKT)
-            {
-                proposals = proposals.Where(a => a.Active);
-            }
-            else
-            {
-                if (Notice == 2)
-                    proposals = proposals.Where(a => a.Active == false);
-                else if (Notice == 3)
-                {
-                    proposals = proposals.Where(a => a.NSSeen == false);
-                }
-            }
             if (User.TypeUser.HasValue && PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
             {
                 proposals = proposals.Where(a => a.UserId2 == User.Id);
@@ -365,8 +362,8 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult EditProposal(int pId)
         {
-            if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
-                return RedirectToAction("ListProposal");
+            if (User.TypeUser == null)
+                return HttpNotFound();
 
             var proposal = _unitOfWork.ProposalRepository.GetById(pId);
             if (proposal == null || proposal.UserId != User.Id || (proposal.CVSeen && !proposal.BMEdit))

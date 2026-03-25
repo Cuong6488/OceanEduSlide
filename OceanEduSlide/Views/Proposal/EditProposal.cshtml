@@ -9,62 +9,67 @@
         @using (Html.BeginForm("EditProposal", "Proposal", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
-        <table class="form_table">
-            @Html.HiddenFor(a => a.Proposal.Id)
-            @Html.HiddenFor(a => a.Proposal.UserId)
-            @Html.HiddenFor(a => a.Proposal.OfficeId)
+            <table class="form_table">
+                @Html.HiddenFor(a => a.Proposal.Id)
+                @Html.HiddenFor(a => a.Proposal.UserId)
+                @Html.HiddenFor(a => a.Proposal.UserId2)
+                @Html.HiddenFor(a => a.Proposal.OfficeId)
 
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
-                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.Office.Name)</strong></td>
-            </tr>
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Proposal.MaDeXuat)</td>
-                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.MaDeXuat)</strong></td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">Nhân sự đề xuất</td>
-                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.User.Fullname)</strong></td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
-                <td class="form_text">
-                    <strong>@(Model.Proposal.ProposalType?.Content)</strong>
-                </td>
-            </tr>
-            <tr>
-                <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
-                <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.CreateDate)</strong></td>
-            </tr>
-            @if (!Model.Proposal.CVSeen)
-            {
                 <tr>
-                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
-                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.MaDeXuat)</td>
+                    <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.MaDeXuat)</strong></td>
                 </tr>
-            }
-            else
-            {
                 <tr>
-                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
-                    <td class="form_text body-format "><div class="p-2 border">@Html.Raw(Model.Proposal.Body)</div></td>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.CreateDate)</td>
+                    <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.CreateDate)</strong></td>
                 </tr>
-            }
-            <tr>
-                <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
-                <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
-            </tr>
-            @*<tr>
-            <td class="form_name">@Html.LabelFor(model => model.Proposal.Active)</td>
-            <td class="form_text">@Html.EditorFor(model => model.Proposal.Active)</td>
-        </tr>*@
-            <tr>
-                <td class="form_name"></td>
-                <td class="form_text">
-                    <input type="submit" class="btn quick-link" value="Cập nhật" />
-                </td>
-            </tr>
-        </table>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                    <td class="form_text"><strong>@Html.DisplayFor(model => model.Proposal.Office.Name)</strong></td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">Nhân sự đề xuất</td>
+                    <td class="form_text"><strong>@Model.Proposal.User.Fullname - @Model.Proposal.User.MaNhanVien</strong></td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">Nhân sự theo dõi</td>
+                    <td class="form_text"><strong>@(Model.Proposal.User2?.Fullname) - @(Model.Proposal.User2?.MaNhanVien)</strong></td>
+                </tr>
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.ProposalTypeId)</td>
+                    <td class="form_text">
+                        <strong>@(Model.Proposal.ProposalType?.Content)</strong>
+                    </td>
+                </tr>
+                @if (!Model.Proposal.CVSeen)
+                {
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Proposal.Body)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Proposal.Body)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.Body)</td>
+                        <td class="form_text body-format "><div class="p-2 border">@Html.Raw(Model.Proposal.Body)</div></td>
+                    </tr>
+                }
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Proposal.Url)</td>
+                    <td class="form_text">@Html.EditorFor(model => model.Proposal.Url)</td>
+                </tr>
+                @*<tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Proposal.Active)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Proposal.Active)</td>
+                    </tr>*@
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Cập nhật" />
+                    </td>
+                </tr>
+            </table>
         }
     </div>
 </div>

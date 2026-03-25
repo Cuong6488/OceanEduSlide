@@ -16,7 +16,11 @@ public static class PermisstionHelper
     public static List<TypeUser> ListTypeUserQuanLy_CN = new List<TypeUser>() { TypeUser.BM };
     public static List<TypeUser> ListTypeUserEdit_CN = new List<TypeUser>() { TypeUser.CV, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserNhanVien_CN_Vung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC };
-    public static List<TypeUser> ListTypeUserNhanVien_DeXuat = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM, TypeUser.ASM };
+    public static List<TypeUser> ListTypeUserNhanVien_ThuocVung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM, TypeUser.ASM };
+    public static List<TypeUser> ListTypeUserNhanVien_ThuocCN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM };
+    public static List<TypeUser> ListTypeUserNhanVien_KinhDoanh = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT};
+    public static List<TypeUser> ListTypeUserNhanVien_HocVu = new List<TypeUser>() {TypeUser.CM, TypeUser.TTL};
+    public static List<TypeUser> ListTypeUserNhanVien_KeToan = new List<TypeUser>() {TypeUser.SAB};
 
     #region Zone
 
@@ -461,7 +465,7 @@ public static class PermisstionHelper
             return Enumerable.Empty<HistoryUser>().AsQueryable();
         }
         var listHistoryUser = unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == month && a.Year == year && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser)
-                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))));
+                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))),q => q.OrderBy(a => a.Sort));
         if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listHistoryUser = listHistoryUser.Where(h =>
@@ -546,7 +550,7 @@ public static class PermisstionHelper
             return Enumerable.Empty<HistoryUser>().AsQueryable();
         }
         var listHistoryUser = unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == year && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser)
-                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month)))).AsNoTracking();
+                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))), q => q.OrderBy(a => a.Sort)).AsNoTracking();
 
         if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
@@ -625,6 +629,7 @@ public static class PermisstionHelper
         }
         return listHistoryUser;
     }
+
 
     #endregion
 

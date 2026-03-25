@@ -188,11 +188,10 @@ namespace OceanEduSlide.DAL
 
             foreach (var item in historyUserActives)
             {
-
                 // Kết quả dự thu
-                var bcDuThuNV = listBCDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.UserId);
+                var bcDuThuNV = listBCDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.Id);
                 if (bcDuThuNV == null)
-                    bcDuThuNV = listBCDuThuAdd.FirstOrDefault(a => a.HistoryUserId == item.UserId && a.ReportCategoryId == 92);
+                    bcDuThuNV = listBCDuThuAdd.FirstOrDefault(a => a.HistoryUserId == item.Id && a.ReportCategoryId == 92);
                 var duThuNV = congNoDuThu.Where(a => a.UserOriginId == item.UserId).Sum(a => a.TotalMoney);
                 var data = duThuNV.ToString("N0");
                 if (bcDuThuNV != null)
@@ -228,9 +227,9 @@ namespace OceanEduSlide.DAL
                     HTDT = tongDuThu / bcCTDSNV.DataReal;
                 }
 
-                var bcHTDuThuNV = listBCHTDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.UserId);
+                var bcHTDuThuNV = listBCHTDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.Id);
                 if (bcHTDuThuNV == null)
-                    bcHTDuThuNV = listBCDuThuAdd.FirstOrDefault(a => a.HistoryUserId == item.UserId && a.ReportCategoryId == 93);
+                    bcHTDuThuNV = listBCDuThuAdd.FirstOrDefault(a => a.HistoryUserId == item.Id && a.ReportCategoryId == 93);
                 if (bcHTDuThuNV != null)
                 {
                     bcHTDuThuNV.DataReal = HTDT;
@@ -258,14 +257,14 @@ namespace OceanEduSlide.DAL
 
             foreach (var item in historyUserNoActives)
             {
-                var bcDuThuNV = listBCDuThuNV.FirstOrDefault(a => a.UserId == item.UserId);
+                var bcDuThuNV = listBCDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.Id);
                 if (bcDuThuNV != null)
                 {
                     bcDuThuNV.DataReal = null;
                     bcDuThuNV.Data = "";
                 }
 
-                var bcHTDuThuNV = listBCHTDuThuNV.FirstOrDefault(a => a.UserId == item.UserId);
+                var bcHTDuThuNV = listBCHTDuThuNV.FirstOrDefault(a => a.HistoryUserId == item.Id);
                 if (bcHTDuThuNV != null)
                 {
                     bcHTDuThuNV.DataReal = null;

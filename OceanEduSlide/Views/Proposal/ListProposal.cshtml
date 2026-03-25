@@ -84,6 +84,10 @@
                     <select name="Notice" class="form-select">
                         <option value="">Tình trạng</option>
                         <option value="1" @(Model.Notice == 1 ? "selected" : "")>Chưa phản hồi</option>
+                        @if (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM)
+                        {
+                            <option value="3" @(Model.Notice == 3 ? "selected" : "")>Mới được phê duyệt</option>
+                        }
                         <option value="4" @(Model.Notice == 4 ? "selected" : "")>Đang xử lý</option>
                         <option value="6" @(Model.Notice == 6 ? "selected" : "")>Phê duyệt</option>
                         <option value="5" @(Model.Notice == 5 ? "selected" : "")>Không phê duyệt</option>
@@ -129,7 +133,6 @@
                 {
                     <span>@ViewBag.NoticeCount</span>
                 }
-
             </a>
         }
     </div>
@@ -188,10 +191,7 @@
                     <th class="col-w65">
                         CN sửa <br /> hồ sơ
                     </th>
-                    @if (Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && Model.User.CDCM != "BAM") || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
-                    {
-                        <th></th>
-                    }
+                    <th></th>
                 </tr>
             </thead>
 
@@ -243,7 +243,7 @@
                             {
                                 <a target="_blank" href="@item.Proposal.Url">Link</a>
                             }
-                            @if (item.Proposal.BMEdit && item.Proposal.CVSeen && ((Model.User.TypeUser == TypeUser.BM && Model.User.CDCM != "BAM") || Model.User.TypeUser == TypeUser.ASM))
+                            @if (item.Proposal.BMEdit && item.Proposal.CVSeen && Model.User.Id == item.Proposal.UserId)
                             {
                                 @: <br /> <br /> <a href="@Url.Action("EditProposal", new {pId = item.Proposal.Id})">Sửa</a>
                             }
@@ -295,51 +295,33 @@
                         {
                             <td class="text-center">@Html.DisplayFor(a => item.Proposal.BMEdit)</td>
                         }
-                        @if (Model.User.TypeUser == TypeUser.CV || (Model.User.TypeUser == TypeUser.BM && Model.User.CDCM != "BAM") || Model.User.TypeUser == TypeUser.HO || Model.User.TypeUser == TypeUser.ASM)
-                        {
-                            <td>
-                                @if ((Model.User.TypeUser == TypeUser.CV && Model.User.ZoneIds.Contains("," + item.Proposal.Zone.ShortCode + ",")) || Model.User.TypeUser == TypeUser.HO)
+                        <td>
+                            @if (Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO || Model.User.Id == item.Proposal.UserId)
+                            {
+                                if ((Model.User.TypeUser == TypeUser.CV || Model.User.TypeUser == TypeUser.HO) && Model.User.Id != item.Proposal.UserId)
                                 {
                                     <a href="@Url.Action("UpdateProposal", new {pId = item.Proposal.Id,Page = Model.Page, ZoneId = Model.ZoneId, OfficeId = Model.OfficeId, StartDay = Model.StartDay, EndDay = Model.EndDay, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type, Fault = Model.Fault, CVName = Model.CVName})">Phản hồi</a>
                                 }
-                                else
+                                if (Model.User.Id == item.Proposal.UserId)
                                 {
                                     if (item.Proposal.CVSeen == false)
                                     {
                                         <a href="@Url.Action("EditProposal", new {pId = item.Proposal.Id})">Sửa</a> <br /> <br />
                                         <a href="javascript:;" onclick="deleteProposal('@item.Proposal.Id')" style="color: red;">Xóa</a>
                                     }
-
-                                    else if (Model.Notice == 3)
-                                    {
-                                        <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
-                                    }
                                 }
-                            </td>
-                        }
+                            }
+                            @if (Model.Notice == 3 && (Model.User.TypeUser == TypeUser.BM || Model.User.TypeUser == TypeUser.ASM))
+                            {
+                                <a class="btn-read" href="javascript:;">Đánh dấu đã xem</a>
+                            }
+                        </td>
                     </tr>
 
                 }
 
             </tbody>
         </table>
-        @*@if (Model.Proposals.PageCount > 1)
-            {
-
-
-                <div class="text-center">
-                    @if (Model.OfficeId != null)
-                    {
-                        @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, officeId = Model.OfficeId, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
-
-                    }
-                    else
-                    {
-                        @Html.PagedListPager(Model.Proposals, page => Url.Action("ListProposal", new { page, zoneId = Model.ZoneId, month = Model.Month, year = Model.Year, Notice = Model.Notice, MaDeXuat = Model.MaDeXuat, Type = Model.Type }))
-
-                    }
-                </div>
-            }*@
     </div>
 </div>
 @section scripts{

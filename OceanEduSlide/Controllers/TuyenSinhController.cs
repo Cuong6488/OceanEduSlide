@@ -12,6 +12,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using OceanEduSlide.EnumHelpers;
+using OceanEduSlide.Migrations;
+using System.Security.Policy;
 namespace OceanEduSlide.Controllers
 {
     [MemberFilter]
@@ -35,8 +37,6 @@ namespace OceanEduSlide.Controllers
                 Categories2 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type2),
                 Categories3 = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3),
             };
-            //if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
-            //    model.Categories3 = model.Categories3.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
             return PartialView(model);
         }
         public PartialViewResult GetCatgory(string MucLuc, int? Month)
@@ -46,45 +46,19 @@ namespace OceanEduSlide.Controllers
                 .Select(a => a.Index) // Chọn trường bạn cần, có thể thay 'Index' bằng tên khác
                 .Distinct()
                 .ToList();
-            var catgories = _unitOfWork.CategoryRepository.GetQuery(a => a.TypeCategory == TypeCategory.Type3, q => q.OrderByDescending(a => a.Month));
-            if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.EC || User.TypeUser == TypeUser.ALT || User.TypeUser == TypeUser.CM || User.TypeUser == TypeUser.SAB || User.TypeUser == TypeUser.TTL)
-            {
-                if (string.IsNullOrEmpty(User.OfficeIds))
-                    catgories = catgories.Where(a => ("," + a.Offices + ",").Contains("," + OfficeCode + ","));
+            IQueryable<Category> catgories = Enumerable.Empty<Category>().AsQueryable();
 
-                else
-                {
-                    var listCode = User.OfficeNames.Split(',');
-                    catgories = catgories.Where(a => listCode.Any(l => ("," + a.Offices + ",").Contains("," + l + ",")));
-                }
+            if (User.TypeUser != null)
+            {
+                catgories = _unitOfWork.CategoryRepository
+                    .GetQuery(a => a.TypeCategory == TypeCategory.Type3,
+                              q => q.OrderByDescending(a => a.Month));
             }
-            else if (User.TypeUser == TypeUser.ASM)
+            if (PermisstionHelper.ListTypeUserNhanVien_ThuocVung.Contains(User.TypeUser.Value))
             {
-                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                {
-                    var officeShortCodesAll = new List<string>();
-                    var listZoneShortCode = User.ZoneIds.Trim(',').Split(',');
-                    foreach (var shortCode in listZoneShortCode)
-                    {
-                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.ShortCode == shortCode).FirstOrDefault();
-                        if (zone != null)
-                        {
-                            var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zone.Id).Select(o => o.ShortCode).ToList();
-                            officeShortCodesAll.AddRange(officeShortCodes);
-                        }
-                    }
-                    catgories = catgories.Where(cat => officeShortCodesAll.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
-
-                }
-                else
-                {
-                    var zoneId = User.ZoneId;
-                    var officeShortCodes = _unitOfWork.OfficeRepository.GetQuery(o => o.ZoneId == zoneId).Select(o => o.ShortCode).ToList();
-
-                    // Lọc các Category có chứa ít nhất một ShortCode trong Offices
-                    catgories = catgories.Where(cat => officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
-                }
-
+                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+                var officeShortCodes = offices.Select(o => o.ShortCode).ToList();
+                catgories = catgories.Where(cat => officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
             }
             if (Month != null)
             {
@@ -104,104 +78,56 @@ namespace OceanEduSlide.Controllers
 
             return PartialView(model);
         }
-        public ActionResult Revenue(int? page, int? ZoneId, int? Month, int? OfficeId, int? Year, int? UserType, int? TypeView, string Result = "")
+        public ActionResult Revenue(int? page, int? zoneId, int? month, int? officeId, int? year, int? userType, int? typeView, string Result = "")
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
             var pageNumber = page ?? 1;
-            var model = new RevenueViewModel
+
+            month = month ?? DateTime.Now.Month;
+            year = year ?? DateTime.Now.Year;
+
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
+
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
+            if (zones.Count() == 1)
             {
-                //SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "ShortName"),
-                Month = Month ?? DateTime.Now.Month,
-                Year = Year ?? DateTime.Now.Year,
-                OfficeId = OfficeId,
-                ZoneId = ZoneId,
-                User = User,
-                UserType = UserType,
-                Offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId))
-            };
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Year == model.Year && a.Month == model.Month
-            && a.TypeUser != TypeUser.ASM && a.TypeUser != TypeUser.HO && a.TypeUser != TypeUser.CV && a.TypeUser != TypeUser.PKT && a.TypeUser != TypeUser.AEC
-            && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == model.Month) || a.DayEnd.Value.Month != model.Month))),
-            q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort));
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == model.Month && h.Year == model.Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            if (User.TypeUser == TypeUser.HO)
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => a.Active);
-            else if (User.TypeUser == TypeUser.CV)
-            {
-                model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                if (model.ZoneId == null)
-                {
-                    model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                    if (model.OfficeId == null)
-                        historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                }
+                zoneId = zones.First().Id;
             }
-            else
+
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        model.Zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                        //model.Offices = model.Offices.Where(a => User.ZoneIds.Contains("," + a.Zone?.ShortCode + ","));
-                        if (model.ZoneId == null)
-                        {
-                            model.Offices = model.Offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                            if (model.OfficeId == null)
-                                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                        }
-                    }
-                    else
-                    {
-                        model.ZoneId = User.ZoneId;
-                    }
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        model.OfficeId = User.OfficeId;
-                    else
-                    {
-                        model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId.ToString() + ",")));
-                        if (model.OfficeId == null)
-                        {
-                            historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && User.OfficeIds.Contains("," + h.OfficeId + ",")));
-                        }
-                    }
-                }
+                officeId = null;
             }
+            if (offices.Count() == 1)
+            {
+                officeId = offices.First().Id;
+            }
+
+            var listHistoryUser = PermisstionHelper.GetHistoryUserManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId, officeId, null, userType);
+
             ViewBag.Result = Result;
             ViewBag.Year = DateTime.Now.Year;
-            if (UserType != null)
-            {
-                historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType);
-            }
-            //else
-            //{
-            //    historyUsers = historyUsers.Where(a => a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM);
-            //}
-            if (model.ZoneId != null)
-            {
-                model.Offices = model.Offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == model.ZoneId));
-                historyUsers = historyUsers.Where(a => historyOffices.Any(h => h.OfficeId == a.OfficeId && h.ZoneId == model.ZoneId));
-            }
-            if (model.Offices.Count() == 1)
-            {
-                model.OfficeId = model.Offices.First().Id;
-            }
-            var (workingWeeks, currentWeek) = CalculateWeeks(model.Year ?? DateTime.Now.Year, model.Month ?? DateTime.Now.Month);
+            var (workingWeeks, currentWeek) = CalculateWeeks(year.Value, month.Value);
 
             ViewBag.WorkingWeeks = workingWeeks;
             ViewBag.CurrentWeek = currentWeek;
 
-            if (model.OfficeId != null)
+            var model = new RevenueViewModel
+            {
+                //SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.Active), "Id", "ShortName"),
+                Month = month,
+                Year = year,
+                OfficeId = officeId,
+                ZoneId = zoneId,
+                User = User,
+                UserType = userType,
+                Offices = offices,
+                Zones = zones
+            };
+            if (officeId != null)
             {
                 var office = _unitOfWork.OfficeRepository.GetById(model.OfficeId);
                 if (office != null)
@@ -210,8 +136,8 @@ namespace OceanEduSlide.Controllers
                     model.RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(a => a.OfficeId == model.OfficeId && a.Month == model.Month && a.Year == model.Year, q => q.OrderByDescending(a => a.CreateDate));
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId && (a.TypeUser == TypeUser.SAB || a.TypeUser == TypeUser.EC || a.TypeUser == TypeUser.ALT || a.TypeUser == TypeUser.CM || a.TypeUser == TypeUser.TTL || a.TypeUser == TypeUser.BM)).ToList();
                     //var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == model.OfficeId);
-                    historyUsers = historyUsers.Where(a => a.OfficeId == model.OfficeId);
-                    var userItems = historyUsers.ToList().Select(a => new RevenueViewModel.UserItem
+                    listHistoryUser = listHistoryUser.Where(a => a.OfficeId == model.OfficeId);
+                    var userItems = listHistoryUser.ToList().Select(a => new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,
                         //User = a.User,
@@ -226,9 +152,9 @@ namespace OceanEduSlide.Controllers
                 }
                 return View(model);
             }
-            if (TypeView == null)
-                TypeView = 1;
-            model.TypeView = TypeView;
+            if (typeView == null)
+                typeView = 1;
+            model.TypeView = typeView;
             //model.RevenueOffices = revenueOffices;
             var officeItems = model.Offices.ToList().Select(a => new RevenueViewModel.OfficeItem
             {
@@ -236,18 +162,18 @@ namespace OceanEduSlide.Controllers
                 RevenueOffice = _unitOfWork.RevenueOfficeRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year).FirstOrDefault(),
                 RevenueOffice_BMs = _unitOfWork.RevenueOffice_BMRepository.GetQuery(p => p.OfficeId == a.Id && p.Month == model.Month && p.Year == model.Year, q => q.OrderByDescending(p => p.CreateDate)),
             });
-            if (TypeView == 2)
+            if (typeView == 2)
             {
                 // Bước 1: Xác định phân trang
                 int pageSize = 20;
 
                 // Bước 2: Truy vấn danh sách người dùng đầy đủ
-                var listHistoryUsers = historyUsers
+                var listHistoryUsers = listHistoryUser
                     .ToList();
                 //var allUserIds = listHistoryUsers.Select(u => u.UserId).Distinct().ToList();
 
                 // Bước 3: Phân trang danh sách người dùng
-                var pagedHistoryUsers = historyUsers
+                var pagedHistoryUsers = listHistoryUser
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -292,18 +218,7 @@ namespace OceanEduSlide.Controllers
                     .GroupBy(p => p.HistoryUserId)
                     .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.CreateDate).ToList());
 
-                //var debtsList = _unitOfWork.DebtRepository
-                //    .GetQuery(q => q.Active && userIds.Contains(q.UserId) &&
-                //        (q.Year < model.Year || (q.Year == model.Year && q.Month < model.Month)) &&
-                //        (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
-                //    .AsNoTracking()
-                //    .GroupBy(q => new { q.UserId, DebtKey = q.DebtId ?? q.Id })
-                //    .Select(g => g.OrderByDescending(q => q.CreateDate).FirstOrDefault())
-                //    .ToList();
-                //var debtDict = debtsList
-                //    .GroupBy(q => q.UserId)
-                //    .ToDictionary(g => g.Key, g => g.Sum(q => (decimal?)(q.TotalMoney - q.DownMoney)) ?? 0);
-                var debtsList = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.TypeData == TypeData.New && q.TypeDebt != TypeDebt.Type6 
+                var debtsList = _unitOfWork.DebtRepository.GetQuery(q => q.Active && q.TypeData == TypeData.New && q.TypeDebt != TypeDebt.Type6
                 && pagedUserIds.Contains(q.UserOriginId.Value) && (q.Year > model.Year || (q.Year == model.Year && q.Month >= model.Month - 1))).AsNoTracking().ToList();
 
                 var debtDict = debtsList
@@ -315,7 +230,7 @@ namespace OceanEduSlide.Controllers
 
                 foreach (var a in pagedHistoryUsers)
                 {
-                    revenueMonthDict.TryGetValue(a.Id, out var month);
+                    revenueMonthDict.TryGetValue(a.Id, out var monthVal);
                     revenueMonthBMsDict.TryGetValue(a.Id, out var bmList);
                     revenueMonthBMRealsDict.TryGetValue(a.Id, out var bmReal);
                     revenueWeeksDict.TryGetValue(a.Id, out var weekList);
@@ -325,7 +240,7 @@ namespace OceanEduSlide.Controllers
                     userItems.Add(new RevenueViewModel.UserItem
                     {
                         HistoryUser = a,
-                        RevenueUser_Month = month,
+                        RevenueUser_Month = monthVal,
                         RevenueUser_Month_BMs = bmList ?? new List<RevenueUser_Month_BM>(),
                         RevenueUser_Month_BM_real = bmReal,
                         RevenueUser_Weeks = weekList ?? new List<RevenueUser_Week>(),
@@ -345,49 +260,8 @@ namespace OceanEduSlide.Controllers
         }
         public void ExportRevenueCN(int Year, int Month, int? ZoneId)
         {
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month == Month && h.Year == Year).Select(h => new
-            {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-
-            var offices = _unitOfWork.OfficeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.ZoneId));
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (ZoneId == null)
-                {
-                    offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
-                }
-            }
-            else if (User.TypeUser != TypeUser.HO)
-            {
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        if (ZoneId == null)
-                        {
-                            //offices = offices.Where(o => o.ZoneId != null && User.ZoneIds.Contains("," + o.Zone.ShortCode + ","));
-                            offices = offices.Where(o => historyOffices.Any(h => h.OfficeId == o.Id && User.ZoneIds.Contains("," + h.ZoneShortCode + ",")));
-                        }
-                    }
-                    else
-                    {
-                        ZoneId = User.ZoneId;
-                    }
-                }
-                else if (User.OfficeIds != null)
-                {
-                    //offices = offices.Where(a => User.OfficeIds.Contains("," + a.Id + ","));
-                    offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && User.OfficeIds.Contains("," + h.OfficeId + ",")));
-                }
-            }
-            if (ZoneId != null)
-            {
-                //offices = offices.Where(a => a.ZoneId == ZoneId);
-                offices = offices.Where(a => historyOffices.Any(h => h.OfficeId == a.Id && h.ZoneId == ZoneId));
-            }
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == Month && a.Year == Year).AsNoTracking();
+            var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, Year, Month, ZoneId);
             var dt = new DataTable();
             dt.Columns.Add("Vùng");
             dt.Columns.Add("Chi nhánh");
@@ -434,89 +308,12 @@ namespace OceanEduSlide.Controllers
                 }).ToList();
 
             var officeIdToZone = historyOffices.ToDictionary(x => x.OfficeId);
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == Month && a.Year == Year).AsNoTracking();
 
-            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a =>
-                a.Active &&
-                a.Year == Year &&
-                a.Month == Month &&
-                a.TypeUser != TypeUser.ASM &&
-                a.TypeUser != TypeUser.HO &&
-                a.TypeUser != TypeUser.CV &&
-                a.TypeUser != TypeUser.PKT &&
-                a.TypeUser != TypeUser.AEC &&
-                (a.DayEnd == null || (a.DayEnd.Value.Month != Month || (a.DayEnd.Value.Day != 1))),
-                q => q.OrderBy(a => a.OfficeId == null ? int.MinValue : a.Office.ZoneId).ThenBy(a => a.OfficeId).ThenBy(a => a.Sort)
-            ).AsNoTracking().ToList();
+            var listHistoryUser = PermisstionHelper.GetHistoryUserManagerMonth(_unitOfWork, User, historyUsers, Year, Month, ZoneId, OfficeId, null, UserType);
 
-            // Filter theo quyền người dùng
-            if (User.TypeUser == TypeUser.CV)
-            {
-                if (ZoneId == null && OfficeId == null)
-                {
-                    historyUsers = historyUsers
-                        .Where(a => a.OfficeId != null &&
-                                    officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
-                                    User.ZoneIds.Contains("," + h.ZoneShortCode + ","))
-                        .ToList();
-                }
-            }
-            else if (User.TypeUser != TypeUser.HO)
-            {
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        if (ZoneId == null && OfficeId == null)
-                        {
-                            historyUsers = historyUsers
-                                .Where(a => a.OfficeId != null &&
-                                            officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
-                                            User.ZoneIds.Contains("," + h.ZoneShortCode + ","))
-                                .ToList();
-                        }
-                    }
-                    else
-                    {
-                        ZoneId = User.ZoneId;
-                    }
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                        OfficeId = User.OfficeId;
-                    else if (OfficeId == null)
-                    {
-                        historyUsers = historyUsers
-                            .Where(a => a.OfficeId != null &&
-                                        User.OfficeIds.Contains("," + a.OfficeId + ","))
-                            .ToList();
-                    }
-                }
-            }
-
-            if (UserType != null)
-            {
-                historyUsers = historyUsers.Where(a => (int)a.TypeUser == UserType).ToList();
-            }
-
-            if (ZoneId != null)
-            {
-                historyUsers = historyUsers
-                    .Where(a => a.OfficeId != null &&
-                                officeIdToZone.TryGetValue(a.OfficeId.Value, out var h) &&
-                                h.ZoneId == ZoneId)
-                    .ToList();
-            }
-
-            if (OfficeId != null)
-            {
-                historyUsers = historyUsers
-                    .Where(a => a.OfficeId == OfficeId)
-                    .ToList();
-            }
-
-            var userIds = historyUsers.Select(u => u.Id).ToList();
-            var actualUserIds = historyUsers.Select(u => u.UserId).ToList();
+            var userIds = listHistoryUser.Select(u => u.Id).ToList();
+            var actualUserIds = listHistoryUser.Select(u => u.UserId).ToList();
 
             // Load dữ liệu batch
             var targetMonths = _unitOfWork.RevenueUser_MonthRepository.GetQuery(a => a.HistoryUserId != null &&
@@ -529,18 +326,16 @@ namespace OceanEduSlide.Controllers
                 .GroupBy(a => a.HistoryUserId)
                 .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.CreateDate).First());
 
-            var allDebts = _unitOfWork.DebtRepository.GetQuery(q =>
-                q.Active &&
-                actualUserIds.Contains(q.UserId) &&
-                (q.Year < Year || (q.Year == Year && q.Month < Month)) &&
-                (q.TypeDebt == TypeDebt.Type1 || q.TypeDebt == TypeDebt.Type2 || q.TypeDebt == TypeDebt.Type3))
+
+            var allDebts = _unitOfWork.DebtRepository
+                .GetQuery(q => q.Active && q.TypeData == TypeData.New && q.TypeDebt != TypeDebt.Type6 && actualUserIds.Contains(q.UserOriginId.Value) && (q.Year > Year || (q.Year == Year && q.Month >= Month - 1)))
                 .AsNoTracking()
                 .ToList();
 
             var debts = allDebts
-                .GroupBy(q => new { q.UserId, DebtId = q.DebtId ?? q.Id })
+                .GroupBy(q => new { q.UserOriginId, DebtId = q.Id })
                 .Select(g => g.OrderByDescending(x => x.CreateDate).First())
-                .GroupBy(x => x.UserId)
+                .GroupBy(x => x.UserOriginId)
                 .ToDictionary(g => g.Key, g => g.Sum(x => x.TotalMoney - x.DownMoney));
 
             var revenueWeeks = _unitOfWork.RevenueUser_WeekRepository.GetQuery(a => a.HistoryUserId != null &&
@@ -566,7 +361,7 @@ namespace OceanEduSlide.Controllers
                 foreach (var sub in subHeaders)
                     dt.Columns.Add($"Tuần {week} - {sub}");
 
-            foreach (var item in historyUsers)
+            foreach (var item in listHistoryUser)
             {
                 var row = dt.NewRow();
 
