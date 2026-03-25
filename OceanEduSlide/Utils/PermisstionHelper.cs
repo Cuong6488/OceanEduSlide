@@ -9,13 +9,14 @@ using System.Linq;
 
 public static class PermisstionHelper
 {
-    public static List<TypeUser> ListTypeUserNhanVien_CN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.ALT };
+    public static List<TypeUser> ListTypeUserNhanVien_CN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB };
     public static List<TypeUser> ListTypeUserQuanLy = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM, TypeUser.HO, TypeUser.PKT };
     public static List<TypeUser> ListTypeUserQuanLy_CN_Vung = new List<TypeUser>() { TypeUser.BM, TypeUser.CV, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserQuanLy_Vung = new List<TypeUser>() { TypeUser.CV, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserQuanLy_CN = new List<TypeUser>() { TypeUser.BM };
     public static List<TypeUser> ListTypeUserEdit_CN = new List<TypeUser>() { TypeUser.CV, TypeUser.ASM };
-    public static List<TypeUser> ListTypeUserNhanVien_CN_Vung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.ALT, TypeUser.AEC };
+    public static List<TypeUser> ListTypeUserNhanVien_CN_Vung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC };
+    public static List<TypeUser> ListTypeUserNhanVien_DeXuat = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM, TypeUser.ASM };
 
     #region Zone
 

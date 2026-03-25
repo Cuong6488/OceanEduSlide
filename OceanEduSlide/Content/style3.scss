@@ -269,7 +269,7 @@ h2 {
 .form-filter {
     .row {
         width: 100%;
-        margin-bottom:8px;
+        margin-bottom: 8px;
     }
 
     button {
@@ -314,8 +314,6 @@ h2 {
         .select2-selection__rendered {
             line-height: 33px;
             background-color: white;
-            border-radius: 5px;
-            border: 1px solid #dbdbdb;
             height: 35px;
         }
     }
@@ -329,6 +327,11 @@ h2 {
     .select2-container .select2-search--inline .select2-search__field {
         height: 19px;
     }
+}
+
+.select2-selection__rendered {
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
 }
 
 .box-remind {

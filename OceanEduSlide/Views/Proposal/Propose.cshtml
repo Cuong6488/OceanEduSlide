@@ -11,24 +11,17 @@
             @Html.ValidationSummary(true)
             <table class="form_table">
                 @Html.HiddenFor(a => a.Proposal.UserId)
-                @if (Model.SelectOffices != null)
-                {
-                    <tr>
-                        <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
-                        <td class="form_text">
-                            @Html.DropDownListFor(model => model.Proposal.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select" })
-                            @Html.ValidationMessageFor(model => model.Proposal.OfficeId)
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    @Html.HiddenFor(a => a.Proposal.OfficeId)
-                }
+                <tr>
+                    <td class="form_name w-25">@Html.LabelFor(model => model.Proposal.OfficeId)</td>
+                    <td class="form_text">
+                        @Html.DropDownListFor(model => model.Proposal.OfficeId, Model.SelectOffices, "Chọn chi nhánh", new { @class = "form-select select2", @data_item = "officepresent" })
+                        @Html.ValidationMessageFor(model => model.Proposal.OfficeId)
+                    </td>
+                </tr>
                 <tr>
                     <td class="form_name">@Html.LabelFor(model => model.Proposal.UserId2)</td>
                     <td class="form_text">
-                        @Html.DropDownListFor(model => model.Proposal.UserId2, Model.SelectUsers, "Chọn nhân sự theo dõi", new { @class = "form-select" })
+                        @Html.DropDownListFor(model => model.Proposal.UserId2, Model.SelectUsers, "Chọn nhân sự theo dõi", new { @class = "form-select select2", @data_item = "userpresent" })
                         @Html.ValidationMessageFor(model => model.Proposal.UserId2)
                     </td>
                 </tr>

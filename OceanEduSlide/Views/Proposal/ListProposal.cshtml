@@ -141,10 +141,8 @@
     {
         <a class="btn quick-link" href="@Url.Action("ListProposal")"><i class="far fa-list me-1"></i>Tất cả đề xuất</a>
     }
-    @if ((Model.User.TypeUser == TypeUser.BM && Model.User.CDCM != "BAM") || Model.User.TypeUser == TypeUser.ASM)
-    {
-        <a class="btn quick-link" href="@Url.Action("Propose")"><i class="fal fa-plus-circle me-1"></i>Thêm mới đề xuất</a>
-    }
+    <a class="btn quick-link" href="@Url.Action("Propose")"><i class="fal fa-plus-circle me-1"></i>Thêm mới đề xuất</a>
+
     <a class="btn quick-link" href="@Url.Action("ExportProposal", new {Month = Model.Month,Year = Model.Year,startDay = Model.StartDay,endDay = Model.EndDay,Notice = Model.Notice,MaDeXuat = Model.MaDeXuat,Type = Model.Type, Fault = Model.Fault,ZoneId = Model.ZoneId,OfficeId = Model.OfficeId})"><i class="fa-regular fa-table me-1"></i>Xuất Excel</a>
     <div class="box_content no-scroll">
         <table class="list_table tablecenter table-striped text-center">

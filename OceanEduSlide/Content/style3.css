@@ -247,8 +247,6 @@ h2 {
 .form-filter .select2 .select2-selection__rendered {
   line-height: 33px;
   background-color: white;
-  border-radius: 5px;
-  border: 1px solid #dbdbdb;
   height: 35px;
 }
 .form-filter .select2-container--default .select2-selection--multiple .select2-selection__choice {
@@ -258,6 +256,11 @@ h2 {
 }
 .form-filter .select2-container .select2-search--inline .select2-search__field {
   height: 19px;
+}
+
+.select2-selection__rendered {
+  border: 1px solid #dbdbdb;
+  border-radius: 5px;
 }
 
 .box-remind {

@@ -104,29 +104,29 @@ $("#form-category3").on("change", function (e) {
     });
 });
 
-//$("[data-item=zone]").on("change", function (data) {
-//    const id = $(this).val();
-//    var items = [];
-//    items.push("<option value>Chọn chi nhánh</option>");
+$("[data-item=officepresent]").on("change", function (data) {
+    const id = $(this).val();
+    var items = [];
+    items.push("<option value>Chọn nhân sự</option>");
 
-//    if (id !== "") {
-//        $.getJSON("/Home/GetOffice", { cityId: id }, function (data) {
-//            $.each(data, function (key, val) {
-//                items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
-//            });
-//            $("[data-item=office]").html(items.join(""));
-//        });
-//    }
-//    else {
-//        $("[data-item=office]").html(items.join(""));
-//    }
-//});
-//$(function () {
-//    $(".input-number").maskMoney({
-//        precision: 0,
-//        thousands: ',',
-//    });
-//});
+    if (id !== "") {
+        $.getJSON("/Base/GetUserManagerPresent", { officeId: id }, function (data) {
+            $.each(data, function (key, val) {
+                items.push("<option value='" + val.Id + "'>" + val.Fullname + " - " + val.MaNhanVien + "</option>");
+            });
+            $("[data-item=userpresent]").html(items.join(""));
+        });
+    }
+    else {
+        $("[data-item=userpresent]").html(items.join(""));
+    }
+});
+$(function () {
+    $(".input-number").maskMoney({
+        precision: 0,
+        thousands: ',',
+    });
+});
 
 $(document).ready(function () {
     $('select[name="OfficeId"]').select2({ placeholder: 'Chọn chi nhánh', allowClear: true });

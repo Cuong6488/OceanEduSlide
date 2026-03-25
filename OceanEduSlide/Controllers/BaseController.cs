@@ -18,6 +18,11 @@ namespace OceanEduSlide.Controllers
                 .GetQuery(a => a.Active && a.ZoneId == zoneId, q => q.OrderBy(a => a.Name)).Select(a => new { a.Id, a.Name });
             return Json(offices, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetUserManagerPresent(int officeId)
+        {
+            var users = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.OfficeId == officeId).Select(a => new { a.Id, a.Fullname, a.MaNhanVien });
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
         protected void DebugModelState()
         {
             var errors = ModelState.GetAllErrors();

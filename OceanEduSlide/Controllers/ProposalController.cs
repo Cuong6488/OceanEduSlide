@@ -13,6 +13,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Helpers;
 using OceanEduSlide.Migrations;
+using System.Security.Policy;
 
 namespace OceanEduSlide.Controllers
 {
@@ -28,63 +29,25 @@ namespace OceanEduSlide.Controllers
 
         public ActionResult Propose()
         {
-            if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
-                return HttpNotFound();
+            //if ((User.TypeUser != TypeUser.BM && User.TypeUser != TypeUser.ASM) || User.CDCM == "BAM")
+            //return HttpNotFound();
+            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+            var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
             var model = new ProposeViewModel
             {
                 Proposal = new Proposal { UserId = User.Id, User = User },
                 SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content"),
-
+                SelectOffices = new SelectList(offices.Select(u => new { Id = u.Id, NameWithZone = u.ShortName + " - " + u.Zone.Name }), "Id", "NameWithZone"),
+                SelectUsers = new SelectList(users.Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode")
             };
-            if (User.TypeUser == TypeUser.ASM)
+            if (offices.Count() == 1)
             {
-                if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                {
-                    var zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                    var offices = new List<Office>();
-                    foreach (var zone in zones)
-                    {
-                        var officeAdd = _unitOfWork.OfficeRepository.GetQuery(a => a.ZoneId == zone.Id);
-                        offices.AddRange(officeAdd);
-                    }
-                    model.SelectOffices = new SelectList(offices, "Id", "ShortName");
-                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","))
-                        .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
-                }
-                else
-                {
-                    var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
-                    if (zone != null)
-                        model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "ShortName");
-                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneId == a.Office.ZoneId)
-                       .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
-                }
+                model.Proposal.OfficeId = offices.First().Id;
             }
-            else
+            if (users.Count() == 1)
             {
-                if (string.IsNullOrEmpty(User.OfficeIds))
-                {
-                    model.Proposal.OfficeId = (int)User.OfficeId;
-                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == model.Proposal.OfficeId)
-                        .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
-                }
-                else
-                {
-                    var selectOffices = _unitOfWork.OfficeRepository.Get(a => User.OfficeIds.Contains("," + a.Id + ","));
-                    var newOfficeIds = User.OfficeIds.Trim(',');
-                    model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && User.OfficeIds.Contains("," + a.OfficeId + ","))
-                            .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
-                    if (selectOffices.Count() == 1)
-                    {
-                        model.Proposal.OfficeId = selectOffices.First().Id;
-                    }
-                    else
-                    {
-                        model.SelectOffices = new SelectList(selectOffices, "Id", "ShortName");
-                    }
-                }
+                model.Proposal.UserId2 = users.First().Id;
             }
-            //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
             return View(model);
         }
 
@@ -93,8 +56,6 @@ namespace OceanEduSlide.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (User.TypeUser == TypeUser.BM || User.TypeUser == TypeUser.ASM)
-                    model.Proposal.Active = true;
                 var isPost = true;
                 var office = _unitOfWork.OfficeRepository.GetById(model.Proposal.OfficeId);
                 if (office == null)
@@ -122,64 +83,21 @@ namespace OceanEduSlide.Controllers
                 }
                 model.SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content");
 
-                if (User.TypeUser == TypeUser.ASM)
+                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+                var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
+                model.SelectOffices = new SelectList(offices.Select(u => new { Id = u.Id, NameWithZone = u.ShortName + " - " + u.Zone.Name }), "Id", "NameWithZone");
+                model.SelectUsers = new SelectList(users.Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
+                if (offices.Count() == 1)
                 {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        var zones = _unitOfWork.ZoneRepository.Get(a => User.ZoneIds.Contains("," + a.ShortCode + ",") && a.Active);
-                        var offices = new List<Office>();
-                        foreach (var zone in zones)
-                        {
-                            var officeAdd = _unitOfWork.OfficeRepository.GetQuery(a => a.ZoneId == zone.Id);
-                            offices.AddRange(officeAdd);
-                        }
-                        model.SelectOffices = new SelectList(offices, "Id", "ShortName");
-                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ","))
-                            .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
-                    }
-                    else
-                    {
-                        var zone = _unitOfWork.ZoneRepository.GetQuery(a => a.Id == User.ZoneId).FirstOrDefault();
-                        if (zone != null)
-                            model.SelectOffices = new SelectList(_unitOfWork.OfficeRepository.Get(a => a.ZoneId == zone.Id), "Id", "ShortName");
-                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId != null && a.Office.ZoneId != null && User.ZoneId == a.Office.ZoneId)
-                           .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien + " - " + u.Office?.ShortName }), "Id", "FullNameWithCode");
-                    }
+                    model.Proposal.OfficeId = offices.First().Id;
                 }
-                else
+                if (users.Count() == 1)
                 {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                    {
-                        model.Proposal.OfficeId = (int)User.OfficeId;
-                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && a.OfficeId == model.Proposal.OfficeId)
-                            .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
-                    }
-                    else
-                    {
-                        var selectOffices = _unitOfWork.OfficeRepository.Get(a => User.OfficeIds.Contains("," + a.Id + ","));
-                        var newOfficeIds = User.OfficeIds.Trim(',');
-                        model.SelectUsers = new SelectList(_unitOfWork.UserRepository.Get(a => a.Active && User.OfficeIds.Contains("," + a.OfficeId + ","))
-                                .Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
-                        if (selectOffices.Count() == 1)
-                        {
-                            model.Proposal.OfficeId = selectOffices.First().Id;
-                        }
-                        else
-                        {
-                            model.SelectOffices = new SelectList(selectOffices, "Id", "ShortName");
-                        }
-                    }
+                    model.Proposal.UserId2 = users.First().Id;
                 }
+
                 return View(model);
-                //var cvs = _unitOfWork.UserRepository.GetQuery(a => a.Active && a.TypeUser == TypeUser.CV && a.ZoneIds.Contains(z.ShortCode));
-                //model.Proposal.CVName = "";
-                //foreach (var item in cvs)
-                //{
-                //    model.Proposal.CVName += item.Fullname + ", ";
-                //}
-                //model.Proposal.CVName = model.Proposal.CVName.Trim().Trim(',');
             }
-            //ViewBag.TypeProposalList = Enum.GetValues(typeof(TypeProposal)).Cast<TypeProposal>().Select(d => new SelectListItem { Value = ((int)d).ToString(), Text = d.GetDisplayName() }).ToList();
 
             return RedirectToAction("ListProposal");
         }
@@ -235,7 +153,7 @@ namespace OceanEduSlide.Controllers
             {
                 if (Notice == 2)
                     proposals = proposals.Where(a => a.CVSeen);
-                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && a.Active && !a.CVSeen).Count();
+                ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && a.Active && !a.CVSeen).Count();
             }
             else if (User.TypeUser == TypeUser.HO || User.TypeUser == TypeUser.PKT)
             {
@@ -252,7 +170,7 @@ namespace OceanEduSlide.Controllers
                 }
                 if (User.TypeUser == TypeUser.ASM)
                 {
-                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.NSSeen == false && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || (a.Office.ZoneId != null && User.ZoneId == a.Office.ZoneId))).Count();
+                    ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.Active && a.NSSeen == false && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)).Count();
                 }
                 else
                 {
@@ -321,7 +239,7 @@ namespace OceanEduSlide.Controllers
             };
             return View(model);
         }
-        public void ExportProposal(int? ZoneId, int? OfficeId, string startDay, string endDay, int? Notice, string MaDeXuat, string Type, string Fault)
+        public void ExportProposal(int? zoneId, int? officeId, string startDay, string endDay, int? Notice, string maDeXuat, string type, string fault)
         {
             if (string.IsNullOrEmpty(startDay))
             {
@@ -340,23 +258,18 @@ namespace OceanEduSlide.Controllers
             {
                 EndDate = new DateTime(crd.Year, crd.Month, crd.Day, 0, 0, 0);
             }
-            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate),
-                q => q.OrderByDescending(a => a.CreateDate));
-            if (!string.IsNullOrEmpty(MaDeXuat))
-                proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));
-            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => h.Month >= StartDate.Month && h.Month <= EndDate.Month && h.Year == StartDate.Year).Select(h => new
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate)
+            , q => q.OrderByDescending(a => a.CreateDate));
+
+            if (!string.IsNullOrEmpty(maDeXuat))
+                proposals = proposals.Where(a => a.MaDeXuat.Contains(maDeXuat));
+            if (!string.IsNullOrEmpty(type))
             {
-                h.OfficeId,
-                ZoneShortCode = h.Zone.ShortCode,
-                h.ZoneId
-            });
-            if (!string.IsNullOrEmpty(Type))
-            {
-                proposals = proposals.Where(a => a.ProposalTypeId != null && a.ProposalType.Content == Type);
+                proposals = proposals.Where(a => a.ProposalTypeId != null && a.ProposalType.Content == type);
             }
-            if (!string.IsNullOrEmpty(Fault))
+            if (!string.IsNullOrEmpty(fault))
             {
-                proposals = proposals.Where(a => a.TypeFaultId != null && a.TypeFault.Content == Fault);
+                proposals = proposals.Where(a => a.TypeFaultId != null && a.TypeFault.Content == fault);
             }
             if (Notice == 1)
                 proposals = proposals.Where(a => !a.CVSeen);
@@ -368,10 +281,6 @@ namespace OceanEduSlide.Controllers
                 proposals = proposals.Where(a => a.TypeApprove == TypeApprove.Type1);
             if (User.TypeUser == TypeUser.CV)
             {
-                if (ZoneId == null)
-                {
-                    proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ",") && a.Active);
-                }
                 if (Notice == 2)
                     proposals = proposals.Where(a => a.CVSeen);
             }
@@ -387,50 +296,34 @@ namespace OceanEduSlide.Controllers
                 {
                     proposals = proposals.Where(a => a.NSSeen == false);
                 }
-                if (User.TypeUser == TypeUser.ASM)
-                {
-                    if (!string.IsNullOrEmpty(User.ZoneIds) && User.ZoneIds.Length > 2)
-                    {
-                        if (ZoneId == null)
-                        {
-                            if (OfficeId == null)
-                                proposals = proposals.Where(a => User.ZoneIds.Contains("," + a.Zone.ShortCode + ","));
-                        }
-                    }
-                    else
-                    {
-                        ZoneId = User.ZoneId;
-                        ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneId == a.ZoneId && a.Active && a.NSSeen == false).Count();
-                    }
-                }
-                else if (User.TypeUser == TypeUser.BM)
-                {
-                    if (string.IsNullOrEmpty(User.OfficeIds))
-                    {
-                        OfficeId = User.OfficeId;
-                        if (User.TypeUser == TypeUser.BM)
-                            ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.OfficeId == a.OfficeId && a.Active && a.NSSeen == false).Count();
-                    }
-                    else
-                    {
-                        if (OfficeId == null)
-                            proposals = proposals.Where(a => User.OfficeIds.Contains("," + a.OfficeId + ","));
-                    }
-                }
-                else
-                {
-                    OfficeId = User.OfficeId;
-                    proposals = proposals.Where(a => a.UserId2 == User.Id);
-                }
             }
-            if (ZoneId != null)
+            if (User.TypeUser.HasValue && PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
             {
-                proposals = proposals.Where(a => a.ZoneId == ZoneId);
+                proposals = proposals.Where(a => a.UserId2 == User.Id);
             }
-            if (OfficeId != null)
+            var historyOffices = _unitOfWork.HistoryOfficeRepository.GetQuery(h => (h.Year > StartDate.Year || (h.Year == StartDate.Year && h.Month >= StartDate.Month)) && (h.Year < EndDate.Year || (h.Year == EndDate.Year && h.Month <= EndDate.Month))).AsNoTracking();
+
+            var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && (a.Year > StartDate.Year || (a.Year == StartDate.Year && a.Month >= StartDate.Month)) && (a.Year < EndDate.Year || (a.Year == EndDate.Year && a.Month <= EndDate.Month))).AsNoTracking();
+
+            var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
+            if (zones.Count() == 1)
             {
-                proposals = proposals.Where(a => a.OfficeId == OfficeId);
+                zoneId = zones.First().Id;
             }
+
+            var offices = PermisstionHelper.GetOfficeManagerPeriod(_unitOfWork, User, historyUsers, historyOffices, zoneId);
+            var listOfficeId = offices.Select(a => a.Id).ToHashSet();
+            if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
+            {
+                officeId = null;
+            }
+            if (offices.Count() == 1)
+            {
+                officeId = offices.First().Id;
+            }
+            if (officeId.HasValue)
+                listOfficeId = listOfficeId.Where(a => a == officeId).ToHashSet();
+            proposals = proposals.Where(a => listOfficeId.Contains(a.OfficeId));
             var dt = new DataTable();
             dt.Columns.Add("STT");
             dt.Columns.Add("Mã đề xuất");
@@ -450,7 +343,7 @@ namespace OceanEduSlide.Controllers
             int stt = 1;
             foreach (var item in proposals)
             {
-                dt.Rows.Add(stt, item.MaDeXuat, item.CVName, item.Office.ShortName, item.Zone.Name, item.ProposalType?.Content, item.User.Fullname, item.User2?.Fullname, item.CreateDate.ToString("dd/MM/yyyy"),
+                dt.Rows.Add(stt, item.MaDeXuat, item.CVName, item.Office.ShortName, item.Office.Zone?.Name, item.ProposalType?.Content, item.User.Fullname, item.User2?.Fullname, item.CreateDate.ToString("dd/MM/yyyy"),
                    HtmlHelpers.RemoveHtml(null, item.Body), item.Url, HtmlHelpers.RemoveHtml(null, item.CVFeedBack), EnumExtensions.GetDisplayName(item.TypeApprove), item.TypeFault?.Content, item.Note);
                 stt++;
             }
