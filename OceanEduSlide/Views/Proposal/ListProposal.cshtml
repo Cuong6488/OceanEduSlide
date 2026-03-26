@@ -158,18 +158,18 @@
                     @*<th class="col-w65">
                             Vùng
                         </th>*@
-                    <th class="col-w90">
+                    @*<th class="col-w90">
                         CV PTS <br /> phụ trách
-                    </th>
+                    </th>*@
                     <th class="col-w90">
                         Chi nhánh <br /> - Vùng
                     </th>
                     <th class="col-w90">
                         Loại đề xuất
                     </th>
-                    <th class="col-w100">
+                    @*<th class="col-w100">
                         Nhân sự
-                    </th>
+                    </th>*@
                     <th class="col-w65">
                         Ngày <br /> đề xuất
                     </th>
@@ -205,8 +205,7 @@
                             @stt
                         </td>
                         <td style="word-break:break-word">@item.Proposal.MaDeXuat</td>
-                        @*<td>@item.Proposal.Zone.Name</td>*@
-                        <td>
+                        @*<td>
                             @{
                                 var listCVPhuTrach = "";
                                 foreach (var cv in item.ListCVPhuTrach)
@@ -215,12 +214,11 @@
                                 }
                                 listCVPhuTrach = listCVPhuTrach.Trim().Trim(',');
                             }
-                            @*@item.Proposal.CVName*@
                             @listCVPhuTrach
-                        </td>
+                        </td>*@
                         <td>@item.Proposal.Office.ShortName - @item.Proposal.Zone.Name</td>
                         <td>@(item.Proposal.ProposalType?.Content)</td>
-                        <td>
+                        @*<td>
                             <strong>Đề xuất:</strong> <br />
                             @(item.Proposal.User.Fullname) <br />
 
@@ -230,13 +228,8 @@
                                 <strong>Theo dõi:</strong> <br />
                                 @(item.Proposal.User2?.Fullname)
                             }
-                        </td>
+                        </td>*@
                         <td>@Html.DisplayFor(a => item.Proposal.CreateDate)</td>
-                        @*<td>
-                                @(item.Proposal.CVSeen == true?"Đã phản hồi":"Chưa phản hồi")
-                            </td>*@
-                        @*<td>@Html.DisplayFor(a => item.Proposal.TypeProposal)</td>*@
-
                         <td class="body-format body-dexuat">@Html.Raw(item.Proposal.Body)</td>
                         <td style="word-break:break-word">
                             @if (!string.IsNullOrEmpty(item.Proposal.Url))

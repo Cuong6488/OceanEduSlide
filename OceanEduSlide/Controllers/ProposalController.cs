@@ -33,7 +33,7 @@ namespace OceanEduSlide.Controllers
                 return HttpNotFound();
             var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, null);
 
-            var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
+            var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User, null, null);
             if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
             {
                 users = users.Where(a => a.Id == User.Id);
@@ -89,7 +89,7 @@ namespace OceanEduSlide.Controllers
                 model.SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content");
 
                 var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, null);
-                var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
+                var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User, null, null);
                 model.SelectOffices = new SelectList(offices.Select(u => new { Id = u.Id, NameWithZone = u.ShortName + " - " + u.Zone.Name }), "Id", "NameWithZone");
                 model.SelectUsers = new SelectList(users.Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
                 if (offices.Count() == 1)
@@ -112,8 +112,6 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == null)
                 return HttpNotFound();
             ViewBag.Result = Result;
-            //var pageSize = 10;
-            //ViewBag.PageSize = pageSize;
             var types = _unitOfWork.ProposalTypeRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).Select(a => a.Content).ToList();
             var faults = _unitOfWork.TypeFaultRepository.GetQuery(a => a.Active, q => q.OrderBy(a => a.Sort)).Select(a => a.Content).ToList();
             if (string.IsNullOrEmpty(startDay))

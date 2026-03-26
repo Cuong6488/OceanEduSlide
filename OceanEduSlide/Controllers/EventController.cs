@@ -1204,7 +1204,7 @@ namespace OceanEduSlide.Controllers
             var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User,null).Select(a => a.Id).ToHashSet();
             if ((PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && !listOfficeId.Contains(debt.OfficeId.Value)) || (!PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && User.Id != debt.UserId))
                 return RedirectToAction("Index");
-            var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User)
+            var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User,null,null)
              .Select(a => new
              {
                  Id = a.Id,

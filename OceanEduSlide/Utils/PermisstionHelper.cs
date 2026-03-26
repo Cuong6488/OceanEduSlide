@@ -212,7 +212,7 @@ public static class PermisstionHelper
 
     #region User
 
-    public static IQueryable<User> GetUserManagerPresent(UnitOfWork unitOfWork, User user)
+    public static IQueryable<User> GetUserManagerPresent(UnitOfWork unitOfWork, User user, int? zoneId, int? officeId)
     {
         if (!user.TypeUser.HasValue)
         {
@@ -250,9 +250,9 @@ public static class PermisstionHelper
             {
                 foreach (var item in listOfficeId)
                 {
-                    if (int.TryParse(item, out var officeId))
+                    if (int.TryParse(item, out var oId))
                     {
-                        listOfficeIds.Add(officeId);
+                        listOfficeIds.Add(oId);
                     }
                 }
             }
@@ -260,6 +260,11 @@ public static class PermisstionHelper
            && ((a.OfficeId.HasValue && listOfficeIds.Contains(a.OfficeId.Value)) || (a.ZoneId.HasValue && listZoneIds.Contains(a.ZoneId.Value))));
 
         }
+        if (zoneId.HasValue)
+            listUser = listUser.Where(a => a.ZoneId == zoneId || (a.OfficeId != null && a.Office.ZoneId == zoneId));
+
+        if (officeId.HasValue)
+            listUser = listUser.Where(a => a.OfficeId == officeId);
 
         return listUser;
     }
