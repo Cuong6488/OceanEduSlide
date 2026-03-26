@@ -31,7 +31,7 @@ namespace OceanEduSlide.Controllers
         {
             if (User.TypeUser == null)
                 return HttpNotFound();
-            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, null);
 
             var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
             if (PermisstionHelper.ListTypeUserNhanVien_CN.Contains(User.TypeUser.Value))
@@ -88,7 +88,7 @@ namespace OceanEduSlide.Controllers
                 }
                 model.SelectProposalTypes = new SelectList(_unitOfWork.ProposalTypeRepository.Get(a => a.Active), "Id", "Content");
 
-                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, null);
                 var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User);
                 model.SelectOffices = new SelectList(offices.Select(u => new { Id = u.Id, NameWithZone = u.ShortName + " - " + u.Zone.Name }), "Id", "NameWithZone");
                 model.SelectUsers = new SelectList(users.Select(u => new { Id = u.Id, FullNameWithCode = u.Fullname + " - " + u.MaNhanVien }), "Id", "FullNameWithCode");
@@ -205,7 +205,7 @@ namespace OceanEduSlide.Controllers
                 zoneId = zones.First().Id;
             }
 
-            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+            var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
             if (officeId.HasValue && !listOfficeId.Contains(officeId.Value))
             {

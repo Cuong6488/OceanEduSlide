@@ -18,9 +18,9 @@ public static class PermisstionHelper
     public static List<TypeUser> ListTypeUserNhanVien_CN_Vung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC };
     public static List<TypeUser> ListTypeUserNhanVien_ThuocVung = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM, TypeUser.ASM };
     public static List<TypeUser> ListTypeUserNhanVien_ThuocCN = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT, TypeUser.CM, TypeUser.TTL, TypeUser.SAB, TypeUser.AEC, TypeUser.BM };
-    public static List<TypeUser> ListTypeUserNhanVien_KinhDoanh = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT};
-    public static List<TypeUser> ListTypeUserNhanVien_HocVu = new List<TypeUser>() {TypeUser.CM, TypeUser.TTL};
-    public static List<TypeUser> ListTypeUserNhanVien_KeToan = new List<TypeUser>() {TypeUser.SAB};
+    public static List<TypeUser> ListTypeUserNhanVien_KinhDoanh = new List<TypeUser>() { TypeUser.EC, TypeUser.ALT };
+    public static List<TypeUser> ListTypeUserNhanVien_HocVu = new List<TypeUser>() { TypeUser.CM, TypeUser.TTL };
+    public static List<TypeUser> ListTypeUserNhanVien_KeToan = new List<TypeUser>() { TypeUser.SAB };
 
     #region Zone
 
@@ -167,7 +167,7 @@ public static class PermisstionHelper
         return listOffice;
     }
 
-    public static IQueryable<Office> GetOfficeManagerPresent(UnitOfWork unitOfWork, User user)
+    public static IQueryable<Office> GetOfficeManagerPresent(UnitOfWork unitOfWork, User user, int? zoneId)
     {
         if (!user.TypeUser.HasValue)
         {
@@ -200,6 +200,10 @@ public static class PermisstionHelper
             (listZoneShortCodeManagerString.Contains("," + a.Zone.ShortCode + ",") && ListTypeUserQuanLy_Vung.Contains(user.TypeUser.Value))
             || listOfficeIdManagerString.Contains("," + a.Id.ToString() + ",")
             ));
+        }
+        if (zoneId.HasValue)
+        {
+            listOffice = listOffice.Where(l => l.ZoneId == zoneId);
         }
 
         return listOffice;
@@ -465,7 +469,7 @@ public static class PermisstionHelper
             return Enumerable.Empty<HistoryUser>().AsQueryable();
         }
         var listHistoryUser = unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.Month == month && a.Year == year && ListTypeUserNhanVien_CN_Vung.Contains(a.TypeUser)
-                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))),q => q.OrderBy(a => a.Sort));
+                    && (a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month))), q => q.OrderBy(a => a.Sort));
         if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {
             listHistoryUser = listHistoryUser.Where(h =>

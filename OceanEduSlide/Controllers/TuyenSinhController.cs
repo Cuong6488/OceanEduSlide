@@ -56,7 +56,7 @@ namespace OceanEduSlide.Controllers
             }
             if (PermisstionHelper.ListTypeUserNhanVien_ThuocVung.Contains(User.TypeUser.Value))
             {
-                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User);
+                var offices = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User, null);
                 var officeShortCodes = offices.Select(o => o.ShortCode).ToList();
                 catgories = catgories.Where(cat => officeShortCodes.Any(code => ("," + cat.Offices + ",").Contains("," + code + ",")));
             }

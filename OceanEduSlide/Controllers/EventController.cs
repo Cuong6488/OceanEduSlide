@@ -1201,7 +1201,7 @@ namespace OceanEduSlide.Controllers
             var debt = _unitOfWork.DebtRepository.GetById(id);
             if (debt == null)
                 return HttpNotFound();
-            var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User).Select(a => a.Id).ToHashSet();
+            var listOfficeId = PermisstionHelper.GetOfficeManagerPresent(_unitOfWork, User,null).Select(a => a.Id).ToHashSet();
             if ((PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && !listOfficeId.Contains(debt.OfficeId.Value)) || (!PermisstionHelper.ListTypeUserEdit_CN.Contains(User.TypeUser.Value) && User.Id != debt.UserId))
                 return RedirectToAction("Index");
             var users = PermisstionHelper.GetUserManagerPresent(_unitOfWork, User)
