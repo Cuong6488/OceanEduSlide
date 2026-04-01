@@ -125,7 +125,7 @@ namespace OceanEduSlide
                         try
                         {
                             var userService = new UserService();
-                            await userService.SyncUserAsync();
+                            await userService.SyncUserAsync(DateTime.Now);
                         }
                         catch (Exception ex)
                         {
@@ -145,7 +145,7 @@ namespace OceanEduSlide
                         try
                         {
                             var userService = new UserService();
-                            await userService.SyncUserAsync();
+                            await userService.SyncUserAsync(DateTime.Now);
                         }
                         catch (Exception ex)
                         {
@@ -220,15 +220,16 @@ namespace OceanEduSlide
             JobManager.AddJob(
                 () =>
                 {
-                    var today = DateTime.Now.Day;
-                    if (today > 3)
+                    var today = DateTime.Now;
+                    if (today.Day > 3)
                         return;
+                    var date = new DateTime(today.Year, today.Month, 1).AddDays(-1);
                     Task.Run(async () =>
                     {
                         try
                         {
                             var userService = new UserService();
-                            await userService.SyncUserLastMonthAsync();
+                            await userService.SyncUserAsync(date);
                         }
                         catch (Exception ex)
                         {
@@ -242,15 +243,16 @@ namespace OceanEduSlide
             JobManager.AddJob(
                 () =>
                 {
-                    var today = DateTime.Now.Day;
-                    if (today > 3)
+                    var today = DateTime.Now;
+                    if (today.Day > 3)
                         return;
+                    var date = new DateTime(today.Year, today.Month, 1).AddDays(-1);
                     Task.Run(async () =>
                     {
                         try
                         {
                             var userService = new UserService();
-                            await userService.SyncUserLastMonthAsync();
+                            await userService.SyncUserAsync(date);
                         }
                         catch (Exception ex)
                         {

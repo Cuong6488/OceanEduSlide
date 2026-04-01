@@ -756,25 +756,6 @@ namespace OceanEduSlide.Controllers
             return RedirectToAction("Revenue", new { Result = "add", Month = model.RevenueOffice.Month, Year = model.RevenueOffice.Year, OfficeId = model.RevenueOffice.OfficeId });
         }
 
-        public ActionResult ListRevenueOffice(int? page, int? officeId, string result = "")
-        {
-            ViewBag.Result = result;
-            var pageNumber = page ?? 1;
-            const int pageSize = 15;
-            var revenueOffices = _unitOfWork.RevenueOfficeRepository.GetQuery(orderBy: q => q.OrderByDescending(a => a.Year).ThenByDescending(a => a.Month)).AsNoTracking();
-
-            if (officeId > 0)
-            {
-                revenueOffices = revenueOffices.Where(a => a.OfficeId == officeId);
-            }
-            var model = new ListRevenueOfficeViewModel
-            {
-                SelectOffices = new SelectList(_unitOfWork.OfficeRepository.GetQuery(), "Id", "ShortName"),
-                RevenueOffices = revenueOffices.ToPagedList(pageNumber, pageSize),
-                OfficeId = officeId,
-            };
-            return View(model);
-        }
         [HttpPost]
         public JsonResult AddOrUpdateRevenueMonth(int year, int month, int historyUserId, decimal targetBM)
         {

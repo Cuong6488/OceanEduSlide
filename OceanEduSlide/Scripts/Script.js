@@ -249,32 +249,17 @@ function price() {
         // Hàm tính toán đơn giá
         function calculateUnitPrice(levelValue) {
             if (levelValue.includes("no-ielts")) {
-                return 2989000; // Đơn giá cho cấp độ có chứa "no-ielts"
+                return 1989000; // Đơn giá cho cấp độ có chứa "no-ielts"
             }
             else if (levelValue.includes("ielts")) {
                 return 3989000; // Đơn giá cho cấp độ "ielts"
             }
-
-            //if (levelValue === "ielts") {
-            //    return 3989000; // Đơn giá cho cấp độ "ielts"
-            //}
-            //else if (levelValue === "no-ielts") {
-            //    return 2989000; // Đơn giá cho cấp độ "no-ielts"
-            //}
             else {
                 return ""; // Đơn giá rỗng nếu không có giá trị
             }
         }
 
         // Hàm tính toán thành tiền
-        //function calculateTotalPrice(unitPrice, pathwayMonths) {
-        //    if (unitPrice && pathwayMonths) {
-        //        return unitPrice * pathwayMonths; // Thành tiền = đơn giá * số tháng
-        //    }
-        //    else {
-        //        return ""; // Thành tiền rỗng nếu thiếu giá trị
-        //    }
-        //}
         function calculateTotalPrice(unitPrice, pathwayMonths) {
             if (unitPrice && pathwayMonths) {
                 return Math.round(unitPrice * pathwayMonths); // Làm tròn đến số nguyên gần nhất
@@ -285,16 +270,6 @@ function price() {
 
         // Khi thay đổi thời gian bắt đầu
         $(".start-date").on("change", function () {
-            //const startDateValue = $(this).val();
-            //const pathwayMonths = $(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val();
-
-            //if (startDateValue && pathwayMonths) {
-            //    const startDate = parseDate(startDateValue);
-            //    startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
-            //    $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
-            //} else {
-            //    $(this).closest(".price-advice-box").find(".end-date").val("");
-            //}
             const pathwayMonths = parseFloat($(this).closest(".price-advice-box").find(".input-container-pathway").find("input").val());
             const startDateValue = $(this).val();
 
@@ -331,16 +306,7 @@ function price() {
             $(this).closest(".price-advice-box").find(".input-container-term").find("select").prop("selectedIndex", 0);
             $(this).closest(".price-advice-box").find(".input-container-percent").find("input").val("");
             $(this).closest(".price-advice-box").find(".input-container-cash").find("input").val("");
-            //const pathwayMonths = $(this).val();
-            //const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
-
-            //if (startDateValue && pathwayMonths) {
-            //    const startDate = parseDate(startDateValue);
-            //    startDate.setMonth(startDate.getMonth() + parseInt(pathwayMonths));
-            //    $(this).closest(".price-advice-box").find(".end-date").val(formatDate(startDate)); // Cập nhật thời gian kết thúc
-            //} else {
-            //    $(this).closest(".price-advice-box").find(".end-date").val(""); // Đặt thời gian kết thúc về chuỗi rỗng
-            //}
+            
             const pathwayMonths = parseFloat($(this).val());
             const startDateValue = $(this).closest(".price-advice-box").find(".start-date").val();
 
@@ -500,13 +466,6 @@ function price() {
                 }
             });
 
-            //if ($(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val() !== "") {
-            //    var finalMoney = $(this).closest(".price-advice-box").find(".input-container-finalprice").find("input").val().replace(/\./g, "").replace(/\,/g, "").replace(/đ/g, "").trim();
-            //    var term = $(this).closest(".price-advice-box").find(".input-container-pathway").find("select").val();
-
-            //    var paypermonth = Math.round(finalMoney / term);
-            //    $(this).closest(".price-advice-box").find(".input-container-pricepermonth").find("input").val(paypermonth.toLocaleString() + 'đ');
-            //}
         });
 
         $(".input-container-cash input,.input-container-percent input").on("change", function () {
@@ -669,22 +628,7 @@ function price() {
     });
 }
 function ExportPdf() {
-    //const margin = 10;
-
-    //// Tạo đối tượng options với cấu hình lề và các tùy chọn khác
-    //const options = {
-    //    margin: margin,
-    //    filename: 'output.pdf',
-    //    html2canvas: { scale: 1 },
-    //    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    //};
-
-    //// Lấy phần tử HTML để chuyển đổi thành PDF
-    //const element = document.getElementById('source-html');
-
-    //// Tạo và lưu tệp PDF với các tùy chọn đã thiết lập
-    //html2pdf().from(element).set(options).save();
-
+  
     const element = document.getElementById('source-html');
     const options = {
         margin: 0,
@@ -864,41 +808,7 @@ function face() {
             });
         }
     });
-    //$(".face-student").on("click", function () {
-    //    if (isTick === false) {
-    //        $(".face-index").fadeOut(300, function () {
-    //            $(".face-student-slide").fadeIn(300);
-    //            $('.face-student-slick').slick({
-    //                autoplay: false,
-    //                dots: false,
-    //                infinite: true,
-    //                speed: 1000,
-    //                slidesToShow: 3,
-    //                slidesToScroll: 1,
-    //                autoplaySpeed: 2000,
-    //                arrows: true,
-    //                nextArrow: '<button type="button" class="slick-next"></button>',
-    //                prevArrow: '<button type="button" class="slick-prev"></button>',
-    //                responsive: [
-    //                    {
-    //                        breakpoint: 1300,
-    //                        settings: {
-    //                            slidesToShow: 2,
-    //                            slidesToScroll: 1,
-    //                        }
-    //                    },
-    //                    {
-    //                        breakpoint: 1100,
-    //                        settings: {
-    //                            slidesToShow: 3,
-    //                            slidesToScroll: 3,
-    //                        }
-    //                    }
-    //                ]
-    //            });
-    //        });
-    //    }
-    //});
+   
     $(".face .btn-back-square").on("click", function () {
         $(".face > .slide:not(.face-index)").fadeOut(300, function () {
             $(".face-index").fadeIn(300);
@@ -910,20 +820,7 @@ function text_title(text) {
 
     $(".btns-text p").text(text);
 }
-//function homeJs() {
 
-//    $('.banner').slick({
-//        autoplay: true,
-//        dots: false,
-//        infinite: true,
-//        speed: 1000,
-//        slidesToShow: 1,
-//        slidesToScroll: 1,
-//        autoplaySpeed: 2000,
-//        arrows: false,
-//        pauseOnHover: false,
-//    });
-//}
 function pathway() {
     $(".star-index img").on("click", function () {
         var classStar = $(this).attr("class");
@@ -1036,13 +933,7 @@ function pathway() {
             });
             slidenumber = 1;
         }
-        //else if (slidenumber === 3) {
-        //    $(".overview3-discovery").fadeOut(300, function () {
-        //        $(".overview2-discovery").fadeIn(300);
-        //        $(".overview-discovery-title").fadeIn(0);
-        //    });
-        //    slidenumber = 2;
-        //}
+        
     });
     $(".overview-discovery .btn-next").on("click", function () {
         if (slidenumber === 1) {

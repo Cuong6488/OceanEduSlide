@@ -23,52 +23,6 @@ function autoReload(minutes) {
     }, minutes * 60 * 1000); // Chuyển phút sang mili giây
 }
 
-//$(".form-filter select").on("change", function (data) {
-//    let form = $(this).closest("form");
-//    if (form.hasClass("form-inyear")) {
-//        var sDay = $("#StartDay").val();
-//        var eDay = $("#EndDay").val();
-//        var yearStart = sDay.slice(-4);
-//        var yearEnd = eDay.slice(-4);
-//        if (yearStart != yearEnd) {
-//            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
-//        }
-//        else {
-//            if (form.valid()) {
-//                form.trigger('submit');
-//            }
-//        }
-//    }
-//    else {
-//        if (form.valid()) { 
-//            form.trigger('submit');
-//        }
-//    }
-
-//});
-//$(".form-filter input").on("change", function (data) {
-//    let form = $(this).closest("form");
-//    if (form.hasClass("form-inyear")) {
-//        var sDay = $("#StartDay").val();
-//        var eDay = $("#EndDay").val();
-//        var yearStart = sDay.slice(-4);
-//        var yearEnd = eDay.slice(-4);
-//        if (yearStart != yearEnd) {
-//            alert("Vui lòng chọn khoảng thời gian trong cùng một năm")
-//        }
-//        else {
-//            if (form.valid()) {
-//                form.trigger('submit');
-//            }
-//        }
-//    }
-//    else {
-//        if (form.valid()) { 
-//            form.trigger('submit');
-//        }
-//    }
-
-//});
 // Lưu giá trị cũ trước khi thay đổi
 $(".form-filter").on("change", "input, select", function () {
     let $this = $(this);
@@ -255,20 +209,14 @@ $(".input-RevenueUser_Month_BMs").on("change", function () {
                     var totalWeekTarget = 0;
 
                     thisElement.closest("tr").find(".revenue-value-week_BM").each(function (index) {
-                        //if (index >= currentWeek) {
-                        //    $(this).siblings(".input-RevenueUser_Week").val("");
-                        //    $(this).closest("td").next("td").text("");
-                        //    $(this).text("");
-                        //}
+                        
                         var weekTarget = $(this).text().trim().replace(/\,/g, "");
                         var weekTarget_real = $(this).closest("td").nextAll(".week-real").first().text().trim().replace(/\,/g, "");
                         if (weekTarget !== "" && targetuser_month_BM > 0) {
                             var percent_user_week = Math.round(weekTarget / targetuser_month_BM * 100);
                             $(this).closest("td").next(".week-percent").text(percent_user_week);
                             if (weekTarget_real !== "" && index < currentWeek - 1) {
-                                //alert(index);
-                                //alert(currentWeek - 1);
-                                //alert(weekTarget_real);
+                              
                                 totalWeekTarget += parseFloat(weekTarget_real) || 0;
                             }
                             else {
@@ -458,7 +406,6 @@ $(function eventFunction() {
                 totalWeekTarget += parseFloat(dayTarget) || 0;
             }
         });
-        //alert(totalWeekTarget);
         // Kiểm tra tổng số sau khi duyệt qua tất cả các phần tử
         if (totalWeekTarget !== targetuser_week) {
             elements.each(function (index) {
@@ -483,12 +430,6 @@ $(function eventFunction() {
                 thisElement.css("display", "none");
                 thisElement.val(thisElement.siblings(".revenue-value").text());
             }
-            //else if (targetBM === "") {
-            //    $.toast({
-            //        text: 'Vui lòng nhập chỉ tiêu doanh số dự kiến',
-            //        icon: 'warning'
-            //    })
-            //}
 
             else {
                 var totalDayTarget = 0;
@@ -539,10 +480,6 @@ $(function eventFunction() {
                             thisElement.css("display", "none");
                             thisElement.siblings(".revenue-value").text(thisElement.val());
 
-                            //thisElement.closest("td").next(".day-target-number").find(".btnedit-input").css("display", "block");
-                            //thisElement.closest("td").next(".day-target-number").find(".revenue-value").css("display", "block");
-                            //thisElement.closest("td").next(".day-target-number").find(".input-RevenueUser_Day_DT").css("display", "none");
-                            //thisElement.closest("td").next(".day-target-number").find(".revenue-value").text(targetBM_DT);
 
                         } else {
                             $.toast({
@@ -578,12 +515,6 @@ $(function eventFunction() {
     });
 
 });
-//$(function homeJs() {
-//    $(".logo a").on("click", function (e) {
-//        e.preventDefault();
-//        window.location.href = "/home/indexshare";
-//    });
-//});
 
 $(".input-RevenueUser_Day_DT").on("change", function () {
     var thisElement = $(this);
@@ -638,27 +569,13 @@ $(".input-RevenueUser_Day_DT").on("change", function () {
 });
 $(function () {
     $(".input-number").each(function () {
-        //const inputVal = $(this).val();
-
-        //if (inputVal === "" || inputVal === "0") {
-        //    $(this).maskMoney({
-        //        precision: 0,
-        //        thousands: ',',
-        //        allowZero: true
-        //    });
-        //} else {
+       
         $(this).maskMoney({
             precision: 0,
             thousands: ','
-            // allowZero không cần thiết nếu đã có giá trị khác
         });
-        //}
     });
 });
-//$(".input-number").maskMoney({
-//    precision: 0,
-//    thousands: ","
-//});
 
 
 $(window).scroll(function () {

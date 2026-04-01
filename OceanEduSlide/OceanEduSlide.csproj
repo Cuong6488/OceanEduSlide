@@ -1688,7 +1688,6 @@
     <Content Include="Views\Vcms\InsertUserExcel.cshtml" />
     <Content Include="Views\TuyenSinh\Revenue.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueOffice.cshtml" />
-    <Content Include="Views\TuyenSinh\ListRevenueOffice.cshtml" />
     <Content Include="Views\TuyenSinh\Header.cshtml" />
     <Content Include="Views\TuyenSinh\LoadHistoryRevenueUser_Month.cshtml" />
     <Content Include="Views\TuyenSinh\RevenueOffice_BM.cshtml" />
@@ -1738,7 +1737,6 @@
     <Content Include="Views\ReportHome\LoadListCall.cshtml" />
     <Content Include="Views\TuyenSinh\GetCatgory.cshtml" />
     <Content Include="Views\Revenue\TargetOffice.cshtml" />
-    <Content Include="Views\Revenue\ListRevenueOffice.cshtml" />
     <Content Include="Views\Revenue\TargetUser.cshtml" />
     <Content Include="Views\Revenue\ListRevenueUser.cshtml" />
     <Content Include="Views\Vcms\CreateProposalType.cshtml" />
@@ -1761,7 +1759,6 @@
     <Content Include="Views\Revenue\UpdateWorkingDay.cshtml" />
     <Content Include="Views\Vcms\ListHistoryOffice.cshtml" />
     <Content Include="Views\TuyenSinh\ListTest.cshtml" />
-    <Content Include="Views\Revenue\TargetOffice2.cshtml" />
     <Content Include="Views\Revenue\PhieuThuTHDB.cshtml" />
     <Content Include="Views\Revenue\ListPhieuThu.cshtml" />
     <Content Include="Views\Report\CreateLockImport.cshtml" />
