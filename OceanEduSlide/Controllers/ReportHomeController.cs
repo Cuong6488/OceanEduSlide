@@ -48,10 +48,10 @@ namespace OceanEduSlide.Controllers
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
 
             var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
-            if (zones.Count() == 1)
-            {
-                zoneId = zones.First().Id;
-            }
+            //if (zones.Count() == 1)
+            //{
+            //    zoneId = zones.First().Id;
+            //}
 
             var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
@@ -237,10 +237,10 @@ namespace OceanEduSlide.Controllers
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month == month && a.Year == year).AsNoTracking();
 
             var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
-            if (zones.Count() == 1)
-            {
-                zoneId = zones.First().Id;
-            }
+            //if (zones.Count() == 1)
+            //{
+            //    zoneId = zones.First().Id;
+            //}
 
             var offices = PermisstionHelper.GetOfficeManagerMonth(_unitOfWork, User, historyUsers, year.Value, month.Value, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
@@ -486,10 +486,10 @@ namespace OceanEduSlide.Controllers
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == year).AsNoTracking();
 
             var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
-            if (zones.Count() == 1)
-            {
-                zoneId = zones.First().Id;
-            }
+            //if (zones.Count() == 1)
+            //{
+            //    zoneId = zones.First().Id;
+            //}
 
             var offices = PermisstionHelper.GetOfficeManagerYear(_unitOfWork, User, historyUsers, year.Value, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
@@ -775,10 +775,10 @@ namespace OceanEduSlide.Controllers
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Year == year).AsNoTracking();
 
             var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
-            if (zones.Count() == 1)
-            {
-                zoneId = zones.First().Id;
-            }
+            //if (zones.Count() == 1)
+            //{
+            //    zoneId = zones.First().Id;
+            //}
 
             var offices = PermisstionHelper.GetOfficeManagerYear(_unitOfWork, User, historyUsers, year.Value, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();
@@ -1490,10 +1490,10 @@ namespace OceanEduSlide.Controllers
             var historyUsers = _unitOfWork.HistoryUserRepository.GetQuery(a => a.Active && a.UserId == User.Id && a.Month >= startDate.Month && a.Month <= endDate.Month && a.Year == startDate.Year).AsNoTracking();
 
             var zones = PermisstionHelper.GetZoneManagerPeriod(_unitOfWork, User, historyUsers);
-            if (zones.Count() == 1)
-            {
-                zoneId = zones.First().Id;
-            }
+            //if (zones.Count() == 1)
+            //{
+            //    zoneId = zones.First().Id;
+            //}
 
             var offices = PermisstionHelper.GetOfficeManagerPeriod(_unitOfWork, User, historyUsers, historyOffices, zoneId);
             var listOfficeId = offices.Select(a => a.Id).ToHashSet();

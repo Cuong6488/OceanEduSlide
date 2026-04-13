@@ -227,12 +227,12 @@ namespace OceanEduSlide.DAL
                 if (isToday)
                 {
                     user.CDCM = maChucDanh;
-                    user.ZoneId = zone?.Id;
                     user.SaleKit = true;
                     user.Active = (status == StatusUser.InActive ? false : true);
                     if (status == StatusUser.Active || status == StatusUser.InActive)
                     {
                         user.OfficeId = office?.Id;
+                        user.ZoneId = zone?.Id;
                         user.TypeUser = type;
                     }
                 }
@@ -240,13 +240,33 @@ namespace OceanEduSlide.DAL
             }
             if (isToday && isAuto)
             {
-                if (office != null && (string.IsNullOrEmpty(user.OfficeIds) || user.OfficeIds.Trim(',').Split(',').Length == 1))
+                if (status == StatusUser.Active || status == StatusUser.InActive)
                 {
-                    user.OfficeIds = "," + office.Id + ",";
-                    user.OfficeNames = office.ShortCode;
+                    if (string.IsNullOrEmpty(user.OfficeIds) || user.OfficeIds.Trim(',').Split(',').Length == 1)
+                    {
+                        if (office != null)
+                        {
+                            user.OfficeIds = "," + office.Id + ",";
+                            user.OfficeNames = office.ShortCode;
+                        }
+                        else
+                        {
+                            user.OfficeIds = null;
+                            user.OfficeNames = null;
+                        }
+                    }
+                    if (string.IsNullOrEmpty(user.ZoneIds) || user.ZoneIds.Trim(',').Split(',').Length == 1)
+                    {
+                        if (zone != null)
+                        {
+                            user.ZoneIds = "," + zone.ShortCode + ",";
+                        }
+                        else
+                        {
+                            user.ZoneIds = null;
+                        }
+                    }
                 }
-                if (zone != null && (string.IsNullOrEmpty(user.ZoneIds) || user.ZoneIds.Trim(',').Split(',').Length == 1))
-                    user.ZoneIds = "," + zone.ShortCode + ",";
             }
             return user;
         }
@@ -1251,6 +1271,8 @@ namespace OceanEduSlide.DAL
                         {
                             logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
                         }
+                        if (office != null && zone != null)
+                            office = null;
                     }
 
                     var sort = _userTypeService.GetSort((TypeUser)type);

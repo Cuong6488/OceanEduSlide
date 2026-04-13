@@ -30,6 +30,7 @@ public static class PermisstionHelper
         {
             return Enumerable.Empty<Zone>().AsQueryable();
         }
+         //historyUsers = historyUsers.Where(a => a.DayEnd == null || (a.DayEnd != null && ((a.DayEnd.Value.Day != 1 && a.DayEnd.Value.Month == a.Month) || a.DayEnd.Value.Month != a.Month)), q => q.OrderBy(a => a.Sort));
         var zones = unitOfWork.ZoneRepository.GetQuery(a => a.Active).AsNoTracking();
         if (user.TypeUser != TypeUser.HO && user.TypeUser != TypeUser.PKT)
         {

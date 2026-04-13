@@ -918,8 +918,8 @@ namespace OceanEduSlide.Controllers
                         }
                         if (historyOffice.BaseTarget == 0)
                         {
-                            ModelState.AddModelError("", "Không có chỉ tiêu cơ sở chi nhánh " + office.ShortName);
-                            return View();
+                            //ModelState.AddModelError("", "Không có chỉ tiêu cơ sở chi nhánh " + office.ShortName);
+                            continue;
                         }
 
                         UserService.SyncChitieuDS(monthInt, yearInt, workingDayFull.Value, lastMonth, yearLastMonth, endDayLastMonth, office, historyOffice, workingDay, targetGroup, workingDayLastYear, newRevenueList,
