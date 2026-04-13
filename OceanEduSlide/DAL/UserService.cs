@@ -1271,6 +1271,7 @@ namespace OceanEduSlide.DAL
                         {
                             logger.Error("Khong ton tai Chi nhanh hoac Vung nao co ten la: " + NsDieuchuyen.WorkPlaceName);
                         }
+                        // Nếu chi nhánh là chi nhánh ảo do hệ thống auto tự tạo (theo vùng)
                         if (office != null && zone != null)
                             office = null;
                     }
