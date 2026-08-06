@@ -1,28 +1,14 @@
-﻿using Newtonsoft.Json;
-using OceanEduSlide.Models;
-using OceanEduSlide.ViewModels;
+﻿using OceanEduSlide.Models;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
 using NLog;
 using System.Data.Entity;
-using FluentScheduler;
 using OceanEduSlide.OEDongBo;
 using Z.EntityFramework.Plus;
-using OceanEduSlide.Migrations;
 using Helpers;
 using System.Web.UI.WebControls;
-using ImageResizer.ExtensionMethods;
-using Microsoft.IdentityModel.Tokens;
-using System.Web.Services.Description;
-using System.Text;
-using System.Xml.Linq;
 using OceanEduSlide.Utils;
 namespace OceanEduSlide.DAL
 {
@@ -1727,7 +1713,6 @@ namespace OceanEduSlide.DAL
                     _unitOfWork.ReportDataRepository.InsertRange(reportDataList2);
                 _unitOfWork.Save();
             }
-
         }
 
         public async Task SyncUserAsync(DateTime date)

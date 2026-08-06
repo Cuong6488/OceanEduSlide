@@ -23,6 +23,7 @@ namespace OceanEduSlide.DAL
     {
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
         #region CallLogs
         public async Task SyncCusTom(int month, int day)
         {
@@ -165,7 +166,6 @@ namespace OceanEduSlide.DAL
                 FetchAndSaveLogsDuplicateAsync();
             });
         }
-
         public void FetchAndSaveLogsDuplicateAsync()
         {
             var thisMonth = DateTime.Now.Month;
@@ -229,7 +229,6 @@ namespace OceanEduSlide.DAL
             }
             _unitOfWork.Save();
         }
-
         #endregion
     }
 }

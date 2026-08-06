@@ -65,7 +65,7 @@
                     <td>@Html.CheckBoxFor(model => office.Active)</td>
                     <td>
                         <a href="javascript:;" onclick="updateInfo('@office.Id')">Cập nhật</a> -
-                        @*@Html.ActionLink("Sửa", "UpdateOffice", new { officeId = office.Id }) -*@
+                        @Html.ActionLink("Sửa", "UpdateOffice", new { officeId = office.Id }) -
                         <a href="javascript:;" onclick="deleteOffice('@office.Id')" style="color: red;">Xóa</a>
                     </td>
                 </tr>

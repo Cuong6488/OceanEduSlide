@@ -5,15 +5,12 @@ using OceanEduSlide.Models;
 using OceanEduSlide.ViewModels;
 using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Helpers;
-using OceanEduSlide.Migrations;
-using System.Security.Policy;
 
 namespace OceanEduSlide.Controllers
 {
@@ -134,39 +131,34 @@ namespace OceanEduSlide.Controllers
             if (User.TypeUser == TypeUser.CV)
             {
                 ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && !a.CVSeen).Count();
-                if (Notice == 1)
-                    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && !a.CVSeen
-                    , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                //if (Notice == 1)
+                //    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => User.ZoneIds != null && a.Office.ZoneId != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",") && !a.CVSeen, q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
             }
             else if (User.TypeUser == TypeUser.HO)
             {
                 ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.TypeApprove == TypeApprove.Type3).Count();
-                if (Notice == 4)
-                    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.TypeApprove == TypeApprove.Type3
-               , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                //if (Notice == 4)
+                //    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.TypeApprove == TypeApprove.Type3, q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
             }
             else
             {
                 if (User.TypeUser == TypeUser.ASM)
                 {
                     ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => !a.NSSeen && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)).Count();
-                    if (Notice == 3)
-                        StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId)
-                        , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                    //if (Notice == 3)
+                    //    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && a.Office.ZoneId != null && ((User.ZoneIds != null && User.ZoneIds.Contains("," + a.Office.Zone.ShortCode + ",")) || User.ZoneId == a.Office.ZoneId), q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
                 }
                 else
                 {
                     if (User.TypeUser == TypeUser.BM)
                     {
                         ViewBag.NoticeCount = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ",")))).Count();
-                        if (Notice == 3)
-                            StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ",")))
-                            , q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
+                        //if (Notice == 3)
+                        //    StartDate = _unitOfWork.ProposalRepository.GetQuery(a => a.NSSeen == false && (User.OfficeId == a.OfficeId || (User.OfficeIds != null && User.OfficeIds.Contains("," + a.OfficeId + ","))), q => q.OrderBy(a => a.CreateDate)).FirstOrDefault()?.CreateDate ?? StartDate;
                     }
                 }
             }
-            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate)
-            , q => q.OrderByDescending(a => a.CreateDate));
+            var proposals = _unitOfWork.ProposalRepository.GetQuery(a => DbFunctions.TruncateTime(a.CreateDate) >= DbFunctions.TruncateTime(StartDate) && DbFunctions.TruncateTime(a.CreateDate) <= DbFunctions.TruncateTime(EndDate), q => q.OrderByDescending(a => a.CreateDate));
 
             if (!string.IsNullOrEmpty(MaDeXuat))
                 proposals = proposals.Where(a => a.MaDeXuat.Contains(MaDeXuat));

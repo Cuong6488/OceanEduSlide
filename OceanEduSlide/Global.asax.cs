@@ -1,20 +1,13 @@
-﻿using OceanEduSlide.Controllers;
-using OceanEduSlide.DAL;
+﻿using OceanEduSlide.DAL;
 using OceanEduSlide.Migrations;
 using System;
-using System.Collections.Generic;
 //using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Hangfire;
-using Hangfire.SqlServer;
-using static OceanEduSlide.Controllers.ReportHomeController;
-using System.Timers;
 using FluentScheduler;
 
 namespace OceanEduSlide
